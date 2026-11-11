@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Document how each engine gets S3 access, with a sequence diagram of Sail 0.7.3's
+  vended-credentials request and static-key fallback, and the caveat that bucket-wide
+  static keys bypass future catalog permissions. Add the prerequisite decision to the
+  OpenID/authorization roadmap item.
+
 - Run the full integration gate natively on amd64 and arm64 in parallel, using
   identical source pins, architecture-correct artifact locks and strict image
   provenance. Keep all T1–T10/crash/canary assertions mandatory on both.

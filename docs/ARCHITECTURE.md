@@ -68,6 +68,52 @@ requests; the gate rejects any such request. No remote signer is needed on the m
 T9 separately exercises a no-key remote-signing client and records the known
 concurrent signer-registration race; see [the draft report](known-issues/remote-signing.md).
 
+### How each engine gets S3 access
+
+Lakekeeper's storage profile has `sts-enabled: false`, so the catalog can never hand
+out S3 keys. Every engine therefore signs S3 requests with its own static keys. Trino
+and PyIceberg choose this explicitly. Sail 0.7.3 asks for vended credentials (it
+cannot be configured not to) and falls back to its own keys when none come back:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Sail as Sail 0.7.3
+    participant LK as Lakekeeper (catalog)
+    participant S3 as SeaweedFS S3 gateway
+    Sail->>LK: Load table<br/>X-Iceberg-Access-Delegation: vended-credentials
+    Note over LK: sts-enabled=false, so<br/>no keys can be vended
+    LK-->>Sail: Table metadata, NO S3 keys<br/>(plus s3.remote-signing-enabled=true, s3.signer=S3V4RestSigner)
+    Note over Sail: Ignores the remote-signing hint and<br/>uses its own static AWS_* keys<br/>(Sail-only env file)
+    Sail->>S3: Read/write Parquet and metadata,<br/>SigV4-signed with Sail's static key
+    S3-->>Sail: Data
+    Note over Sail,LK: T10 asserts zero requests to Lakekeeper's signer endpoint
+```
+
+| Client | What it asks the catalog for | What it actually signs S3 requests with |
+| --- | --- | --- |
+| Trino | Nothing (`vended-credentials-enabled=false`) | Its own static keys |
+| PyIceberg | `client-managed` | Its own static keys |
+| Sail 0.7.3 | `vended-credentials` (hard-coded) | Its own static keys, because none are vended |
+
+**Caveat: static keys bypass catalog authorization.** Each engine's S3 identity can
+read and write the whole `warehouse` bucket (Read/Write/List). The catalog decides
+which tables an engine can *find*, not which objects it can *read*. Today that changes
+nothing, because Lakekeeper login is off and every caller is allowed everything. Once
+OpenID login and table permissions are added (see the roadmap), those permissions will
+NOT protect the data while engines hold bucket-wide static keys: an engine can read
+any table's files directly from S3. For catalog permissions to be enforced on data,
+the catalog must grant the S3 access itself, per table and short-lived, through either:
+
+- **credential vending**, which needs an STS in SeaweedFS (present upstream, but
+  unsupported and unqualified in `seaweedfs-ubi`); or
+- **remote signing**, which Trino 484 does not support, and where PyIceberg has the
+  concurrency bug that T9 records.
+
+Choosing one is part of the OpenID/authorization phase. Also, when Sail is upgraded to
+a release with configurable delegation (upstream commit `0c8333a`), set
+`access_delegation` explicitly so this behaviour is a decision, not a fallback.
+
 T5 removes containers/network using compose down without --volumes, then creates
 a new stack. The four volumes and generated keys survive. Every nonempty container
 ID must change; a fresh Python process reads all tables and validates a new write.
