@@ -1,10 +1,12 @@
 """Remote-signing restart diagnostics, isolated from the static-credential path."""
 
 import json
+import os
 import re
 import socket
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import ExitStack
 from unittest.mock import patch
 
@@ -25,11 +27,13 @@ class RestartDiagnostic:
         self.values = list(credentials.values())
         self.lock = threading.Lock()
         self.phase = "before"
+        self.entries = []
         self.stack = ExitStack()
 
     def emit(self, kind, **data):
         entry = {"phase": self.phase, "kind": kind, "time": time.time(), **data}
         with self.lock, self.path.open("a") as stream:
+            self.entries.append(entry)
             stream.write(sanitize(json.dumps(entry, default=str), self.values) + "\n")
 
     def start(self):
@@ -68,6 +72,13 @@ class RestartDiagnostic:
 
         self.stack.enter_context(patch.object(requests.Session, "send", traced_send))
         self.stack.enter_context(patch.object(AIOHTTPSession, "send", traced_aio))
+        # Serialization is a control experiment, not the canary: the separate
+        # barrier below forces the actual concurrent upstream initialization gap.
+        from pyiceberg.utils.concurrent import ExecutorFactory
+
+        pool = self.stack.enter_context(ThreadPoolExecutor(max_workers=1))
+        self.stack.enter_context(patch.object(ExecutorFactory, "_instance", pool))
+        self.stack.enter_context(patch.object(ExecutorFactory, "_instance_pid", os.getpid()))
         self.catalog = self.factory("remote-signing", False)
         self.table = self.catalog.load_table("integration.from_trino")
         self.properties = dict(self.table.io.properties)
@@ -77,7 +88,12 @@ class RestartDiagnostic:
             for key in ("s3.access-key-id", "s3.secret-access-key", "s3.session-token", "token")
         )
         self.emit("properties", properties=self.properties)
-        return self.read(self.table)
+        rows = self.read(self.table)
+        tasks = list(self.table.scan().plan_files())
+        assert any(task.delete_files for task in tasks)
+        self.path_to_read = next(file.file_path for task in tasks for file in task.delete_files)
+        self.fs = self.table.io.get_fs("s3")
+        return rows
 
     def read(self, table):
         self.emit("dns", addresses={name: socket.gethostbyname(name) for name in ("catalog", "s3")})
@@ -86,11 +102,121 @@ class RestartDiagnostic:
         self.emit("rows", rows=rows)
         return rows
 
+    def race(self):
+        """Pause real PyIceberg initialization between unregister/register.
+
+        Never remove a handler ourselves. If upstream stops unregistering or
+        stops sharing filesystems, signed success must surface as upstream-fixed.
+        """
+        from botocore.exceptions import ClientError
+        from pyiceberg.io.fsspec import FsspecFileIO
+
+        events = self.fs.s3.meta.events
+        original = events.unregister
+        removed = threading.Event()
+        release = threading.Event()
+        finished = threading.Event()
+        worker = {}
+
+        def unregister(event_name, *args, **kwargs):
+            result = original(event_name, *args, **kwargs)
+            if event_name == "before-sign.s3" and kwargs.get("unique_id") == 1925:
+                removed.set()
+                assert release.wait(30), "Reader did not release signer initialization"
+            return result
+
+        def initialize():
+            try:
+                worker["fs"] = FsspecFileIO(dict(self.properties)).get_fs("s3")
+            except BaseException as exc:
+                worker["error"] = exc
+            finally:
+                finished.set()
+                removed.set()  # Also wake the reader if upstream removed this gap.
+
+        start = len(self.entries)
+        with patch.object(events, "unregister", unregister):
+            thread = threading.Thread(target=initialize, name="T9-fileio-initializer")
+            thread.start()
+            try:
+                assert removed.wait(30), "FileIO initialization did not reach barrier"
+                if "error" in worker:
+                    raise worker["error"]
+                self.emit("interleaving", initializer_finished=finished.is_set())
+                try:
+                    with self.table.io.new_input(self.path_to_read).open() as source:
+                        assert source.read(4) == b"PAR1"
+                except PermissionError as exc:
+                    assert type(exc) is PermissionError and str(exc) == "Forbidden", repr(exc)
+                    cause = exc.__cause__
+                    assert isinstance(cause, ClientError), repr(cause)
+                    assert cause.operation_name == "HeadObject", cause
+                    assert cause.response["Error"] == {"Code": "403", "Message": "Forbidden"}, (
+                        cause.response
+                    )
+                    assert cause.response["ResponseMetadata"]["HTTPStatusCode"] == 403
+                    # HEAD has no error body. Ask the same unsigned client for the
+                    # same object with GET to retain SeaweedFS's precise reason.
+                    try:
+                        self.fs.cat_file(self.path_to_read, start=0, end=4)
+                    except PermissionError as get_error:
+                        get_cause = get_error.__cause__
+                        assert isinstance(get_cause, ClientError), repr(get_cause)
+                        assert get_cause.operation_name == "GetObject"
+                        assert get_cause.response["Error"]["Code"] == "AccessDenied", (
+                            get_cause.response
+                        )
+                        assert get_cause.response["ResponseMetadata"]["HTTPStatusCode"] == 403
+                    else:
+                        raise AssertionError("Unsigned GET unexpectedly succeeded")
+                    status = "expected-failure"
+                else:
+                    status = "upstream-fixed"
+            finally:
+                release.set()
+                thread.join(30)
+                assert not thread.is_alive(), "FileIO initialization did not finish"
+            if "error" in worker:
+                raise worker["error"]
+        traffic = self.entries[start:]
+        s3 = [entry for entry in traffic if entry["kind"] == "s3"]
+        signing = [
+            entry for entry in traffic if entry["kind"] == "rest" and entry["url"].endswith("/sign")
+        ]
+        if status == "expected-failure":
+            assert worker["fs"] is self.fs, "Expected shared filesystem was not reused"
+            assert not signing, "Failed operation reached the signer"
+            assert [(entry["method"], entry["status"]) for entry in s3] == [
+                ("HEAD", 403),
+                ("GET", 403),
+            ], s3
+            assert all("authorization" not in {k.lower() for k in entry["headers"]} for entry in s3)
+            assert "<Code>AccessDenied</Code>" in s3[1]["error"]
+        else:
+            assert s3 and all(entry["status"] in (200, 206) for entry in s3), s3
+            assert signing, "Successful read must use remote signing"
+        result = {
+            "status": status,
+            "shared_filesystem": worker["fs"] is self.fs,
+            "signer_calls_in_gap": len(signing),
+            "s3": [
+                {k: entry[k] for k in ("method", "status", "response_headers", "error")}
+                for entry in s3
+            ],
+        }
+        self.emit("canary", **result)
+        return result
+
     def after(self):
         results = {}
         try:
+            # Same live catalog, table and filesystem; no refresh or new keys.
+            self.phase = "after_serial_control"
+            results["same_table"] = self.read(self.table)
+            self.phase = "after_forced_interleaving"
+            results["canary"] = self.race()
             for label, load in (
-                ("same_table", lambda: self.table),
+                ("same_table_recovered", lambda: self.table),
                 ("reload_table", lambda: self.catalog.load_table("integration.from_trino")),
                 (
                     "new_catalog",
@@ -100,18 +226,22 @@ class RestartDiagnostic:
                 ),
             ):
                 self.phase = label
-                try:
-                    table = load()
-                    self.emit(
-                        "properties",
-                        properties=table.io.properties,
-                        same=table.io.properties == self.properties,
-                    )
-                    results[label] = {"rows": self.read(table)}
-                except Exception as exc:
-                    results[label] = {"error": str(exc), "type": type(exc).__name__}
-                    self.emit("failure", **results[label])
-            assert all("rows" in result for result in results.values()), results
+                table = load()
+
+                # Auth manager instances differ, but all server-supplied signing
+                # and storage properties must be unchanged across recreation.
+                def config(props):
+                    return {k: v for k, v in props.items() if k != "auth.manager"}
+
+                assert config(table.io.properties) == config(self.properties)
+                self.emit("properties", properties=table.io.properties, same=True)
+                results[label] = self.read(table)
+            if results["canary"]["status"] == "upstream-fixed":
+                notice = "Remote-signing initialization race no longer reproduces; review the pinned client fix and retire T9's expected failure."
+                print("::notice title=Remote-signing canary passed::" + notice, flush=True)
+                if os.environ.get("GITHUB_STEP_SUMMARY"):
+                    with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
+                        summary.write("\n**" + notice + "**\n")
             return results
         finally:
             self.stack.close()
