@@ -9,7 +9,10 @@ from pyspark.sql import SparkSession
 def main():
     spark = SparkSession.builder.remote("sc://sail:50051").getOrCreate()
     try:
-        assert [list(row) for row in spark.sql("SHOW CATALOGS").collect()] == [["qualification"]]
+        catalogs = sorted(row[0] for row in spark.sql("SHOW CATALOGS").collect())
+        print("SAIL CATALOGS=" + json.dumps(catalogs), flush=True)
+        # 0.7.3 always registers its built-in system catalog as well.
+        assert catalogs == ["qualification", "system"], catalogs
         assert spark.sql("SELECT current_catalog()").collect()[0][0] == "qualification"
         results = []
         for query in json.load(sys.stdin):

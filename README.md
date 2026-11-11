@@ -13,8 +13,10 @@ Each input is fetched by full SHA, checked against detached HEAD, built with its
 own build script, and inspected after loading. Trino falls back to fetching
 `refs/pull/2/head` if the SHA fetch fails, then still requires exact HEAD.
 
-**The initial Lakekeeper and SeaweedFS pins fail strict provenance.** There is no
-allowance for inherited or missing labels. The mandatory gate checks
+**Strict provenance is mandatory for every image.** There is no allowance for
+inherited or missing labels. All five current pins passed this gate in the
+[initial Sail run](https://github.com/datopsis/lakehouse-integration/actions/runs/42968152884)
+(the runtime step in that run failed; see the PR for final qualification). The mandatory gate checks
 `org.opencontainers.image.revision` against the pin and
 `io.datopsis.artifact-lock.sha256` against the exact repository artifact lock.
 Runtime probes still collect evidence when all images built, but cannot turn a
