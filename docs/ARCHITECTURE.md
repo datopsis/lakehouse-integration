@@ -1,5 +1,10 @@
 # Architecture
 
+> **Target TLS design (Phase A, not yet implemented):** see the polished diagram below and
+> [TLS-PLAN.md](TLS-PLAN.md). The Mermaid chart that follows shows the CURRENT test topology.
+
+![Datopsis lakehouse TLS architecture: services, verified TLS and mutual TLS connections, nginx-ubi TLS proxies for Lakekeeper and Sail, and the per-run test CA](diagrams/lakehouse-tls-architecture.svg)
+
 ```mermaid
 flowchart LR
   P[PyIceberg runner] -->|REST| L[Lakekeeper]

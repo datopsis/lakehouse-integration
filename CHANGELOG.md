@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add a polished SVG of the Phase A target TLS architecture (services, verified and
+  mutual TLS links, nginx-ubi proxies, per-run CA, open gaps), linked from
+  ARCHITECTURE.md and TLS-PLAN.md.
+
 - Document how each engine gets S3 access, with a sequence diagram of Sail 0.7.3's
   vended-credentials request and static-key fallback, and the caveat that bucket-wide
   static keys bypass future catalog permissions. Add the prerequisite decision to the
