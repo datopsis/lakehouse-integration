@@ -5,7 +5,8 @@ import os
 from pathlib import Path
 
 
-def prepare_build(source, env, run):
+def prepare_build(source, env, run, architecture):
+    assert architecture in ("amd64", "arm64")
     # Keep Sail's client Arrow separate from the integration's decoder canary.
     venv = source.parent / "sail-venv"
     run(["python3", "-m", "venv", str(venv)])
@@ -34,7 +35,7 @@ def prepare_build(source, env, run):
             str(source / ".github/requirements/client.txt"),
         ]
     )
-    env.update(PATH=str(venv / "bin") + os.pathsep + env["PATH"], ARCHITECTURE="amd64")
+    env.update(PATH=str(venv / "bin") + os.pathsep + env["PATH"], ARCHITECTURE=architecture)
     return ["bash", "scripts/build.sh"]
 
 

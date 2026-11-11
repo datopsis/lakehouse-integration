@@ -12,7 +12,9 @@ require review and exact labels, with no allowances.
   (`0c8333a349e5438e4b37fe984b9e3a45befc7bff`) and explicitly omit vending.
   Current 0.7.3 works with static credentials despite requesting vending. Do not
   assume an unreleased version number or change the static main path.
-- ARM64 images and execution, after amd64 qualification; no emulated green claims.
+- [x] ARM64 images and execution for this integration test, alongside qualified
+  amd64: native parallel runners, identical mandatory assertions and strict
+  per-architecture provenance. Owner authorized 2026-11-11; no emulated green claims.
 - Remote-signing restart investigation resolved as a PyIceberg/Fsspec concurrent
   signer-registration bug: T9 deterministically exposes the unsigned-request gap
   after full recreation and verifies exact-row recovery. Review an upstream fix

@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Run the full integration gate natively on amd64 and arm64 in parallel, using
+  identical source pins, architecture-correct artifact locks and strict image
+  provenance. Keep all T1–T10/crash/canary assertions mandatory on both.
+- Preserve the required `Integration` check as a fail-closed aggregate, separate
+  architecture artifacts, and weekly issue reporting for either architecture.
+- Supersede the amd64-only scope by the owner's 2026-11-11 decision; no emulation.
+
 - Add the pinned Sail image, its owner build and strict two-lock provenance check.
 - Add isolated Sail service, static AWS secret file and Spark client environment.
 - Add T10 exact cross-engine reads and copy-on-write mutations, credential-path

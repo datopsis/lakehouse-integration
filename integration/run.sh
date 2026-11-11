@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-test "$(uname -m)" = x86_64
+python3 -c 'import sys; sys.path.insert(0, "integration"); from build import native_architecture; print("Native architecture:", native_architecture())'
 mkdir -p reports
 trap 'python3 integration/cleanup.py' EXIT
 python3 integration/build.py 2>&1 | tee reports/build.log
