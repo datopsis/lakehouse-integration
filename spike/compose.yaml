@@ -18,7 +18,7 @@ services:
     volumes:
       - pg-data:/var/lib/pgsql
       - ../.runtime/secrets:/run/secrets:ro
-    tmpfs: [/tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777]
+    tmpfs: ['/tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777']
   master:
     <<: *hardened
     image: localhost/seaweedfs-ubi:spike

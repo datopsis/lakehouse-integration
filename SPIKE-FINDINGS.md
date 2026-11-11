@@ -7,7 +7,7 @@ The first GitHub Actions experiment is being prepared. No runtime result is clai
 
 ## Known source-level constraints
 
-- Lakekeeper's pinned build emits neither the OCI revision label nor the artifact-lock hash label.
+- Lakekeeper's pinned build inherits UBI's OCI revision label instead of emitting its own, and emits no artifact-lock hash label.
 - SeaweedFS emits an OCI revision label and upstream commit label, but no artifact-lock hash label.
 - The harness records these exact missing-label gaps, checks all emitted labels, and additionally
   compares the image's Lakekeeper/SeaweedFS binary SHA-256 with the reviewed lock. It does not
