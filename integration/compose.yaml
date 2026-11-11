@@ -43,7 +43,7 @@ services:
     <<: *hardened
     image: localhost/seaweedfs-ubi:integration
     user: '1000:0'
-    command: [s3, '-filer=filer:8888', '-ip.bind=0.0.0.0', '-config=/run/secrets/s3.json']
+    command: ['-v=4', s3, '-filer=filer:8888', '-ip.bind=0.0.0.0', '-config=/run/secrets/s3.json']
     volumes: [../.runtime/s3:/run/secrets:ro]
     depends_on: [filer]
   migrate:
