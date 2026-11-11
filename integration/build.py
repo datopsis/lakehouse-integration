@@ -3,6 +3,7 @@
 import hashlib
 import json
 import os
+import re
 import subprocess
 import time
 from pathlib import Path
@@ -101,6 +102,27 @@ def build(repo, revision):
     }
     result["provenance_errors"] = provenance_errors(inspected, revision, sha(lock))
     result["status"] = "fail" if result["provenance_errors"] else "pass"
+    # Preserve the spike's binary checks as additional evidence, never as a
+    # substitute for the strict revision and artifact-lock labels.
+    if repo in ("lakekeeper-ubi", "seaweedfs-ubi"):
+        binary = "lakekeeper" if repo == "lakekeeper-ubi" else "weed"
+        container = output(["docker", "create", image])
+        extracted = ROOT / ".sources" / f"{binary}-from-image"
+        try:
+            run(["docker", "cp", f"{container}:/usr/local/bin/{binary}", str(extracted)])
+            result["image_binary_sha256"] = sha(extracted)
+            artifact = json.loads(lock.read_text())
+            assert (
+                result["image_binary_sha256"]
+                == artifact["architectures"]["amd64"]["binary"]["sha256"]
+            )
+            if repo == "seaweedfs-ubi":
+                assert (
+                    labels["io.datopsis.seaweedfs.commit"] == artifact["upstream"]["releaseCommit"]
+                )
+        finally:
+            run(["docker", "rm", container])
+            extracted.unlink(missing_ok=True)
     assert not output(["git", "-C", str(source), "diff", "HEAD"])
     return result
 
@@ -120,6 +142,9 @@ def provenance_errors(inspected, revision, lock_hash):
 
 
 def main():
+    if not __debug__:
+        raise RuntimeError("Assertions must be enabled; remove -O/PYTHONOPTIMIZE")
+    assert len(PINS) == 4 and all(re.fullmatch(r"[0-9a-f]{40}", pin) for pin in PINS.values())
     results = {}
     for repo, revision in PINS.items():
         start = time.monotonic()

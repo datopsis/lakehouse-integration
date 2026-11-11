@@ -193,10 +193,10 @@ def prepare():
     secret_dir = RUNTIME / "postgres"
     secret_dir.mkdir(mode=0o755)
     (RUNTIME / "s3").mkdir(mode=0o755)
-    for key in CREDS.values():
-        print(f"::add-mask::{key}", flush=True)
     (RUNTIME / "credentials.json").write_text(json.dumps(CREDS))
     (RUNTIME / "credentials.json").chmod(0o600)
+    for key in CREDS.values():
+        print(f"::add-mask::{key}", flush=True)
     (secret_dir / "postgres-password").write_text(CREDS["admin"])
     (secret_dir / "lakekeeper-password").write_text(CREDS["postgres"])
     (RUNTIME / "s3/s3.json").write_text(
@@ -360,9 +360,12 @@ def start():
 
 
 def trino_write():
-    sql("CREATE SCHEMA iceberg.integration")
-    sql(
-        "CREATE TABLE iceberg.integration.from_trino (id BIGINT, label VARCHAR) WITH (format='PARQUET', format_version=2)"
+    assert sql("CREATE SCHEMA iceberg.integration") == []
+    assert (
+        sql(
+            "CREATE TABLE iceberg.integration.from_trino (id BIGINT, label VARCHAR) WITH (format='PARQUET', format_version=2)"
+        )
+        == []
     )
     assert sql(
         "INSERT INTO iceberg.integration.from_trino VALUES (1, 'alpha'), (2, 'beta'), (3, 'gamma')"
@@ -396,6 +399,10 @@ def mutate():
 
 def py_read(expected=None, delegation="client-managed", with_credentials=True):
     table = rest_catalog(delegation, with_credentials).load_table("integration.from_trino")
+    from pyiceberg.io.pyarrow import PyArrowFileIO
+
+    assert isinstance(table.io, PyArrowFileIO)
+    assert not table.io.properties.get("s3.signer")
     rows = table.scan().to_arrow().sort_by("id").to_pylist()
     expected = expected or [{"id": 1, "label": "alpha"}, {"id": 2, "label": "updated"}]
     assert rows == expected, rows
@@ -493,8 +500,8 @@ def verify_restart():
         [1, "alpha"],
         [2, "updated"],
     ]
-    canary_read()
-    sql("INSERT INTO iceberg.integration.from_python VALUES (30, 'after-restart')")
+    canary_outcome = canary_read()
+    assert sql("INSERT INTO iceberg.integration.from_python VALUES (30, 'after-restart')") == [[1]]
     assert rest_catalog().load_table("integration.from_python").scan().to_arrow().sort_by(
         "id"
     ).to_pylist() == [
@@ -502,7 +509,10 @@ def verify_restart():
         {"id": 20, "label": "py-beta"},
         {"id": 30, "label": "after-restart"},
     ]
-    result = {"static_mode": "Both engines reread both tables; new Trino write read by PyIceberg"}
+    result = {
+        "static_mode": "Both engines reread main tables; new Trino write read by PyIceberg",
+        "encoding_canary": canary_outcome,
+    }
     print("RESTART_RESULT=" + json.dumps(result), flush=True)
 
 
@@ -707,6 +717,8 @@ def negatives():
 
 def main():
     global CREDS
+    if not __debug__:
+        raise RuntimeError("Assertions must be enabled; remove -O/PYTHONOPTIMIZE")
     if sys.argv[1:] == ["verify-restart"]:
         CREDS = json.loads((RUNTIME / "credentials.json").read_text())
         verify_restart()
