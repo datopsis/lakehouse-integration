@@ -1,39 +1,120 @@
 """Regression tests for gates that must never accidentally turn a failure green."""
 
 import copy
+import os
+import subprocess
 import sys
 import unittest
 from pathlib import Path
+from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "integration"))
-from build import provenance_errors
+from build import artifact_lock, native_architecture, provenance_errors, sha
 from gates import DECODER_ERROR, EXPECTED_ROWS, encoding_read, redact, remote_signing_failure
 from probe import check_container_config
 from remote_signing import sanitize
 
 
 class Gates(unittest.TestCase):
-    def test_exact_provenance(self):
-        image = {
-            "Architecture": "amd64",
-            "Config": {
-                "Labels": {
-                    "org.opencontainers.image.revision": "a" * 40,
-                    "io.datopsis.artifact-lock.sha256": "b" * 64,
-                }
-            },
-        }
-        self.assertEqual(provenance_errors(image, "a" * 40, "b" * 64), [])
-        for field in image["Config"]["Labels"]:
-            for value in (None, "", "wrong"):
-                with self.subTest(field=field, value=value):
-                    broken = copy.deepcopy(image)
-                    broken["Config"]["Labels"][field] = value
-                    self.assertTrue(provenance_errors(broken, "a" * 40, "b" * 64))
-        image["Architecture"] = "arm64"
-        self.assertTrue(provenance_errors(image, "a" * 40, "b" * 64))
+    def test_native_architecture_rejects_cross_builds_and_unsupported_hosts(self):
+        with patch("build.platform.system", return_value="Linux"):
+            for machine, arch in (("x86_64", "amd64"), ("aarch64", "arm64")):
+                with patch("build.platform.machine", return_value=machine):
+                    with patch.dict(os.environ, {"INTEGRATION_ARCH": arch}):
+                        self.assertEqual(native_architecture(), arch)
+                    with patch.dict(os.environ, {"INTEGRATION_ARCH": "wrong"}):
+                        with self.assertRaises(AssertionError):
+                            native_architecture()
+            with patch("build.platform.machine", return_value="riscv64"):
+                with self.assertRaises(AssertionError):
+                    native_architecture()
+        with patch("build.platform.system", return_value="Darwin"):
+            with self.assertRaises(AssertionError):
+                native_architecture()
+
+    def test_exact_provenance_on_both_architectures(self):
+        for arch, foreign in (("amd64", "arm64"), ("arm64", "amd64")):
+            image = {
+                "Architecture": arch,
+                "Config": {
+                    "Labels": {
+                        "org.opencontainers.image.revision": "a" * 40,
+                        "io.datopsis.artifact-lock.sha256": "b" * 64,
+                    }
+                },
+            }
+            with self.subTest(arch=arch):
+                self.assertEqual(provenance_errors(image, "a" * 40, "b" * 64, arch), [])
+                for field in image["Config"]["Labels"]:
+                    for value in (None, "", "wrong"):
+                        with self.subTest(field=field, value=value):
+                            broken = copy.deepcopy(image)
+                            broken["Config"]["Labels"][field] = value
+                            self.assertTrue(provenance_errors(broken, "a" * 40, "b" * 64, arch))
+                self.assertTrue(provenance_errors(image, "a" * 40, "b" * 64, foreign))
+                image["Config"]["Labels"] = None
+                self.assertTrue(provenance_errors(image, "a" * 40, "b" * 64, arch))
+
+    def test_lock_selection_cannot_substitute_other_architecture(self):
+        with TemporaryDirectory() as directory:
+            source = Path(directory)
+            for arch in ("amd64", "arm64"):
+                lock = artifact_lock(source, "postgresql-lakekeeper-ubi", arch)
+                self.assertEqual(lock, source / f"artifacts/locks/{arch}.json")
+                lock.parent.mkdir(parents=True, exist_ok=True)
+                lock.write_text(arch)
+            amd64 = sha(artifact_lock(source, "postgresql-lakekeeper-ubi", "amd64"))
+            arm64 = sha(artifact_lock(source, "postgresql-lakekeeper-ubi", "arm64"))
+            self.assertNotEqual(amd64, arm64)
+            image = {
+                "Architecture": "arm64",
+                "Config": {
+                    "Labels": {
+                        "org.opencontainers.image.revision": "a" * 40,
+                        "io.datopsis.artifact-lock.sha256": amd64,
+                    }
+                },
+            }
+            self.assertTrue(provenance_errors(image, "a" * 40, arm64, "arm64"))
+            for repo in ("lakekeeper", "seaweedfs", "trino"):
+                for arch in ("amd64", "arm64"):
+                    self.assertEqual(
+                        artifact_lock(source, repo + "-ubi", arch),
+                        source / f"artifacts/{repo}.lock.json",
+                    )
+
+    def test_workflow_requires_both_native_jobs_without_fail_fast(self):
+        jobs = yaml.safe_load(Path(".github/workflows/integration.yml").read_text())["jobs"]
+        architectures = jobs["architectures"]
+        self.assertFalse(architectures["strategy"]["fail-fast"])
+        self.assertEqual(
+            architectures["strategy"]["matrix"]["include"],
+            [
+                {"arch": "amd64", "machine": "x86_64", "runner": "ubuntu-24.04"},
+                {"arch": "arm64", "machine": "aarch64", "runner": "ubuntu-24.04-arm"},
+            ],
+        )
+        self.assertNotIn("max-parallel", architectures["strategy"])
+        self.assertNotIn("continue-on-error", architectures)
+        self.assertTrue(all("continue-on-error" not in step for step in architectures["steps"]))
+        aggregate = jobs["integration"]
+        self.assertEqual(aggregate["name"], "Integration")
+        self.assertEqual(aggregate["needs"], ["architectures"])
+        self.assertEqual(aggregate["if"], "always()")
+        step = aggregate["steps"][0]
+        self.assertEqual(step["env"]["ARCHITECTURES_RESULT"], "${{ needs.architectures.result }}")
+        for result in ("success", "failure", "cancelled", "skipped", ""):
+            completed = subprocess.run(
+                ["bash", "-c", step["run"]],
+                env=dict(os.environ, ARCHITECTURES_RESULT=result),
+                check=False,
+            )
+            self.assertEqual(completed.returncode == 0, result == "success")
+        self.assertIn("integration", jobs["weekly-failure"]["needs"])
+        self.assertIn("needs.integration.result == 'failure'", jobs["weekly-failure"]["if"])
 
     def test_canary_only_accepts_exact_decoder_failure(self):
         def fail():

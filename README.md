@@ -1,6 +1,6 @@
 # Lakehouse integration
 
-One amd64 integration gate for the four Datopsis image repositories: Trino queries
+One native amd64 and arm64 integration gate for the four Datopsis image repositories: Trino queries
 Iceberg v2 / Parquet through Lakekeeper's REST catalog, PostgreSQL stores catalog
 metadata, and separated SeaweedFS master/volume/filer/S3 roles store table objects.
 PyIceberg is the independent second client. Nothing is published to a host port.
@@ -16,7 +16,10 @@ own build script, and inspected after loading. Trino falls back to fetching
 The reviewed Lakekeeper and SeaweedFS pins now pass strict provenance. There is
 no allowance for inherited or missing labels. The mandatory gate checks
 `org.opencontainers.image.revision` against the pin and
-`io.datopsis.artifact-lock.sha256` against the exact repository artifact lock.
+`io.datopsis.artifact-lock.sha256` against the exact repository artifact lock. The image
+architecture must match its native runner: `amd64` / `x86_64` or `arm64` / `aarch64`.
+PostgreSQL uses `artifacts/locks/<architecture>.json`; Lakekeeper, SeaweedFS, and
+Trino each use their shared repository lock, with architecture-specific artifacts.
 Runtime probes still collect evidence when all images built, but cannot turn a
 failed provenance gate green. `reports/builds.json` records each image separately.
 
@@ -59,7 +62,7 @@ T5 covers graceful recreation; T8 tests crash durability under container SIGKILL
 on one host at the reviewed pins. **A container SIGKILL is not host power loss:**
 the host page cache can survive. There is no fsync or disk-cache qualification,
 and no host-loss evidence. These tests do not prove production readiness,
-TLS/login/authorization, replication, backup recovery, load, ARM64, upgrades,
+TLS/login/authorization, replication, backup recovery, load, upgrades,
 or general concurrent remote-signing recovery.
 
 T9 isolates remote signing from the main path. The restart investigation found a
@@ -75,10 +78,11 @@ fix for the race. Remote signing remains OFF the main data path.
 
 ## Run locally
 
-Use a disposable **Linux x86_64** machine with Python 3.11 or 3.12, Git, Bash,
+Use a disposable **Linux x86_64 or aarch64** machine with Python 3.11 or 3.12, Git, Bash,
 Docker CLI + Compose v2, Podman, RPM tooling, and sudo. Repository-owned builds
 use both Docker and Podman; the runner must reach its private bridge IPs.
-macOS/Windows users should run inside an amd64 Linux VM, not publish listeners.
+macOS/Windows users should run inside a Linux VM matching their native CPU,
+without publishing listeners. QEMU and cross-architecture emulation are not supported.
 Allow several GB of disk and memory (Trino is capped at 3 GiB). No GitHub secrets
 or prebuilt Datopsis images are required. Builds download locked upstream inputs.
 
@@ -146,9 +150,19 @@ Never run Python with `-O` or `PYTHONOPTIMIZE`: assertions are the test contract
 ## CI
 
 One workflow runs on pull requests, weekly Mondays at 06:23 UTC, and manual
-dispatch, on `ubuntu-24.04` amd64 with a 30-minute cap. All actions use full SHAs.
+dispatch. `Integration (amd64)` on `ubuntu-24.04` and `Integration (arm64)` on
+`ubuntu-24.04-arm` run in parallel, each with a 30-minute cap and fail-fast disabled.
+Both assert `uname -m` and run the same builds, strict provenance, T1–T9, T8 crash
+scenarios, encoding canary, and remote-signing canary without exemptions. The
+required check named exactly `Integration` waits for both matrix jobs and fails
+unless both succeed (including skipped/cancelled outcomes). All actions use full SHAs.
+Artifacts are named `lakehouse-<architecture>-<run_id>-<attempt>` and include
+`runner-uname.txt` plus image architecture, lock path/hash, revisions and labels
+in `builds.json`. Actions job start/end timestamps give each architecture's wall
+time and runner minutes; parallel execution overlaps wall time but consumes both
+jobs' runner time.
 The integration and upstream-comparison jobs have only `contents: read`.
-The separate issue job gets `issues: write` only on scheduled failures, checks out
+The separate issue job gets `issues: write` only on scheduled failures (either architecture or upstream reporting), checks out
 no code, and opens/updates the single issue **Weekly lakehouse integration failed**
 with the run link. The built-in GitHub token is sufficient. The upstream job only
 reports each pin versus its repository's `main` in the job summary; it never

@@ -6,7 +6,9 @@
   include certificate verification, lifecycle and negative tests.
 - OpenID login for Lakekeeper **with authorization**, plus authenticated Trino access.
 - Sail as a second query engine (PyIceberg remains an independent client).
-- ARM64 images and execution, after amd64 qualification; no emulated green claims.
+- [x] ARM64 images and execution for this integration test, alongside qualified
+  amd64: native parallel runners, identical mandatory assertions and strict
+  per-architecture provenance. Owner authorized 2026-11-11; no emulated green claims.
 - Remote-signing restart investigation resolved as a PyIceberg/Fsspec concurrent
   signer-registration bug: T9 deterministically exposes the unsigned-request gap
   after full recreation and verifies exact-row recovery. Review an upstream fix
