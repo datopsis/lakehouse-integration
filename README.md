@@ -3,7 +3,8 @@
 One amd64 integration gate for the five Datopsis image repositories: Trino queries
 Iceberg v2 / Parquet through Lakekeeper's REST catalog, PostgreSQL stores catalog
 metadata, and separated SeaweedFS master/volume/filer/S3 roles store table objects.
-Sail is the second query engine; PyIceberg is an independent client. Nothing is published to a host port.
+Sail is the second query engine; PyIceberg is an independent client. Nothing is
+published to a host port.
 
 The implementation follows the evidence on
 [`spike/feasibility`](https://github.com/datopsis/lakehouse-integration/blob/spike/feasibility/SPIKE-FINDINGS.md).
@@ -48,8 +49,9 @@ delete files. A successful exact-row read emits a CI notice and job-summary entr
 that upstream fixed the decoder and the setting can be revisited. Any other
 error, wrong rows, or missing test fails. The canary is also reread after restart;
 its specific expected decoder failure is the only exception to reading every
-table successfully with PyIceberg. Trino must read all four tables successfully. Sail is recreated too and reads all
-four tables, then writes another row read exactly by Trino and fresh PyIceberg.
+table successfully with PyIceberg. Trino must read all four tables successfully.
+Sail is recreated too and reads all four tables, then writes another row read
+exactly by Trino and fresh PyIceberg.
 
 Static S3 credentials are explicit: Trino credential vending is off; PyIceberg
 sends `X-Iceberg-Access-Delegation: client-managed`. S3 credentials and PostgreSQL
@@ -77,7 +79,8 @@ fix for the race. Remote signing remains OFF the main data path.
 
 Use a disposable **Linux x86_64** machine with Python 3.11 or 3.12, Git, Bash,
 Docker CLI + Compose v2, Podman, RPM/GnuPG tooling, tcpdump, and sudo.
-Repository-owned builds use both Docker and Podman; the runner must reach its private bridge IPs.
+Repository-owned builds use both Docker and Podman; the runner must reach its
+private bridge IPs.
 macOS/Windows users should run inside an amd64 Linux VM, not publish listeners.
 Allow several GB of disk and memory (Trino is capped at 3 GiB). No GitHub secrets
 or prebuilt Datopsis images are required. Builds download locked upstream inputs.

@@ -33,7 +33,6 @@ runtime store and inspected there.
 | Seaweed filer | 1000:0 | 8888, 18888 gRPC | filer-data at /data (embedded store) | none |
 | Seaweed S3 | 1000:0 | 8333, 18333 gRPC | none | S3-only directory with s3.json |
 | Trino | 10001:0 | 8080 | /var/lib/trino tmpfs; executable /tmp/trino tmpfs for native libraries | Trino-only env file with static S3 keys |
-
 | Sail | 10001:10001 | 50051 Spark Connect | /tmp and /var/lib/sail tmpfs (noexec) | Sail-only env file with static AWS keys; read-only listener JSON |
 
 Sail is defined in `integration/compose.sail.yaml`, always composed with the base
