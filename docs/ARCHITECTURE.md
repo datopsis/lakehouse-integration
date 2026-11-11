@@ -58,3 +58,44 @@ ID must change; a fresh Python process reads all tables and validates a new writ
 The encoding canary retains its exact decoder expectation across restart. Final
 cleanup destroys volumes and restores the marked hosts block. This is graceful
 recreation, not crash, power-loss, replication, or host-loss durability evidence.
+
+
+T8 follows T5 on the same private fixture. It creates a dedicated Iceberg v2 /
+Parquet table and journals three successful 16-row INSERTs on the runner. One
+`docker kill --signal=KILL` invocation targets all seven service IDs; every target
+must stop with exit code 137. `compose start` reuses the same containers and named
+volumes. Both Trino and a fresh PyIceberg process must read all 48 exact rows and
+exactly three append snapshots with matching IDs and parents.
+
+Next, separate tables exercise PostgreSQL, Lakekeeper (`catalog`), SeaweedFS
+`volume`, and `filer` in that order. A continuous writer assigns every INSERT a
+unique batch ID and 16 deterministic rows. After at least two acknowledgements,
+the injector waits for a nonterminal Trino RUNNING response. It pauses response
+consumption, kills that component, resumes the writer, and starts the component.
+Server execution continues during the pause: this targets an unacknowledged
+statement, not a guaranteed storage-instruction boundary. Even if the server
+finishes before the signal arrives, every subsequent client acknowledgement is
+binding. The test fails if it cannot observe a RUNNING INSERT.
+
+The runner flushes the attempt/acknowledgement journal outside the killed
+containers. A failed client statement is ambiguous: after it reaches a terminal
+state (or is explicitly cancelled and confirmed terminal), its entire batch may
+be present or absent. No query is left running when rows are checked. Unknown
+submissions that cannot be settled fail closed. Exact batch comparison rejects
+partial, duplicate, unexpected or changed rows; every acknowledged batch is
+mandatory. The snapshot count must equal the number of fully visible batches,
+all operations must be append, and the parent chain and current snapshot must
+match. Both clients must agree on rows and snapshot metadata.
+
+A new INSERT started after component restart must succeed. Recovery time is
+measured from the kill command through that write and fresh-process verification
+of all tables, with a 180-second component bound. Only readiness and workload
+operations retry; durability assertions run once. Earlier tables and settled
+in-flight outcomes are rechecked after every later kill. The existing encoding
+canary keeps its exact decoder contract; no crash table has an encoding exemption.
+Artifacts include the JSONL journal, reader logs and per-scenario results.
+
+This is **single-host container-kill** testing. A container SIGKILL is not a host
+power loss: the host page cache can survive. There is no fsync or disk-cache
+qualification, no host-loss or replication evidence, and no claim of exhaustive
+crash timing coverage. Real power-loss and host-loss tests remain on the roadmap.

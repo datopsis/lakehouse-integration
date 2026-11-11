@@ -36,6 +36,7 @@ security gate, and does not authorize release or modify the jars.
 | T5 | `compose down` keeps volumes; `up` replaces all seven IDs; fresh clients reread every table; a new write is read back |
 | T6 | Anonymous S3 and wrong S3 secret return specific 403 errors; missing encryption key prevents Lakekeeper startup; wrong PostgreSQL password prevents migration |
 | T7 | Non-root, read-only roots, dropped capabilities, no-new-privileges, internal network, no published ports; S3 cannot read PostgreSQL secrets |
+| T8 | SIGKILL all seven services after three acknowledged 16-row INSERTs; exact rows and three snapshots after restart on the same volumes. SIGKILL PostgreSQL, Lakekeeper, volume, and filer during continuous INSERTs; retain every acknowledged batch, require ambiguous batches fully visible or absent, verify snapshot counts/chains and fresh PyIceberg/Trino reads, and require a new successful write after each restart. Report recovery seconds per component. |
 | Canary | Default Trino encoding, INSERT/UPDATE/DELETE, then PyIceberg read; only the exact known Arrow decoder error is an expected failure |
 
 The main Iceberg catalog sets
@@ -53,9 +54,12 @@ passwords are enabled. Lakekeeper login is off, a known gap acceptable **only on
 the private test network**. Trino uses its documented isolated-test insecure
 mode with no published listener. See [SECURITY.md](SECURITY.md).
 
-This proves a small, single-host, graceful stop/recreate path at reviewed pins.
-It does not prove production readiness, TLS/login/authorization, crash durability,
-replication, backup recovery, load, ARM64, upgrades, or remote-signing recovery.
+T5 covers graceful recreation; T8 tests crash durability under container SIGKILL
+on one host at the reviewed pins. **A container SIGKILL is not host power loss:**
+the host page cache can survive. There is no fsync or disk-cache qualification,
+and no host-loss evidence. These tests do not prove production readiness,
+TLS/login/authorization, replication, backup recovery, load, ARM64, upgrades,
+or remote-signing recovery.
 The spike's long-lived remote-signing reader failed with 403 after restart;
 that remains a [roadmap item](docs/ROADMAP.md).
 
@@ -96,10 +100,17 @@ network bridge routing from the host is not supported by this runner.
 
 The runner generates fresh credentials under ignored `.runtime/`, mounts only
 service-specific files, retains those credentials and four named volumes during
-T5, and removes the stack and volumes at final cleanup. It temporarily adds and
+T5 and T8, and removes the stack and volumes at final cleanup. It temporarily adds and
 then removes a marked block in `/etc/hosts`. Raw local logs may contain secrets;
 only `reports/sanitized/` is eligible for CI upload. Cleanup fails closed if it
-cannot redact. Inspect that directory for `builds.json`, `results.json`, and logs.
+cannot redact. Inspect that directory for `builds.json`, `results.json`, and logs. T8 adds
+`crash-journal.jsonl` (attempts, acknowledgements, query IDs, kill events and recovery)
+and `crash-*-reader.log` (fresh-process exact read evidence). Recovery time runs
+from the kill command through a newly started successful INSERT and exact reads
+by both clients, bounded at 180 seconds per component. In-flight outcomes are
+reported, not required to commit or abort; partial batches, lost acknowledged
+data, corrupt/unreadable tables, and failure to recover fail the test. See the
+[architecture](docs/ARCHITECTURE.md) for injection and settlement details.
 
 Run from a clean workspace. Before rerunning, after ensuring the stack has been
 removed, delete only this harness's `.sources/`, `.runtime/`, and `reports/`
