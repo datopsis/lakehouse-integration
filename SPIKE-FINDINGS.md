@@ -274,7 +274,8 @@ provenance gaps without misrepresenting them as valid labels.
 These are elapsed runner times, not an invoice or performance benchmark. They exclude queue
 wait and do not include a fresh vulnerability scan. Actions artifacts retain redacted full
 logs for 14 days; selected JSON, probe logs and run metadata are committed under
-`spike/evidence/` so the findings do not depend on artifact retention.
+`spike/evidence/` so the findings do not depend on artifact retention. Retained text logs have trailing
+whitespace removed; diagnostic content is unchanged.
 
 ## What Phase 3 should copy or avoid
 
