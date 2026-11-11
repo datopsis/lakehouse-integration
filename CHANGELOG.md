@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Enforce LF line endings: `.gitattributes` normalizes text to LF, a local
+  pre-commit hook and CI reject any committed CRLF.
 - Document how each engine gets S3 access, with a sequence diagram of Sail 0.7.3's
   vended-credentials request and static-key fallback, and the caveat that bucket-wide
   static keys bypass future catalog permissions. Add the prerequisite decision to the
