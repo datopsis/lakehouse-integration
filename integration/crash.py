@@ -70,7 +70,7 @@ def verify(p, manifest):
         table = p.rest_catalog().load_table("integration." + name)
         py_snapshots = [
             [s.snapshot_id, s.parent_snapshot_id, s.summary.operation.value]
-            for s in table.metadata.snapshots
+            for s in sorted(table.metadata.snapshots, key=lambda snapshot: snapshot.timestamp_ms)
         ]
         assert py_snapshots == snapshots, (name, py_snapshots, snapshots)
         # An append-only crash table must have one unbroken chain, no orphan snapshots.
@@ -87,7 +87,12 @@ def verify(p, manifest):
         else:
             arrow = table.scan().to_arrow()
             columns = arrow.column_names
-            py_rows = [list(row.values()) for row in arrow.sort_by(order.split(", ")).to_pylist()]
+            py_rows = [
+                list(row.values())
+                for row in arrow.sort_by(
+                    [(column, "ascending") for column in order.split(", ")]
+                ).to_pylist()
+            ]
             assert columns == (
                 ["batch", "row_id", "label"] if "attempts" in spec else ["id", "label"]
             )
