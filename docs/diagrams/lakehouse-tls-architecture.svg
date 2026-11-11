@@ -1,0 +1,249 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1720" height="1330" viewBox="0 0 1720 1330" font-family="'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+  <title>Datopsis lakehouse: Phase A TLS architecture (target design)</title>
+  <desc>Services, TLS connections, trust anchors and the role of nginx-ubi TLS proxies in the lakehouse integration test. Source: docs/TLS-PLAN.md.</desc>
+  <defs>
+    <linearGradient id="hdr" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0f2742"/>
+      <stop offset="1" stop-color="#1d4b7a"/>
+    </linearGradient>
+    <filter id="sh" x="-5%" y="-5%" width="110%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#0f2742" flood-opacity="0.16"/>
+    </filter>
+    <marker id="aG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1b8a3a"/></marker>
+    <marker id="aB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fd6"/></marker>
+    <marker id="aR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03030"/></marker>
+    <marker id="aO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c27c0e"/></marker>
+    <style>
+      .t1 { font-size: 15px; font-weight: 700; fill: #10233b; }
+      .t2 { font-size: 12.5px; fill: #33475e; }
+      .t3 { font-size: 11.5px; fill: #5b6d82; }
+      .lbl { font-size: 11.5px; fill: #1b5e2c; font-weight: 600; }
+      .lblB { font-size: 11.5px; fill: #1f4f9c; font-weight: 600; }
+      .lblR { font-size: 11.5px; fill: #b02020; font-weight: 700; }
+      .zone { font-size: 13px; font-weight: 700; fill: #4a6789; letter-spacing: 0.3px; }
+      .card { fill: #ffffff; stroke: #c9d6e6; stroke-width: 1.2; }
+      .tls  { fill: none; stroke: #1b8a3a; stroke-width: 2.6; marker-end: url(#aG); }
+      .mtls { fill: none; stroke: #2f6fd6; stroke-width: 2.6; marker-end: url(#aB); marker-start: url(#aB); }
+      .mtls1 { fill: none; stroke: #2f6fd6; stroke-width: 2.6; marker-end: url(#aB); }
+      .plain { fill: none; stroke: #d03030; stroke-width: 2.6; stroke-dasharray: 5 4; marker-end: url(#aR); }
+      .pill { font-size: 10.5px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Canvas -->
+  <rect width="1720" height="1330" fill="#ffffff"/>
+
+  <!-- Header -->
+  <rect width="1720" height="92" fill="url(#hdr)"/>
+  <text x="40" y="44" font-size="26" font-weight="700" fill="#ffffff">Datopsis lakehouse · TLS architecture (Phase A)</text>
+  <text x="40" y="72" font-size="14" fill="#c8d8ec">Trino, Sail and PyIceberg on Iceberg tables via Lakekeeper · metadata in PostgreSQL · data in SeaweedFS · source of truth: docs/TLS-PLAN.md</text>
+  <rect x="1352" y="28" width="330" height="36" rx="18" fill="#f2a900"/>
+  <text x="1517" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#2b1d00">TARGET DESIGN · not yet implemented</text>
+
+  <!-- ===== Runner panel ===== -->
+  <rect x="40" y="128" width="290" height="640" rx="12" fill="#f4f5f7" stroke="#9aa5b1" stroke-width="1.5"/>
+  <text x="58" y="154" class="zone" fill="#444">CI RUNNER (trusted host)</text>
+  <text x="58" y="172" class="t3">GitHub-hosted, amd64 + arm64</text>
+
+  <rect x="56" y="186" width="258" height="56" rx="8" class="card" filter="url(#sh)"/>
+  <text x="70" y="208" class="t1" font-size="13.5">Spark Connect client</text>
+  <text x="70" y="228" class="t2">pyspark-client → Sail over TLS</text>
+
+  <rect x="56" y="256" width="258" height="56" rx="8" class="card" filter="url(#sh)"/>
+  <text x="70" y="278" class="t1" font-size="13.5">SQL client</text>
+  <text x="70" y="298" class="t2">HTTPS → Trino</text>
+
+  <rect x="56" y="336" width="258" height="176" rx="8" fill="#fff8ea" stroke="#e3c48a" stroke-width="1.2"/>
+  <text x="70" y="360" class="t1" font-size="13.5" fill="#8a5600">Every client verifies TLS</text>
+  <text x="70" y="382" class="t2">The test CA is configured separately</text>
+  <text x="70" y="400" class="t2">in each library: urllib, PyIceberg</text>
+  <text x="70" y="418" class="t2">REST, PyArrow, fsspec, botocore and</text>
+  <text x="70" y="436" class="t2">the Spark Connect client.</text>
+  <text x="70" y="462" class="t3">Forbidden anywhere: verify=False,</text>
+  <text x="70" y="478" class="t3">--insecure, sslmode=require without</text>
+  <text x="70" y="494" class="t3">verify-full, grpc_ssl_verify off.</text>
+  <rect x="56" y="538" width="258" height="70" rx="8" class="card" filter="url(#sh)"/>
+  <text x="70" y="560" class="t1" font-size="13.5">PyIceberg REST client</text>
+  <text x="70" y="580" class="t2">HTTPS → catalog proxy</text>
+  <text x="70" y="598" class="t3">+ urllib management calls</text>
+
+  <rect x="56" y="700" width="258" height="56" rx="8" class="card" filter="url(#sh)"/>
+  <text x="70" y="722" class="t1" font-size="13.5">PyArrow / fsspec / botocore</text>
+  <text x="70" y="742" class="t2">HTTPS S3 → SeaweedFS</text>
+
+  <!-- ===== Per-run CA panel ===== -->
+  <rect x="40" y="800" width="290" height="262" rx="12" fill="#fff8ea" stroke="#c27c0e" stroke-width="1.6"/>
+  <text x="58" y="828" class="zone" fill="#8a5600">PER-RUN TEST CA</text>
+  <text x="58" y="852" class="t2">Created fresh by the harness each run</text>
+  <text x="58" y="874" class="t2">• Root key stays on the runner only</text>
+  <text x="58" y="896" class="t2">• Root 24 h · leaves 6 h · RSA 3072</text>
+  <text x="58" y="918" class="t2">• Exact DNS SANs, no wildcards</text>
+  <text x="58" y="940" class="t2">• Public root PEM → every verifier</text>
+  <text x="58" y="962" class="t2">• Each TLS server gets only its own key</text>
+  <text x="58" y="984" class="t2">• Nothing committed, cached or uploaded</text>
+  <text x="58" y="1010" class="t3">Negative fixtures: unrelated root, wrong SAN,</text>
+  <text x="58" y="1027" class="t3">expired leaves, untrusted client certs.</text>
+  <text x="58" y="1048" class="t3">Never: verify off, insecure fallbacks.</text>
+
+  <!-- ===== Private network boundary ===== -->
+  <rect x="362" y="118" width="1318" height="972" rx="16" fill="#f5f8fc" stroke="#7d97b8" stroke-width="2" stroke-dasharray="10 6"/>
+  <text x="384" y="144" class="zone">PRIVATE COMPOSE NETWORK · internal: true · no published ports</text>
+
+  <!-- Trino -->
+  <rect x="420" y="196" width="340" height="108" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="420" y="196" width="340" height="6" rx="3" fill="#2f6fd6"/>
+  <text x="436" y="226" class="t1">Trino 484 · trino:8443</text>
+  <text x="436" y="248" class="t2">Native HTTPS · own server keystore</text>
+  <text x="436" y="268" class="t2">PKCS12 truststore = test CA</text>
+  <text x="436" y="290" class="t3">Isolated-test auth mode (login: Phase B)</text>
+
+  <!-- Sail namespace -->
+  <rect x="886" y="164" width="584" height="244" rx="12" fill="#eef7f0" stroke="#3a9a52" stroke-width="1.6"/>
+  <text x="904" y="188" class="zone" fill="#2b6e3c">SAIL NETWORK NAMESPACE · 2 containers, shared network only</text>
+  <rect x="906" y="204" width="250" height="104" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="906" y="204" width="250" height="6" rx="3" fill="#009639"/>
+  <text x="922" y="232" class="t1">nginx-ubi · sail:50051</text>
+  <text x="922" y="254" class="t2">TLS 1.2/1.3 · HTTP/2</text>
+  <text x="922" y="274" class="t2">grpc_pass → 127.0.0.1:50052</text>
+  <text x="922" y="294" class="t3">Holds only its listener cert</text>
+  <rect x="1208" y="204" width="246" height="104" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="1208" y="204" width="246" height="6" rx="3" fill="#2f6fd6"/>
+  <text x="1224" y="232" class="t1">Sail 0.7.3</text>
+  <text x="1224" y="254" class="t2">Spark Connect 127.0.0.1:50052</text>
+  <text x="1224" y="274" class="t2">No native TLS listener</text>
+  <text x="1224" y="294" class="t3">Holds only its S3 keys + CA</text>
+  <path d="M1156,256 L1206,256" class="plain"/>
+  <text x="1181" y="326" text-anchor="middle" class="lblR">h2c on loopback ①</text>
+  <text x="904" y="352" class="t3">Shares the network namespace only: no shared PID, filesystem or secret directories.</text>
+  <text x="904" y="370" class="t3">Sail binds 127.0.0.1 only, so the plaintext hop never touches the network.</text>
+  <text x="904" y="390" class="t3">Why the proxy: Sail 0.7.3 cannot serve TLS itself.</text>
+
+  <!-- Catalog namespace -->
+  <rect x="404" y="474" width="700" height="246" rx="12" fill="#f3effb" stroke="#7a4fd6" stroke-width="1.6"/>
+  <text x="680" y="498" class="zone" fill="#5a3aa8">CATALOG NETWORK NAMESPACE · shared network only</text>
+  <rect x="424" y="516" width="262" height="108" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="424" y="516" width="262" height="6" rx="3" fill="#009639"/>
+  <text x="440" y="544" class="t1">nginx-ubi · catalog:8181</text>
+  <text x="440" y="566" class="t2">TLS 1.2/1.3 termination</text>
+  <text x="440" y="586" class="t2">proxy_pass → 127.0.0.1:8182</text>
+  <text x="440" y="606" class="t3">Holds only its listener cert</text>
+  <rect x="806" y="512" width="280" height="140" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="806" y="512" width="280" height="6" rx="3" fill="#7a4fd6"/>
+  <text x="822" y="540" class="t1">Lakekeeper 0.13.4</text>
+  <text x="822" y="562" class="t2">REST 127.0.0.1:8182 · metrics :9000</text>
+  <text x="822" y="582" class="t2">No native TLS listener</text>
+  <text x="822" y="602" class="t2">Login OFF until Phase B</text>
+  <text x="822" y="622" class="t3">Also the one-shot migrate job:</text>
+  <text x="822" y="638" class="t3">same verify-full TLS to PostgreSQL</text>
+  <path d="M686,568 L804,568" class="plain"/>
+  <text x="745" y="556" text-anchor="middle" class="lblR">HTTP on</text>
+  <text x="745" y="590" text-anchor="middle" class="lblR">loopback ①</text>
+  <text x="422" y="660" class="t3">Why the proxy: Lakekeeper 0.13.4 cannot serve TLS itself.</text>
+  <text x="422" y="678" class="t3">Lakekeeper binds 127.0.0.1 only; tests prove nothing else listens.</text>
+  <text x="422" y="702" class="t3">Lakekeeper keeps outbound TLS natively: PostgreSQL, S3 and STS.</text>
+
+  <!-- PostgreSQL -->
+  <rect x="420" y="838" width="300" height="138" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="420" y="838" width="300" height="6" rx="3" fill="#1f9d8a"/>
+  <text x="436" y="866" class="t1">PostgreSQL 18.6 · postgres:5432</text>
+  <text x="436" y="888" class="t2">postgresql-lakekeeper-ubi</text>
+  <text x="436" y="908" class="t2">Native TLS · own leaf key</text>
+  <text x="436" y="928" class="t2">Clients: verify-full + SCRAM</text>
+  <text x="436" y="950" class="t3">Lakekeeper catalog metadata only</text>
+
+  <!-- SeaweedFS cluster -->
+  <rect x="780" y="800" width="884" height="272" rx="12" fill="#ecf7f5" stroke="#1f9d8a" stroke-width="1.6"/>
+  <text x="800" y="1000" class="zone" fill="#16705f">SEAWEEDFS 4.53 · separated roles</text>
+  <text x="800" y="1020" class="t3">Role-to-role traffic: mutual TLS.</text>
+  <text x="800" y="1038" class="t3">Master, filer and volume APIs bypass S3 auth:</text>
+  <text x="800" y="1055" class="t3">reachable only inside this network.</text>
+  <rect x="800" y="840" width="290" height="124" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="800" y="840" width="290" height="6" rx="3" fill="#1f9d8a"/>
+  <text x="816" y="868" class="t1">S3 + STS gateway · s3:8333</text>
+  <text x="816" y="890" class="t2">Native HTTPS · gRPC 18333</text>
+  <text x="816" y="910" class="t2">One origin for S3 and STS:</text>
+  <text x="816" y="928" class="t2">https://s3:8333 (no plaintext 8334)</text>
+  <text x="816" y="950" class="t3">STS vending: Phase D</text>
+  <rect x="1150" y="840" width="220" height="74" rx="10" class="card" filter="url(#sh)"/>
+  <text x="1166" y="866" class="t1">Filer</text>
+  <text x="1166" y="886" class="t2">8888 HTTPS · 18888 gRPC</text>
+  <text x="1166" y="904" class="t3">embedded metadata store</text>
+  <rect x="1150" y="980" width="220" height="74" rx="10" class="card" filter="url(#sh)"/>
+  <text x="1166" y="1006" class="t1">Volume</text>
+  <text x="1166" y="1026" class="t2">8080 HTTPS · 18080 gRPC</text>
+  <text x="1166" y="1044" class="t3">object chunks</text>
+  <rect x="1438" y="930" width="208" height="74" rx="10" class="card" filter="url(#sh)"/>
+  <text x="1454" y="956" class="t1">Master</text>
+  <text x="1454" y="976" class="t2">9333 HTTPS · 19333 gRPC</text>
+  <text x="1454" y="994" class="t3">topology</text>
+  <rect x="1438" y="840" width="208" height="64" rx="10" class="card" filter="url(#sh)" stroke-dasharray="4 3"/>
+  <text x="1454" y="866" class="t1">Provisioner</text>
+  <text x="1454" y="886" class="t2">weed shell · own client cert</text>
+
+  <!-- SeaweedFS mutual TLS links -->
+  <path d="M1092,876 L1148,876" class="mtls"/>
+  <path d="M1060,966 L1060,1016 L1148,1016" class="mtls1"/>
+  <path d="M1260,916 L1260,978" class="mtls1"/>
+  <path d="M1372,890 L1404,890 L1404,960 L1436,960" class="mtls1"/>
+  <path d="M1372,1030 L1540,1030 L1540,1006" class="mtls"/>
+  <path d="M1436,860 L1372,860" class="mtls1"/>
+  <path d="M1580,906 L1580,928" class="mtls1"/>
+
+  <!-- ===== Verified TLS connections ===== -->
+  <!-- Runner → Sail proxy -->
+  <path d="M314,214 L360,214 L360,176 L866,176 L866,256 L904,256" class="tls"/>
+  <text x="560" y="170" class="lbl">TLS Spark Connect (HTTP/2)</text>
+  <!-- Runner → Trino -->
+  <path d="M314,284 L418,284" class="tls"/>
+  <text x="368" y="276" class="lbl">HTTPS</text>
+  <!-- Runner → catalog proxy -->
+  <path d="M314,572 L422,572" class="tls"/>
+  <text x="332" y="564" class="lbl">HTTPS REST</text>
+  <!-- Runner → S3 -->
+  <path d="M314,728 L370,728 L370,780 L880,780 L880,838" class="tls"/>
+  <text x="520" y="774" class="lbl">HTTPS S3 (static keys today)</text>
+  <!-- Trino → catalog proxy -->
+  <path d="M560,306 L560,514" class="tls"/>
+  <text x="568" y="430" class="lbl">HTTPS REST</text>
+  <!-- Sail → catalog proxy -->
+  <path d="M1380,310 L1380,444 L630,444 L630,514" class="tls"/>
+  <text x="860" y="463" class="lbl">HTTPS REST (Sail → catalog)</text>
+  <!-- Trino → S3 (bus) -->
+  <path d="M720,306 L720,424 L1124,424 L1124,820 L1060,820 L1060,838" class="tls"/>
+  <text x="1132" y="700" class="lbl">HTTPS S3</text>
+  <text x="1132" y="716" class="lbl">(Trino, Sail)</text>
+  <!-- Sail → S3 joins bus -->
+  <path d="M1440,310 L1440,740 L1128,740" class="tls"/>
+  <circle cx="1124" cy="740" r="4.5" fill="#1b8a3a"/>
+  <!-- Lakekeeper → S3 / STS -->
+  <path d="M990,654 L990,838" class="tls"/>
+  <text x="998" y="752" class="lbl">HTTPS S3 validation</text>
+  <text x="998" y="768" class="lbl">+ STS AssumeRole (D)</text>
+  <!-- Lakekeeper → PostgreSQL -->
+  <path d="M830,654 L830,760 L760,760 L760,906 L722,906" class="tls"/>
+  <text x="596" y="826" class="lbl">TLS verify-full + SCRAM</text>
+
+  <!-- ===== Legend ===== -->
+  <rect x="40" y="1110" width="760" height="196" rx="12" fill="#fafbfd" stroke="#c9d6e6"/>
+  <text x="60" y="1138" class="zone">LEGEND</text>
+  <path d="M62,1166 L142,1166" class="tls"/>
+  <text x="156" y="1171" class="t2">Verified TLS: server certificate and hostname checked against the test CA</text>
+  <path d="M62,1200 L142,1200" class="mtls"/>
+  <text x="156" y="1205" class="t2">Mutual TLS: both sides present certificates (SeaweedFS roles, provisioner)</text>
+  <path d="M62,1234 L142,1234" class="plain"/>
+  <text x="156" y="1239" class="t2">Plaintext on 127.0.0.1 inside one network namespace (owner decision ①)</text>
+  <rect x="62" y="1258" width="80" height="22" rx="5" fill="#009639"/>
+  <text x="102" y="1273" text-anchor="middle" class="pill" fill="#ffffff">nginx-ubi</text>
+  <text x="156" y="1274" class="t2">Datopsis' own hardened NGINX image, used only as a TLS terminator</text>
+
+  <!-- ===== Notes ===== -->
+  <rect x="820" y="1110" width="860" height="196" rx="12" fill="#fffaf2" stroke="#e3c48a"/>
+  <text x="840" y="1138" class="zone" fill="#8a5600">WHAT THIS DESIGN DOES AND DOES NOT DO</text>
+  <text x="840" y="1164" class="t2">① Lakekeeper and Sail cannot serve TLS, so a sidecar nginx-ubi terminates it. The backend binds 127.0.0.1 only.</text>
+  <text x="840" y="1184" class="t2">② Encryption only. Lakekeeper login and table permissions come in Phases B and C.</text>
+  <text x="840" y="1204" class="t2">③ Engines still hold bucket-wide static S3 keys. Phase D replaces them with per-table keys</text>
+  <text x="858" y="1222" class="t2">vended through SeaweedFS STS over https://s3:8333.</text>
+  <text x="840" y="1242" class="t2">④ Open gap: SeaweedFS checks peer names against an allowlist, not the dialled host.</text>
+  <text x="858" y="1260" class="t2">Tests for wrong-SAN and swapped role certificates must stay mandatory.</text>
+  <text x="840" y="1284" class="t3">Short-lived test certificates only: no rotation, revocation or production PKI is claimed.</text>
+</svg>

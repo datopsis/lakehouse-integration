@@ -53,7 +53,7 @@ jobs:
       - name: Lint and unit tests
         run: |
           set -euo pipefail
-          if git ls-files --eol | grep -E "^i/(crlf|mixed)"; then echo "CRLF line endings found: commit LF only (see .gitattributes)" >&2; exit 1; fi
+          if git ls-files --eol | grep -E "^i/(crlf|mixed)"; then echo "CRLF line endings found, commit LF only (see .gitattributes)" >&2; exit 1; fi
           .venv/bin/ruff check .
           .venv/bin/ruff format --check .
           .venv/bin/zizmor --offline --persona pedantic .github/workflows
