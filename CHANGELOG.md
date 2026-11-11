@@ -7,6 +7,13 @@
   Journal acknowledgements and ambiguous outcomes; require exact atomic batches,
   snapshots, fresh independent reads, successful recovery writes and recovery times.
 - Keep power loss, fsync/disk-cache qualification and host loss explicitly unproven.
+- Investigate remote-signing restart failures: identify a PyIceberg/Fsspec signer
+  callback race that sends unsigned S3 requests, also reproducible before restart.
+- Add mandatory T9 with full recreation, deterministic concurrent initialization,
+  exact unsigned HEAD 403 / GET AccessDenied canary, exact-row recovery controls,
+  and a visible notice on upstream success. Preserve the static main path.
+- Add an unfiled upstream draft, hypothesis evidence, redacted signer/S3 traces,
+  SeaweedFS auth diagnostics, and hash-locked remote-signing client dependencies.
 
 - Add the amd64 Phase 3 cross-repository integration gate: exact SQL/interop,
   storage locations, recreation persistence, negative auth tests, and hardening.

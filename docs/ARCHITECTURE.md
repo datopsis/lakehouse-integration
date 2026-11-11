@@ -50,7 +50,9 @@ exposure; they do not isolate an already-compromised network member from the
 unauthenticated Lakekeeper or Seaweed control APIs. Host/runner access is fully
 trusted. Lakekeeper login off and plaintext internal traffic are known test-only
 gaps. Trino uses TRINO_UBI_ALLOW_INSECURE=true, vending is disabled, and PyIceberg
-explicitly selects client-managed credentials. No remote signer is needed.
+explicitly selects client-managed credentials. No remote signer is needed on the main path. T9 separately exercises a no-key
+remote-signing client and records the known concurrent signer-registration race;
+see [the draft report](known-issues/remote-signing.md).
 
 T5 removes containers/network using compose down without --volumes, then creates
 a new stack. The four volumes and generated keys survive. Every nonempty container

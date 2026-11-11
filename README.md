@@ -13,8 +13,8 @@ Each input is fetched by full SHA, checked against detached HEAD, built with its
 own build script, and inspected after loading. Trino falls back to fetching
 `refs/pull/2/head` if the SHA fetch fails, then still requires exact HEAD.
 
-**The initial Lakekeeper and SeaweedFS pins fail strict provenance.** There is no
-allowance for inherited or missing labels. The mandatory gate checks
+The reviewed Lakekeeper and SeaweedFS pins now pass strict provenance. There is
+no allowance for inherited or missing labels. The mandatory gate checks
 `org.opencontainers.image.revision` against the pin and
 `io.datopsis.artifact-lock.sha256` against the exact repository artifact lock.
 Runtime probes still collect evidence when all images built, but cannot turn a
@@ -37,6 +37,7 @@ security gate, and does not authorize release or modify the jars.
 | T6 | Anonymous S3 and wrong S3 secret return specific 403 errors; missing encryption key prevents Lakekeeper startup; wrong PostgreSQL password prevents migration |
 | T7 | Non-root, read-only roots, dropped capabilities, no-new-privileges, internal network, no published ports; S3 cannot read PostgreSQL secrets |
 | T8 | SIGKILL all seven services after three acknowledged 16-row INSERTs; exact rows and four snapshots (CREATE plus three INSERTs) after restart on the same volumes. SIGKILL PostgreSQL, Lakekeeper, volume, and filer during continuous INSERTs; retain every acknowledged batch, require ambiguous batches fully visible or absent, verify snapshot counts/chains and fresh PyIceberg/Trino reads, and require a new successful write after each restart. Report recovery seconds per component. |
+| T9 | No-key remote-signing client retained across recreation; serial exact-row controls and deterministic concurrent-initialization canary with unsigned HEAD 403 / GET AccessDenied evidence |
 | Canary | Default Trino encoding, INSERT/UPDATE/DELETE, then PyIceberg read; only the exact known Arrow decoder error is an expected failure |
 
 The main Iceberg catalog sets
@@ -59,9 +60,18 @@ on one host at the reviewed pins. **A container SIGKILL is not host power loss:*
 the host page cache can survive. There is no fsync or disk-cache qualification,
 and no host-loss evidence. These tests do not prove production readiness,
 TLS/login/authorization, replication, backup recovery, load, ARM64, upgrades,
-or remote-signing recovery.
-The spike's long-lived remote-signing reader failed with 403 after restart;
-that remains a [roadmap item](docs/ROADMAP.md).
+or general concurrent remote-signing recovery.
+
+T9 isolates remote signing from the main path. The restart investigation found a
+PyIceberg/Fsspec concurrency bug: FileIO initialization temporarily removes the
+signer callback from a shared S3 client, allowing an unsigned request to escape.
+The same live table works across recreation when initialization is serialized.
+T9 forces the real callback gap and accepts only unsigned HeadObject 403 followed
+by GET AccessDenied, then requires exact-row recovery. A successful signed canary
+emits a notice; any other failure fails the job. See the
+[draft report and reproduction](docs/known-issues/remote-signing.md); nothing was
+filed upstream. Reloading a table or starting a fresh process is not a general
+fix for the race. Remote signing remains OFF the main data path.
 
 ## Run locally
 
@@ -102,8 +112,12 @@ The runner generates fresh credentials under ignored `.runtime/`, mounts only
 service-specific files, retains those credentials and four named volumes during
 T5 and T8, and removes the stack and volumes at final cleanup. It temporarily adds and
 then removes a marked block in `/etc/hosts`. Raw local logs may contain secrets;
-only `reports/sanitized/` is eligible for CI upload. Cleanup fails closed if it
-cannot redact. Inspect that directory for `builds.json`, `results.json`, and logs. T8 adds
+only `reports/sanitized/` is eligible for CI upload. T9 records REST signer
+requests/responses and S3 headers in `remote-signing.jsonl`; SeaweedFS verbose
+auth logs and GET error XML explain the denial. Fixture keys, signatures and
+bearer tokens are redacted. Cleanup fails closed if it cannot redact. Inspect that directory for `builds.json`, `results.json`, and logs.
+
+T8 adds
 `crash-journal.jsonl` (attempts, acknowledgements, query IDs, kill events and recovery)
 and `crash-*-reader.log` (fresh-process exact read evidence). Recovery time runs
 from the kill command through a newly started successful INSERT and exact reads

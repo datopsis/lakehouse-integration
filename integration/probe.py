@@ -468,6 +468,7 @@ def restart():
         previous and new[service] and new[service] != previous for service, previous in old.items()
     )
     record("container_recreation", {"before": old, "after": new})
+    probe("T9_remote_signing_restart", REMOTE.after)
     # A fresh independent reader matches the owner's storage fixture and avoids
     # carrying S3/signing/DNS clients across network/container replacement.
     checked = subprocess.run(
@@ -719,7 +720,7 @@ def negatives():
 
 
 def main():
-    global CREDS
+    global CREDS, REMOTE
     if not __debug__:
         raise RuntimeError("Assertions must be enabled; remove -O/PYTHONOPTIMIZE")
     if sys.argv[1:] == ["verify-restart"]:
@@ -748,6 +749,10 @@ def main():
         probe("T4_location", location)
         probe("T6_negative", negatives)
         probe("T7_secret_isolation", secret_isolation)
+        from remote_signing import RestartDiagnostic
+
+        REMOTE = RestartDiagnostic(rest_catalog, REPORTS, CREDS)
+        probe("T9_remote_signing_before", REMOTE.start)
         probe("T5_persistence", restart)
         from crash import crash_durability
 
@@ -770,6 +775,8 @@ def main():
         "T7_secret_isolation",
         "T8_crash_durability",
         "encoding_canary",
+        "T9_remote_signing_before",
+        "T9_remote_signing_restart",
     }
     assert expected <= RESULTS.keys(), "Missing tests: " + str(expected - RESULTS.keys())
     assert not any(isinstance(v, dict) and v.get("status") == "fail" for v in RESULTS.values()), (
