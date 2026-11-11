@@ -7,9 +7,12 @@
 - OpenID login for Lakekeeper **with authorization**, plus authenticated Trino access.
 - Sail as a second query engine (PyIceberg remains an independent client).
 - ARM64 images and execution, after amd64 qualification; no emulated green claims.
-- Investigate remote-signing restart behaviour: the spike's long-lived PyIceberg
-  remote-signing reader hit HeadObject 403 after recreation. Fresh-client success
-  does not explain that failure. Keep it out of the static-credential main path.
+- Remote-signing restart investigation resolved as a PyIceberg/Fsspec concurrent
+  signer-registration bug: T9 deterministically exposes the unsigned-request gap
+  after full recreation and verifies exact-row recovery. Review an upstream fix
+  when the canary announces signed success; retain the canary until then. See the
+  [unfiled draft report](known-issues/remote-signing.md). Remote signing stays OFF
+  the static-credential main path; fresh-client success is not a concurrency fix.
 - Crash durability: kill/power-loss, restart ordering, host loss, backup/restore,
   replication, and encryption-key recovery; current tests cover graceful down/up only.
 - Trino upstream-fix follow-up: keep draft PR #2's vulnerability gate blocking

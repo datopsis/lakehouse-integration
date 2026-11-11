@@ -1,0 +1,1268 @@
+{
+  "run_url": "https://github.com/datopsis/lakehouse-integration/actions/runs/42968251506",
+  "head_sha": "896f51e3c1e01bf204014b01ac26eed45df18445",
+  "selection": "Unmodified JSONL records with source line numbers: DNS, barrier/canary, all forced-gap traffic, first two REST/S3 entries per control phase. Full trace in run artifact.",
+  "jobs": {
+    "conclusion": "success",
+    "jobs": [
+      {
+        "completedAt": "2026-11-11T05:54:23Z",
+        "conclusion": "success",
+        "databaseId": 130350420396,
+        "name": "Integration",
+        "startedAt": "2026-11-11T05:49:31Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-11T05:49:33Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-11T05:49:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:49:34Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 2,
+            "startedAt": "2026-11-11T05:49:33Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:50:12Z",
+            "conclusion": "success",
+            "name": "Prerequisites and hash-locked Python clients",
+            "number": 3,
+            "startedAt": "2026-11-11T05:49:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:50:12Z",
+            "conclusion": "success",
+            "name": "Lint and unit tests",
+            "number": 4,
+            "startedAt": "2026-11-11T05:50:12Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:52:13Z",
+            "conclusion": "success",
+            "name": "Build exact pinned source with owner scripts",
+            "number": 5,
+            "startedAt": "2026-11-11T05:50:12Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:52:13Z",
+            "conclusion": "success",
+            "name": "Strict image provenance (mandatory gate)",
+            "number": 6,
+            "startedAt": "2026-11-11T05:52:13Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:53:54Z",
+            "conclusion": "success",
+            "name": "T1\u2013T7, T9 remote-signing restart, and encoding canary",
+            "number": 7,
+            "startedAt": "2026-11-11T05:52:13Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:54:20Z",
+            "conclusion": "success",
+            "name": "Redact diagnostics and remove services",
+            "number": 8,
+            "startedAt": "2026-11-11T05:53:54Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:54:21Z",
+            "conclusion": "success",
+            "name": "Retain sanitized evidence",
+            "number": 9,
+            "startedAt": "2026-11-11T05:54:20Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:54:21Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 18,
+            "startedAt": "2026-11-11T05:54:21Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:54:21Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 19,
+            "startedAt": "2026-11-11T05:54:21Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/datopsis/lakehouse-integration/actions/runs/42968251506/job/130350420396"
+      },
+      {
+        "completedAt": "2026-11-11T05:49:38Z",
+        "conclusion": "success",
+        "databaseId": 130350420633,
+        "name": "Upstream commits",
+        "startedAt": "2026-11-11T05:49:31Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-11-11T05:49:32Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-11-11T05:49:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:49:34Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 2,
+            "startedAt": "2026-11-11T05:49:32Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:49:36Z",
+            "conclusion": "success",
+            "name": "Report newer upstream commits without changing pins",
+            "number": 3,
+            "startedAt": "2026-11-11T05:49:34Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:49:36Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "number": 6,
+            "startedAt": "2026-11-11T05:49:36Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-11-11T05:49:36Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 7,
+            "startedAt": "2026-11-11T05:49:36Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/datopsis/lakehouse-integration/actions/runs/42968251506/job/130350420633"
+      },
+      {
+        "completedAt": "2026-11-11T05:54:23Z",
+        "conclusion": "skipped",
+        "databaseId": 130352085440,
+        "name": "Weekly failure issue",
+        "startedAt": "2026-11-11T05:54:23Z",
+        "status": "completed",
+        "steps": [],
+        "url": "https://github.com/datopsis/lakehouse-integration/actions/runs/42968251506/job/130352085440"
+      }
+    ]
+  },
+  "results": {
+    "wrong_s3_secret": {
+      "status": 400,
+      "body": {
+        "error": {
+          "message": "IO error at `s3://warehouse/01a1c92a-0d6d-7821-a233-d7a7215d7489/metadata/test`: S3 write failed: The request signature we calculated does not match the signature you provided. Check your key and signing method.",
+          "type": "Unexpected",
+          "code": 400,
+          "stack": [
+            "IO Operation Failed during validation.",
+            "Error ID: 01a1c92a-1033-72f3-ad3e-13ab43cdf509"
+          ]
+        }
+      }
+    },
+    "elapsed_seconds": 100.72,
+    "warehouse": {
+      "profile": {
+        "type": "s3",
+        "bucket": "warehouse",
+        "region": "local",
+        "sts-enabled": false,
+        "flavor": "s3-compat",
+        "endpoint": "http://s3:8333",
+        "path-style-access": true
+      },
+      "response": {
+        "id": "14b63b44-dd94-11f1-a975-47f6382a1768",
+        "warehouse-id": "14b63b44-dd94-11f1-a975-47f6382a1768",
+        "name": "qualification",
+        "project-id": "00000000-0000-0000-0000-000000000000",
+        "storage-profile": {
+          "type": "s3",
+          "bucket": "warehouse",
+          "key-prefix": null,
+          "assume-role-arn": null,
+          "endpoint": "http://s3:8333/",
+          "region": "local",
+          "path-style-access": true,
+          "sts-role-arn": null,
+          "sts-endpoint": null,
+          "sts-enabled": false,
+          "sts-token-validity-seconds": 3600,
+          "sts-session-tags": {},
+          "flavor": "s3-compat",
+          "allow-alternative-protocols": null,
+          "remote-signing-url-style": "auto",
+          "push-s3-delete-disabled": true,
+          "aws-kms-key-arn": null,
+          "remote-signing-enabled": true,
+          "legacy-md5-behavior": null,
+          "storage-layout": null
+        },
+        "storage-credential-type": {
+          "type": "s3",
+          "credential-type": "access-key"
+        },
+        "delete-profile": {
+          "type": "hard"
+        },
+        "status": "active",
+        "protected": false,
+        "managed-by": "self-managed",
+        "allowed-format-versions": [
+          1,
+          2,
+          3
+        ],
+        "updated-at": null
+      }
+    },
+    "T7_hardening": {
+      "status": "pass",
+      "seconds": 1.38,
+      "value": {
+        "postgres": {
+          "Uid": "26\t26\t26\t26",
+          "CapEff": "0000000000000000",
+          "NoNewPrivs": "1"
+        },
+        "master": {
+          "Uid": "1000\t1000\t1000\t1000",
+          "CapEff": "0000000000000000",
+          "NoNewPrivs": "1"
+        },
+        "volume": {
+          "Uid": "1000\t1000\t1000\t1000",
+          "CapEff": "0000000000000000",
+          "NoNewPrivs": "1"
+        },
+        "filer": {
+          "Uid": "1000\t1000\t1000\t1000",
+          "CapEff": "0000000000000000",
+          "NoNewPrivs": "1"
+        },
+        "s3": {
+          "Uid": "1000\t1000\t1000\t1000",
+          "CapEff": "0000000000000000",
+          "NoNewPrivs": "1"
+        },
+        "catalog": {
+          "Uid": "999\t999\t999\t999",
+          "CapEff": "0000000000000000",
+          "NoNewPrivs": "1"
+        },
+        "trino": {
+          "Uid": "10001\t10001\t10001\t10001",
+          "CapEff": "0000000000000000",
+          "NoNewPrivs": "1"
+        }
+      }
+    },
+    "T1_create_insert_select": {
+      "status": "pass",
+      "seconds": 3.33,
+      "value": "CREATE TABLE / INSERT / SELECT asserted"
+    },
+    "T2_pyiceberg_before_mutations": {
+      "status": "pass",
+      "seconds": 0.51,
+      "value": {
+        "rows": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "beta"
+          },
+          {
+            "id": 3,
+            "label": "gamma"
+          }
+        ],
+        "files": [
+          "s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055239_00002_4n9xt-7bbbd329-240b-4527-9854-4757438da1a2.parquet"
+        ],
+        "file_io": "pyiceberg.io.pyarrow.PyArrowFileIO",
+        "signer": null,
+        "delegation": "client-managed",
+        "client_s3_credentials": true
+      }
+    },
+    "T1_update_delete_history": {
+      "status": "pass",
+      "seconds": 2.47,
+      "value": {
+        "snapshots": [
+          [
+            3374564731781143330,
+            "append"
+          ],
+          [
+            2282987996491928232,
+            "append"
+          ],
+          [
+            2226554312858969125,
+            "overwrite"
+          ],
+          [
+            5179214582430294815,
+            "delete"
+          ]
+        ],
+        "history": [
+          [
+            3374564731781143330,
+            true
+          ],
+          [
+            2282987996491928232,
+            true
+          ],
+          [
+            2226554312858969125,
+            true
+          ],
+          [
+            5179214582430294815,
+            true
+          ]
+        ]
+      }
+    },
+    "T2_pyiceberg_after_mutations": {
+      "status": "pass",
+      "seconds": 0.05,
+      "value": {
+        "rows": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "updated"
+          }
+        ],
+        "files": [
+          "s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-7506af52-8bef-4d2e-bb2a-0d2dbaf52502.parquet",
+          "s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055239_00002_4n9xt-7bbbd329-240b-4527-9854-4757438da1a2.parquet"
+        ],
+        "file_io": "pyiceberg.io.pyarrow.PyArrowFileIO",
+        "signer": null,
+        "delegation": "client-managed",
+        "client_s3_credentials": true
+      }
+    },
+    "T3_trino_reads_pyiceberg": {
+      "status": "pass",
+      "seconds": 0.51,
+      "value": {
+        "metadata": "s3://warehouse/01a1c92a-73bb-7520-8335-387de6996d2a/metadata/00001-01a1c92a-7405-7a82-9a53-ee2c82771679.gz.metadata.json",
+        "rows": 2
+      }
+    },
+    "encoding_canary": {
+      "status": "pass",
+      "seconds": 2.71,
+      "value": {
+        "status": "expected-failure",
+        "error": "Not yet implemented: DecodeArrow of DictAccumulator for DeltaLengthByteArrayDecoder."
+      }
+    },
+    "T4_location": {
+      "status": "pass",
+      "seconds": 0.31,
+      "value": {
+        "objects": 41,
+        "tables": {
+          "from_trino": [
+            "s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00004-01a1c92a-6e0d-7700-914b-5d2b825a0c6d.gz.metadata.json",
+            "s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-7506af52-8bef-4d2e-bb2a-0d2dbaf52502.parquet",
+            "s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055239_00002_4n9xt-7bbbd329-240b-4527-9854-4757438da1a2.parquet",
+            "s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-1cf33fdc-53b7-4b1d-9d88-494435819e54.parquet",
+            "s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055243_00005_4n9xt-9f94bd44-6c3f-4d28-9dd6-a0b28c066cb2.parquet"
+          ],
+          "from_python": [
+            "s3://warehouse/01a1c92a-73bb-7520-8335-387de6996d2a/metadata/00001-01a1c92a-7405-7a82-9a53-ee2c82771679.gz.metadata.json",
+            "s3://warehouse/01a1c92a-73bb-7520-8335-387de6996d2a/data/00000-0-7206c10e-406d-469a-9b36-1a497d2bd68a.parquet"
+          ],
+          "encoding_canary": [
+            "s3://warehouse/01a1c92a-7628-7ca0-8d3c-97fa6b76313a/metadata/00004-01a1c92a-7da8-79b3-9c88-959a2eced810.gz.metadata.json",
+            "s3://warehouse/01a1c92a-7628-7ca0-8d3c-97fa6b76313a/data/20261111_055246_00013_4n9xt-c396aab2-a0c4-4717-b00f-9ccabfd584f4.parquet",
+            "s3://warehouse/01a1c92a-7628-7ca0-8d3c-97fa6b76313a/data/20261111_055245_00011_4n9xt-c48b6af1-40ac-4b36-b935-6ff90052ad0e.parquet",
+            "s3://warehouse/01a1c92a-7628-7ca0-8d3c-97fa6b76313a/data/20261111_055247_00014_4n9xt-7e5af0ac-249b-488e-9af1-41d86d2564b2.parquet",
+            "s3://warehouse/01a1c92a-7628-7ca0-8d3c-97fa6b76313a/data/20261111_055246_00013_4n9xt-1c1679e0-f9a7-453c-bdbe-194f29e83379.parquet"
+          ]
+        },
+        "postgres_catalog_rows": [
+          "encoding_canary",
+          "from_python",
+          "from_trino"
+        ]
+      }
+    },
+    "T6_negative": {
+      "status": "pass",
+      "seconds": 0.75,
+      "value": {
+        "anonymous_s3": "AccessDenied",
+        "wrong_s3_secret": "SignatureDoesNotMatch",
+        "missing_encryption_key": {
+          "exit_code": 78,
+          "matched": "LAKEKEEPER__PG_ENCRYPTION_KEY is unset or empty"
+        },
+        "wrong_postgres_password": {
+          "exit_code": 1,
+          "matched": "password authentication failed"
+        }
+      }
+    },
+    "T7_secret_isolation": {
+      "status": "pass",
+      "seconds": 0.84,
+      "value": "S3 sees only s3.json; PostgreSQL passwords are absent and unreadable"
+    },
+    "T9_remote_signing_before": {
+      "status": "pass",
+      "seconds": 0.4,
+      "value": [
+        {
+          "id": 1,
+          "label": "alpha"
+        },
+        {
+          "id": 2,
+          "label": "updated"
+        }
+      ]
+    },
+    "container_recreation": {
+      "before": {
+        "postgres": "282a337b53fd71789fbc3a07f168d23468bed12a1f514c29036dcf3c0b6d1396",
+        "master": "d64b4cc23afbcfc40e18a90696991253b426211e1009ed6d03eb2d9d3ce6df04",
+        "volume": "c413e8972d11d9b56c5b35381599794e5c3ea1763cf9949c2bfcb3e7908e3d97",
+        "filer": "3d563f4b57a254fd03e5a86ef79c1bbe6ddc05c2c16a8e6f9eb2bd1c9559d9b0",
+        "s3": "5c9a22f8006671e738e11257b07fe72eda16cdbeb4d155ccadc61a9ec4b575eb",
+        "catalog": "b57aabc4cd2b8ebc5a894d6daf6b3e65bfba25837740de004c8a3d9aa7514f39",
+        "trino": "27dc05a90cab4f361ba2b17cc94a11f300c1af6de1f8822d908b4c1271474b7d"
+      },
+      "after": {
+        "postgres": "2436a6564f5de2d6139b8cd84ae4293dce31c3b19d5c5b994d14c4bbc3a339ba",
+        "master": "30529d7af558fcd721950ca37bc2b3e687588f6cd2656620e50ad9d6fe4b6a1e",
+        "volume": "93a3590ff9f0cd335204cc591870261f950089ce0a05e88f70cde1785c7ee871",
+        "filer": "c0565e57ec24ba6053faead0d1f5add80372efb6f2aaef8ff1768ed9acf2e3f7",
+        "s3": "ef4862c59d6bd9e2d3a4b395578edf767f96e96a892050e0b0cf49709cae64f5",
+        "catalog": "73f7f7d162859f496cdf4733e6a9c408902fb999951566c96b4671ac54bb21d6",
+        "trino": "41a2fa0656f694da0459eeb1c441000525e4e045ad96466615addfaac3bc8ad9"
+      }
+    },
+    "T9_remote_signing_restart": {
+      "status": "pass",
+      "seconds": 12.18,
+      "value": {
+        "same_table": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "updated"
+          }
+        ],
+        "canary": {
+          "status": "expected-failure",
+          "shared_filesystem": true,
+          "signer_calls_in_gap": 0,
+          "s3": [
+            {
+              "method": "HEAD",
+              "status": 403,
+              "response_headers": {
+                "accept-ranges": "bytes",
+                "content-length": "464",
+                "content-type": "application/xml",
+                "server": "SeaweedFS 8000GB 4.53",
+                "vary": "Origin",
+                "x-amz-request-id": "18E6E7D86748F779C1764F33",
+                "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+              },
+              "error": ""
+            },
+            {
+              "method": "GET",
+              "status": 403,
+              "response_headers": {
+                "accept-ranges": "bytes",
+                "content-length": "464",
+                "content-type": "application/xml",
+                "server": "SeaweedFS 8000GB 4.53",
+                "vary": "Origin",
+                "x-amz-request-id": "18E6E7D86777F04CC958991F",
+                "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+              },
+              "error": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error><Code>AccessDenied</Code><Message>Access Denied.</Message><Resource>/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-1cf33fdc-53b7-4b1d-9d88-494435819e54.parquet</Resource><RequestId>18E6E7D86777F04CC958991F</RequestId><Key>01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-1cf33fdc-53b7-4b1d-9d88-494435819e54.parquet</Key><BucketName>warehouse</BucketName></Error>"
+            }
+          ]
+        },
+        "same_table_recovered": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "updated"
+          }
+        ],
+        "reload_table": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "updated"
+          }
+        ],
+        "new_catalog": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "updated"
+          }
+        ]
+      }
+    },
+    "T5_persistence": {
+      "status": "pass",
+      "seconds": 63.32,
+      "value": {
+        "static_mode": "Both engines reread main tables; new Trino write read by PyIceberg",
+        "encoding_canary": {
+          "status": "expected-failure",
+          "error": "Not yet implemented: DecodeArrow of DictAccumulator for DeltaLengthByteArrayDecoder."
+        }
+      }
+    },
+    "total_runtime_seconds": 100.72
+  },
+  "trace": [
+    {
+      "source_line": 1,
+      "phase": "before",
+      "kind": "rest",
+      "time": 1794376370.294814,
+      "method": "GET",
+      "url": "http://catalog:8181/catalog/v1/config?warehouse=qualification",
+      "headers": {
+        "User-Agent": "PyIceberg/0.12.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Iceberg-Access-Delegation": "remote-signing",
+        "Content-type": "application/json",
+        "X-Client-Version": "PyIceberg 0.12.0",
+        "Authorization": "Bearer [REDACTED]"
+      },
+      "body": null,
+      "status": 200,
+      "response": "{\"overrides\":{\"uri\":\"http://catalog:8181/catalog\",\"idempotency-key-lifetime\":\"PT30M\"},\"defaults\":{\"rest-page-size\":\"100\",\"prefix\":\"14b63b44-dd94-11f1-a975-47f6382a1768\"},\"endpoints\":[\"GET /v1/config\",\"GET /v1/{prefix}/namespaces\",\"HEAD /v1/{prefix}/namespaces/{namespace}\",\"POST /v1/{prefix}/namespaces\",\"GET /v1/{prefix}/namespaces/{namespace}\",\"DELETE /v1/{prefix}/namespaces/{namespace}\",\"POST /v1/{prefix}/namespaces/{namespace}/properties\",\"GET /v1/{prefix}/namespaces/{namespace}/tables\",\"POST /v1/{prefix}/namespaces/{namespace}/tables\",\"GET /v1/{prefix}/namespaces/{namespace}/tables/{table}\",\"POST /v1/{prefix}/namespaces/{namespace}/tables/{table}\",\"DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}\",\"HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}\",\"GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials\",\"POST /v1/{prefix}/tables/rename\",\"POST /v1/{prefix}/namespaces/{namespace}/register\",\"POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics\",\"POST /v1/{prefix}/transactions/commit\",\"POST /v1/{prefix}/namespaces/{namespace}/views\",\"GET /v1/{prefix}/namespaces/{namespace}/views\",\"GET /v1/{prefix}/namespaces/{namespace}/views/{view}\",\"POST /v1/{prefix}/namespaces/{namespace}/views/{view}\",\"DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}\",\"HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}\",\"POST /v1/{prefix}/views/rename\"]}"
+    },
+    {
+      "source_line": 2,
+      "phase": "before",
+      "kind": "rest",
+      "time": 1794376370.2985349,
+      "method": "GET",
+      "url": "http://catalog:8181/catalog/v1/14b63b44-dd94-11f1-a975-47f6382a1768/namespaces/integration/tables/from_trino",
+      "headers": {
+        "User-Agent": "PyIceberg/0.12.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Iceberg-Access-Delegation": "remote-signing",
+        "Content-type": "application/json",
+        "X-Client-Version": "PyIceberg 0.12.0",
+        "Authorization": "Bearer [REDACTED]"
+      },
+      "body": null,
+      "status": 200,
+      "response": "{\"metadata-location\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00004-01a1c92a-6e0d-7700-914b-5d2b825a0c6d.gz.metadata.json\",\"metadata\":{\"format-version\":2,\"table-uuid\":\"01a1c92a-5dec-7920-9ca5-229970bcc4e7\",\"location\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7\",\"last-sequence-number\":4,\"last-updated-ms\":1794376363506,\"last-column-id\":2,\"schemas\":[{\"schema-id\":0,\"type\":\"struct\",\"fields\":[{\"id\":1,\"name\":\"id\",\"required\":false,\"type\":\"long\"},{\"id\":2,\"name\":\"label\",\"required\":false,\"type\":\"string\"}]}],\"current-schema-id\":0,\"partition-specs\":[{\"spec-id\":0,\"fields\":[]}],\"default-spec-id\":0,\"last-partition-id\":999,\"properties\":{\"write.format.default\":\"PARQUET\"},\"current-snapshot-id\":5179214582430294815,\"snapshot-log\":[{\"snapshot-id\":3374564731781143330,\"timestamp-ms\":1794376359733},{\"snapshot-id\":2282987996491928232,\"timestamp-ms\":1794376361160},{\"snapshot-id\":2226554312858969125,\"timestamp-ms\":1794376362975},{\"snapshot-id\":5179214582430294815,\"timestamp-ms\":1794376363506}],\"metadata-log\":[{\"metadata-file\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00000-01a1c92a-5dec-7920-9ca5-22aeaea2aff9.gz.metadata.json\",\"timestamp-ms\":1794376359404},{\"metadata-file\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00001-01a1c92a-5f59-78f3-8ab6-5a48d4cc28ff.gz.metadata.json\",\"timestamp-ms\":1794376359733},{\"metadata-file\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00002-01a1c92a-652d-7352-94c1-8ab11ac40a74.gz.metadata.json\",\"timestamp-ms\":1794376361160},{\"metadata-file\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00003-01a1c92a-6bf5-7621-9039-a62ecf062efa.gz.metadata.json\",\"timestamp-ms\":1794376362975}],\"sort-orders\":[{\"order-id\":0,\"fields\":[]}],\"default-sort-order-id\":0,\"refs\":{\"main\":{\"snapshot-id\":5179214582430294815,\"type\":\"branch\"}},\"statistics\":[{\"snapshot-id\":2282987996491928232,\"statistics-path\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/20261111_055239_00002_4n9xt-9e2cdf97-4a78-499a-ab54-5995df04c52c.stats\",\"file-size-in-bytes\":550,\"file-footer-size-in-bytes\":440,\"blob-metadata\":[{\"type\":\"apache-datasketches-theta-v1\",\"snapshot-id\":2282987996491928232,\"sequence-number\":2,\"fields\":[1],\"properties\":{\"ndv\":\"3\"}},{\"type\":\"apache-datasketches-theta-v1\",\"snapshot-id\":2282987996491928232,\"sequence-number\":2,\"fields\":[2],\"properties\":{\"ndv\":\"3\"}}]}],\"snapshots\":[{\"snapshot-id\":2226554312858969125,\"parent-snapshot-id\":2282987996491928232,\"sequence-number\":3,\"timestamp-ms\":1794376362975,\"manifest-list\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-2226554312858969125-1-07305fb2-51f1-44c4-8de3-c6b245da50c0.avro\",\"summary\":{\"operation\":\"overwrite\",\"trino_user\":\"integration\",\"changed-partition-count\":\"1\",\"trino_query_id\":\"20261111_055242_00004_4n9xt\",\"engine-version\":\"484\",\"total-delete-files\":\"1\",\"engine-name\":\"trino\",\"manifests-replaced\":\"0\",\"added-position-deletes\":\"1\",\"added-delete-files\":\"1\",\"manifests-kept\":\"1\",\"total-data-files\":\"2\",\"total-equality-deletes\":\"0\",\"added-position-delete-files\":\"1\",\"manifests-created\":\"2\",\"total-records\":\"4\",\"total-position-deletes\":\"1\",\"iceberg-version\":\"Apache Iceberg 1.12.0 (commit 212aa894e919ff9fdf89160da4aadcbe6858ac01)\",\"added-data-files\":\"1\",\"added-records\":\"1\",\"added-files-size\":\"1327\",\"total-files-size\":\"1695\"},\"schema-id\":0},{\"snapshot-id\":5179214582430294815,\"parent-snapshot-id\":2226554312858969125,\"sequence-number\":4,\"timestamp-ms\":1794376363506,\"manifest-list\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\",\"summary\":{\"operation\":\"delete\",\"iceberg-version\":\"Apache Iceberg 1.12.0 (commit 212aa894e919ff9fdf89160da4aadcbe6858ac01)\",\"added-position-delete-files\":\"1\",\"total-equality-deletes\":\"0\",\"engine-version\":\"484\",\"added-files-size\":\"964\",\"trino_query_id\":\"20261111_055243_00005_4n9xt\",\"added-position-deletes\":\"1\",\"engine-name\":\"trino\",\"trino_user\":\"integration\",\"added-delete-files\":\"1\",\"total-position-deletes\":\"2\",\"total-files-size\":\"2659\",\"total-data-files\":\"2\",\"changed-partition-count\":\"1\",\"manifests-kept\":\"3\",\"total-delete-files\":\"2\",\"manifests-replaced\":\"0\",\"manifests-created\":\"1\",\"total-records\":\"4\"},\"schema-id\":0},{\"snapshot-id\":2282987996491928232,\"parent-snapshot-id\":3374564731781143330,\"sequence-number\":2,\"timestamp-ms\":1794376361160,\"manifest-list\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-2282987996491928232-1-1b84497c-cf96-4cb5-855a-3714bd13ac5f.avro\",\"summary\":{\"operation\":\"append\",\"changed-partition-count\":\"1\",\"total-records\":\"3\",\"trino_query_id\":\"20261111_055239_00002_4n9xt\",\"trino_user\":\"integration\",\"total-delete-files\":\"0\",\"engine-version\":\"484\",\"added-data-files\":\"1\",\"added-files-size\":\"368\",\"added-records\":\"3\",\"engine-name\":\"trino\",\"manifests-replaced\":\"0\",\"manifests-kept\":\"0\",\"total-position-deletes\":\"0\",\"iceberg-version\":\"Apache Iceberg 1.12.0 (commit 212aa894e919ff9fdf89160da4aadcbe6858ac01)\",\"total-files-size\":\"368\",\"total-equality-deletes\":\"0\",\"total-data-files\":\"1\",\"manifests-created\":\"1\"},\"schema-id\":0},{\"snapshot-id\":3374564731781143330,\"sequence-number\":1,\"timestamp-ms\":1794376359733,\"manifest-list\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-3374564731781143330-1-c387f2bc-2b5b-4908-9304-7a98bfaf409c.avro\",\"summary\":{\"operation\":\"append\",\"total-data-files\":\"0\",\"trino_query_id\":\"20261111_055239_00001_4n9xt\",\"changed-partition-count\":\"0\",\"manifests-replaced\":\"0\",\"total-delete-files\":\"0\",\"total-equality-deletes\":\"0\",\"total-position-deletes\":\"0\",\"total-records\":\"0\",\"trino_user\":\"integration\",\"engine-version\":\"484\",\"iceberg-version\":\"Apache Iceberg 1.12.0 (commit 212aa894e919ff9fdf89160da4aadcbe6858ac01)\",\"engine-name\":\"trino\",\"total-files-size\":\"0\",\"manifests-kept\":\"0\",\"manifests-created\":\"0\"},\"schema-id\":0}]},\"config\":{\"s3.remote-signing-enabled\":\"true\",\"py-io-impl\":\"pyiceberg.io.fsspec.FsspecFileIO\",\"signer.uri\":\"http://catalog:8181/catalog/\",\"client.region\":\"local\",\"s3.path-style-access\":\"true\",\"s3.region\":\"local\",\"signer.endpoint\":\"v1/signer/14b63b44-dd94-11f1-a975-47f6382a1768/tabular-id/01a1c92a-5dec-7920-9ca5-229970bcc4e7/v1/aws/s3/sign\",\"region\":\"local\",\"s3.endpoint\":\"http://s3:8333/\",\"s3.signer.uri\":\"http://catalog:8181/catalog/\",\"s3.signer\":\"S3V4RestSigner\",\"s3.signer.endpoint\":\"v1/signer/14b63b44-dd94-11f1-a975-47f6382a1768/tabular-id/01a1c92a-5dec-7920-9ca5-229970bcc4e7/v1/aws/s3/sign\"},\"storage-credentials\":[{\"prefix\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7\",\"config\":{\"s3.endpoint\":\"http://s3:8333/\",\"s3.path-style-access\":\"true\",\"client.region\":\"local\",\"s3.region\":\"local\"}}]}"
+    },
+    {
+      "source_line": 4,
+      "phase": "before",
+      "kind": "dns",
+      "time": 1794376370.3101203,
+      "addresses": {
+        "catalog": "172.18.0.7",
+        "s3": "172.18.0.6"
+      }
+    },
+    {
+      "source_line": 6,
+      "phase": "before",
+      "kind": "s3",
+      "time": 1794376370.3943784,
+      "method": "HEAD",
+      "url": "http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro",
+      "headers": {
+        "User-Agent": "b'aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117'",
+        "x-amz-date": "b'20261111T055250Z'",
+        "Cache-Control": "b'private'",
+        "x-amz-content-sha256": "b'UNSIGNED-PAYLOAD'",
+        "authorization": "b'AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]'",
+        "amz-sdk-invocation-id": "b'5ae6fad9-4e08-4dc4-b3ae-c79565836700'",
+        "amz-sdk-request": "b'attempt=1'"
+      },
+      "status": 200,
+      "response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "4586",
+        "content-type": "application/octet-stream",
+        "etag": "\"de8b9edd1250579e7f03a2a69cc0512c\"",
+        "last-modified": "Wed, 11 Nov 2026 05:52:43 GMT",
+        "server": "SeaweedFS 8000GB 4.53",
+        "vary": "Origin",
+        "x-amz-request-id": "18E6E7CD46A6620DA2F4ECBC",
+        "x-amz-storage-class": "STANDARD",
+        "date": "Wed, 11 Nov 2026 05:52:50 GMT"
+      },
+      "error": null
+    },
+    {
+      "source_line": 8,
+      "phase": "before",
+      "kind": "s3",
+      "time": 1794376370.400423,
+      "method": "GET",
+      "url": "http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro",
+      "headers": {
+        "Range": "b'bytes=0-4585'",
+        "If-Match": "b'\"de8b9edd1250579e7f03a2a69cc0512c\"'",
+        "x-amz-checksum-mode": "b'ENABLED'",
+        "User-Agent": "b'aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117'",
+        "x-amz-content-sha256": "b'UNSIGNED-PAYLOAD'",
+        "authorization": "b'AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;if-match;range;x-amz-checksum-mode;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]'",
+        "Cache-Control": "b'private'",
+        "x-amz-date": "b'20261111T055250Z'",
+        "amz-sdk-invocation-id": "b'7b2b8f62-b83a-4352-b5ff-b9fcf5099d6c'",
+        "amz-sdk-request": "b'attempt=1'"
+      },
+      "status": 206,
+      "response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "4586",
+        "content-range": "bytes 0-4585/4586",
+        "content-type": "application/octet-stream",
+        "etag": "\"de8b9edd1250579e7f03a2a69cc0512c\"",
+        "last-modified": "Wed, 11 Nov 2026 05:52:43 GMT",
+        "server": "SeaweedFS 8000GB 4.53",
+        "vary": "Origin",
+        "x-amz-request-id": "18E6E7CD470027C385281259",
+        "x-amz-storage-class": "STANDARD",
+        "date": "Wed, 11 Nov 2026 05:52:50 GMT"
+      },
+      "error": null
+    },
+    {
+      "source_line": 62,
+      "phase": "after_serial_control",
+      "kind": "dns",
+      "time": 1794376406.2549229,
+      "addresses": {
+        "catalog": "172.18.0.4",
+        "s3": "172.18.0.7"
+      }
+    },
+    {
+      "source_line": 63,
+      "phase": "after_serial_control",
+      "kind": "rest",
+      "time": 1794376406.2784681,
+      "method": "POST",
+      "url": "http://catalog:8181/catalog/v1/signer/14b63b44-dd94-11f1-a975-47f6382a1768/tabular-id/01a1c92a-5dec-7920-9ca5-229970bcc4e7/v1/aws/s3/sign",
+      "headers": {
+        "User-Agent": "python-requests/2.34.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "Bearer [REDACTED]",
+        "X-Iceberg-Access-Delegation": "remote-signing",
+        "Content-Length": "394",
+        "Content-Type": "application/json"
+      },
+      "body": "b'{\"method\": \"HEAD\", \"region\": \"local\", \"uri\": \"http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\", \"headers\": {\"User-Agent\": [\"aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117\"]}}'",
+      "status": 200,
+      "response": "{\"uri\":\"http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\",\"headers\":{\"Cache-Control\":[\"private\"],\"authorization\":[\"AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]\"],\"User-Agent\":[\"aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117\"],\"x-amz-date\":[\"20261111T055326Z\"],\"x-amz-content-sha256\":[\"UNSIGNED-PAYLOAD\"]}}"
+    },
+    {
+      "source_line": 64,
+      "phase": "after_serial_control",
+      "kind": "s3",
+      "time": 1794376406.282094,
+      "method": "HEAD",
+      "url": "http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro",
+      "headers": {
+        "User-Agent": "b'aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117'",
+        "Cache-Control": "b'private'",
+        "authorization": "b'AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]'",
+        "x-amz-date": "b'20261111T055326Z'",
+        "x-amz-content-sha256": "b'UNSIGNED-PAYLOAD'",
+        "amz-sdk-invocation-id": "b'a4f59d2a-dee7-4019-9cb7-c27494d44a76'",
+        "amz-sdk-request": "b'attempt=1'"
+      },
+      "status": 200,
+      "response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "4586",
+        "content-type": "application/octet-stream",
+        "etag": "\"de8b9edd1250579e7f03a2a69cc0512c\"",
+        "last-modified": "Wed, 11 Nov 2026 05:52:43 GMT",
+        "server": "SeaweedFS 8000GB 4.53",
+        "vary": "Origin",
+        "x-amz-request-id": "18E6E7D5A1A9445B9F9AEEA0",
+        "x-amz-storage-class": "STANDARD",
+        "date": "Wed, 11 Nov 2026 05:53:26 GMT"
+      },
+      "error": null
+    },
+    {
+      "source_line": 65,
+      "phase": "after_serial_control",
+      "kind": "rest",
+      "time": 1794376406.2885435,
+      "method": "POST",
+      "url": "http://catalog:8181/catalog/v1/signer/14b63b44-dd94-11f1-a975-47f6382a1768/tabular-id/01a1c92a-5dec-7920-9ca5-229970bcc4e7/v1/aws/s3/sign",
+      "headers": {
+        "User-Agent": "python-requests/2.34.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "Bearer [REDACTED]",
+        "X-Iceberg-Access-Delegation": "remote-signing",
+        "Content-Length": "510",
+        "Content-Type": "application/json"
+      },
+      "body": "b'{\"method\": \"GET\", \"region\": \"local\", \"uri\": \"http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\", \"headers\": {\"Range\": [\"bytes=0-4585\"], \"If-Match\": [\"\\\\\"de8b9edd1250579e7f03a2a69cc0512c\\\\\"\"], \"x-amz-checksum-mode\": [\"ENABLED\"], \"User-Agent\": [\"aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117\"]}}'",
+      "status": 200,
+      "response": "{\"uri\":\"http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\",\"headers\":{\"x-amz-content-sha256\":[\"UNSIGNED-PAYLOAD\"],\"authorization\":[\"AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;if-match;range;x-amz-checksum-mode;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]\"],\"Cache-Control\":[\"private\"],\"Range\":[\"bytes=0-4585\"],\"x-amz-date\":[\"20261111T055326Z\"],\"User-Agent\":[\"aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117\"],\"x-amz-checksum-mode\":[\"ENABLED\"],\"If-Match\":[\"\\\"de8b9edd1250579e7f03a2a69cc0512c\\\"\"]}}"
+    },
+    {
+      "source_line": 66,
+      "phase": "after_serial_control",
+      "kind": "s3",
+      "time": 1794376418.10807,
+      "method": "GET",
+      "url": "http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro",
+      "headers": {
+        "Range": "b'bytes=0-4585'",
+        "If-Match": "b'\"de8b9edd1250579e7f03a2a69cc0512c\"'",
+        "x-amz-checksum-mode": "b'ENABLED'",
+        "User-Agent": "b'aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117'",
+        "x-amz-content-sha256": "b'UNSIGNED-PAYLOAD'",
+        "authorization": "b'AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;if-match;range;x-amz-checksum-mode;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]'",
+        "Cache-Control": "b'private'",
+        "x-amz-date": "b'20261111T055326Z'",
+        "amz-sdk-invocation-id": "b'd29f1677-5023-4bc7-99a2-f3b73a0910cb'",
+        "amz-sdk-request": "b'attempt=1'"
+      },
+      "status": 206,
+      "response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "4586",
+        "content-range": "bytes 0-4585/4586",
+        "content-type": "application/octet-stream",
+        "etag": "\"de8b9edd1250579e7f03a2a69cc0512c\"",
+        "last-modified": "Wed, 11 Nov 2026 05:52:43 GMT",
+        "server": "SeaweedFS 8000GB 4.53",
+        "vary": "Origin",
+        "x-amz-request-id": "18E6E7D5A2361EFF58C8758B",
+        "x-amz-storage-class": "STANDARD",
+        "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+      },
+      "error": null
+    },
+    {
+      "source_line": 100,
+      "phase": "after_forced_interleaving",
+      "kind": "interleaving",
+      "time": 1794376418.1847181,
+      "initializer_finished": false
+    },
+    {
+      "source_line": 101,
+      "phase": "after_forced_interleaving",
+      "kind": "s3",
+      "time": 1794376418.186083,
+      "method": "HEAD",
+      "url": "http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-1cf33fdc-53b7-4b1d-9d88-494435819e54.parquet",
+      "headers": {
+        "User-Agent": "b'aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117'",
+        "amz-sdk-invocation-id": "b'4004c50c-7e0e-4cae-9680-1b6a72afa6b7'",
+        "amz-sdk-request": "b'attempt=1'"
+      },
+      "status": 403,
+      "response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "464",
+        "content-type": "application/xml",
+        "server": "SeaweedFS 8000GB 4.53",
+        "vary": "Origin",
+        "x-amz-request-id": "18E6E7D86748F779C1764F33",
+        "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+      },
+      "error": ""
+    },
+    {
+      "source_line": 102,
+      "phase": "after_forced_interleaving",
+      "kind": "s3",
+      "time": 1794376418.189129,
+      "method": "GET",
+      "url": "http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-1cf33fdc-53b7-4b1d-9d88-494435819e54.parquet",
+      "headers": {
+        "Range": "b'bytes=0-3'",
+        "x-amz-checksum-mode": "b'ENABLED'",
+        "User-Agent": "b'aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117'",
+        "amz-sdk-invocation-id": "b'759c01b1-f53d-43a5-82d6-2a1caf1e5f97'",
+        "amz-sdk-request": "b'attempt=1'"
+      },
+      "status": 403,
+      "response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "464",
+        "content-type": "application/xml",
+        "server": "SeaweedFS 8000GB 4.53",
+        "vary": "Origin",
+        "x-amz-request-id": "18E6E7D86777F04CC958991F",
+        "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+      },
+      "error": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error><Code>AccessDenied</Code><Message>Access Denied.</Message><Resource>/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-1cf33fdc-53b7-4b1d-9d88-494435819e54.parquet</Resource><RequestId>18E6E7D86777F04CC958991F</RequestId><Key>01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-1cf33fdc-53b7-4b1d-9d88-494435819e54.parquet</Key><BucketName>warehouse</BucketName></Error>"
+    },
+    {
+      "source_line": 103,
+      "phase": "after_forced_interleaving",
+      "kind": "canary",
+      "time": 1794376418.189681,
+      "status": "expected-failure",
+      "shared_filesystem": true,
+      "signer_calls_in_gap": 0,
+      "s3": [
+        {
+          "method": "HEAD",
+          "status": 403,
+          "response_headers": {
+            "accept-ranges": "bytes",
+            "content-length": "464",
+            "content-type": "application/xml",
+            "server": "SeaweedFS 8000GB 4.53",
+            "vary": "Origin",
+            "x-amz-request-id": "18E6E7D86748F779C1764F33",
+            "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+          },
+          "error": ""
+        },
+        {
+          "method": "GET",
+          "status": 403,
+          "response_headers": {
+            "accept-ranges": "bytes",
+            "content-length": "464",
+            "content-type": "application/xml",
+            "server": "SeaweedFS 8000GB 4.53",
+            "vary": "Origin",
+            "x-amz-request-id": "18E6E7D86777F04CC958991F",
+            "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+          },
+          "error": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Error><Code>AccessDenied</Code><Message>Access Denied.</Message><Resource>/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-1cf33fdc-53b7-4b1d-9d88-494435819e54.parquet</Resource><RequestId>18E6E7D86777F04CC958991F</RequestId><Key>01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-1cf33fdc-53b7-4b1d-9d88-494435819e54.parquet</Key><BucketName>warehouse</BucketName></Error>"
+        }
+      ]
+    },
+    {
+      "source_line": 105,
+      "phase": "same_table_recovered",
+      "kind": "dns",
+      "time": 1794376418.1899457,
+      "addresses": {
+        "catalog": "172.18.0.4",
+        "s3": "172.18.0.7"
+      }
+    },
+    {
+      "source_line": 106,
+      "phase": "same_table_recovered",
+      "kind": "rest",
+      "time": 1794376418.1918504,
+      "method": "POST",
+      "url": "http://catalog:8181/catalog/v1/signer/14b63b44-dd94-11f1-a975-47f6382a1768/tabular-id/01a1c92a-5dec-7920-9ca5-229970bcc4e7/v1/aws/s3/sign",
+      "headers": {
+        "User-Agent": "python-requests/2.34.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "Bearer [REDACTED]",
+        "X-Iceberg-Access-Delegation": "remote-signing",
+        "Content-Length": "394",
+        "Content-Type": "application/json"
+      },
+      "body": "b'{\"method\": \"HEAD\", \"region\": \"local\", \"uri\": \"http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\", \"headers\": {\"User-Agent\": [\"aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117\"]}}'",
+      "status": 200,
+      "response": "{\"uri\":\"http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\",\"headers\":{\"User-Agent\":[\"aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117\"],\"Cache-Control\":[\"private\"],\"x-amz-content-sha256\":[\"UNSIGNED-PAYLOAD\"],\"x-amz-date\":[\"20261111T055338Z\"],\"authorization\":[\"AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]\"]}}"
+    },
+    {
+      "source_line": 107,
+      "phase": "same_table_recovered",
+      "kind": "s3",
+      "time": 1794376418.1929717,
+      "method": "HEAD",
+      "url": "http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro",
+      "headers": {
+        "User-Agent": "b'aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117'",
+        "Cache-Control": "b'private'",
+        "x-amz-content-sha256": "b'UNSIGNED-PAYLOAD'",
+        "x-amz-date": "b'20261111T055338Z'",
+        "authorization": "b'AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]'",
+        "amz-sdk-invocation-id": "b'fbe45564-d2e9-4d3a-a14d-647658652889'",
+        "amz-sdk-request": "b'attempt=1'"
+      },
+      "status": 200,
+      "response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "4586",
+        "content-type": "application/octet-stream",
+        "etag": "\"de8b9edd1250579e7f03a2a69cc0512c\"",
+        "last-modified": "Wed, 11 Nov 2026 05:52:43 GMT",
+        "server": "SeaweedFS 8000GB 4.53",
+        "vary": "Origin",
+        "x-amz-request-id": "18E6E7D867B0FC37BDD4E8CF",
+        "x-amz-storage-class": "STANDARD",
+        "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+      },
+      "error": null
+    },
+    {
+      "source_line": 108,
+      "phase": "same_table_recovered",
+      "kind": "rest",
+      "time": 1794376418.1949024,
+      "method": "POST",
+      "url": "http://catalog:8181/catalog/v1/signer/14b63b44-dd94-11f1-a975-47f6382a1768/tabular-id/01a1c92a-5dec-7920-9ca5-229970bcc4e7/v1/aws/s3/sign",
+      "headers": {
+        "User-Agent": "python-requests/2.34.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "Bearer [REDACTED]",
+        "X-Iceberg-Access-Delegation": "remote-signing",
+        "Content-Length": "510",
+        "Content-Type": "application/json"
+      },
+      "body": "b'{\"method\": \"GET\", \"region\": \"local\", \"uri\": \"http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\", \"headers\": {\"Range\": [\"bytes=0-4585\"], \"If-Match\": [\"\\\\\"de8b9edd1250579e7f03a2a69cc0512c\\\\\"\"], \"x-amz-checksum-mode\": [\"ENABLED\"], \"User-Agent\": [\"aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117\"]}}'",
+      "status": 200,
+      "response": "{\"uri\":\"http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\",\"headers\":{\"If-Match\":[\"\\\"de8b9edd1250579e7f03a2a69cc0512c\\\"\"],\"Cache-Control\":[\"private\"],\"x-amz-date\":[\"20261111T055338Z\"],\"Range\":[\"bytes=0-4585\"],\"authorization\":[\"AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;if-match;range;x-amz-checksum-mode;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]\"],\"x-amz-content-sha256\":[\"UNSIGNED-PAYLOAD\"],\"x-amz-checksum-mode\":[\"ENABLED\"],\"User-Agent\":[\"aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117\"]}}"
+    },
+    {
+      "source_line": 109,
+      "phase": "same_table_recovered",
+      "kind": "s3",
+      "time": 1794376418.1964781,
+      "method": "GET",
+      "url": "http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro",
+      "headers": {
+        "Range": "b'bytes=0-4585'",
+        "If-Match": "b'\"de8b9edd1250579e7f03a2a69cc0512c\"'",
+        "x-amz-checksum-mode": "b'ENABLED'",
+        "User-Agent": "b'aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117'",
+        "Cache-Control": "b'private'",
+        "x-amz-date": "b'20261111T055338Z'",
+        "authorization": "b'AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;if-match;range;x-amz-checksum-mode;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]'",
+        "x-amz-content-sha256": "b'UNSIGNED-PAYLOAD'",
+        "amz-sdk-invocation-id": "b'5acdba27-a0e4-4819-b50b-2376b5cac3f7'",
+        "amz-sdk-request": "b'attempt=1'"
+      },
+      "status": 206,
+      "response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "4586",
+        "content-range": "bytes 0-4585/4586",
+        "content-type": "application/octet-stream",
+        "etag": "\"de8b9edd1250579e7f03a2a69cc0512c\"",
+        "last-modified": "Wed, 11 Nov 2026 05:52:43 GMT",
+        "server": "SeaweedFS 8000GB 4.53",
+        "vary": "Origin",
+        "x-amz-request-id": "18E6E7D867E047B8A6756E78",
+        "x-amz-storage-class": "STANDARD",
+        "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+      },
+      "error": null
+    },
+    {
+      "source_line": 143,
+      "phase": "reload_table",
+      "kind": "rest",
+      "time": 1794376418.2723317,
+      "method": "GET",
+      "url": "http://catalog:8181/catalog/v1/14b63b44-dd94-11f1-a975-47f6382a1768/namespaces/integration/tables/from_trino",
+      "headers": {
+        "User-Agent": "PyIceberg/0.12.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Iceberg-Access-Delegation": "remote-signing",
+        "Content-type": "application/json",
+        "X-Client-Version": "PyIceberg 0.12.0",
+        "Authorization": "Bearer [REDACTED]"
+      },
+      "body": null,
+      "status": 200,
+      "response": "{\"metadata-location\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00004-01a1c92a-6e0d-7700-914b-5d2b825a0c6d.gz.metadata.json\",\"metadata\":{\"format-version\":2,\"table-uuid\":\"01a1c92a-5dec-7920-9ca5-229970bcc4e7\",\"location\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7\",\"last-sequence-number\":4,\"last-updated-ms\":1794376363506,\"last-column-id\":2,\"schemas\":[{\"schema-id\":0,\"type\":\"struct\",\"fields\":[{\"id\":1,\"name\":\"id\",\"required\":false,\"type\":\"long\"},{\"id\":2,\"name\":\"label\",\"required\":false,\"type\":\"string\"}]}],\"current-schema-id\":0,\"partition-specs\":[{\"spec-id\":0,\"fields\":[]}],\"default-spec-id\":0,\"last-partition-id\":999,\"properties\":{\"write.format.default\":\"PARQUET\"},\"current-snapshot-id\":5179214582430294815,\"snapshot-log\":[{\"snapshot-id\":3374564731781143330,\"timestamp-ms\":1794376359733},{\"snapshot-id\":2282987996491928232,\"timestamp-ms\":1794376361160},{\"snapshot-id\":2226554312858969125,\"timestamp-ms\":1794376362975},{\"snapshot-id\":5179214582430294815,\"timestamp-ms\":1794376363506}],\"metadata-log\":[{\"metadata-file\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00000-01a1c92a-5dec-7920-9ca5-22aeaea2aff9.gz.metadata.json\",\"timestamp-ms\":1794376359404},{\"metadata-file\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00001-01a1c92a-5f59-78f3-8ab6-5a48d4cc28ff.gz.metadata.json\",\"timestamp-ms\":1794376359733},{\"metadata-file\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00002-01a1c92a-652d-7352-94c1-8ab11ac40a74.gz.metadata.json\",\"timestamp-ms\":1794376361160},{\"metadata-file\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00003-01a1c92a-6bf5-7621-9039-a62ecf062efa.gz.metadata.json\",\"timestamp-ms\":1794376362975}],\"sort-orders\":[{\"order-id\":0,\"fields\":[]}],\"default-sort-order-id\":0,\"refs\":{\"main\":{\"snapshot-id\":5179214582430294815,\"type\":\"branch\"}},\"statistics\":[{\"snapshot-id\":2282987996491928232,\"statistics-path\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/20261111_055239_00002_4n9xt-9e2cdf97-4a78-499a-ab54-5995df04c52c.stats\",\"file-size-in-bytes\":550,\"file-footer-size-in-bytes\":440,\"blob-metadata\":[{\"type\":\"apache-datasketches-theta-v1\",\"snapshot-id\":2282987996491928232,\"sequence-number\":2,\"fields\":[1],\"properties\":{\"ndv\":\"3\"}},{\"type\":\"apache-datasketches-theta-v1\",\"snapshot-id\":2282987996491928232,\"sequence-number\":2,\"fields\":[2],\"properties\":{\"ndv\":\"3\"}}]}],\"snapshots\":[{\"snapshot-id\":3374564731781143330,\"sequence-number\":1,\"timestamp-ms\":1794376359733,\"manifest-list\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-3374564731781143330-1-c387f2bc-2b5b-4908-9304-7a98bfaf409c.avro\",\"summary\":{\"operation\":\"append\",\"iceberg-version\":\"Apache Iceberg 1.12.0 (commit 212aa894e919ff9fdf89160da4aadcbe6858ac01)\",\"total-files-size\":\"0\",\"total-equality-deletes\":\"0\",\"total-delete-files\":\"0\",\"manifests-replaced\":\"0\",\"manifests-created\":\"0\",\"changed-partition-count\":\"0\",\"total-position-deletes\":\"0\",\"engine-name\":\"trino\",\"engine-version\":\"484\",\"trino_query_id\":\"20261111_055239_00001_4n9xt\",\"trino_user\":\"integration\",\"total-records\":\"0\",\"manifests-kept\":\"0\",\"total-data-files\":\"0\"},\"schema-id\":0},{\"snapshot-id\":2282987996491928232,\"parent-snapshot-id\":3374564731781143330,\"sequence-number\":2,\"timestamp-ms\":1794376361160,\"manifest-list\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-2282987996491928232-1-1b84497c-cf96-4cb5-855a-3714bd13ac5f.avro\",\"summary\":{\"operation\":\"append\",\"engine-version\":\"484\",\"trino_user\":\"integration\",\"added-records\":\"3\",\"total-data-files\":\"1\",\"total-position-deletes\":\"0\",\"trino_query_id\":\"20261111_055239_00002_4n9xt\",\"iceberg-version\":\"Apache Iceberg 1.12.0 (commit 212aa894e919ff9fdf89160da4aadcbe6858ac01)\",\"added-files-size\":\"368\",\"total-delete-files\":\"0\",\"engine-name\":\"trino\",\"changed-partition-count\":\"1\",\"added-data-files\":\"1\",\"total-files-size\":\"368\",\"manifests-kept\":\"0\",\"manifests-replaced\":\"0\",\"total-equality-deletes\":\"0\",\"total-records\":\"3\",\"manifests-created\":\"1\"},\"schema-id\":0},{\"snapshot-id\":2226554312858969125,\"parent-snapshot-id\":2282987996491928232,\"sequence-number\":3,\"timestamp-ms\":1794376362975,\"manifest-list\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-2226554312858969125-1-07305fb2-51f1-44c4-8de3-c6b245da50c0.avro\",\"summary\":{\"operation\":\"overwrite\",\"manifests-kept\":\"1\",\"total-equality-deletes\":\"0\",\"total-position-deletes\":\"1\",\"changed-partition-count\":\"1\",\"manifests-replaced\":\"0\",\"total-records\":\"4\",\"total-data-files\":\"2\",\"added-position-deletes\":\"1\",\"trino_user\":\"integration\",\"added-position-delete-files\":\"1\",\"added-records\":\"1\",\"engine-version\":\"484\",\"engine-name\":\"trino\",\"total-delete-files\":\"1\",\"total-files-size\":\"1695\",\"trino_query_id\":\"20261111_055242_00004_4n9xt\",\"added-data-files\":\"1\",\"manifests-created\":\"2\",\"added-files-size\":\"1327\",\"added-delete-files\":\"1\",\"iceberg-version\":\"Apache Iceberg 1.12.0 (commit 212aa894e919ff9fdf89160da4aadcbe6858ac01)\"},\"schema-id\":0},{\"snapshot-id\":5179214582430294815,\"parent-snapshot-id\":2226554312858969125,\"sequence-number\":4,\"timestamp-ms\":1794376363506,\"manifest-list\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\",\"summary\":{\"operation\":\"delete\",\"total-equality-deletes\":\"0\",\"added-position-delete-files\":\"1\",\"added-files-size\":\"964\",\"added-delete-files\":\"1\",\"manifests-created\":\"1\",\"total-position-deletes\":\"2\",\"engine-name\":\"trino\",\"total-files-size\":\"2659\",\"trino_query_id\":\"20261111_055243_00005_4n9xt\",\"manifests-replaced\":\"0\",\"changed-partition-count\":\"1\",\"iceberg-version\":\"Apache Iceberg 1.12.0 (commit 212aa894e919ff9fdf89160da4aadcbe6858ac01)\",\"trino_user\":\"integration\",\"total-delete-files\":\"2\",\"total-records\":\"4\",\"manifests-kept\":\"3\",\"engine-version\":\"484\",\"total-data-files\":\"2\",\"added-position-deletes\":\"1\"},\"schema-id\":0}]},\"config\":{\"s3.remote-signing-enabled\":\"true\",\"signer.uri\":\"http://catalog:8181/catalog/\",\"s3.signer.uri\":\"http://catalog:8181/catalog/\",\"s3.endpoint\":\"http://s3:8333/\",\"s3.path-style-access\":\"true\",\"s3.region\":\"local\",\"signer.endpoint\":\"v1/signer/14b63b44-dd94-11f1-a975-47f6382a1768/tabular-id/01a1c92a-5dec-7920-9ca5-229970bcc4e7/v1/aws/s3/sign\",\"region\":\"local\",\"py-io-impl\":\"pyiceberg.io.fsspec.FsspecFileIO\",\"s3.signer.endpoint\":\"v1/signer/14b63b44-dd94-11f1-a975-47f6382a1768/tabular-id/01a1c92a-5dec-7920-9ca5-229970bcc4e7/v1/aws/s3/sign\",\"client.region\":\"local\",\"s3.signer\":\"S3V4RestSigner\"},\"storage-credentials\":[{\"prefix\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7\",\"config\":{\"s3.region\":\"local\",\"client.region\":\"local\",\"s3.path-style-access\":\"true\",\"s3.endpoint\":\"http://s3:8333/\"}}]}"
+    },
+    {
+      "source_line": 145,
+      "phase": "reload_table",
+      "kind": "dns",
+      "time": 1794376418.2733684,
+      "addresses": {
+        "catalog": "172.18.0.4",
+        "s3": "172.18.0.7"
+      }
+    },
+    {
+      "source_line": 146,
+      "phase": "reload_table",
+      "kind": "rest",
+      "time": 1794376418.2759683,
+      "method": "POST",
+      "url": "http://catalog:8181/catalog/v1/signer/14b63b44-dd94-11f1-a975-47f6382a1768/tabular-id/01a1c92a-5dec-7920-9ca5-229970bcc4e7/v1/aws/s3/sign",
+      "headers": {
+        "User-Agent": "python-requests/2.34.2",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "Authorization": "Bearer [REDACTED]",
+        "X-Iceberg-Access-Delegation": "remote-signing",
+        "Content-Length": "394",
+        "Content-Type": "application/json"
+      },
+      "body": "b'{\"method\": \"HEAD\", \"region\": \"local\", \"uri\": \"http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\", \"headers\": {\"User-Agent\": [\"aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117\"]}}'",
+      "status": 200,
+      "response": "{\"uri\":\"http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\",\"headers\":{\"x-amz-content-sha256\":[\"UNSIGNED-PAYLOAD\"],\"authorization\":[\"AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]\"],\"User-Agent\":[\"aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117\"],\"Cache-Control\":[\"private\"],\"x-amz-date\":[\"20261111T055338Z\"]}}"
+    },
+    {
+      "source_line": 147,
+      "phase": "reload_table",
+      "kind": "s3",
+      "time": 1794376418.2776117,
+      "method": "HEAD",
+      "url": "http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro",
+      "headers": {
+        "User-Agent": "b'aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117'",
+        "x-amz-content-sha256": "b'UNSIGNED-PAYLOAD'",
+        "authorization": "b'AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]'",
+        "Cache-Control": "b'private'",
+        "x-amz-date": "b'20261111T055338Z'",
+        "amz-sdk-invocation-id": "b'81a572fc-9a76-42b8-9879-c91227124bbb'",
+        "amz-sdk-request": "b'attempt=1'"
+      },
+      "status": 200,
+      "response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "4586",
+        "content-type": "application/octet-stream",
+        "etag": "\"de8b9edd1250579e7f03a2a69cc0512c\"",
+        "last-modified": "Wed, 11 Nov 2026 05:52:43 GMT",
+        "server": "SeaweedFS 8000GB 4.53",
+        "vary": "Origin",
+        "x-amz-request-id": "18E6E7D86CB7D217B5ED0AC4",
+        "x-amz-storage-class": "STANDARD",
+        "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+      },
+      "error": null
+    },
+    {
+      "source_line": 149,
+      "phase": "reload_table",
+      "kind": "s3",
+      "time": 1794376418.2817414,
+      "method": "GET",
+      "url": "http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro",
+      "headers": {
+        "Range": "b'bytes=0-4585'",
+        "If-Match": "b'\"de8b9edd1250579e7f03a2a69cc0512c\"'",
+        "x-amz-checksum-mode": "b'ENABLED'",
+        "User-Agent": "b'aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117'",
+        "Cache-Control": "b'private'",
+        "x-amz-date": "b'20261111T055338Z'",
+        "x-amz-content-sha256": "b'UNSIGNED-PAYLOAD'",
+        "authorization": "b'AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;if-match;range;x-amz-checksum-mode;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]'",
+        "amz-sdk-invocation-id": "b'04fab550-a5ca-46fe-bda6-c72e2121b843'",
+        "amz-sdk-request": "b'attempt=1'"
+      },
+      "status": 206,
+      "response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "4586",
+        "content-range": "bytes 0-4585/4586",
+        "content-type": "application/octet-stream",
+        "etag": "\"de8b9edd1250579e7f03a2a69cc0512c\"",
+        "last-modified": "Wed, 11 Nov 2026 05:52:43 GMT",
+        "server": "SeaweedFS 8000GB 4.53",
+        "vary": "Origin",
+        "x-amz-request-id": "18E6E7D86CF437B00D307511",
+        "x-amz-storage-class": "STANDARD",
+        "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+      },
+      "error": null
+    },
+    {
+      "source_line": 183,
+      "phase": "new_catalog",
+      "kind": "rest",
+      "time": 1794376418.347968,
+      "method": "GET",
+      "url": "http://catalog:8181/catalog/v1/config?warehouse=qualification",
+      "headers": {
+        "User-Agent": "PyIceberg/0.12.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Iceberg-Access-Delegation": "remote-signing",
+        "Content-type": "application/json",
+        "X-Client-Version": "PyIceberg 0.12.0",
+        "Authorization": "Bearer [REDACTED]"
+      },
+      "body": null,
+      "status": 200,
+      "response": "{\"overrides\":{\"idempotency-key-lifetime\":\"PT30M\",\"uri\":\"http://catalog:8181/catalog\"},\"defaults\":{\"rest-page-size\":\"100\",\"prefix\":\"14b63b44-dd94-11f1-a975-47f6382a1768\"},\"endpoints\":[\"GET /v1/config\",\"GET /v1/{prefix}/namespaces\",\"HEAD /v1/{prefix}/namespaces/{namespace}\",\"POST /v1/{prefix}/namespaces\",\"GET /v1/{prefix}/namespaces/{namespace}\",\"DELETE /v1/{prefix}/namespaces/{namespace}\",\"POST /v1/{prefix}/namespaces/{namespace}/properties\",\"GET /v1/{prefix}/namespaces/{namespace}/tables\",\"POST /v1/{prefix}/namespaces/{namespace}/tables\",\"GET /v1/{prefix}/namespaces/{namespace}/tables/{table}\",\"POST /v1/{prefix}/namespaces/{namespace}/tables/{table}\",\"DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}\",\"HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}\",\"GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials\",\"POST /v1/{prefix}/tables/rename\",\"POST /v1/{prefix}/namespaces/{namespace}/register\",\"POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics\",\"POST /v1/{prefix}/transactions/commit\",\"POST /v1/{prefix}/namespaces/{namespace}/views\",\"GET /v1/{prefix}/namespaces/{namespace}/views\",\"GET /v1/{prefix}/namespaces/{namespace}/views/{view}\",\"POST /v1/{prefix}/namespaces/{namespace}/views/{view}\",\"DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}\",\"HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}\",\"POST /v1/{prefix}/views/rename\"]}"
+    },
+    {
+      "source_line": 184,
+      "phase": "new_catalog",
+      "kind": "rest",
+      "time": 1794376418.3559318,
+      "method": "GET",
+      "url": "http://catalog:8181/catalog/v1/14b63b44-dd94-11f1-a975-47f6382a1768/namespaces/integration/tables/from_trino",
+      "headers": {
+        "User-Agent": "PyIceberg/0.12.0",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept": "*/*",
+        "Connection": "keep-alive",
+        "X-Iceberg-Access-Delegation": "remote-signing",
+        "Content-type": "application/json",
+        "X-Client-Version": "PyIceberg 0.12.0",
+        "Authorization": "Bearer [REDACTED]"
+      },
+      "body": null,
+      "status": 200,
+      "response": "{\"metadata-location\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00004-01a1c92a-6e0d-7700-914b-5d2b825a0c6d.gz.metadata.json\",\"metadata\":{\"format-version\":2,\"table-uuid\":\"01a1c92a-5dec-7920-9ca5-229970bcc4e7\",\"location\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7\",\"last-sequence-number\":4,\"last-updated-ms\":1794376363506,\"last-column-id\":2,\"schemas\":[{\"schema-id\":0,\"type\":\"struct\",\"fields\":[{\"id\":1,\"name\":\"id\",\"required\":false,\"type\":\"long\"},{\"id\":2,\"name\":\"label\",\"required\":false,\"type\":\"string\"}]}],\"current-schema-id\":0,\"partition-specs\":[{\"spec-id\":0,\"fields\":[]}],\"default-spec-id\":0,\"last-partition-id\":999,\"properties\":{\"write.format.default\":\"PARQUET\"},\"current-snapshot-id\":5179214582430294815,\"snapshot-log\":[{\"snapshot-id\":3374564731781143330,\"timestamp-ms\":1794376359733},{\"snapshot-id\":2282987996491928232,\"timestamp-ms\":1794376361160},{\"snapshot-id\":2226554312858969125,\"timestamp-ms\":1794376362975},{\"snapshot-id\":5179214582430294815,\"timestamp-ms\":1794376363506}],\"metadata-log\":[{\"metadata-file\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00000-01a1c92a-5dec-7920-9ca5-22aeaea2aff9.gz.metadata.json\",\"timestamp-ms\":1794376359404},{\"metadata-file\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00001-01a1c92a-5f59-78f3-8ab6-5a48d4cc28ff.gz.metadata.json\",\"timestamp-ms\":1794376359733},{\"metadata-file\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00002-01a1c92a-652d-7352-94c1-8ab11ac40a74.gz.metadata.json\",\"timestamp-ms\":1794376361160},{\"metadata-file\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/00003-01a1c92a-6bf5-7621-9039-a62ecf062efa.gz.metadata.json\",\"timestamp-ms\":1794376362975}],\"sort-orders\":[{\"order-id\":0,\"fields\":[]}],\"default-sort-order-id\":0,\"refs\":{\"main\":{\"snapshot-id\":5179214582430294815,\"type\":\"branch\"}},\"statistics\":[{\"snapshot-id\":2282987996491928232,\"statistics-path\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/20261111_055239_00002_4n9xt-9e2cdf97-4a78-499a-ab54-5995df04c52c.stats\",\"file-size-in-bytes\":550,\"file-footer-size-in-bytes\":440,\"blob-metadata\":[{\"type\":\"apache-datasketches-theta-v1\",\"snapshot-id\":2282987996491928232,\"sequence-number\":2,\"fields\":[1],\"properties\":{\"ndv\":\"3\"}},{\"type\":\"apache-datasketches-theta-v1\",\"snapshot-id\":2282987996491928232,\"sequence-number\":2,\"fields\":[2],\"properties\":{\"ndv\":\"3\"}}]}],\"snapshots\":[{\"snapshot-id\":5179214582430294815,\"parent-snapshot-id\":2226554312858969125,\"sequence-number\":4,\"timestamp-ms\":1794376363506,\"manifest-list\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro\",\"summary\":{\"operation\":\"delete\",\"trino_user\":\"integration\",\"manifests-replaced\":\"0\",\"total-data-files\":\"2\",\"trino_query_id\":\"20261111_055243_00005_4n9xt\",\"engine-name\":\"trino\",\"engine-version\":\"484\",\"total-equality-deletes\":\"0\",\"changed-partition-count\":\"1\",\"total-records\":\"4\",\"iceberg-version\":\"Apache Iceberg 1.12.0 (commit 212aa894e919ff9fdf89160da4aadcbe6858ac01)\",\"added-position-deletes\":\"1\",\"manifests-kept\":\"3\",\"added-files-size\":\"964\",\"total-files-size\":\"2659\",\"manifests-created\":\"1\",\"added-delete-files\":\"1\",\"total-delete-files\":\"2\",\"total-position-deletes\":\"2\",\"added-position-delete-files\":\"1\"},\"schema-id\":0},{\"snapshot-id\":2226554312858969125,\"parent-snapshot-id\":2282987996491928232,\"sequence-number\":3,\"timestamp-ms\":1794376362975,\"manifest-list\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-2226554312858969125-1-07305fb2-51f1-44c4-8de3-c6b245da50c0.avro\",\"summary\":{\"operation\":\"overwrite\",\"added-position-deletes\":\"1\",\"added-delete-files\":\"1\",\"total-records\":\"4\",\"manifests-kept\":\"1\",\"total-delete-files\":\"1\",\"iceberg-version\":\"Apache Iceberg 1.12.0 (commit 212aa894e919ff9fdf89160da4aadcbe6858ac01)\",\"total-data-files\":\"2\",\"total-equality-deletes\":\"0\",\"total-position-deletes\":\"1\",\"added-position-delete-files\":\"1\",\"added-records\":\"1\",\"trino_user\":\"integration\",\"engine-version\":\"484\",\"total-files-size\":\"1695\",\"engine-name\":\"trino\",\"added-data-files\":\"1\",\"trino_query_id\":\"20261111_055242_00004_4n9xt\",\"added-files-size\":\"1327\",\"manifests-created\":\"2\",\"manifests-replaced\":\"0\",\"changed-partition-count\":\"1\"},\"schema-id\":0},{\"snapshot-id\":2282987996491928232,\"parent-snapshot-id\":3374564731781143330,\"sequence-number\":2,\"timestamp-ms\":1794376361160,\"manifest-list\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-2282987996491928232-1-1b84497c-cf96-4cb5-855a-3714bd13ac5f.avro\",\"summary\":{\"operation\":\"append\",\"total-files-size\":\"368\",\"total-data-files\":\"1\",\"total-delete-files\":\"0\",\"engine-version\":\"484\",\"manifests-created\":\"1\",\"total-position-deletes\":\"0\",\"trino_query_id\":\"20261111_055239_00002_4n9xt\",\"manifests-kept\":\"0\",\"changed-partition-count\":\"1\",\"added-files-size\":\"368\",\"total-equality-deletes\":\"0\",\"trino_user\":\"integration\",\"total-records\":\"3\",\"added-records\":\"3\",\"iceberg-version\":\"Apache Iceberg 1.12.0 (commit 212aa894e919ff9fdf89160da4aadcbe6858ac01)\",\"manifests-replaced\":\"0\",\"engine-name\":\"trino\",\"added-data-files\":\"1\"},\"schema-id\":0},{\"snapshot-id\":3374564731781143330,\"sequence-number\":1,\"timestamp-ms\":1794376359733,\"manifest-list\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-3374564731781143330-1-c387f2bc-2b5b-4908-9304-7a98bfaf409c.avro\",\"summary\":{\"operation\":\"append\",\"total-data-files\":\"0\",\"iceberg-version\":\"Apache Iceberg 1.12.0 (commit 212aa894e919ff9fdf89160da4aadcbe6858ac01)\",\"total-records\":\"0\",\"engine-version\":\"484\",\"manifests-created\":\"0\",\"trino_query_id\":\"20261111_055239_00001_4n9xt\",\"trino_user\":\"integration\",\"manifests-kept\":\"0\",\"manifests-replaced\":\"0\",\"total-files-size\":\"0\",\"total-delete-files\":\"0\",\"total-position-deletes\":\"0\",\"engine-name\":\"trino\",\"changed-partition-count\":\"0\",\"total-equality-deletes\":\"0\"},\"schema-id\":0}]},\"config\":{\"s3.remote-signing-enabled\":\"true\",\"signer.endpoint\":\"v1/signer/14b63b44-dd94-11f1-a975-47f6382a1768/tabular-id/01a1c92a-5dec-7920-9ca5-229970bcc4e7/v1/aws/s3/sign\",\"s3.signer.endpoint\":\"v1/signer/14b63b44-dd94-11f1-a975-47f6382a1768/tabular-id/01a1c92a-5dec-7920-9ca5-229970bcc4e7/v1/aws/s3/sign\",\"signer.uri\":\"http://catalog:8181/catalog/\",\"s3.signer.uri\":\"http://catalog:8181/catalog/\",\"s3.region\":\"local\",\"region\":\"local\",\"client.region\":\"local\",\"s3.endpoint\":\"http://s3:8333/\",\"s3.signer\":\"S3V4RestSigner\",\"s3.path-style-access\":\"true\",\"py-io-impl\":\"pyiceberg.io.fsspec.FsspecFileIO\"},\"storage-credentials\":[{\"prefix\":\"s3://warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7\",\"config\":{\"client.region\":\"local\",\"s3.region\":\"local\",\"s3.path-style-access\":\"true\",\"s3.endpoint\":\"http://s3:8333/\"}}]}"
+    },
+    {
+      "source_line": 186,
+      "phase": "new_catalog",
+      "kind": "dns",
+      "time": 1794376418.3568928,
+      "addresses": {
+        "catalog": "172.18.0.4",
+        "s3": "172.18.0.7"
+      }
+    },
+    {
+      "source_line": 188,
+      "phase": "new_catalog",
+      "kind": "s3",
+      "time": 1794376418.3609543,
+      "method": "HEAD",
+      "url": "http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro",
+      "headers": {
+        "User-Agent": "b'aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117'",
+        "x-amz-content-sha256": "b'UNSIGNED-PAYLOAD'",
+        "authorization": "b'AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]'",
+        "Cache-Control": "b'private'",
+        "x-amz-date": "b'20261111T055338Z'",
+        "amz-sdk-invocation-id": "b'a2f4da54-2aea-43c8-adde-b5eae0dcd344'",
+        "amz-sdk-request": "b'attempt=1'"
+      },
+      "status": 200,
+      "response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "4586",
+        "content-type": "application/octet-stream",
+        "etag": "\"de8b9edd1250579e7f03a2a69cc0512c\"",
+        "last-modified": "Wed, 11 Nov 2026 05:52:43 GMT",
+        "server": "SeaweedFS 8000GB 4.53",
+        "vary": "Origin",
+        "x-amz-request-id": "18E6E7D871AF85E93ECDBB7F",
+        "x-amz-storage-class": "STANDARD",
+        "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+      },
+      "error": null
+    },
+    {
+      "source_line": 190,
+      "phase": "new_catalog",
+      "kind": "s3",
+      "time": 1794376418.3648217,
+      "method": "GET",
+      "url": "http://s3:8333/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/metadata/snap-5179214582430294815-1-22267c49-2661-402e-91a9-f8ddcf0c3a01.avro",
+      "headers": {
+        "Range": "b'bytes=0-4585'",
+        "If-Match": "b'\"de8b9edd1250579e7f03a2a69cc0512c\"'",
+        "x-amz-checksum-mode": "b'ENABLED'",
+        "User-Agent": "b'aiobotocore/3.10.0 md/Botocore#1.43.117 ua/2.1 os/linux#7.0.0-1017-azure md/arch#x86_64 lang/python#3.12.3 md/pyimpl#CPython m/N,D,b,Z cfg/retry-mode#legacy botocore/1.43.117'",
+        "x-amz-content-sha256": "b'UNSIGNED-PAYLOAD'",
+        "x-amz-date": "b'20261111T055338Z'",
+        "authorization": "b'AWS4-HMAC-SHA256 Credential=[REDACTED]/20261111/local/s3/aws4_request, SignedHeaders=host;if-match;range;x-amz-checksum-mode;x-amz-content-sha256;x-amz-date, Signature=[REDACTED]'",
+        "Cache-Control": "b'private'",
+        "amz-sdk-invocation-id": "b'850e7439-7797-488d-b473-43effa7feb9c'",
+        "amz-sdk-request": "b'attempt=1'"
+      },
+      "status": 206,
+      "response_headers": {
+        "accept-ranges": "bytes",
+        "content-length": "4586",
+        "content-range": "bytes 0-4585/4586",
+        "content-type": "application/octet-stream",
+        "etag": "\"de8b9edd1250579e7f03a2a69cc0512c\"",
+        "last-modified": "Wed, 11 Nov 2026 05:52:43 GMT",
+        "server": "SeaweedFS 8000GB 4.53",
+        "vary": "Origin",
+        "x-amz-request-id": "18E6E7D871E7EB224DA8140A",
+        "x-amz-storage-class": "STANDARD",
+        "date": "Wed, 11 Nov 2026 05:53:38 GMT"
+      },
+      "error": null
+    }
+  ],
+  "seaweed_error_log": [
+    "s3-1        | {\"ts\":\"2026-11-11T05:53:38.188951197Z\",\"level\":\"INFO\",\"file\":\"error_handler.go\",\"line\":164,\"msg\":\"status 403 application/xml: <?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<Error><Code>AccessDenied</Code><Message>Access Denied.</Message><Resource>/warehouse/01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-1cf33fdc-53b7-4b1d-9d88-494435819e54.parquet</Resource><RequestId>18E6E7D86777F04CC958991F</RequestId><Key>01a1c92a-5dec-7920-9ca5-229970bcc4e7/data/20261111_055242_00004_4n9xt-1cf33fdc-53b7-4b1d-9d88-494435819e54.parquet</Key><BucketName>warehouse</BucketName></Error>\"}"
+  ]
+}
