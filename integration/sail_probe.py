@@ -143,13 +143,17 @@ def exercise(h):
     )
     assert status == 200, (status, response)
     config = response.get("config", {})
-    assert not any(
-        config.get(key) for key in ("s3.access-key-id", "s3.secret-access-key", "s3.session-token")
-    )
-    assert not response.get("storage-credentials"), response
-    assert any("sign" in key and value for key, value in config.items()), config
+    storage = response["storage-credentials"]
+    assert len(storage) == 1 and storage[0]["prefix"] == response["metadata"]["location"], storage
+    for properties in [config, storage[0]["config"]]:
+        assert not any(
+            key in properties
+            for key in ("s3.access-key-id", "s3.secret-access-key", "s3.session-token")
+        ), properties
+    assert config["s3.signer"] == "S3V4RestSigner", config
+    assert config["s3.remote-signing-enabled"] == "true", config
     h.record(
-        "sail_vended_response", {"status": status, "config": config, "storage-credentials": []}
+        "sail_vended_response", {"status": status, "config": config, "storage-credentials": storage}
     )
     assert (
         queries(
