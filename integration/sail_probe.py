@@ -79,6 +79,8 @@ def check_rows(h, rows):
 def interoperability(h):
     # Capture only T10 traffic; cleanup redacts credentials before artifact upload.
     # Never patch the engine or proxy/rewrite its delegation request.
+    item = json.loads(subprocess.check_output(["docker", "inspect", h.cid("sail")]))[0]
+    address = item["NetworkSettings"]["Networks"]["lakehouse-integration_private"]["IPAddress"]
     traffic = h.REPORTS / "sail-traffic.log"
     capture_log = h.REPORTS / "sail-capture.log"
     with traffic.open("w") as out, capture_log.open("w") as err:
@@ -92,7 +94,7 @@ def interoperability(h):
                 "-A",
                 "-s",
                 "0",
-                "tcp port 8181 or tcp port 8333",
+                f"host {address} and (tcp port 8181 or tcp port 8333)",
             ],
             stdout=out,
             stderr=err,
@@ -112,6 +114,7 @@ def interoperability(h):
         finally:
             subprocess.run(["sudo", "kill", "-INT", str(capture.pid)], check=True)
             assert capture.wait(timeout=15) == 0, capture_log.read_text()
+    assert "0 packets dropped by kernel" in capture_log.read_text(), capture_log.read_text()
     trace = traffic.read_text()
     assert "x-iceberg-access-delegation: vended-credentials" in trace.lower()
     assert "Credential=" + h.CREDS["access"] + "/" in trace
@@ -120,7 +123,7 @@ def interoperability(h):
         "delegation": "vended-credentials (observed on wire)",
         "s3_authorization": "AWS SigV4 with fixture's static access key (observed on wire)",
         "signer_posts": 0,
-        "trace": "sail-traffic.log (redacted)",
+        "trace": "sail-traffic.log (redacted, filtered to Sail container IP)",
     }
     return result
 
