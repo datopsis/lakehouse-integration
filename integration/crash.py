@@ -23,7 +23,7 @@ def insert(table, batch):
     return f"INSERT INTO iceberg.integration.{table} VALUES {values}"
 
 
-def check_batches(rows, attempts, snapshots):
+def check_batches(rows, attempts, snapshots, initial_snapshot):
     """Exact multi-row atomicity oracle; unknown, duplicate, or missing rows fail."""
     assert len({a["batch"] for a in attempts}) == len(attempts), "Duplicate attempt IDs"
     assert all(a["outcome"] in ("acknowledged", "in-flight") for a in attempts)
@@ -42,7 +42,9 @@ def check_batches(rows, attempts, snapshots):
         outcomes[str(batch)] = visible
         expected.extend(actual)
     assert rows == expected, ("Unexpected/duplicate/out-of-order rows", rows, expected)
-    assert len(snapshots) == sum(v == "fully-visible" for v in outcomes.values()), snapshots
+    assert initial_snapshot[1:] == [None, "append"], initial_snapshot
+    assert snapshots and snapshots[0] == initial_snapshot, snapshots
+    assert len(snapshots) == 1 + sum(v == "fully-visible" for v in outcomes.values()), snapshots
     assert len({s[0] for s in snapshots}) == len(snapshots), snapshots
     assert all(s[2] == "append" for s in snapshots), snapshots
     assert [s[1] for s in snapshots] == (
@@ -73,7 +75,7 @@ def verify(p, manifest):
         assert py_snapshots == snapshots, (name, py_snapshots, snapshots)
         # An append-only crash table must have one unbroken chain, no orphan snapshots.
         if "attempts" in spec:
-            outcomes = check_batches(rows, spec["attempts"], snapshots)
+            outcomes = check_batches(rows, spec["attempts"], snapshots, spec["initial_snapshot"])
             assert table.metadata.current_snapshot_id == (snapshots[-1][0] if snapshots else None)
         else:
             assert rows == spec["rows"], (name, rows)
@@ -178,8 +180,7 @@ def settle(p, attempt):
     raise AssertionError(f"Query {query_id} did not settle")
 
 
-def component(p, service, manifest, journal):
-    table = "crash_" + service
+def create_table(p, table):
     assert (
         p.sql(
             f"CREATE TABLE iceberg.integration.{table} (batch BIGINT, row_id BIGINT, label VARCHAR) "
@@ -187,9 +188,16 @@ def component(p, service, manifest, journal):
         )
         == []
     )
-    assert snapshot_rows(p, table) == []
-    attempts = []
-    manifest[table] = {"attempts": attempts}
+    snapshots = snapshot_rows(p, table)
+    assert len(snapshots) == 1 and snapshots[0][1:] == [None, "append"], snapshots
+    assert p.sql(f"SELECT * FROM iceberg.integration.{table}") == []
+    return {"attempts": [], "initial_snapshot": snapshots[0]}
+
+
+def component(p, service, manifest, journal):
+    table = "crash_" + service
+    manifest[table] = create_table(p, table)
+    attempts = manifest[table]["attempts"]
     injected = threading.Event()
     before = containers(p, [service])
     restarted = threading.Event()
@@ -303,15 +311,7 @@ def crash_durability(p):
             "snapshots": snapshot_rows(p, name),
         }
     name = "crash_all"
-    assert (
-        p.sql(
-            f"CREATE TABLE iceberg.integration.{name} (batch BIGINT, row_id BIGINT, label VARCHAR) "
-            "WITH (format='PARQUET', format_version=2)"
-        )
-        == []
-    )
-    assert snapshot_rows(p, name) == []
-    manifest[name] = {"attempts": []}
+    manifest[name] = create_table(p, name)
     for batch in (1, 2, 3):
         assert p.sql(insert(name, batch)) == [[BATCH_SIZE]]
         attempt = {"batch": batch, "outcome": "acknowledged"}

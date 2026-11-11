@@ -65,7 +65,7 @@ Parquet table and journals three successful 16-row INSERTs on the runner. One
 `docker kill --signal=KILL` invocation targets all seven service IDs; every target
 must stop with exit code 137. `compose start` reuses the same containers and named
 volumes. Both Trino and a fresh PyIceberg process must read all 48 exact rows and
-exactly three append snapshots with matching IDs and parents.
+exactly four append snapshots (one empty CREATE plus three INSERTs) with matching IDs and parents.
 
 Next, separate tables exercise PostgreSQL, Lakekeeper (`catalog`), SeaweedFS
 `volume`, and `filer` in that order. A continuous writer assigns every INSERT a
@@ -83,8 +83,8 @@ state (or is explicitly cancelled and confirmed terminal), its entire batch may
 be present or absent. No query is left running when rows are checked. Unknown
 submissions that cannot be settled fail closed. Exact batch comparison rejects
 partial, duplicate, unexpected or changed rows; every acknowledged batch is
-mandatory. The snapshot count must equal the number of fully visible batches,
-all operations must be append, and the parent chain and current snapshot must
+mandatory. The snapshot count must equal one creation snapshot plus the number of fully
+visible batches; the original empty creation snapshot must survive unchanged. All operations must be append, and the parent chain and current snapshot must
 match. Both clients must agree on rows and snapshot metadata.
 
 A new INSERT started after component restart must succeed. Recovery time is

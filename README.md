@@ -36,7 +36,7 @@ security gate, and does not authorize release or modify the jars.
 | T5 | `compose down` keeps volumes; `up` replaces all seven IDs; fresh clients reread every table; a new write is read back |
 | T6 | Anonymous S3 and wrong S3 secret return specific 403 errors; missing encryption key prevents Lakekeeper startup; wrong PostgreSQL password prevents migration |
 | T7 | Non-root, read-only roots, dropped capabilities, no-new-privileges, internal network, no published ports; S3 cannot read PostgreSQL secrets |
-| T8 | SIGKILL all seven services after three acknowledged 16-row INSERTs; exact rows and three snapshots after restart on the same volumes. SIGKILL PostgreSQL, Lakekeeper, volume, and filer during continuous INSERTs; retain every acknowledged batch, require ambiguous batches fully visible or absent, verify snapshot counts/chains and fresh PyIceberg/Trino reads, and require a new successful write after each restart. Report recovery seconds per component. |
+| T8 | SIGKILL all seven services after three acknowledged 16-row INSERTs; exact rows and four snapshots (CREATE plus three INSERTs) after restart on the same volumes. SIGKILL PostgreSQL, Lakekeeper, volume, and filer during continuous INSERTs; retain every acknowledged batch, require ambiguous batches fully visible or absent, verify snapshot counts/chains and fresh PyIceberg/Trino reads, and require a new successful write after each restart. Report recovery seconds per component. |
 | Canary | Default Trino encoding, INSERT/UPDATE/DELETE, then PyIceberg read; only the exact known Arrow decoder error is an expected failure |
 
 The main Iceberg catalog sets
