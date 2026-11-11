@@ -1,0 +1,256 @@
+{
+  "wrong_s3_secret": {
+    "status": 400,
+    "body": {
+      "error": {
+        "message": "IO error at `s3://warehouse/01a1c8aa-3c3c-79f2-9f7e-922e075f328d/metadata/test`: S3 write failed: The request signature we calculated does not match the signature you provided. Check your key and signing method.",
+        "type": "Unexpected",
+        "code": 400,
+        "stack": [
+          "IO Operation Failed during validation.",
+          "Error ID: 01a1c8aa-3f02-7b72-9873-edc588f83a58"
+        ]
+      }
+    }
+  },
+  "elapsed_seconds": 76.97,
+  "warehouse": {
+    "profile": {
+      "type": "s3",
+      "bucket": "warehouse",
+      "region": "local",
+      "sts-enabled": false,
+      "flavor": "s3-compat",
+      "endpoint": "http://s3:8333",
+      "path-style-access": true
+    },
+    "response": {
+      "id": "93414e68-dd80-11f1-bbb7-cb701ebb818b",
+      "warehouse-id": "93414e68-dd80-11f1-bbb7-cb701ebb818b",
+      "name": "qualification",
+      "project-id": "00000000-0000-0000-0000-000000000000",
+      "storage-profile": {
+        "type": "s3",
+        "bucket": "warehouse",
+        "key-prefix": null,
+        "assume-role-arn": null,
+        "endpoint": "http://s3:8333/",
+        "region": "local",
+        "path-style-access": true,
+        "sts-role-arn": null,
+        "sts-endpoint": null,
+        "sts-enabled": false,
+        "sts-token-validity-seconds": 3600,
+        "sts-session-tags": {},
+        "flavor": "s3-compat",
+        "allow-alternative-protocols": null,
+        "remote-signing-url-style": "auto",
+        "push-s3-delete-disabled": true,
+        "aws-kms-key-arn": null,
+        "remote-signing-enabled": true,
+        "legacy-md5-behavior": null,
+        "storage-layout": null
+      },
+      "storage-credential-type": {
+        "type": "s3",
+        "credential-type": "access-key"
+      },
+      "delete-profile": {
+        "type": "hard"
+      },
+      "status": "active",
+      "protected": false,
+      "managed-by": "self-managed",
+      "allowed-format-versions": [
+        1,
+        2,
+        3
+      ],
+      "updated-at": null
+    }
+  },
+  "hardening": {
+    "postgres": {
+      "Uid": "26\t26\t26\t26",
+      "CapEff": "0000000000000000",
+      "NoNewPrivs": "1"
+    },
+    "master": {
+      "Uid": "1000\t1000\t1000\t1000",
+      "CapEff": "0000000000000000",
+      "NoNewPrivs": "1"
+    },
+    "volume": {
+      "Uid": "1000\t1000\t1000\t1000",
+      "CapEff": "0000000000000000",
+      "NoNewPrivs": "1"
+    },
+    "filer": {
+      "Uid": "1000\t1000\t1000\t1000",
+      "CapEff": "0000000000000000",
+      "NoNewPrivs": "1"
+    },
+    "s3": {
+      "Uid": "1000\t1000\t1000\t1000",
+      "CapEff": "0000000000000000",
+      "NoNewPrivs": "1"
+    },
+    "catalog": {
+      "Uid": "999\t999\t999\t999",
+      "CapEff": "0000000000000000",
+      "NoNewPrivs": "1"
+    },
+    "trino": {
+      "Uid": "10001\t10001\t10001\t10001",
+      "CapEff": "0000000000000000",
+      "NoNewPrivs": "1"
+    }
+  },
+  "trino_create_insert_select": {
+    "status": "pass",
+    "seconds": 3.55,
+    "value": "CREATE TABLE / INSERT / SELECT asserted"
+  },
+  "trino_update_delete_history": {
+    "status": "pass",
+    "seconds": 2.47,
+    "value": {
+      "snapshots": [
+        [
+          7963018364125892156,
+          "append"
+        ],
+        [
+          5920020698855727889,
+          "append"
+        ],
+        [
+          7138454465796380713,
+          "overwrite"
+        ],
+        [
+          2593314625979229096,
+          "delete"
+        ]
+      ],
+      "history": [
+        [
+          7963018364125892156,
+          true
+        ],
+        [
+          5920020698855727889,
+          true
+        ],
+        [
+          7138454465796380713,
+          true
+        ],
+        [
+          2593314625979229096,
+          true
+        ]
+      ]
+    }
+  },
+  "pyiceberg_reads_trino": {
+    "status": "fail",
+    "seconds": 0.97,
+    "error": "Not yet implemented: DecodeArrow of DictAccumulator for DeltaLengthByteArrayDecoder."
+  },
+  "trino_reads_pyiceberg": {
+    "status": "pass",
+    "seconds": 0.5,
+    "value": {
+      "metadata": "s3://warehouse/01a1c8aa-a271-7382-b7a9-3b2c63ec9ea5/metadata/00001-01a1c8aa-a2b1-7073-a346-932520cdac3b.gz.metadata.json",
+      "rows": 2
+    }
+  },
+  "delegation_modes": {
+    "none": {
+      "status": 200,
+      "config_keys": [
+        "client.region",
+        "py-io-impl",
+        "region",
+        "s3.endpoint",
+        "s3.path-style-access",
+        "s3.region",
+        "s3.remote-signing-enabled",
+        "s3.signer",
+        "s3.signer.endpoint",
+        "s3.signer.uri",
+        "signer.endpoint",
+        "signer.uri"
+      ],
+      "remote_signing_enabled": "true",
+      "error": null
+    },
+    "vended-credentials": {
+      "status": 200,
+      "config_keys": [
+        "client.region",
+        "py-io-impl",
+        "region",
+        "s3.endpoint",
+        "s3.path-style-access",
+        "s3.region",
+        "s3.remote-signing-enabled",
+        "s3.signer",
+        "s3.signer.endpoint",
+        "s3.signer.uri",
+        "signer.endpoint",
+        "signer.uri"
+      ],
+      "remote_signing_enabled": "true",
+      "error": null
+    },
+    "remote-signing": {
+      "status": 200,
+      "config_keys": [
+        "client.region",
+        "py-io-impl",
+        "region",
+        "s3.endpoint",
+        "s3.path-style-access",
+        "s3.region",
+        "s3.remote-signing-enabled",
+        "s3.signer",
+        "s3.signer.endpoint",
+        "s3.signer.uri",
+        "signer.endpoint",
+        "signer.uri"
+      ],
+      "remote_signing_enabled": "true",
+      "error": null
+    },
+    "vended-credentials,remote-signing": {
+      "status": 200,
+      "config_keys": [
+        "client.region",
+        "py-io-impl",
+        "region",
+        "s3.endpoint",
+        "s3.path-style-access",
+        "s3.region",
+        "s3.remote-signing-enabled",
+        "s3.signer",
+        "s3.signer.endpoint",
+        "s3.signer.uri",
+        "signer.endpoint",
+        "signer.uri"
+      ],
+      "remote_signing_enabled": "true",
+      "error": null
+    },
+    "trino_vending_true": {
+      "error": "{\"message\": \"io.trino.spi.TrinoException: Error processing metadata for table spike.from_trino\", \"errorCode\": 65536, \"errorName\": \"GENERIC_INTERNAL_ERROR\", \"errorType\": \"INTERNAL_ERROR\", \"failureInfo\": {\"type\": \"java.util.concurrent.CompletionException\", \"message\": \"io.trino.spi.TrinoException: Error processing metadata for table spike.from_trino\", \"cause\": {\"type\": \"io.trino.spi.TrinoException\", \"message\": \"Error processing metadata for table spike.from_trino\", \"cause\": {\"type\": \"java.lang.NullPointerException\", \"message\": \"accessKey is null\", \"suppressed\": [], \"stack\": [\"java.base/java.util.Objects.requireNonNull(Unknown Source)\", \"io.trino.plugin.iceberg.catalog.rest.S3VendedCredentials.<init>(S3VendedCredentials.java:32)\", \"io.trino.plugin.iceberg.catalog.rest.S3VendedCredentialsProvider.createVendedCredentials(S3VendedCredentialsProvider.java:65)\", \"io.trino.plugin.iceberg.catalog.rest.IcebergRestCatalogFileSystemFactory.createS3VendedCredentials(IcebergRestCatalogFileSystemFactory.java:173)\", \"io.trino.plugin.iceberg.catalog.rest.IcebergRestCatalogFileSystemFactory.createVendedCredentialsCacheKey(IcebergRestCatalogFileSystemFactory.java:152)\", \"io.trino.plugin.iceberg.catalog.rest.IcebergRestCatalogFileSystemFactory$1.create(IcebergRestCatalogFileSystemFactory.java:87)\", \"io.trino.plugin.iceberg.catalog.rest.IcebergRestCatalogFileSystem.fileSystem(IcebergRestCatalogFileSystem.java:213)\", \"io.trino.plugin.iceberg.catalog.rest.IcebergRestCatalogFileSystem.newInputFile(IcebergRestCatalogFileSystem.java:59)\", \"io.trino.plugin.iceberg.fileio.ForwardingFileIo.newInputFile(ForwardingFileIo.java:100)\", \"org.apache.iceberg.io.FileIO.newInputFile(FileIO.java:80)\", \"io.trino.plugin.iceberg.fileio.ForwardingFileIo.newInputFile(ForwardingFileIo.java:180)\", \"org.apache.iceberg.ManifestLists.newInputFile(ManifestLists.java:36)\", \"org.apache.iceberg.BaseSnapshot.cacheManifests(BaseSnapshot.java:187)\", \"org.apache.iceberg.BaseSnapshot.dataManifests(BaseSnapshot.java:214)\", \"org.apache.iceberg.DataTableScan.doPlanFiles(DataTableScan.java:68)\", \"org.apache.iceberg.SnapshotScan.planFiles(SnapshotScan.java:162)\", \"io.trino.plugin.iceberg.IcebergSplitSource.getNextBatchInternal(IcebergSplitSource.java:313)\", \"io.trino.plugin.iceberg.IcebergSplitSource.lambda$getNextBatch$0(IcebergSplitSource.java:272)\", \"com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)\", \"com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)\", \"com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)\", \"java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)\", \"java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)\", \"java.base/java.lang.Thread.run(Unknown Source)\"], \"errorInfo\": {\"code\": 65536, \"name\": \"GENERIC_INTERNAL_ERROR\", \"type\": \"INTERNAL_ERROR\"}}, \"suppressed\": [], \"stack\": [\"io.trino.plugin.iceberg.IcebergExceptions.translateMetadataException(IcebergExceptions.java:58)\", \"io.trino.plugin.iceberg.IcebergSplitSource.lambda$getNextBatch$1(IcebergSplitSource.java:277)\", \"java.base/java.util.concurrent.CompletableFuture.uniExceptionally(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture$UniExceptionally.tryFire(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.postComplete(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.completeExceptionally(Unknown Source)\", \"io.airlift.concurrent.MoreFutures$2.onFailure(MoreFutures.java:495)\", \"com.google.common.util.concurrent.Futures$CallbackListener.run(Futures.java:1113)\", \"com.google.common.util.concurrent.DirectExecutor.execute(DirectExecutor.java:30)\", \"com.google.common.util.concurrent.AbstractFuture.executeListener(AbstractFuture.java:1040)\", \"com.google.common.util.concurrent.AbstractFuture.complete(AbstractFuture.java:803)\", \"com.google.common.util.concurrent.AbstractFuture.setException(AbstractFuture.java:542)\", \"com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.afterRanInterruptiblyFailure(TrustedListenableFutureTask.java:138)\", \"com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:87)\", \"com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)\", \"java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)\", \"java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)\", \"java.base/java.lang.Thread.run(Unknown Source)\"], \"errorInfo\": {\"code\": 65536, \"name\": \"GENERIC_INTERNAL_ERROR\", \"type\": \"INTERNAL_ERROR\"}}, \"suppressed\": [], \"stack\": [\"java.base/java.util.concurrent.CompletableFuture.wrapInCompletionException(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.encodeThrowable(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.completeThrowable(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.uniExceptionally(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture$UniExceptionally.tryFire(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.postComplete(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.completeExceptionally(Unknown Source)\", \"io.airlift.concurrent.MoreFutures$2.onFailure(MoreFutures.java:495)\", \"com.google.common.util.concurrent.Futures$CallbackListener.run(Futures.java:1113)\", \"com.google.common.util.concurrent.DirectExecutor.execute(DirectExecutor.java:30)\", \"com.google.common.util.concurrent.AbstractFuture.executeListener(AbstractFuture.java:1040)\", \"com.google.common.util.concurrent.AbstractFuture.complete(AbstractFuture.java:803)\", \"com.google.common.util.concurrent.AbstractFuture.setException(AbstractFuture.java:542)\", \"com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.afterRanInterruptiblyFailure(TrustedListenableFutureTask.java:138)\", \"com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:87)\", \"com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)\", \"java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)\", \"java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)\", \"java.base/java.lang.Thread.run(Unknown Source)\"], \"errorInfo\": {\"code\": 65536, \"name\": \"GENERIC_INTERNAL_ERROR\", \"type\": \"INTERNAL_ERROR\"}}}"
+    }
+  },
+  "all_services_recreated": {
+    "status": "fail",
+    "seconds": 43.67,
+    "error": "Not yet implemented: DecodeArrow of DictAccumulator for DeltaLengthByteArrayDecoder."
+  },
+  "total_runtime_seconds": 76.97
+}

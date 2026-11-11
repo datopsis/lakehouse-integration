@@ -1,0 +1,38 @@
+::add-mask::[REDACTED]
+::add-mask::[REDACTED]
+::add-mask::[REDACTED]
+::add-mask::[REDACTED]
+::add-mask::[REDACTED]
+ Network feasibility_private  Creating
+ Network feasibility_private  Created
+ Volume "feasibility_master-data"  Creating
+ Volume "feasibility_master-data"  Created
+ Volume "feasibility_volume-data"  Creating
+ Volume "feasibility_volume-data"  Created
+ Volume "feasibility_filer-data"  Creating
+ Volume "feasibility_filer-data"  Created
+ Volume "feasibility_pg-data"  Creating
+ Volume "feasibility_pg-data"  Created
+ Container feasibility-postgres-1  Creating
+ Container feasibility-master-1  Creating
+ Container feasibility-postgres-1  Error response from daemon: invalid mount path: 'mode=1777' mount path must be absolute
+Error response from daemon: invalid mount path: 'mode=1777' mount path must be absolute
+fatal: {"status": "fail", "error": "Command '['docker', 'compose', '-f', '/home/runner/work/lakehouse-integration/lakehouse-integration/spike/compose.yaml', 'up', '-d', 'postgres', 'master', 'volume', 'filer', 's3']' returned non-zero exit status 1."}
+Traceback (most recent call last):
+  File "/home/runner/work/lakehouse-integration/lakehouse-integration/spike/probe.py", line 282, in <module>
+    warehouse_id = start()
+                   ^^^^^^^
+  File "/home/runner/work/lakehouse-integration/lakehouse-integration/spike/probe.py", line 172, in start
+    compose('up', '-d', 'postgres', 'master', 'volume', 'filer', 's3')
+  File "/home/runner/work/lakehouse-integration/lakehouse-integration/spike/probe.py", line 29, in compose
+    return subprocess.run(DC + list(args), check=True, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['docker', 'compose', '-f', '/home/runner/work/lakehouse-integration/lakehouse-integration/spike/compose.yaml', 'up', '-d', 'postgres', 'master', 'volume', 'filer', 's3']' returned non-zero exit status 1.
+total_runtime_seconds: 0.32
+Traceback (most recent call last):
+  File "/home/runner/work/lakehouse-integration/lakehouse-integration/spike/probe.py", line 294, in <module>
+    assert not any(isinstance(v, dict) and v.get('status') == 'fail' for v in RESULTS.values()), 'See reports/results.json'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: See reports/results.json

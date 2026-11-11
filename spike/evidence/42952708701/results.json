@@ -1,0 +1,8 @@
+{
+  "fatal": {
+    "status": "fail",
+    "error": "Command '['docker', 'compose', '-f', '/home/runner/work/lakehouse-integration/lakehouse-integration/spike/compose.yaml', 'up', '-d', 'postgres', 'master', 'volume', 'filer', 's3']' returned non-zero exit status 1."
+  },
+  "elapsed_seconds": 0.32,
+  "total_runtime_seconds": 0.32
+}

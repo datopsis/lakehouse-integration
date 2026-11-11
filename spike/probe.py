@@ -118,13 +118,17 @@ def check_hardening():
     record('hardening', report)
 
 
-def rest_catalog():
+def rest_catalog(delegation=None, with_credentials=True):
     from pyiceberg.catalog.rest import RestCatalog
-    return RestCatalog('qualification', **{
+    properties = {
         'uri': 'http://catalog:8181/catalog', 'warehouse': 'qualification',
         's3.endpoint': 'http://s3:8333', 's3.region': 'local', 's3.path-style-access': 'true',
-        's3.access-key-id': CREDS['access'], 's3.secret-access-key': CREDS['secret'],
-    })
+    }
+    if with_credentials:
+        properties.update({'s3.access-key-id': CREDS['access'], 's3.secret-access-key': CREDS['secret']})
+    if delegation:
+        properties['header.X-Iceberg-Access-Delegation'] = delegation
+    return RestCatalog('qualification', **properties)
 
 
 def probe(name, fn):
@@ -221,13 +225,15 @@ def mutate():
     return {'snapshots': snapshots, 'history': history}
 
 
-def py_read():
-    table = rest_catalog().load_table('spike.from_trino')
+def py_read(expected=None, delegation=None, with_credentials=True):
+    table = rest_catalog(delegation, with_credentials).load_table('spike.from_trino')
     rows = table.scan().to_arrow().sort_by('id').to_pylist()
-    assert rows == [{'id': 1, 'label': 'alpha'}, {'id': 2, 'label': 'updated'}], rows
+    expected = expected or [{'id': 1, 'label': 'alpha'}, {'id': 2, 'label': 'updated'}]
+    assert rows == expected, rows
     paths = [task.file.file_path for task in table.scan().plan_files()]
     assert paths and all(p.startswith('s3://warehouse/') for p in paths)
-    return {'rows': rows, 'files': paths}
+    return {'rows': rows, 'files': paths, 'file_io': type(table.io).__module__ + '.' + type(table.io).__name__,
+            'signer': table.io.properties.get('s3.signer'), 'delegation': delegation, 'client_s3_credentials': with_credentials}
 
 
 def py_write():
@@ -242,7 +248,7 @@ def py_write():
 def modes(warehouse_id):
     url = f'http://catalog:8181/catalog/v1/{warehouse_id}/namespaces/spike/tables/from_trino'
     results = {}
-    for mode in ('none', 'vended-credentials', 'remote-signing', 'vended-credentials,remote-signing'):
+    for mode in ('none', 'vended-credentials', 'remote-signing', 'client-managed'):
         headers = {} if mode == 'none' else {'X-Iceberg-Access-Delegation': mode}
         status, body = http('GET', url, headers=headers)
         # Do not retain credentials if an implementation unexpectedly vends them.
@@ -260,6 +266,8 @@ def modes(warehouse_id):
 def restart():
     old = {service: cid(service) for service in ('postgres', 'master', 'volume', 'filer', 's3', 'catalog', 'trino')}
     # Down removes every container and network, retaining only named volumes and secrets.
+    logs = subprocess.run(DC + ['logs', '--no-color'], text=True, capture_output=True, check=True)
+    (REPORTS / 'services-before-recreation.log').write_text(logs.stdout + logs.stderr)
     compose('down', '--timeout', '30')
     compose('up', '-d')
     hosts()
@@ -272,7 +280,8 @@ def restart():
     assert rest_catalog().load_table('spike.from_python').scan().to_arrow().num_rows == 2
     # A post-restart write needs the persisted Lakekeeper encryption key and storage credential.
     sql("INSERT INTO iceberg.spike.from_python VALUES (30, 'after-restart')")
-    assert rest_catalog().load_table('spike.from_python').scan().to_arrow().num_rows == 3
+    assert rest_catalog().load_table('spike.from_python').scan().to_arrow().sort_by('id').to_pylist() == [
+        {'id': 10, 'label': 'py-alpha'}, {'id': 20, 'label': 'py-beta'}, {'id': 30, 'label': 'after-restart'}]
     check_hardening()
     return 'Seven containers replaced; both engines reread both tables; a new Trino write was read by PyIceberg'
 
@@ -281,10 +290,14 @@ try:
     prepare()
     warehouse_id = start()
     probe('trino_create_insert_select', trino_write)
+    probe('pyiceberg_reads_trino_before_mutations', lambda: py_read([
+        {'id': 1, 'label': 'alpha'}, {'id': 2, 'label': 'beta'}, {'id': 3, 'label': 'gamma'}]))
     probe('trino_update_delete_history', mutate)
     probe('pyiceberg_reads_trino', py_read)
     probe('trino_reads_pyiceberg', py_write)
     modes(warehouse_id)
+    probe('pyiceberg_client_managed_static', lambda: py_read(delegation='client-managed'))
+    probe('pyiceberg_remote_signing_without_s3_credentials', lambda: py_read(delegation='remote-signing', with_credentials=False))
     probe('all_services_recreated', restart)
 except Exception as exc:
     record('fatal', {'status': 'fail', 'error': str(exc)})
