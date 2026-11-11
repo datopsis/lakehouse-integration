@@ -1,13 +1,13 @@
 # Lakehouse integration
 
-One amd64 integration gate for the four Datopsis image repositories: Trino queries
+One amd64 integration gate for the five Datopsis image repositories: Trino queries
 Iceberg v2 / Parquet through Lakekeeper's REST catalog, PostgreSQL stores catalog
 metadata, and separated SeaweedFS master/volume/filer/S3 roles store table objects.
-PyIceberg is the independent second client. Nothing is published to a host port.
+Sail is the second query engine; PyIceberg is an independent client. Nothing is published to a host port.
 
 The implementation follows the evidence on
 [`spike/feasibility`](https://github.com/datopsis/lakehouse-integration/blob/spike/feasibility/SPIKE-FINDINGS.md).
-That branch is retained unchanged. All four source commits live in
+That branch is retained unchanged. All five source commits live in
 [images.lock.json](images.lock.json); changing a pin is a reviewed one-line change.
 Each input is fetched by full SHA, checked against detached HEAD, built with its
 own build script, and inspected after loading. Trino falls back to fetching
@@ -33,9 +33,10 @@ security gate, and does not authorize release or modify the jars.
 | T2 | PyIceberg reads exact Trino rows before and after mutations |
 | T3 | Trino reads exact PyIceberg-written rows |
 | T4 | Every table's current metadata, data, and delete files exist in the S3 bucket; exact catalog table rows exist in PostgreSQL |
-| T5 | `compose down` keeps volumes; `up` replaces all seven IDs; fresh clients reread every table; a new write is read back |
+| T5 | `compose down` keeps volumes; `up` replaces all eight IDs; fresh clients reread every table; a new write is read back |
 | T6 | Anonymous S3 and wrong S3 secret return specific 403 errors; missing encryption key prevents Lakekeeper startup; wrong PostgreSQL password prevents migration |
-| T7 | Non-root, read-only roots, dropped capabilities, no-new-privileges, internal network, no published ports; S3 cannot read PostgreSQL secrets |
+| T7 | Non-root, read-only roots, dropped capabilities, no-new-privileges, internal network, no published ports; S3 cannot read PostgreSQL secrets; Sail receives only its own AWS env file |
+| T10 | Sail CREATE/INSERT, exact Trino/fresh-PyIceberg reads after INSERT/UPDATE/DELETE; Sail reads Trino/PyIceberg tables, with passive REST/S3 credential evidence |
 | Canary | Default Trino encoding, INSERT/UPDATE/DELETE, then PyIceberg read; only the exact known Arrow decoder error is an expected failure |
 
 The main Iceberg catalog sets
@@ -45,7 +46,8 @@ delete files. A successful exact-row read emits a CI notice and job-summary entr
 that upstream fixed the decoder and the setting can be revisited. Any other
 error, wrong rows, or missing test fails. The canary is also reread after restart;
 its specific expected decoder failure is the only exception to reading every
-table successfully with PyIceberg. Trino must read all three tables successfully.
+table successfully with PyIceberg. Trino must read all four tables successfully. Sail is recreated too and reads all
+four tables, then writes another row read exactly by Trino and fresh PyIceberg.
 
 Static S3 credentials are explicit: Trino credential vending is off; PyIceberg
 sends `X-Iceberg-Access-Delegation: client-managed`. S3 credentials and PostgreSQL
@@ -132,3 +134,26 @@ commits or opens PRs. A newly introduced schedule takes effect after merge to ma
 See [architecture](docs/ARCHITECTURE.md), [roadmap](docs/ROADMAP.md), and
 [changelog](CHANGELOG.md). CI artifacts expire after 14 days; retain required
 review evidence before that expiry. A green badge alone is not a security review.
+
+## Sail qualification
+
+Sail uses the reviewed source pin in `images.lock.json`, its own `scripts/build.sh`,
+and the exact configuration/limits in that pin's `docs/ICEBERG.md`. Its provenance
+label is checked against SHA-256 of `sail.lock.json` followed by `rpms.lock.json`,
+exactly as its build script specifies; both input hashes are recorded. No label
+allowance applies. Its Spark Connect client uses the owning repo's hash-locked
+requirements in an isolated environment, preserving the main Arrow canary versions.
+
+T10 exercises unpartitioned Iceberg v2/Parquet tables and explicit copy-on-write
+UPDATE/DELETE. It does not claim merge-on-read UPDATE support (unsupported by
+0.7.3) or qualify MERGE. A Sail-only `0600` environment file delivers static
+`AWS_*` credentials. The unauthenticated Spark Connect listener is private, with
+no published port. Lakekeeper's `sts-enabled=false` profile is unchanged.
+
+Sail 0.7.3 hard-codes `X-Iceberg-Access-Delegation: vended-credentials`.
+T10 records the real Lakekeeper response, the actual request header and S3 signing
+traffic in sanitized artifacts; startup alone is insufficient evidence.
+Runtime qualification is pending the PR's Actions run. Configurable delegation
+was added upstream in [0c8333a](https://github.com/lakehq/sail/commit/0c8333a349e5438e4b37fe984b9e3a45befc7bff);
+a future reviewed sail-ubi release containing that change can explicitly omit
+vending. This integration does not patch or upgrade the pinned engine.

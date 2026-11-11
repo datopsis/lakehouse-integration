@@ -1,0 +1,25 @@
+# Merged with compose.yaml; Sail receives only its own AWS credential file.
+services:
+  sail:
+    image: localhost/sail-ubi:integration
+    user: '10001:10001'
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    networks: [private]
+    pids_limit: 256
+    mem_limit: 2g
+    cpus: 2
+    stop_grace_period: 30s
+    environment:
+      SAIL_CATALOG__LIST: '[{type="iceberg-rest", name="qualification", uri="http://catalog:8181/catalog", warehouse="qualification"}]'
+      AWS_ENDPOINT: http://s3:8333
+      AWS_REGION: local
+      AWS_ALLOW_HTTP: 'true'
+      AWS_VIRTUAL_HOSTED_STYLE_REQUEST: 'false'
+    env_file: ../.runtime/sail.env
+    volumes: ['./sail/config.json:/etc/sail/config.json:ro']
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=256m,mode=0700,uid=10001,gid=10001
+      - /var/lib/sail:rw,noexec,nosuid,nodev,size=256m,mode=0700,uid=10001,gid=10001
+    depends_on: [catalog, s3]

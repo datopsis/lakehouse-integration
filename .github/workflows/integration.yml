@@ -28,7 +28,7 @@ jobs:
           test "$(uname -m)" = x86_64
           df -h
           sudo apt-get update -qq
-          sudo apt-get install -y rpm
+          sudo apt-get install -y rpm gnupg tcpdump
           python3 -m venv .venv
           .venv/bin/pip install --require-hashes -r requirements.txt
           mkdir -p reports
@@ -52,7 +52,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 integration/verify.py 2>&1 | tee reports/provenance.log
-      - name: T1–T7 and default-encoding canary
+      - name: T1–T7, T10 Sail and default-encoding canary
         # Collect runtime evidence even if provenance fails; the job stays failed.
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |

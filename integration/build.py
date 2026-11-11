@@ -82,6 +82,11 @@ def build(repo, revision):
         env["COSIGN"] = str(verifier)
         command = ["bash", "scripts/build.sh", "amd64"]
         lock = source / "artifacts/seaweedfs.lock.json"
+    elif repo == "sail-ubi":
+        from sail_build import prepare_build
+
+        command = prepare_build(source, env, run)
+        lock = source / "artifacts/sail.lock.json"
     else:
         command = ["bash", "scripts/build.sh", "amd64"]
         lock = source / "artifacts/trino.lock.json"
@@ -100,7 +105,11 @@ def build(repo, revision):
         "lock_sha256": sha(lock),
         "labels": labels,
     }
-    result["provenance_errors"] = provenance_errors(inspected, revision, sha(lock))
+    if repo == "sail-ubi":
+        from sail_build import lock_evidence
+
+        result.update(lock_evidence(source))
+    result["provenance_errors"] = provenance_errors(inspected, revision, result["lock_sha256"])
     result["status"] = "fail" if result["provenance_errors"] else "pass"
     # Preserve the spike's binary checks as additional evidence, never as a
     # substitute for the strict revision and artifact-lock labels.
@@ -144,7 +153,7 @@ def provenance_errors(inspected, revision, lock_hash):
 def main():
     if not __debug__:
         raise RuntimeError("Assertions must be enabled; remove -O/PYTHONOPTIMIZE")
-    assert len(PINS) == 4 and all(re.fullmatch(r"[0-9a-f]{40}", pin) for pin in PINS.values())
+    assert len(PINS) == 5 and all(re.fullmatch(r"[0-9a-f]{40}", pin) for pin in PINS.values())
     results = {}
     for repo, revision in PINS.items():
         start = time.monotonic()

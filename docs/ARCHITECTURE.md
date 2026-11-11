@@ -4,6 +4,8 @@
 flowchart LR
   P[PyIceberg runner] -->|REST| L[Lakekeeper]
   T[Trino] -->|REST| L
+  A[Sail] -->|REST| L
+  A -->|S3 static credentials| S
   L -->|password auth| DB[PostgreSQL]
   P -->|S3 static credentials| S[S3 gateway]
   T -->|S3 static credentials| S
@@ -14,9 +16,9 @@ flowchart LR
   V --> M
 ```
 
-All seven long-running containers share one internal network, with zero published
+All eight long-running containers share one internal network, with zero published
 ports. The trusted Linux runner reaches bridge addresses and resolves catalog,
-s3, and trino through a temporary marked /etc/hosts block. A short-lived migration
+s3, trino, and sail through a temporary marked /etc/hosts block. A short-lived migration
 container uses the same hardening and network. Negative-test containers also use
 that profile and are explicitly removed. All images are built from images.lock.json
 using their owning repository scripts; Podman-built images are exported into the
@@ -31,6 +33,15 @@ runtime store and inspected there.
 | Seaweed filer | 1000:0 | 8888, 18888 gRPC | filer-data at /data (embedded store) | none |
 | Seaweed S3 | 1000:0 | 8333, 18333 gRPC | none | S3-only directory with s3.json |
 | Trino | 10001:0 | 8080 | /var/lib/trino tmpfs; executable /tmp/trino tmpfs for native libraries | Trino-only env file with static S3 keys |
+
+| Sail | 10001:10001 | 50051 Spark Connect | /tmp and /var/lib/sail tmpfs (noexec) | Sail-only env file with static AWS keys; read-only listener JSON |
+
+Sail is defined in `integration/compose.sail.yaml`, always composed with the base
+file for startup, recreation, diagnostics and teardown. Its separate probe/client
+modules keep Spark dependencies out of the PyIceberg environment. T10 uses fresh
+Spark sessions and fresh PyIceberg processes at every mutation boundary. Passive
+HTTP capture provides evidence of the hard-coded vending header, Lakekeeper's
+response and the credential used to sign S3; only redacted text is uploaded.
 
 Ports are internal configuration, not published host listeners. All roots are
 read-only; every service drops ALL capabilities and sets no-new-privileges.
@@ -58,3 +69,11 @@ ID must change; a fresh Python process reads all tables and validates a new writ
 The encoding canary retains its exact decoder expectation across restart. Final
 cleanup destroys volumes and restores the marked hosts block. This is graceful
 recreation, not crash, power-loss, replication, or host-loss durability evidence.
+
+Sail 0.7.3 mutations use explicit copy-on-write on an unpartitioned table. T10
+requires no delete files from these mutations and distinct committed snapshots,
+without imposing Trino's snapshot sequence on Sail. Sail also reads Trino's
+mutated files with the adopted delta-length encoding setting. The separate
+default-encoding canary stays mandatory. T5 checks Sail's new container ID,
+rereads all four tables and verifies a new Sail write with both other clients.
+Sail's own unauthenticated remote-listener opt-out is another private-test gap.

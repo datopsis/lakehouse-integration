@@ -15,7 +15,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME = ROOT / ".runtime"
 REPORTS = ROOT / "reports"
-DC = ["docker", "compose", "-f", str(ROOT / "integration/compose.yaml")]
+DC = [
+    "docker",
+    "compose",
+    "-f",
+    str(ROOT / "integration/compose.yaml"),
+    "-f",
+    str(ROOT / "integration/compose.sail.yaml"),
+]
 RESULTS = {}
 START = time.monotonic()
 
@@ -71,7 +78,7 @@ def wait(label, fn, seconds=120):
 def hosts():
     # Linux runner can reach the internal bridge. Nothing is port-published.
     entries = []
-    for service in ("s3", "catalog", "trino"):
+    for service in ("s3", "catalog", "trino", "sail"):
         if not cid(service):
             continue
         item = json.loads(subprocess.check_output(["docker", "inspect", cid(service)]))[0]
@@ -130,7 +137,7 @@ def check_container_config(item):
 
 def check_hardening():
     report = {}
-    for service in ("postgres", "master", "volume", "filer", "s3", "catalog", "trino"):
+    for service in ("postgres", "master", "volume", "filer", "s3", "catalog", "trino", "sail"):
         item = json.loads(subprocess.check_output(["docker", "inspect", cid(service)]))[0]
         check_container_config(item)
         status = subprocess.check_output(
@@ -228,7 +235,10 @@ def prepare():
     (RUNTIME / "trino.env").write_text(
         f"S3_ACCESS_KEY_ID={CREDS['access']}\nS3_SECRET_ACCESS_KEY={CREDS['secret']}\n"
     )
-    for name in ("lakekeeper.env", "trino.env"):
+    (RUNTIME / "sail.env").write_text(
+        f"AWS_ACCESS_KEY_ID={CREDS['access']}\nAWS_SECRET_ACCESS_KEY={CREDS['secret']}\n"
+    )
+    for name in ("lakekeeper.env", "trino.env", "sail.env"):
         (RUNTIME / name).chmod(0o600)
     shutil.copytree(ROOT / "integration/trino", RUNTIME / "trino")
     # No encoding override in this catalog: exercise the actual Trino default.
@@ -353,9 +363,12 @@ def start():
     status, body = http("POST", "http://catalog:8181/management/v1/warehouse", warehouse)
     assert status in (200, 201), (status, body)
     record("warehouse", {"profile": profile, "response": body})
-    compose("up", "-d", "trino")
+    compose("up", "-d", "trino", "sail")
     hosts()
     wait("Trino", lambda: http("GET", "http://trino:8080/v1/info")[1].get("starting") is False, 180)
+    from sail_probe import ready
+
+    ready(sys.modules[__name__])
     probe("T7_hardening", check_hardening)
     return body["warehouse-id"]
 
@@ -437,7 +450,7 @@ def py_write():
 def restart():
     old = {
         service: cid(service)
-        for service in ("postgres", "master", "volume", "filer", "s3", "catalog", "trino")
+        for service in ("postgres", "master", "volume", "filer", "s3", "catalog", "trino", "sail")
     }
     # Down removes every container and network, retaining only named volumes and secrets.
     logs = subprocess.run(DC + ["logs", "--no-color"], text=True, capture_output=True, check=True)
@@ -461,6 +474,9 @@ def restart():
         lambda: http("GET", "http://trino:8080/v1/info")[1].get("starting") is False,
         180,
     )
+    from sail_probe import ready
+
+    ready(sys.modules[__name__])
     new = {service: cid(service) for service in old}
     assert all(
         previous and new[service] and new[service] != previous for service, previous in old.items()
@@ -510,7 +526,11 @@ def verify_restart():
         {"id": 20, "label": "py-beta"},
         {"id": 30, "label": "after-restart"},
     ]
+    from sail_probe import verify_restart as sail_restart
+
+    sail_result = sail_restart(sys.modules[__name__])
     result = {
+        "sail": sail_result,
         "static_mode": "Both engines reread main tables; new Trino write read by PyIceberg",
         "encoding_canary": canary_outcome,
     }
@@ -601,7 +621,7 @@ def location():
         for obj in page.get("Contents", [])
     }
     evidence = {}
-    for name in ("from_trino", "from_python", "encoding_canary"):
+    for name in ("from_trino", "from_python", "encoding_canary", "from_sail"):
         table = rest_catalog().load_table("integration." + name)
         assert table.metadata.format_version == 2
         files = list(table.scan().plan_files())
@@ -636,7 +656,7 @@ def location():
         ],
         text=True,
     ).splitlines()
-    assert rows == ["encoding_canary", "from_python", "from_trino"], rows
+    assert rows == ["encoding_canary", "from_python", "from_sail", "from_trino"], rows
     return {"objects": len(objects), "tables": evidence, "postgres_catalog_rows": rows}
 
 
@@ -655,12 +675,17 @@ def secret_isolation():
         )
         assert result.returncode != 0 and b"No such file" in result.stderr, result.stderr
     # An environment leak is as serious as a mount leak.
-    for service in ("master", "volume", "filer", "s3", "trino"):
+    for service in ("master", "volume", "filer", "s3", "trino", "sail"):
         config = json.loads(subprocess.check_output(["docker", "inspect", cid(service)]))[0][
             "Config"
         ]
         assert all(value not in json.dumps(config) for value in (CREDS["admin"], CREDS["postgres"]))
-    return "S3 sees only s3.json; PostgreSQL passwords are absent and unreadable"
+    from sail_probe import secret_isolation as sail_isolation
+
+    return {
+        "s3": "S3 sees only s3.json; PostgreSQL passwords are absent and unreadable",
+        "sail": sail_isolation(sys.modules[__name__]),
+    }
 
 
 def negatives():
@@ -743,6 +768,9 @@ def main():
         probe("T2_pyiceberg_after_mutations", py_read)
         probe("T3_trino_reads_pyiceberg", py_write)
         probe("encoding_canary", canary)
+        from sail_probe import interoperability
+
+        probe("T10_sail", lambda: interoperability(sys.modules[__name__]))
         probe("T4_location", location)
         probe("T6_negative", negatives)
         probe("T7_secret_isolation", secret_isolation)
@@ -764,6 +792,7 @@ def main():
         "T7_hardening",
         "T7_secret_isolation",
         "encoding_canary",
+        "T10_sail",
     }
     assert expected <= RESULTS.keys(), "Missing tests: " + str(expected - RESULTS.keys())
     assert not any(isinstance(v, dict) and v.get("status") == "fail" for v in RESULTS.values()), (

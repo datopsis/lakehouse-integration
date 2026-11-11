@@ -5,7 +5,10 @@
 - TLS between all services: REST, S3, PostgreSQL, Seaweed control HTTP/gRPC, and Trino;
   include certificate verification, lifecycle and negative tests.
 - OpenID login for Lakekeeper **with authorization**, plus authenticated Trino access.
-- Sail as a second query engine (PyIceberg remains an independent client).
+- Qualify Sail 0.7.3 as the second query engine with T10 (PR CI evidence pending).
+  Track upstream configurable delegation commit `0c8333a349e5438e4b37fe984b9e3a45befc7bff`;
+  review a sail-ubi bump to the first release containing it and explicitly omit
+  vending. Do not assume an unreleased version number or change the static main path.
 - ARM64 images and execution, after amd64 qualification; no emulated green claims.
 - Investigate remote-signing restart behaviour: the spike's long-lived PyIceberg
   remote-signing reader hit HeadObject 403 after recreation. Fresh-client success
