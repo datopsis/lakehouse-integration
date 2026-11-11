@@ -13,10 +13,23 @@ defaults:
   run:
     shell: bash
 jobs:
-  integration:
-    name: Integration
-    runs-on: ubuntu-24.04
+  architectures:
+    name: Integration (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            machine: x86_64
+            runner: ubuntu-24.04
+          - arch: arm64
+            machine: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
+    env:
+      INTEGRATION_ARCH: ${{ matrix.arch }}
+      EXPECTED_MACHINE: ${{ matrix.machine }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -25,10 +38,12 @@ jobs:
         id: dependencies
         run: |
           set -euo pipefail
-          test "$(uname -m)" = x86_64
+          mkdir -p reports
+          uname -m | tee reports/runner-uname.txt
+          test "$(uname -m)" = "$EXPECTED_MACHINE"
           df -h
           sudo apt-get update -qq
-          sudo apt-get install -y rpm
+          sudo apt-get install -y rpm podman
           python3 -m venv .venv
           .venv/bin/pip install --require-hashes -r requirements.txt
           mkdir -p reports
@@ -68,10 +83,25 @@ jobs:
         if: ${{ !cancelled() && steps.cleanup.outcome == 'success' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: lakehouse-${{ github.run_id }}-${{ github.run_attempt }}
+          name: lakehouse-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: reports/sanitized/
           retention-days: 14
           if-no-files-found: error
+  integration:
+    # Preserve the exact required-check name. A matrix need waits for BOTH jobs;
+    # fail-fast is disabled so either architecture still collects full evidence.
+    name: Integration
+    needs: [architectures]
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Require both native architectures to succeed
+        env:
+          ARCHITECTURES_RESULT: ${{ needs.architectures.result }}
+        run: |
+          set -euo pipefail
+          test "$ARCHITECTURES_RESULT" = success
   upstream:
     name: Upstream commits
     runs-on: ubuntu-24.04

@@ -3,6 +3,7 @@
 import hashlib
 import json
 import os
+import platform
 import re
 import subprocess
 import time
@@ -27,7 +28,29 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def build(repo, revision):
+def native_architecture():
+    assert platform.system() == "Linux", "Native Linux is required"
+    machine = platform.machine()
+    assert machine in ("x86_64", "aarch64"), f"Unsupported native machine: {machine}"
+    architecture = {"x86_64": "amd64", "aarch64": "arm64"}[machine]
+    expected = os.environ.get("INTEGRATION_ARCH", architecture)
+    assert architecture == expected, f"Expected native {expected}, got {machine}"
+    return architecture
+
+
+def artifact_lock(source, repo, architecture):
+    assert architecture in ("amd64", "arm64")
+    paths = {
+        "postgresql-lakekeeper-ubi": f"artifacts/locks/{architecture}.json",
+        "lakekeeper-ubi": "artifacts/lakekeeper.lock.json",
+        "seaweedfs-ubi": "artifacts/seaweedfs.lock.json",
+        "trino-ubi": "artifacts/trino.lock.json",
+    }
+    return source / paths[repo]
+
+
+def build(repo, revision, architecture):
+    assert architecture == native_architecture(), "Cross-architecture builds are forbidden"
     source = ROOT / ".sources" / repo
     source.mkdir(parents=True)
     run(["git", "init", "-q", str(source)])
@@ -52,26 +75,29 @@ def build(repo, revision):
     image = f"localhost/{repo}:integration"
     runtime = "podman" if repo in ("lakekeeper-ubi", "seaweedfs-ubi") else "docker"
     env = dict(os.environ, CONTAINER_RUNTIME=runtime, IMAGE=image, RELEASE_REVISION=revision)
+    lock = artifact_lock(source, repo, architecture)
     if repo == "postgresql-lakekeeper-ubi":
         command = ["bash", "scripts/build-offline.sh"]
-        lock = source / "artifacts/locks/amd64.json"
     elif repo == "lakekeeper-ubi":
         command = [
             "bash",
             "scripts/build.sh",
             "--arch",
-            "amd64",
+            architecture,
             "--runtime",
             runtime,
             "--tag",
             image,
         ]
-        lock = source / "artifacts/lakekeeper.lock.json"
     elif repo == "seaweedfs-ubi":
         # Extract (never run) the exact verifier image chosen by the owner's script.
         # Host execution avoids an unhardened helper container and leaves admission intact.
         ref = "ghcr.io/sigstore/cosign/cosign@sha256:68839b7f13dac5a6744a5d8818e984dd39183374e37855c19e14d623d9bc9037"
-        run(["docker", "pull", ref])
+        run(["docker", "pull", "--platform", f"linux/{architecture}", ref])
+        assert (
+            output(["docker", "image", "inspect", "--format", "{{.Architecture}}", ref])
+            == architecture
+        )
         cid = output(["docker", "create", ref])
         verifier = ROOT / ".sources/cosign"
         try:
@@ -80,11 +106,9 @@ def build(repo, revision):
             run(["docker", "rm", cid])
         verifier.chmod(0o755)
         env["COSIGN"] = str(verifier)
-        command = ["bash", "scripts/build.sh", "amd64"]
-        lock = source / "artifacts/seaweedfs.lock.json"
+        command = ["bash", "scripts/build.sh", architecture]
     else:
-        command = ["bash", "scripts/build.sh", "amd64"]
-        lock = source / "artifacts/trino.lock.json"
+        command = ["bash", "scripts/build.sh", architecture]
     run(command, cwd=source, env=env)
     if runtime == "podman":
         archive = ROOT / ".sources/transfer.tar"
@@ -97,10 +121,13 @@ def build(repo, revision):
         "revision": revision,
         "image_id": inspected["Id"],
         "architecture": inspected["Architecture"],
+        "runner_machine": platform.machine(),
+        "expected_architecture": architecture,
+        "lock_path": str(lock.relative_to(source)),
         "lock_sha256": sha(lock),
         "labels": labels,
     }
-    result["provenance_errors"] = provenance_errors(inspected, revision, sha(lock))
+    result["provenance_errors"] = provenance_errors(inspected, revision, sha(lock), architecture)
     result["status"] = "fail" if result["provenance_errors"] else "pass"
     # Preserve the spike's binary checks as additional evidence, never as a
     # substitute for the strict revision and artifact-lock labels.
@@ -114,7 +141,7 @@ def build(repo, revision):
             artifact = json.loads(lock.read_text())
             assert (
                 result["image_binary_sha256"]
-                == artifact["architectures"]["amd64"]["binary"]["sha256"]
+                == artifact["architectures"][architecture]["binary"]["sha256"]
             )
             if repo == "seaweedfs-ubi":
                 assert (
@@ -127,10 +154,13 @@ def build(repo, revision):
     return result
 
 
-def provenance_errors(inspected, revision, lock_hash):
+def provenance_errors(inspected, revision, lock_hash, architecture):
+    assert architecture in ("amd64", "arm64")
     errors = []
-    if inspected["Architecture"] != "amd64":
-        errors.append("image architecture is not amd64")
+    if inspected["Architecture"] != architecture:
+        errors.append(
+            f"image architecture: expected {architecture}, got {inspected['Architecture']}"
+        )
     labels = inspected["Config"].get("Labels") or {}
     for key, expected in [
         ("org.opencontainers.image.revision", revision),
@@ -145,11 +175,13 @@ def main():
     if not __debug__:
         raise RuntimeError("Assertions must be enabled; remove -O/PYTHONOPTIMIZE")
     assert len(PINS) == 4 and all(re.fullmatch(r"[0-9a-f]{40}", pin) for pin in PINS.values())
+    architecture = native_architecture()
+    print(f"Native runner: {platform.machine()}; image architecture: {architecture}", flush=True)
     results = {}
     for repo, revision in PINS.items():
         start = time.monotonic()
         try:
-            results[repo] = build(repo, revision)
+            results[repo] = build(repo, revision, architecture)
         except Exception as exc:
             results[repo] = {"status": "build-failed", "error": str(exc)}
             import traceback

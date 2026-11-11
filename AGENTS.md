@@ -4,7 +4,8 @@ Read README.md, SECURITY.md, docs/ARCHITECTURE.md, and docs/ROADMAP.md before ch
 The feasibility evidence lives on spike/feasibility; never modify/delete that branch.
 
 Binding owner decisions:
-- amd64 only. ARM64 is roadmap work.
+- Native amd64 and arm64. The owner superseded the amd64-only decision on
+  2026-11-11. Both must run the complete identical gate; no QEMU or emulation.
 - Keep S3 credentials and PostgreSQL passwords enabled.
 - Lakekeeper login stays off only on the private test network; document the gap.
 - Trino's documented isolated-test insecure mode has no published listener.

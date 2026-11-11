@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Run the full integration gate natively on amd64 and arm64 in parallel, using
+  identical source pins, architecture-correct artifact locks and strict image
+  provenance. Keep all T1–T9/crash/canary assertions mandatory on both.
+- Preserve the required `Integration` check as a fail-closed aggregate, separate
+  architecture artifacts, and weekly issue reporting for either architecture.
+- Supersede the amd64-only scope by the owner's 2026-11-11 decision; no emulation.
+
 - Add T8 container-SIGKILL durability tests: kill all seven services after successful
   INSERTs, then kill PostgreSQL, Lakekeeper, SeaweedFS volume and filer during writes.
   Journal acknowledgements and ambiguous outcomes; require exact atomic batches,

@@ -101,3 +101,32 @@ This is **single-host container-kill** testing. A container SIGKILL is not a hos
 power loss: the host page cache can survive. There is no fsync or disk-cache
 qualification, no host-loss or replication evidence, and no claim of exhaustive
 crash timing coverage. Real power-loss and host-loss tests remain on the roadmap.
+
+## Native architecture gate
+
+The owner superseded the initial amd64-only scope on 2026-11-11. One workflow
+matrix runs the complete fixture in parallel on native GitHub-hosted Linux
+`ubuntu-24.04` (amd64) and `ubuntu-24.04-arm` (arm64). `uname -m` must be `x86_64`
+and `aarch64`, respectively. The build driver independently validates the native
+Linux host and rejects a different requested architecture. No QEMU or emulation
+is installed or used. Runtime tests and their assertions are identical.
+
+Both jobs read the same `images.lock.json` and fetch the same full source SHAs.
+Repository-owned build commands receive the native architecture; PostgreSQL's
+build script detects it itself. Its provenance hash uses
+`artifacts/locks/amd64.json` or `artifacts/locks/arm64.json`. Lakekeeper, SeaweedFS,
+and Trino hash their shared `artifacts/<service>.lock.json` files and select the
+native architecture's artifacts. Extracted Lakekeeper/SeaweedFS binary hashes
+must also match that architecture's lock entry. The pinned cosign helper is
+selected and checked for the native architecture before extracting its binary.
+Every loaded image must have matching OCI architecture metadata, source revision,
+and artifact-lock SHA-256. Missing or mismatched evidence fails without exceptions.
+
+`Integration (amd64)` and `Integration (arm64)` retain separate sanitized artifacts.
+Fail-fast is disabled so a failing architecture does not cancel the other. The
+final required job is named exactly `Integration`: its matrix dependency waits
+for both jobs, and its always-run success assertion rejects failure, cancellation
+and skipping. The scheduled issue job depends on this aggregate and the unchanged
+read-only upstream report, so either architecture's failure opens/updates the
+existing weekly issue. Each job's Actions timestamps provide wall time and runner
+minutes; sum runner durations for consumption, not overlapping elapsed wall time.
