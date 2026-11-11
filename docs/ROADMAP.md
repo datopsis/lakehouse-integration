@@ -13,8 +13,14 @@
   when the canary announces signed success; retain the canary until then. See the
   [unfiled draft report](known-issues/remote-signing.md). Remote signing stays OFF
   the static-credential main path; fresh-client success is not a concurrency fix.
-- Crash durability: kill/power-loss, restart ordering, host loss, backup/restore,
-  replication, and encryption-key recovery; current tests cover graceful down/up only.
+- [x] Crash durability — container-kill scope: T8 kills all services after acknowledged
+  writes and individually kills PostgreSQL, Lakekeeper, the volume server, and filer
+  during INSERTs. Exact acknowledged rows, atomic in-flight outcomes, snapshots,
+  independent fresh reads, new writes, and per-component recovery time are required.
+- [ ] Power-loss durability: container SIGKILL leaves the host page cache alive;
+  qualify fsync and disk-cache behavior with real power-loss testing.
+- [ ] Host-loss durability, restart-order permutations, backup/restore, replication,
+  and encryption-key recovery. T8 is single-host evidence only.
 - Trino upstream-fix follow-up: keep draft PR #2's vulnerability gate blocking
   release until upstream jar fixes are available and the owning repo qualifies them.
   Replace the deliberate pre-release test pin only after review; make no security claim.
