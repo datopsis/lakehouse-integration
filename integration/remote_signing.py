@@ -8,13 +8,17 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import ExitStack
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from unittest.mock import patch
+from urllib.parse import urlsplit
 
-from gates import EXPECTED_ROWS, redact
+from gates import EXPECTED_ROWS, redact, remote_signing_failure
 
 
 def sanitize(text, values):
     text = redact(text, values)
+    text = redact(text, [value[:4] + "***" for value in values if len(value) >= 4])
     text = re.sub(r"(?i)(Signature=)[0-9a-f]+", r"\1[REDACTED]", text)
     text = re.sub(r"(?i)((?:Calculated|Provided): )[0-9a-f]+", r"\1[REDACTED]", text)
     return re.sub(r"(?i)(Bearer )[A-Za-z0-9._~+/=-]+", r"\1[REDACTED]", text)
@@ -25,6 +29,7 @@ class RestartDiagnostic:
         self.factory = factory
         self.path = reports / "remote-signing.jsonl"
         self.values = list(credentials.values())
+        self.access_key = credentials["access"]
         self.lock = threading.Lock()
         self.phase = "before"
         self.entries = []
@@ -59,11 +64,26 @@ class RestartDiagnostic:
 
         async def traced_aio(session, request):
             response = await aio_send(session, request)
+            headers = {
+                key: value.decode() if isinstance(value, bytes) else value
+                for key, value in request.headers.items()
+            }
+            lower = {key.lower(): value for key, value in headers.items()}
+            if response.status_code in (200, 206):
+                assert "Credential=" + diagnostic.access_key + "/" in lower["authorization"]
+                assert "SignedHeaders=" in lower["authorization"]
+                assert "x-amz-security-token" not in lower
+                signed_at = datetime.strptime(lower["x-amz-date"], "%Y%m%dT%H%M%SZ").replace(
+                    tzinfo=timezone.utc
+                )
+                server_at = parsedate_to_datetime(response.headers["date"])
+                assert abs((server_at - signed_at).total_seconds()) < 60
             diagnostic.emit(
                 "s3",
                 method=request.method,
                 url=request.url,
-                headers=dict(request.headers),
+                headers=headers,
+                host=urlsplit(request.url).netloc,
                 status=response.status_code,
                 response_headers=dict(response.headers),
                 error=(await response.content).decode() if response.status_code >= 400 else None,
@@ -108,7 +128,6 @@ class RestartDiagnostic:
         Never remove a handler ourselves. If upstream stops unregistering or
         stops sharing filesystems, signed success must surface as upstream-fixed.
         """
-        from botocore.exceptions import ClientError
         from pyiceberg.io.fsspec import FsspecFileIO
 
         events = self.fs.s3.meta.events
@@ -147,26 +166,15 @@ class RestartDiagnostic:
                     with self.table.io.new_input(self.path_to_read).open() as source:
                         assert source.read(4) == b"PAR1"
                 except PermissionError as exc:
-                    assert type(exc) is PermissionError and str(exc) == "Forbidden", repr(exc)
-                    cause = exc.__cause__
-                    assert isinstance(cause, ClientError), repr(cause)
-                    assert cause.operation_name == "HeadObject", cause
-                    assert cause.response["Error"] == {"Code": "403", "Message": "Forbidden"}, (
-                        cause.response
-                    )
-                    assert cause.response["ResponseMetadata"]["HTTPStatusCode"] == 403
+                    remote_signing_failure(exc, "HeadObject", "403", "Forbidden")
                     # HEAD has no error body. Ask the same unsigned client for the
                     # same object with GET to retain SeaweedFS's precise reason.
                     try:
                         self.fs.cat_file(self.path_to_read, start=0, end=4)
                     except PermissionError as get_error:
-                        get_cause = get_error.__cause__
-                        assert isinstance(get_cause, ClientError), repr(get_cause)
-                        assert get_cause.operation_name == "GetObject"
-                        assert get_cause.response["Error"]["Code"] == "AccessDenied", (
-                            get_cause.response
+                        remote_signing_failure(
+                            get_error, "GetObject", "AccessDenied", "Access Denied."
                         )
-                        assert get_cause.response["ResponseMetadata"]["HTTPStatusCode"] == 403
                     else:
                         raise AssertionError("Unsigned GET unexpectedly succeeded")
                     status = "expected-failure"
