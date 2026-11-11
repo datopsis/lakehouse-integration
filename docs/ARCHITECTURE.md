@@ -54,8 +54,8 @@ The S3 fixture identity has Read:warehouse, Write:warehouse, List:warehouse.
 supports bucket-scoped actions. Admin/Tagging are not granted. A trusted weed
 shell precreates the bucket. PostgreSQL stores catalog rows and encrypted S3
 credentials; SeaweedFS stores Iceberg metadata JSON, manifests, Parquet data and
-positional deletes. Trino/PyIceberg table locations are assigned by Lakekeeper; Sail proposes
-`s3://warehouse/from_sail`, which Lakekeeper registers in that same warehouse.
+positional deletes. Trino/PyIceberg table locations are assigned by Lakekeeper;
+Sail proposes `s3://warehouse/from_sail`, which Lakekeeper registers in that same warehouse.
 
 Trust boundaries: service file mounts limit accidental cross-service secret
 exposure; they do not isolate an already-compromised network member from the
@@ -65,7 +65,9 @@ gaps. Trino uses TRINO_UBI_ALLOW_INSECURE=true, vending is disabled, and PyIcebe
 explicitly selects client-managed credentials. Sail 0.7.3 requests vending, receives
 remote-signing properties without keys, and uses its own static AWS environment
 credentials successfully. The [T10 capture](SAIL-EVIDENCE.md) observes no signer
-requests; the gate rejects any such request. No remote signer is needed.
+requests; the gate rejects any such request. No remote signer is needed on the main path.
+T9 separately exercises a no-key remote-signing client and records the known
+concurrent signer-registration race; see [the draft report](known-issues/remote-signing.md).
 
 T5 removes containers/network using compose down without --volumes, then creates
 a new stack. The four volumes and generated keys survive. Every nonempty container

@@ -6,7 +6,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from gates import redact
+from remote_signing import sanitize
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -58,7 +58,7 @@ def main():
     try:
         for path in reports.iterdir():
             if path.is_file():
-                text = redact(path.read_text(), values)
+                text = sanitize(path.read_text(), values)
                 assert not any(value and value in text for value in values)
                 (safe / path.name).write_text(text)
     except Exception:

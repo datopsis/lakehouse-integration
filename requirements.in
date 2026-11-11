@@ -1,5 +1,5 @@
 # Runtime clients; retain the spike's independently reproduced decoder versions.
-pyiceberg[pyarrow]==0.12.0
+pyiceberg[pyarrow,s3fs]==0.12.0
 pyarrow==25.0.1
 botocore==1.43.117
 # Local/CI verification and reproducible lock generation.

@@ -22,3 +22,18 @@ def redact(text, values):
         if value:
             text = text.replace(value, "[REDACTED]")
     return text
+
+
+def remote_signing_failure(exc, operation, code, message):
+    """Accept only the measured S3 denial, never arbitrary permission errors."""
+    from botocore.exceptions import ClientError
+
+    assert type(exc) is PermissionError and str(exc) == message, repr(exc)
+    cause = exc.__cause__
+    assert isinstance(cause, ClientError), repr(cause)
+    assert cause.operation_name == operation, cause
+    if operation == "HeadObject":
+        assert cause.response["Error"] == {"Code": code, "Message": message}, cause.response
+    assert cause.response["Error"]["Code"] == code, cause.response
+    assert cause.response["Error"]["Message"] == message, cause.response
+    assert cause.response["ResponseMetadata"]["HTTPStatusCode"] == 403, cause.response

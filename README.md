@@ -37,6 +37,7 @@ security gate, and does not authorize release or modify the jars.
 | T5 | `compose down` keeps volumes; `up` replaces all eight IDs; fresh clients reread every table; a new write is read back |
 | T6 | Anonymous S3 and wrong S3 secret return specific 403 errors; missing encryption key prevents Lakekeeper startup; wrong PostgreSQL password prevents migration |
 | T7 | Non-root, read-only roots, dropped capabilities, no-new-privileges, internal network, no published ports; S3 cannot read PostgreSQL secrets; Sail receives only its own AWS env file |
+| T9 | No-key remote-signing client retained across recreation; serial exact-row controls and deterministic concurrent-initialization canary with unsigned HEAD 403 / GET AccessDenied evidence |
 | T10 | Sail CREATE/INSERT, exact Trino/fresh-PyIceberg reads after INSERT/UPDATE/DELETE; Sail reads Trino/PyIceberg tables, with passive REST/S3 credential evidence |
 | Canary | Default Trino encoding, INSERT/UPDATE/DELETE, then PyIceberg read; only the exact known Arrow decoder error is an expected failure |
 
@@ -58,15 +59,25 @@ mode with no published listener. See [SECURITY.md](SECURITY.md).
 
 This proves a small, single-host, graceful stop/recreate path at reviewed pins.
 It does not prove production readiness, TLS/login/authorization, crash durability,
-replication, backup recovery, load, ARM64, upgrades, or remote-signing recovery.
-The spike's long-lived remote-signing reader failed with 403 after restart;
-that remains a [roadmap item](docs/ROADMAP.md).
+replication, backup recovery, load, ARM64, upgrades, or general concurrent
+remote-signing recovery.
+
+T9 isolates remote signing from the main path. The restart investigation found a
+PyIceberg/Fsspec concurrency bug: FileIO initialization temporarily removes the
+signer callback from a shared S3 client, allowing an unsigned request to escape.
+The same live table works across recreation when initialization is serialized.
+T9 forces the real callback gap and accepts only unsigned HeadObject 403 followed
+by GET AccessDenied, then requires exact-row recovery. A successful signed canary
+emits a notice; any other failure fails the job. See the
+[draft report and reproduction](docs/known-issues/remote-signing.md); nothing was
+filed upstream. Reloading a table or starting a fresh process is not a general
+fix for the race. Remote signing remains OFF the main data path.
 
 ## Run locally
 
 Use a disposable **Linux x86_64** machine with Python 3.11 or 3.12, Git, Bash,
-Docker CLI + Compose v2, Podman, RPM/GnuPG tooling, tcpdump, and sudo. Repository-owned builds
-use both Docker and Podman; the runner must reach its private bridge IPs.
+Docker CLI + Compose v2, Podman, RPM/GnuPG tooling, tcpdump, and sudo.
+Repository-owned builds use both Docker and Podman; the runner must reach its private bridge IPs.
 macOS/Windows users should run inside an amd64 Linux VM, not publish listeners.
 Allow several GB of disk and memory (Trino is capped at 3 GiB). No GitHub secrets
 or prebuilt Datopsis images are required. Builds download locked upstream inputs.
@@ -101,8 +112,10 @@ The runner generates fresh credentials under ignored `.runtime/`, mounts only
 service-specific files, retains those credentials and four named volumes during
 T5, and removes the stack and volumes at final cleanup. It temporarily adds and
 then removes a marked block in `/etc/hosts`. Raw local logs may contain secrets;
-only `reports/sanitized/` is eligible for CI upload. Cleanup fails closed if it
-cannot redact. Inspect that directory for `builds.json`, `results.json`, and logs.
+only `reports/sanitized/` is eligible for CI upload. T9 records REST signer
+requests/responses and S3 headers in `remote-signing.jsonl`; SeaweedFS verbose
+auth logs and GET error XML explain the denial. Fixture keys, signatures and
+bearer tokens are redacted. Cleanup fails closed if it cannot redact. Inspect that directory for `builds.json`, `results.json`, and logs.
 
 Run from a clean workspace. Before rerunning, after ensuring the stack has been
 removed, delete only this harness's `.sources/`, `.runtime/`, and `reports/`
@@ -157,7 +170,6 @@ traffic in sanitized artifacts; startup alone is insufficient evidence.
 The [qualified run](docs/SAIL-EVIDENCE.md) proves Sail uses its static AWS keys
 successfully: Lakekeeper returns signing properties but no keys, and the trace
 shows direct S3 signing with zero signer calls. T10 is a mandatory success test.
-Configurable delegation
-was added upstream in [0c8333a](https://github.com/lakehq/sail/commit/0c8333a349e5438e4b37fe984b9e3a45befc7bff);
+Configurable delegation was added upstream in [0c8333a](https://github.com/lakehq/sail/commit/0c8333a349e5438e4b37fe984b9e3a45befc7bff);
 a future reviewed sail-ubi release containing that change can explicitly omit
 vending. This integration does not patch or upgrade the pinned engine.
