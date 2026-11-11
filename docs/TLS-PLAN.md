@@ -1,5 +1,9 @@
 # Phase A: TLS design and service survey
 
+![Target TLS architecture](diagrams/lakehouse-tls-architecture.svg)
+
+The diagram summarises this plan; where they differ, this document is authoritative.
+
 Survey date: 2026-11-11. **Design only: no TLS has been implemented or runtime
 qualified by this PR.** The coordinator can dispatch the small image-repository
 PRs below; admission still requires the unchanged native amd64/arm64
