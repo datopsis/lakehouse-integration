@@ -131,10 +131,12 @@ CA and correct identity. These are proposed configurations, still unverified.
 [484 internal docs][TR-internal], [config][TR-internal-config],
 [selection code][TR-internal-module].
 
-The image directly execs Java and does not read a conventional `jvm.config`.
-Qualify a narrowly documented JVM truststore injection (for example
-`JAVA_TOOL_OPTIONS=-Djavax.net.ssl.trustStore=/run/tls/truststore.p12 ...`) or
-add an explicit guarded image setting in its small PR. JVM-wide truststore
+The image directly execs Java, does not read a conventional `jvm.config`, and
+**rejects `JAVA_TOOL_OPTIONS`, `JDK_JAVA_OPTIONS`, and `_JAVA_OPTIONS`**.
+Its small image PR must add a narrowly guarded truststore setting which emits
+only the required `-Djavax.net.ssl.trustStore`, `trustStoreType` and
+`trustStorePassword` arguments. Keep the general Java-option override prohibition;
+do not recommend an environment override that the pinned image refuses. JVM-wide truststore
 support for both the bundled Iceberg and AWS clients must be proved with real
 REST/S3 operations, including all certificate negatives. Do not invent an
 `iceberg.rest-catalog.ssl.*` property or assume `http-server.https.truststore.path`
@@ -193,15 +195,18 @@ design must not strand a proxy on an old app namespace after replacement.
 [Lakekeeper config][LK-config], [NGINX profile][NG-profiles],
 [existing restart contract](../integration/crash.py).
 
-Sail client proposal: use Spark Connect's secure channel with the run CA
-(`GRPC_DEFAULT_SSL_ROOTS_FILE_PATH` set before gRPC initialization and the pinned
-client's TLS option, or its supported `ChannelBuilder` with
-`grpc.ssl_channel_credentials(root_certificates=...)`). Exact pyspark-client
-4.2.0 construction is **unverified** and belongs in sail-ubi's client rehearsal;
-the current `sc://sail:50051` alone is plaintext. Do not set an SSL target-name
+Sail client proposal: use `sc://sail:50051/;use_ssl=true`. The pinned
+pyspark-client 4.2.0 `DefaultChannelBuilder` selects
+`grpc.ssl_channel_credentials()` for that option. Supply the run CA before gRPC
+initialization through its root-file environment, or use the supported
+`ChannelBuilder` with `grpc.ssl_channel_credentials(root_certificates=...)`.
+The exact custom-CA channel construction and streaming behavior are still
+**runtime-unverified** and belong in sail-ubi's client rehearsal; the current
+`sc://sail:50051` alone is plaintext. Do not set an SSL target-name
 override to hide a SAN mismatch. If mTLS is later selected, use a dedicated
 runner identity through a supported client channel builder, never Sail's server
-key. [Current client](../integration/sail_client.py), [pinned client lock][SA-client-lock].
+key. [Current client](../integration/sail_client.py), [pinned client lock][SA-client-lock],
+[Spark 4.2.0 channel implementation][SP-client].
 
 ## Per-run certificate design (proposed)
 
@@ -377,7 +382,7 @@ qualification/docs PR. All must retain their own security/provenance gates.
    invented. Depends on 1/2/3 test endpoints. [Image contract][LK-image],
    [PG builder][LK-pg], [SDK client][LK-io].
 5. **datopsis/trino-ubi** — add an explicit documented HTTPS isolated-test
-   profile and verified custom truststore delivery for internal traffic, REST
+   profile and guarded custom truststore delivery for internal traffic, REST
    and S3; test each independently. If adding an opt-in TLS profile guard,
    do not weaken the existing authenticated production profile or release
    vulnerability gate. Keep dependency/JAR versions unchanged unless separately
@@ -578,6 +583,7 @@ PR's base. Source inspection establishes capability, not shipped-binary evidence
 [SA-image]: https://github.com/datopsis/sail-ubi/blob/6e6f65a69108f4c6870eab26f356dccb41efbf35/README.md
 [SA-entry]: https://github.com/datopsis/sail-ubi/blob/6e6f65a69108f4c6870eab26f356dccb41efbf35/container/entrypoint.py
 [SA-client-lock]: https://github.com/datopsis/sail-ubi/blob/6e6f65a69108f4c6870eab26f356dccb41efbf35/.github/requirements/client.txt
+[SP-client]: https://github.com/apache/spark/blob/v4.2.0/python/pyspark/sql/connect/client/core.py
 [SA-server]: https://github.com/lakehq/sail/blob/ac4690078021cf2a5402dc5c7b38a886f1916c73/crates/sail-common/src/server/builder.rs
 [SA-config]: https://github.com/lakehq/sail/blob/ac4690078021cf2a5402dc5c7b38a886f1916c73/docs/reference/configuration/index.md
 [SA-rest]: https://github.com/lakehq/sail/blob/ac4690078021cf2a5402dc5c7b38a886f1916c73/crates/sail-catalog-iceberg/src/provider.rs
