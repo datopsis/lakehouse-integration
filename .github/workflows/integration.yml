@@ -1,0 +1,129 @@
+name: Lakehouse integration
+on:
+  pull_request:
+  schedule:
+    - cron: '23 6 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: lakehouse-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  integration:
+    name: Integration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Prerequisites and hash-locked Python clients
+        id: dependencies
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = x86_64
+          df -h
+          sudo apt-get update -qq
+          sudo apt-get install -y rpm
+          python3 -m venv .venv
+          .venv/bin/pip install --require-hashes -r requirements.txt
+          mkdir -p reports
+          .venv/bin/pip freeze > reports/python-packages.txt
+          docker version > reports/docker-version.txt
+          podman version > reports/podman-version.txt
+      - name: Lint and unit tests
+        run: |
+          set -euo pipefail
+          .venv/bin/ruff check .
+          .venv/bin/ruff format --check .
+          .venv/bin/zizmor --offline --persona pedantic .github/workflows
+          .venv/bin/python -m unittest discover -s tests -v
+      - name: Build exact pinned source with owner scripts
+        id: build
+        run: |
+          set -euo pipefail
+          python3 integration/build.py 2>&1 | tee reports/build.log
+      - name: Strict image provenance (mandatory gate)
+        id: provenance
+        run: |
+          set -euo pipefail
+          python3 integration/verify.py 2>&1 | tee reports/provenance.log
+      - name: T1–T7 and default-encoding canary
+        # Collect runtime evidence even if provenance fails; the job stays failed.
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          .venv/bin/python integration/probe.py 2>&1 | tee reports/probe.log
+      - name: Redact diagnostics and remove services
+        id: cleanup
+        if: always()
+        run: |
+          set -euo pipefail
+          python3 integration/cleanup.py
+      - name: Retain sanitized evidence
+        if: ${{ !cancelled() && steps.cleanup.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lakehouse-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/sanitized/
+          retention-days: 14
+          if-no-files-found: error
+  upstream:
+    name: Upstream commits
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Report newer upstream commits without changing pins
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 integration/check_updates.py
+  weekly-failure:
+    name: Weekly failure issue
+    needs: [integration, upstream]
+    if: ${{ always() && github.event_name == 'schedule' && (needs.integration.result == 'failure' || needs.upstream.result == 'failure') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write # Only scheduled failures may create/update the single tracking issue.
+    concurrency:
+      group: weekly-lakehouse-failure-issue
+      cancel-in-progress: false
+    steps:
+      # No checkout or untrusted artifacts in the only write-capable job.
+      - name: Open or update the single weekly failure issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          title = 'Weekly lakehouse integration failed'
+          issues = json.loads(subprocess.check_output([
+              'gh', 'issue', 'list', '--state', 'all', '--search', title + ' in:title',
+              '--limit', '100', '--json', 'number,title,state'], text=True))
+          matches = [issue for issue in issues if issue['title'] == title]
+          body = 'The weekly integration gate failed. Inspect the run and sanitized artifacts:\n\n' + os.environ['RUN_URL']
+          with open('issue-body.md', 'w') as output:
+              output.write(body + '\n')
+          if matches:
+              issue = min(matches, key=lambda item: item['number'])
+              number = str(issue['number'])
+              if issue['state'] == 'CLOSED':
+                  subprocess.run(['gh', 'issue', 'reopen', number], check=True)
+              subprocess.run(['gh', 'issue', 'edit', number, '--body-file', 'issue-body.md'], check=True)
+          else:
+              subprocess.run(['gh', 'issue', 'create', '--title', title, '--body-file', 'issue-body.md'], check=True)
+          PY

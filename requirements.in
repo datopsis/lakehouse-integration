@@ -1,0 +1,9 @@
+# Runtime clients; retain the spike's independently reproduced decoder versions.
+pyiceberg[pyarrow]==0.12.0
+pyarrow==25.0.1
+botocore==1.43.117
+# Local/CI verification and reproducible lock generation.
+ruff==0.17.4
+zizmor==1.32.0
+pip-tools==7.6.2
+PyYAML==6.0.3

@@ -1,0 +1,8 @@
+.venv/
+.sources/
+.runtime/
+reports/
+__pycache__/
+*.pyc
+.env
+.ruff_cache/

@@ -1,0 +1,84 @@
+name: lakehouse-integration
+x-hardened: &hardened
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  networks: [private]
+  pids_limit: 512
+  stop_grace_period: 30s
+services:
+  postgres:
+    <<: *hardened
+    image: localhost/postgresql-lakekeeper-ubi:integration
+    user: '26:0'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: lakekeeper
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres-password
+    volumes:
+      - pg-data:/var/lib/pgsql
+      - ../.runtime/postgres:/run/secrets:ro
+    tmpfs: ['/tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777']
+  master:
+    <<: *hardened
+    image: localhost/seaweedfs-ubi:integration
+    user: '1000:0'
+    command: [master, '-mdir=/data', '-ip=master', '-volumeSizeLimitMB=64']
+    volumes: [master-data:/data]
+  volume:
+    <<: *hardened
+    image: localhost/seaweedfs-ubi:integration
+    user: '1000:0'
+    command: [volume, '-dir=/data', '-ip=volume', '-mserver=master:9333', '-max=4']
+    volumes: [volume-data:/data]
+    depends_on: [master]
+  filer:
+    <<: *hardened
+    image: localhost/seaweedfs-ubi:integration
+    user: '1000:0'
+    command: [filer, '-ip=filer', '-master=master:9333', '-defaultStoreDir=/data']
+    volumes: [filer-data:/data]
+    depends_on: [master, volume]
+  s3:
+    <<: *hardened
+    image: localhost/seaweedfs-ubi:integration
+    user: '1000:0'
+    command: [s3, '-filer=filer:8888', '-ip.bind=0.0.0.0', '-config=/run/secrets/s3.json']
+    volumes: [../.runtime/s3:/run/secrets:ro]
+    depends_on: [filer]
+  migrate:
+    <<: *hardened
+    image: localhost/lakekeeper-ubi:integration
+    user: '999:0'
+    command: [migrate]
+    env_file: ../.runtime/lakekeeper.env
+    profiles: [setup]
+  catalog:
+    <<: *hardened
+    image: localhost/lakekeeper-ubi:integration
+    user: '999:0'
+    command: [serve]
+    env_file: ../.runtime/lakekeeper.env
+    depends_on: [postgres]
+  trino:
+    <<: *hardened
+    image: localhost/trino-ubi:integration
+    user: '10001:0'
+    mem_limit: 3g
+    # Explicit isolated-test profile supported by the pinned image; no published port.
+    environment:
+      TRINO_UBI_ALLOW_INSECURE: 'true'
+    env_file: ../.runtime/trino.env
+    volumes: [../.runtime/trino:/etc/trino:ro]
+    tmpfs:
+      - /var/lib/trino:rw,noexec,nosuid,nodev,uid=10001,gid=0,mode=0750,size=512m
+      - /tmp/trino:rw,exec,nosuid,nodev,uid=10001,gid=0,mode=0750,size=256m
+    depends_on: [catalog, s3]
+networks:
+  private:
+    internal: true
+volumes:
+  pg-data:
+  master-data:
+  volume-data:
+  filer-data:
