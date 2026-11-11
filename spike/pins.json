@@ -1,0 +1,6 @@
+{
+  "postgresql-lakekeeper-ubi": "93666c251ca2c4e6618ddd35a669c4c3ea380313",
+  "lakekeeper-ubi": "dac1d6b06ef30690a8784bf7e8490bec1f58a1cf",
+  "seaweedfs-ubi": "1bfd88f26ff63f9b33839ab1d5477e8f7f57376c",
+  "trino-ubi": "964802b7afd3ae526039ef7dc7fcf605ce3d5b26"
+}

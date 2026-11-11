@@ -1,0 +1,43 @@
+name: Feasibility spike
+on:
+  push:
+    branches: ['spike/**']
+    paths-ignore: ['SPIKE-FINDINGS.md', 'spike/evidence/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  spike:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Runner prerequisites
+        run: |
+          test "$(uname -m)" = x86_64
+          df -h
+          sudo apt-get update -qq
+          sudo apt-get install -y rpm
+          python3 -m venv .venv
+          .venv/bin/pip install 'pyiceberg[s3fs,pyarrow]==0.12.0' 'pyarrow==25.0.1'
+          mkdir -p reports
+          .venv/bin/pip freeze > reports/python-packages.txt
+          docker version > reports/docker-version.txt
+          podman version > reports/podman-version.txt
+      - name: Fetch exact commits, build with owner scripts, verify images
+        run: python3 spike/build.py 2>&1 | tee reports/build.log
+      - name: Exercise the lakehouse and restart every service
+        run: .venv/bin/python spike/probe.py 2>&1 | tee reports/probe.log
+      - name: Collect sanitized diagnostics and remove services
+        if: always()
+        run: python3 spike/cleanup.py
+      - name: Retain evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: feasibility-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/
+          retention-days: 14
+          if-no-files-found: error
