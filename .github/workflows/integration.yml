@@ -52,7 +52,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 integration/verify.py 2>&1 | tee reports/provenance.log
-      - name: T1–T7, T9 remote signing, T10 Sail and encoding canary
+      - name: T1–T10 and encoding canaries
         # Collect runtime evidence even if provenance fails; the job stays failed.
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |

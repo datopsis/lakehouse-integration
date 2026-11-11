@@ -10,6 +10,11 @@
   keyless Lakekeeper signing properties, direct S3 signing, no signer requests;
   exact cross-engine reads and mutations pass. Record Actions evidence in
   `docs/SAIL-EVIDENCE.md`.
+- Add T8 container-SIGKILL durability tests: kill all eight services after successful
+  INSERTs, then kill PostgreSQL, Lakekeeper, SeaweedFS volume and filer during writes.
+  Journal acknowledgements and ambiguous outcomes; require exact atomic batches,
+  snapshots, fresh independent reads, successful recovery writes and recovery times.
+- Keep power loss, fsync/disk-cache qualification and host loss explicitly unproven.
 - Investigate remote-signing restart failures: identify a PyIceberg/Fsspec signer
   callback race that sends unsigned S3 requests, also reproducible before restart.
 - Add mandatory T9 with full recreation, deterministic concurrent initialization,

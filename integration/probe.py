@@ -104,7 +104,7 @@ def hosts():
     )
 
 
-def sql(query):
+def sql(query, observe=None):
     status, page = http(
         "POST", "http://trino:8080/v1/statement", query, {"X-Trino-User": "integration"}
     )
@@ -112,6 +112,8 @@ def sql(query):
     rows = []
     deadline = time.monotonic() + 180
     while True:
+        if observe is not None:
+            observe(page)
         if "error" in page:
             raise RuntimeError(json.dumps(page["error"]))
         rows.extend(page.get("data", []))
@@ -780,6 +782,9 @@ def main():
         REMOTE = RestartDiagnostic(rest_catalog, REPORTS, CREDS)
         probe("T9_remote_signing_before", REMOTE.start)
         probe("T5_persistence", restart)
+        from crash import crash_durability
+
+        probe("T8_crash_durability", lambda: crash_durability(sys.modules[__name__]))
     except Exception as exc:
         record("fatal", {"status": "fail", "error": str(exc)})
         traceback.print_exc()
@@ -796,6 +801,7 @@ def main():
         "T6_negative",
         "T7_hardening",
         "T7_secret_isolation",
+        "T8_crash_durability",
         "encoding_canary",
         "T10_sail",
         "T9_remote_signing_before",
