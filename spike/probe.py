@@ -5,6 +5,7 @@ from pathlib import Path
 import secrets
 import shutil
 import subprocess
+import sys
 import time
 import traceback
 import urllib.error
@@ -118,7 +119,7 @@ def check_hardening():
     record('hardening', report)
 
 
-def rest_catalog(delegation=None, with_credentials=True):
+def rest_catalog(delegation='client-managed', with_credentials=True):
     from pyiceberg.catalog.rest import RestCatalog
     properties = {
         'uri': 'http://catalog:8181/catalog', 'warehouse': 'qualification',
@@ -225,7 +226,7 @@ def mutate():
     return {'snapshots': snapshots, 'history': history}
 
 
-def py_read(expected=None, delegation=None, with_credentials=True):
+def py_read(expected=None, delegation='client-managed', with_credentials=True):
     table = rest_catalog(delegation, with_credentials).load_table('spike.from_trino')
     rows = table.scan().to_arrow().sort_by('id').to_pylist()
     expected = expected or [{'id': 1, 'label': 'alpha'}, {'id': 2, 'label': 'updated'}]
@@ -274,16 +275,37 @@ def restart():
     wait('catalog after restart', lambda: subprocess.run(DC + ['exec', '-T', 'catalog', 'lakekeeper', 'healthcheck', '-s'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0)
     wait('Trino after restart', lambda: http('GET', 'http://trino:8080/v1/info')[1].get('starting') is False, 180)
     assert all(cid(service) != previous for service, previous in old.items())
+    # A fresh independent reader matches the owner's storage fixture and avoids
+    # carrying S3/signing/DNS clients across network/container replacement.
+    checked = subprocess.run([sys.executable, __file__, 'verify-restart'], text=True, capture_output=True)
+    print(checked.stdout, flush=True)
+    print(checked.stderr, file=sys.stderr, flush=True)
+    checked.check_returncode()
+    check_hardening()
+    return json.loads(next(line.removeprefix('RESTART_RESULT=') for line in checked.stdout.splitlines() if line.startswith('RESTART_RESULT=')))
+
+
+def verify_restart():
     assert sql('SELECT * FROM iceberg.spike.from_trino ORDER BY id') == [[1, 'alpha'], [2, 'updated']]
     assert sql('SELECT * FROM iceberg.spike.from_python ORDER BY id') == [[10, 'py-alpha'], [20, 'py-beta']]
     py_read()
     assert rest_catalog().load_table('spike.from_python').scan().to_arrow().num_rows == 2
-    # A post-restart write needs the persisted Lakekeeper encryption key and storage credential.
     sql("INSERT INTO iceberg.spike.from_python VALUES (30, 'after-restart')")
     assert rest_catalog().load_table('spike.from_python').scan().to_arrow().sort_by('id').to_pylist() == [
         {'id': 10, 'label': 'py-alpha'}, {'id': 20, 'label': 'py-beta'}, {'id': 30, 'label': 'after-restart'}]
-    check_hardening()
-    return 'Seven containers replaced; both engines reread both tables; a new Trino write was read by PyIceberg'
+    result = {'static_mode': 'Both engines reread both tables; new Trino write read by PyIceberg'}
+    try:
+        result['fresh_client_remote_signing'] = py_read(delegation='remote-signing', with_credentials=False)
+    except Exception as exc:
+        result['fresh_client_remote_signing'] = {'error': str(exc)}
+        traceback.print_exc()
+    print('RESTART_RESULT=' + json.dumps(result), flush=True)
+
+
+if sys.argv[1:] == ['verify-restart']:
+    CREDS = json.loads((RUNTIME / 'credentials.json').read_text())
+    verify_restart()
+    sys.exit(0)
 
 
 try:
