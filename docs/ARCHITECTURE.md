@@ -103,14 +103,22 @@ nothing, because Lakekeeper login is off and every caller is allowed everything.
 OpenID login and table permissions are added (see the roadmap), those permissions will
 NOT protect the data while engines hold bucket-wide static keys: an engine can read
 any table's files directly from S3. For catalog permissions to be enforced on data,
-the catalog must grant the S3 access itself, per table and short-lived, through either:
+the catalog must grant the S3 access itself, per table and short-lived. Lakekeeper
+offers two ways, and on SeaweedFS only one of them isolates tables:
 
-- **credential vending**, which needs an STS in SeaweedFS (present upstream, but
-  unsupported and unqualified in `seaweedfs-ubi`); or
-- **remote signing**, which Trino 484 does not support, and where PyIceberg has the
-  concurrency bug that T9 records.
+- **Credential vending (the chosen path).** Lakekeeper calls SeaweedFS's STS
+  `AssumeRole` with a session policy limited to the table's location and hands the
+  engine short-lived keys. STS exists in SeaweedFS 4.53 but is being qualified in
+  `seaweedfs-ubi` (owner approval 2026-11-11, subject to adversarial tests).
+- **Remote signing (not a table-isolation control on SeaweedFS).** Lakekeeper's own
+  [storage documentation](https://github.com/lakekeeper/lakekeeper/blob/main/docs/docs/storage.md)
+  states that SeaweedFS does not check every part of a signed request, so a client can
+  alter a signed request to reach another table's files, and recommends vended
+  credentials for SeaweedFS. Trino 484 also does not support it, and PyIceberg has the
+  concurrency bug that T9 records. `seaweedfs-ubi` documents how to use it and its limits.
 
-Choosing one is part of the OpenID/authorization phase. Also, when Sail is upgraded to
+This switch is part of the security phases (TLS, OpenID, authorization, then
+catalog-controlled data access). Also, when Sail is upgraded to
 a release with configurable delegation (upstream commit `0c8333a`), set
 `access_delegation` explicitly so this behaviour is a decision, not a fallback.
 

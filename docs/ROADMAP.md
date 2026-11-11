@@ -10,10 +10,11 @@ require review and exact labels, with no allowances.
 - OpenID login for Lakekeeper **with authorization**, plus authenticated Trino access.
   Prerequisite decision: while engines hold bucket-wide static S3 keys, catalog
   permissions do not protect data (see "How each engine gets S3 access" in
-  [ARCHITECTURE.md](ARCHITECTURE.md)). Decide how the catalog grants S3 access per
-  table: credential vending (needs SeaweedFS STS qualified in seaweedfs-ubi) or
-  remote signing (unsupported by Trino 484; PyIceberg race in T9). Then remove the
-  engines' static keys.
+  [ARCHITECTURE.md](ARCHITECTURE.md)). Decided 2026-11-11: the catalog grants
+  per-table S3 access by credential vending through SeaweedFS STS (being qualified
+  in seaweedfs-ubi). Remote signing does not isolate tables on SeaweedFS (per
+  Lakekeeper's docs), so it stays off for table isolation. Then remove the engines'
+  static keys.
 - Review a sail-ubi bump to the first release containing configurable delegation
   (`0c8333a349e5438e4b37fe984b9e3a45befc7bff`) and explicitly omit vending.
   Current 0.7.3 works with static credentials despite requesting vending. Do not
