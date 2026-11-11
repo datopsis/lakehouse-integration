@@ -1,0 +1,6 @@
+Client:       Podman Engine
+Version:      4.9.3
+API Version:  4.9.3
+Go Version:   go1.22.2
+Built:        Thu Jan  1 00:00:00 1970
+OS/Arch:      linux/amd64

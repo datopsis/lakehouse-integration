@@ -1,0 +1,334 @@
+::add-mask::[REDACTED]
+::add-mask::[REDACTED]
+::add-mask::[REDACTED]
+::add-mask::[REDACTED]
+::add-mask::[REDACTED]
+ Network feasibility_private  Creating
+ Network feasibility_private  Created
+ Volume "feasibility_pg-data"  Creating
+ Volume "feasibility_pg-data"  Created
+ Volume "feasibility_master-data"  Creating
+ Volume "feasibility_master-data"  Created
+ Volume "feasibility_volume-data"  Creating
+ Volume "feasibility_volume-data"  Created
+ Volume "feasibility_filer-data"  Creating
+ Volume "feasibility_filer-data"  Created
+ Container feasibility-master-1  Creating
+ Container feasibility-postgres-1  Creating
+ Container feasibility-master-1  Created
+ Container feasibility-volume-1  Creating
+ Container feasibility-postgres-1  Created
+ Container feasibility-volume-1  Created
+ Container feasibility-filer-1  Creating
+ Container feasibility-filer-1  Created
+ Container feasibility-s3-1  Creating
+ Container feasibility-s3-1  Created
+ Container feasibility-postgres-1  Starting
+ Container feasibility-master-1  Starting
+ Container feasibility-postgres-1  Started
+ Container feasibility-master-1  Started
+ Container feasibility-volume-1  Starting
+ Container feasibility-volume-1  Started
+ Container feasibility-filer-1  Starting
+ Container feasibility-filer-1  Started
+ Container feasibility-s3-1  Starting
+ Container feasibility-s3-1  Started
+BEGIN
+CREATE ROLE
+ALTER DATABASE
+COMMIT
+BEGIN
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE EXTENSION
+CREATE EXTENSION
+COMMIT
+ _      ___  _   _______ _   _______ ___________ ___________ 
+| |    / _ \| | / |  ___| | / |  ___|  ___| ___ |  ___| ___ \
+| |   / /_\ | |/ /| |__ | |/ /| |__ | |__ | |_/ | |__ | |_/ /
+| |   |  _  |    \|  __||    \|  __||  __||  __/|  __||    / 
+| |___| | | | |\  | |___| |\  | |___| |___| |   | |___| |\ \ 
+\_____\_| |_\_| \_\____/\_| \_\____/\____/\_|   \____/\_| \_|
+
+ _____ ___________ _____ 
+/  __ |  _  | ___ |  ___|
+| /  \| | | | |_/ | |__  
+| |   | | | |    /|  __|
+| \__/\ \_/ | |\ \| |___
+ \____/\___/\_| \_\____/
+
+Created with ❤️ by Vakamo
+Docs: https://docs.lakekeeper.io
+Enterprise Support: https://vakamo.com
+
+Lakekeeper Version: 0.13.4
+
+{"timestamp":"2026-11-11T03:43:47.360913Z","level":"INFO","message":"Lakekeeper Version: 0.13.4","target":"lakekeeper"}
+{"timestamp":"2026-11-11T03:43:47.360966Z","level":"INFO","message":"Migrating database...","target":"lakekeeper"}
+{"timestamp":"2026-11-11T03:43:47.361180Z","level":"INFO","message":"Building PostgreSQL write connection","host":"postgres","port":5432,"database":"lakekeeper","username":"lakekeeper","target":"lakekeeper_storage_postgres"}
+{"timestamp":"2026-11-11T03:43:47.365692Z","level":"INFO","message":"Core data migration hooks: [20241106201139]","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.365715Z","level":"INFO","message":"Core SHA patches: [20251109122721, 20251228101923, 20250505101407, 20250923164029, 20250328131139, 20250523101407]","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.369955Z","level":"INFO","message":"Current migration","migration.version":"1","migration.description":"setup","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.370992Z","level":"INFO","message":"extension \"uuid-ossp\" already exists, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.371005Z","level":"INFO","message":"extension \"pgcrypto\" already exists, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.375705Z","level":"INFO","message":"Applying migration","migration.version":"1","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.375724Z","level":"INFO","message":"Current migration","migration.version":"2","migration.description":"warehouse","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.378695Z","level":"INFO","message":"Applying migration","migration.version":"2","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.378703Z","level":"INFO","message":"Current migration","migration.version":"3","migration.description":"secret","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.380126Z","level":"INFO","message":"Applying migration","migration.version":"3","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.380134Z","level":"INFO","message":"Current migration","migration.version":"4","migration.description":"namespace","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.382102Z","level":"INFO","message":"Applying migration","migration.version":"4","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.382111Z","level":"INFO","message":"Current migration","migration.version":"5","migration.description":"table","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.384034Z","level":"INFO","message":"Applying migration","migration.version":"5","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.384043Z","level":"INFO","message":"Current migration","migration.version":"20240620151429","migration.description":"timecolumns","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.384391Z","level":"INFO","message":"Applying migration","migration.version":"20240620151429","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.384398Z","level":"INFO","message":"Current migration","migration.version":"20240620151514","migration.description":"tabular identifiers","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.389736Z","level":"INFO","message":"Applying migration","migration.version":"20240620151514","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.389746Z","level":"INFO","message":"Current migration","migration.version":"20240620151544","migration.description":"views","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.398032Z","level":"INFO","message":"Applying migration","migration.version":"20240620151544","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.398044Z","level":"INFO","message":"Current migration","migration.version":"20240897111544","migration.description":"view versions are i32","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.404920Z","level":"INFO","message":"Applying migration","migration.version":"20240897111544","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.404949Z","level":"INFO","message":"Current migration","migration.version":"20240898160621","migration.description":"tabular deleted at","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.405264Z","level":"INFO","message":"Applying migration","migration.version":"20240898160621","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.405273Z","level":"INFO","message":"Current migration","migration.version":"20240898175225","migration.description":"tabular deletion extended","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.406125Z","level":"INFO","message":"Applying migration","migration.version":"20240898175225","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.406135Z","level":"INFO","message":"Current migration","migration.version":"20240899175225","migration.description":"tabular expiration","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.410970Z","level":"INFO","message":"Applying migration","migration.version":"20240899175225","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.410979Z","level":"INFO","message":"Current migration","migration.version":"20240909120857","migration.description":"configurable drops","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.411742Z","level":"INFO","message":"Applying migration","migration.version":"20240909120857","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.411751Z","level":"INFO","message":"Current migration","migration.version":"20240911094637","migration.description":"unique tabular location","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.412320Z","level":"INFO","message":"Applying migration","migration.version":"20240911094637","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.412332Z","level":"INFO","message":"Current migration","migration.version":"20241006083546","migration.description":"projects-table","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.414140Z","level":"INFO","message":"Applying migration","migration.version":"20241006083546","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.414152Z","level":"INFO","message":"Current migration","migration.version":"20241009122911","migration.description":"users and roles","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.414285Z","level":"INFO","message":"extension \"pg_trgm\" already exists, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.414299Z","level":"INFO","message":"extension \"btree_gin\" already exists, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.417990Z","level":"INFO","message":"Applying migration","migration.version":"20241009122911","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.418004Z","level":"INFO","message":"Current migration","migration.version":"20241011203612","migration.description":"server","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.419228Z","level":"INFO","message":"Applying migration","migration.version":"20241011203612","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.419238Z","level":"INFO","message":"Current migration","migration.version":"20241106163000","migration.description":"user email search","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.419868Z","level":"INFO","message":"Applying migration","migration.version":"20241106163000","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.419877Z","level":"INFO","message":"Current migration","migration.version":"20241106201139","migration.description":"split table metadata","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.434130Z","level":"INFO","message":"Applying migration","migration.version":"20241106201139","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.434144Z","level":"INFO","message":"Running data migration split_table_metadata","migration.version":"20241106201139","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.434543Z","level":"INFO","message":"Data migration split_table_metadata complete","migration.version":"20241106201139","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.434554Z","level":"INFO","message":"Current migration","migration.version":"20241117144332","migration.description":"task queue indexes","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.435308Z","level":"INFO","message":"Applying migration","migration.version":"20241117144332","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.435317Z","level":"INFO","message":"Current migration","migration.version":"20241216114355","migration.description":"table statistics","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.438091Z","level":"INFO","message":"Applying migration","migration.version":"20241216114355","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.438101Z","level":"INFO","message":"Current migration","migration.version":"20241216150545","migration.description":"fix schemaless snapshots","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.438430Z","level":"INFO","message":"Applying migration","migration.version":"20241216150545","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.438441Z","level":"INFO","message":"Current migration","migration.version":"20241224055514","migration.description":"unique user email","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.439072Z","level":"INFO","message":"Applying migration","migration.version":"20241224055514","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.439084Z","level":"INFO","message":"Current migration","migration.version":"20250108131004","migration.description":"statistics","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.441794Z","level":"INFO","message":"Applying migration","migration.version":"20250108131004","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.441804Z","level":"INFO","message":"Current migration","migration.version":"20250216105917","migration.description":"variant protocols","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.444003Z","level":"INFO","message":"Applying migration","migration.version":"20250216105917","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.444012Z","level":"INFO","message":"Current migration","migration.version":"20250304100842","migration.description":"string project ids","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.446988Z","level":"INFO","message":"Applying migration","migration.version":"20250304100842","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.446997Z","level":"INFO","message":"Current migration","migration.version":"20250310181331","migration.description":"endpoint stats","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.450110Z","level":"INFO","message":"Applying migration","migration.version":"20250310181331","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.450119Z","level":"INFO","message":"Current migration","migration.version":"20250326153233","migration.description":"table statistics fkey","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.451225Z","level":"INFO","message":"Applying migration","migration.version":"20250326153233","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.451234Z","level":"INFO","message":"Current migration","migration.version":"20250328131139","migration.description":"fix sequence number","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.451969Z","level":"INFO","message":"Applying migration","migration.version":"20250328131139","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.451978Z","level":"INFO","message":"Current migration","migration.version":"20250401163352","migration.description":"project id constraints","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.452818Z","level":"INFO","message":"Applying migration","migration.version":"20250401163352","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.452826Z","level":"INFO","message":"Current migration","migration.version":"20250407144536","migration.description":"fix warehouse deletion fk","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.453727Z","level":"INFO","message":"Applying migration","migration.version":"20250407144536","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.453735Z","level":"INFO","message":"Current migration","migration.version":"20250409201248","migration.description":"cascade delete","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.455201Z","level":"INFO","message":"Applying migration","migration.version":"20250409201248","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.455209Z","level":"INFO","message":"Current migration","migration.version":"20250410024101","migration.description":"fix warehouse stats","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.458992Z","level":"INFO","message":"Applying migration","migration.version":"20250410024101","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.459001Z","level":"INFO","message":"Current migration","migration.version":"20250412220607","migration.description":"restructure endpoints","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.469212Z","level":"INFO","message":"Applying migration","migration.version":"20250412220607","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.469223Z","level":"INFO","message":"Current migration","migration.version":"20250428072447","migration.description":"add task warehouse id idx","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.471398Z","level":"INFO","message":"Applying migration","migration.version":"20250428072447","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.471406Z","level":"INFO","message":"Current migration","migration.version":"20250505101407","migration.description":"fix index function","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.471503Z","level":"INFO","message":"index \"unique_table_snapshot_sequence_number\" does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.471527Z","level":"INFO","message":"function is_not_table_format_v1() does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.471802Z","level":"INFO","message":"Applying migration","migration.version":"20250505101407","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.471814Z","level":"INFO","message":"Current migration","migration.version":"20250506094141","migration.description":"fix index function2","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.472042Z","level":"INFO","message":"index \"unique_table_snapshot_sequence_number\" does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.472053Z","level":"INFO","message":"function is_not_table_format_v1() does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.472256Z","level":"INFO","message":"Applying migration","migration.version":"20250506094141","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.472266Z","level":"INFO","message":"Current migration","migration.version":"20250513172324","migration.description":"s3 sign table endpoint","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.472590Z","level":"INFO","message":"Applying migration","migration.version":"20250513172324","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.472600Z","level":"INFO","message":"Current migration","migration.version":"20250523101407","migration.description":"tasks store their state","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.481771Z","level":"INFO","message":"Applying migration","migration.version":"20250523101407","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.481783Z","level":"INFO","message":"Current migration","migration.version":"20250623114333","migration.description":"fix soft deleted tabulars","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.484185Z","level":"INFO","message":"Applying migration","migration.version":"20250623114333","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.484196Z","level":"INFO","message":"Current migration","migration.version":"20250826171037","migration.description":"task runtime information","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.488224Z","level":"INFO","message":"Applying migration","migration.version":"20250826171037","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.488234Z","level":"INFO","message":"Current migration","migration.version":"20250904142650","migration.description":"reusable table id","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.504389Z","level":"INFO","message":"constraint \"unique_namespace_id_per_warehouse\" of relation \"namespace\" does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.504679Z","level":"INFO","message":"constraint \"tabular_warehouse_id_fkey\" of relation \"tabular\" does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.514108Z","level":"INFO","message":"Applying migration","migration.version":"20250904142650","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.514119Z","level":"INFO","message":"Current migration","migration.version":"20250919101934","migration.description":"add task entity name","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.516649Z","level":"INFO","message":"constraint \"task_unique_warehouse_id_entity_type_entity_id_queue_name\" of relation \"task\" does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.517232Z","level":"INFO","message":"Applying migration","migration.version":"20250919101934","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.517242Z","level":"INFO","message":"Current migration","migration.version":"20250923102542","migration.description":"v3 support","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.519681Z","level":"INFO","message":"Applying migration","migration.version":"20250923102542","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.519692Z","level":"INFO","message":"Current migration","migration.version":"20250923164029","migration.description":"fuzzy tabular search","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.519847Z","level":"INFO","message":"extension \"btree_gist\" already exists, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.521394Z","level":"INFO","message":"index \"tabular_name_namespace_name_gist_index\" does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.522293Z","level":"INFO","message":"Applying migration","migration.version":"20250923164029","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.522303Z","level":"INFO","message":"Current migration","migration.version":"20250930101627","migration.description":"active tabulars remove namespace join","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.522899Z","level":"INFO","message":"Applying migration","migration.version":"20250930101627","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.522908Z","level":"INFO","message":"Current migration","migration.version":"20251003103404","migration.description":"fix project endpoint stats","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.523456Z","level":"INFO","message":"Applying migration","migration.version":"20251003103404","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.523465Z","level":"INFO","message":"Current migration","migration.version":"20251027163724","migration.description":"introduce entity versions","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.524794Z","level":"INFO","message":"Applying migration","migration.version":"20251027163724","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.524804Z","level":"INFO","message":"Current migration","migration.version":"20251109122721","migration.description":"role project filter","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.525401Z","level":"INFO","message":"extension \"btree_gist\" already exists, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.525604Z","level":"INFO","message":"Applying migration","migration.version":"20251109122721","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.525616Z","level":"INFO","message":"Current migration","migration.version":"20251117114624","migration.description":"action endpoint statistics","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.526543Z","level":"INFO","message":"Applying migration","migration.version":"20251117114624","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.526554Z","level":"INFO","message":"Current migration","migration.version":"20251121072340","migration.description":"role external id","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.527254Z","level":"INFO","message":"Applying migration","migration.version":"20251121072340","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.527266Z","level":"INFO","message":"Current migration","migration.version":"20251228101923","migration.description":"enable tasks on project level","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.527475Z","level":"INFO","message":"index \"task_warehouse_created_at_idx\" does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.534294Z","level":"INFO","message":"constraint \"task_warehouse_id_check\" of relation \"task\" does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.534306Z","level":"INFO","message":"constraint \"task_entity_check\" of relation \"task\" does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.535128Z","level":"INFO","message":"constraint \"task_log_warehouse_id_check\" of relation \"task_log\" does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.535138Z","level":"INFO","message":"constraint \"task_log_entity_check\" of relation \"task_log\" does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.536687Z","level":"INFO","message":"Applying migration","migration.version":"20251228101923","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.536697Z","level":"INFO","message":"Current migration","migration.version":"20260219081950","migration.description":"improve list performance","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.539339Z","level":"INFO","message":"Applying migration","migration.version":"20260219081950","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.539348Z","level":"INFO","message":"Current migration","migration.version":"20260220011106","migration.description":"string role id","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.540782Z","level":"INFO","message":"Applying migration","migration.version":"20260220011106","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.540791Z","level":"INFO","message":"Current migration","migration.version":"20260301083426","migration.description":"user role mappings","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.544160Z","level":"INFO","message":"Applying migration","migration.version":"20260301083426","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.544170Z","level":"INFO","message":"Current migration","migration.version":"20260318120000","migration.description":"idempotency record","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.545554Z","level":"INFO","message":"Applying migration","migration.version":"20260318120000","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.545563Z","level":"INFO","message":"Current migration","migration.version":"20260513091606","migration.description":"drop unique user email","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.545891Z","level":"INFO","message":"Applying migration","migration.version":"20260513091606","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.545903Z","level":"INFO","message":"Current migration","migration.version":"20260525120000","migration.description":"fix namespace trigger wholerow when","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.546422Z","level":"INFO","message":"Applying migration","migration.version":"20260525120000","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.546433Z","level":"INFO","message":"Current migration","migration.version":"20260527120000","migration.description":"add schedule task endpoint","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.546767Z","level":"INFO","message":"Applying migration","migration.version":"20260527120000","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.546777Z","level":"INFO","message":"Current migration","migration.version":"20260529000000","migration.description":"add generic table","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.547177Z","level":"INFO","message":"constraint \"tabular_metadata_location_check\" of relation \"tabular\" does not exist, skipping","target":"sqlx::postgres::notice"}
+{"timestamp":"2026-11-11T03:43:47.559105Z","level":"INFO","message":"Applying migration","migration.version":"20260529000000","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.559118Z","level":"INFO","message":"Current migration","migration.version":"20260529120000","migration.description":"warehouse format version policy","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.559914Z","level":"INFO","message":"Applying migration","migration.version":"20260529120000","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.559925Z","level":"INFO","message":"Current migration","migration.version":"20260601000000","migration.description":"role membership","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.561486Z","level":"INFO","message":"Applying migration","migration.version":"20260601000000","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.561499Z","level":"INFO","message":"Current migration","migration.version":"20260605000000","migration.description":"warehouse managed by","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.562253Z","level":"INFO","message":"Applying migration","migration.version":"20260605000000","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.562265Z","level":"INFO","message":"Current migration","migration.version":"20260607000000","migration.description":"role membership endpoints and user name nullable","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.563943Z","level":"INFO","message":"Applying migration","migration.version":"20260607000000","target":"lakekeeper_storage_postgres::migrations"}
+{"timestamp":"2026-11-11T03:43:47.660009Z","level":"INFO","message":"Database migration complete.","target":"lakekeeper"}
+{"timestamp":"2026-11-11T03:43:47.660043Z","level":"INFO","message":"Migrating authorizer...","target":"lakekeeper"}
+{"timestamp":"2026-11-11T03:43:47.660170Z","level":"INFO","message":"Authorizer migration complete.","target":"lakekeeper"}
+{"timestamp":"2026-11-11T03:43:47.660253Z","level":"INFO","message":"Running post-migration hooks...","target":"lakekeeper"}
+{"timestamp":"2026-11-11T03:43:47.660289Z","level":"INFO","message":"Installed system role registry with 0 role(s)","count":0,"target":"lakekeeper::service::identifier::role"}
+{"timestamp":"2026-11-11T03:43:47.660300Z","level":"INFO","message":"Post-migration hook: initializing task log cleanup cron tasks for all projects","target":"lakekeeper::service::post_migration_hooks"}
+{"timestamp":"2026-11-11T03:43:47.670203Z","level":"INFO","message":"All projects already have task log cleanup tasks scheduled.","target":"lakekeeper::service::post_migration_hooks"}
+{"timestamp":"2026-11-11T03:43:47.670230Z","level":"INFO","message":"Post-migration hooks complete.","target":"lakekeeper"}
+ Container feasibility-postgres-1  Running
+ Container feasibility-catalog-1  Creating
+ Container feasibility-catalog-1  Created
+ Container feasibility-catalog-1  Starting
+ Container feasibility-catalog-1  Started
+wrong_s3_secret: {"status": 400, "body": {"error": {"message": "IO error at `s3://warehouse/01a1c8b4-685c-74a2-9369-c3976a70dc8d/metadata/test`: S3 write failed: The request signature we calculated does not match the signature you provided. Check your key and signing method.", "type": "Unexpected", "code": 400, "stack": ["IO Operation Failed during validation.", "Error ID: 01a1c8b4-6b23-77e1-906f-7b4d8f6f7a7e"]}}}
+warehouse: {"profile": {"type": "s3", "bucket": "warehouse", "region": "local", "sts-enabled": false, "flavor": "s3-compat", "endpoint": "http://s3:8333", "path-style-access": true}, "response": {"id": "2136369c-dd82-11f1-a3b3-13c78c5dbb6e", "warehouse-id": "2136369c-dd82-11f1-a3b3-13c78c5dbb6e", "name": "qualification", "project-id": "00000000-0000-0000-0000-000000000000", "storage-profile": {"type": "s3", "bucket": "warehouse", "key-prefix": null, "assume-role-arn": null, "endpoint": "http://s3:8333/", "region": "local", "path-style-access": true, "sts-role-arn": null, "sts-endpoint": null, "sts-enabled": false, "sts-token-validity-seconds": 3600, "sts-session-tags": {}, "flavor": "s3-compat", "allow-alternative-protocols": null, "remote-signing-url-style": "auto", "push-s3-delete-disabled": true, "aws-kms-key-arn": null, "remote-signing-enabled": true, "legacy-md5-behavior": null, "storage-layout": null}, "storage-credential-type": {"type": "s3", "credential-type": "access-key"}, "delete-profile": {"type": "hard"}, "status": "active", "protected": false, "managed-by": "self-managed", "allowed-format-versions": [1, 2, 3], "updated-at": null}}
+ Container feasibility-master-1  Running
+ Container feasibility-postgres-1  Running
+ Container feasibility-volume-1  Running
+ Container feasibility-catalog-1  Running
+ Container feasibility-filer-1  Running
+ Container feasibility-s3-1  Running
+ Container feasibility-trino-1  Creating
+ Container feasibility-trino-1  Created
+ Container feasibility-trino-1  Starting
+ Container feasibility-trino-1  Started
+hardening: {"postgres": {"Uid": "26\t26\t26\t26", "CapEff": "0000000000000000", "NoNewPrivs": "1"}, "master": {"Uid": "1000\t1000\t1000\t1000", "CapEff": "0000000000000000", "NoNewPrivs": "1"}, "volume": {"Uid": "1000\t1000\t1000\t1000", "CapEff": "0000000000000000", "NoNewPrivs": "1"}, "filer": {"Uid": "1000\t1000\t1000\t1000", "CapEff": "0000000000000000", "NoNewPrivs": "1"}, "s3": {"Uid": "1000\t1000\t1000\t1000", "CapEff": "0000000000000000", "NoNewPrivs": "1"}, "catalog": {"Uid": "999\t999\t999\t999", "CapEff": "0000000000000000", "NoNewPrivs": "1"}, "trino": {"Uid": "10001\t10001\t10001\t10001", "CapEff": "0000000000000000", "NoNewPrivs": "1"}}
+SQL CREATE SCHEMA iceberg.spike => []
+SQL CREATE TABLE iceberg.spike.from_trino (id BIGINT, label VARCHAR) WITH (format='PARQUET', format_version=2) => []
+SQL INSERT INTO iceberg.spike.from_trino VALUES (1, 'alpha'), (2, 'beta'), (3, 'gamma') => [[3]]
+SQL SELECT * FROM iceberg.spike.from_trino ORDER BY id => [[1, 'alpha'], [2, 'beta'], [3, 'gamma']]
+trino_create_insert_select: {"status": "pass", "seconds": 3.72, "value": "CREATE TABLE / INSERT / SELECT asserted"}
+pyiceberg_reads_trino_before_mutations: {"status": "pass", "seconds": 0.48, "value": {"rows": [{"id": 1, "label": "alpha"}, {"id": 2, "label": "beta"}, {"id": 3, "label": "gamma"}], "files": ["s3://warehouse/01a1c8b4-baa1-7eb3-b1cf-fe43310c795e/data/20261111_034410_00002_vfvrt-e921cc6a-a9cf-4588-8b07-d74683d17124.parquet"], "file_io": "pyiceberg.io.pyarrow.PyArrowFileIO", "signer": null, "delegation": "client-managed", "client_s3_credentials": true}}
+SQL UPDATE iceberg.spike.from_trino SET label='updated' WHERE id=2 => [[1]]
+SQL DELETE FROM iceberg.spike.from_trino WHERE id=3 => [[1]]
+SQL SELECT * FROM iceberg.spike.from_trino ORDER BY id => [[1, 'alpha'], [2, 'updated']]
+SQL SELECT snapshot_id, operation FROM iceberg.spike."from_trino$snapshots" ORDER BY committed_at => [[3030868263698889265, 'append'], [472727724172637246, 'append'], [2899320071274001616, 'overwrite'], [1305574850725146089, 'delete']]
+SQL SELECT snapshot_id, is_current_ancestor FROM iceberg.spike."from_trino$history" ORDER BY made_current_at => [[3030868263698889265, True], [472727724172637246, True], [2899320071274001616, True], [1305574850725146089, True]]
+trino_update_delete_history: {"status": "pass", "seconds": 2.67, "value": {"snapshots": [[3030868263698889265, "append"], [472727724172637246, "append"], [2899320071274001616, "overwrite"], [1305574850725146089, "delete"]], "history": [[3030868263698889265, true], [472727724172637246, true], [2899320071274001616, true], [1305574850725146089, true]]}}
+pyiceberg_reads_trino: {"status": "pass", "seconds": 0.07, "value": {"rows": [{"id": 1, "label": "alpha"}, {"id": 2, "label": "updated"}], "files": ["s3://warehouse/01a1c8b4-baa1-7eb3-b1cf-fe43310c795e/data/20261111_034413_00004_vfvrt-0289c494-5256-44a9-9b21-36ed71672d2e.parquet", "s3://warehouse/01a1c8b4-baa1-7eb3-b1cf-fe43310c795e/data/20261111_034410_00002_vfvrt-e921cc6a-a9cf-4588-8b07-d74683d17124.parquet"], "file_io": "pyiceberg.io.pyarrow.PyArrowFileIO", "signer": null, "delegation": "client-managed", "client_s3_credentials": true}}
+SQL SELECT * FROM iceberg.spike.from_python ORDER BY id => [[10, 'py-alpha'], [20, 'py-beta']]
+trino_reads_pyiceberg: {"status": "pass", "seconds": 0.52, "value": {"metadata": "s3://warehouse/01a1c8b4-d25f-75b1-9f1d-a4bc72386553/metadata/00001-01a1c8b4-d2ad-7211-92be-ad85c41df3f9.gz.metadata.json", "rows": 2}}
+delegation_modes: {"none": {"status": 200, "config_keys": ["client.region", "py-io-impl", "region", "s3.endpoint", "s3.path-style-access", "s3.region", "s3.remote-signing-enabled", "s3.signer", "s3.signer.endpoint", "s3.signer.uri", "signer.endpoint", "signer.uri"], "remote_signing_enabled": "true", "error": null}, "vended-credentials": {"status": 200, "config_keys": ["client.region", "py-io-impl", "region", "s3.endpoint", "s3.path-style-access", "s3.region", "s3.remote-signing-enabled", "s3.signer", "s3.signer.endpoint", "s3.signer.uri", "signer.endpoint", "signer.uri"], "remote_signing_enabled": "true", "error": null}, "remote-signing": {"status": 200, "config_keys": ["client.region", "py-io-impl", "region", "s3.endpoint", "s3.path-style-access", "s3.region", "s3.remote-signing-enabled", "s3.signer", "s3.signer.endpoint", "s3.signer.uri", "signer.endpoint", "signer.uri"], "remote_signing_enabled": "true", "error": null}, "client-managed": {"status": 200, "config_keys": ["client.region", "region", "s3.endpoint", "s3.path-style-access", "s3.region"], "remote_signing_enabled": null, "error": null}, "trino_vending_true": {"error": "{\"message\": \"io.trino.spi.TrinoException: Error processing metadata for table spike.from_trino\", \"errorCode\": 65536, \"errorName\": \"GENERIC_INTERNAL_ERROR\", \"errorType\": \"INTERNAL_ERROR\", \"failureInfo\": {\"type\": \"java.util.concurrent.CompletionException\", \"message\": \"io.trino.spi.TrinoException: Error processing metadata for table spike.from_trino\", \"cause\": {\"type\": \"io.trino.spi.TrinoException\", \"message\": \"Error processing metadata for table spike.from_trino\", \"cause\": {\"type\": \"java.lang.NullPointerException\", \"message\": \"accessKey is null\", \"suppressed\": [], \"stack\": [\"java.base/java.util.Objects.requireNonNull(Unknown Source)\", \"io.trino.plugin.iceberg.catalog.rest.S3VendedCredentials.<init>(S3VendedCredentials.java:32)\", \"io.trino.plugin.iceberg.catalog.rest.S3VendedCredentialsProvider.createVendedCredentials(S3VendedCredentialsProvider.java:65)\", \"io.trino.plugin.iceberg.catalog.rest.IcebergRestCatalogFileSystemFactory.createS3VendedCredentials(IcebergRestCatalogFileSystemFactory.java:173)\", \"io.trino.plugin.iceberg.catalog.rest.IcebergRestCatalogFileSystemFactory.createVendedCredentialsCacheKey(IcebergRestCatalogFileSystemFactory.java:152)\", \"io.trino.plugin.iceberg.catalog.rest.IcebergRestCatalogFileSystemFactory$1.create(IcebergRestCatalogFileSystemFactory.java:87)\", \"io.trino.plugin.iceberg.catalog.rest.IcebergRestCatalogFileSystem.fileSystem(IcebergRestCatalogFileSystem.java:213)\", \"io.trino.plugin.iceberg.catalog.rest.IcebergRestCatalogFileSystem.newInputFile(IcebergRestCatalogFileSystem.java:59)\", \"io.trino.plugin.iceberg.fileio.ForwardingFileIo.newInputFile(ForwardingFileIo.java:100)\", \"org.apache.iceberg.io.FileIO.newInputFile(FileIO.java:80)\", \"io.trino.plugin.iceberg.fileio.ForwardingFileIo.newInputFile(ForwardingFileIo.java:180)\", \"org.apache.iceberg.ManifestLists.newInputFile(ManifestLists.java:36)\", \"org.apache.iceberg.BaseSnapshot.cacheManifests(BaseSnapshot.java:187)\", \"org.apache.iceberg.BaseSnapshot.dataManifests(BaseSnapshot.java:214)\", \"org.apache.iceberg.DataTableScan.doPlanFiles(DataTableScan.java:68)\", \"org.apache.iceberg.SnapshotScan.planFiles(SnapshotScan.java:162)\", \"io.trino.plugin.iceberg.IcebergSplitSource.getNextBatchInternal(IcebergSplitSource.java:313)\", \"io.trino.plugin.iceberg.IcebergSplitSource.lambda$getNextBatch$0(IcebergSplitSource.java:272)\", \"com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)\", \"com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)\", \"com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)\", \"java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)\", \"java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)\", \"java.base/java.lang.Thread.run(Unknown Source)\"], \"errorInfo\": {\"code\": 65536, \"name\": \"GENERIC_INTERNAL_ERROR\", \"type\": \"INTERNAL_ERROR\"}}, \"suppressed\": [], \"stack\": [\"io.trino.plugin.iceberg.IcebergExceptions.translateMetadataException(IcebergExceptions.java:58)\", \"io.trino.plugin.iceberg.IcebergSplitSource.lambda$getNextBatch$1(IcebergSplitSource.java:277)\", \"java.base/java.util.concurrent.CompletableFuture.uniExceptionally(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture$UniExceptionally.tryFire(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.postComplete(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.completeExceptionally(Unknown Source)\", \"io.airlift.concurrent.MoreFutures$2.onFailure(MoreFutures.java:495)\", \"com.google.common.util.concurrent.Futures$CallbackListener.run(Futures.java:1113)\", \"com.google.common.util.concurrent.DirectExecutor.execute(DirectExecutor.java:30)\", \"com.google.common.util.concurrent.AbstractFuture.executeListener(AbstractFuture.java:1040)\", \"com.google.common.util.concurrent.AbstractFuture.complete(AbstractFuture.java:803)\", \"com.google.common.util.concurrent.AbstractFuture.setException(AbstractFuture.java:542)\", \"com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.afterRanInterruptiblyFailure(TrustedListenableFutureTask.java:138)\", \"com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:87)\", \"com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)\", \"java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)\", \"java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)\", \"java.base/java.lang.Thread.run(Unknown Source)\"], \"errorInfo\": {\"code\": 65536, \"name\": \"GENERIC_INTERNAL_ERROR\", \"type\": \"INTERNAL_ERROR\"}}, \"suppressed\": [], \"stack\": [\"java.base/java.util.concurrent.CompletableFuture.wrapInCompletionException(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.encodeThrowable(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.completeThrowable(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.uniExceptionally(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture$UniExceptionally.tryFire(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.postComplete(Unknown Source)\", \"java.base/java.util.concurrent.CompletableFuture.completeExceptionally(Unknown Source)\", \"io.airlift.concurrent.MoreFutures$2.onFailure(MoreFutures.java:495)\", \"com.google.common.util.concurrent.Futures$CallbackListener.run(Futures.java:1113)\", \"com.google.common.util.concurrent.DirectExecutor.execute(DirectExecutor.java:30)\", \"com.google.common.util.concurrent.AbstractFuture.executeListener(AbstractFuture.java:1040)\", \"com.google.common.util.concurrent.AbstractFuture.complete(AbstractFuture.java:803)\", \"com.google.common.util.concurrent.AbstractFuture.setException(AbstractFuture.java:542)\", \"com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.afterRanInterruptiblyFailure(TrustedListenableFutureTask.java:138)\", \"com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:87)\", \"com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)\", \"java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)\", \"java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)\", \"java.base/java.lang.Thread.run(Unknown Source)\"], \"errorInfo\": {\"code\": 65536, \"name\": \"GENERIC_INTERNAL_ERROR\", \"type\": \"INTERNAL_ERROR\"}}}"}}
+pyiceberg_client_managed_static: {"status": "pass", "seconds": 0.07, "value": {"rows": [{"id": 1, "label": "alpha"}, {"id": 2, "label": "updated"}], "files": ["s3://warehouse/01a1c8b4-baa1-7eb3-b1cf-fe43310c795e/data/20261111_034413_00004_vfvrt-0289c494-5256-44a9-9b21-36ed71672d2e.parquet", "s3://warehouse/01a1c8b4-baa1-7eb3-b1cf-fe43310c795e/data/20261111_034410_00002_vfvrt-e921cc6a-a9cf-4588-8b07-d74683d17124.parquet"], "file_io": "pyiceberg.io.pyarrow.PyArrowFileIO", "signer": null, "delegation": "client-managed", "client_s3_credentials": true}}
+pyiceberg_remote_signing_without_s3_credentials: {"status": "pass", "seconds": 0.37, "value": {"rows": [{"id": 1, "label": "alpha"}, {"id": 2, "label": "updated"}], "files": ["s3://warehouse/01a1c8b4-baa1-7eb3-b1cf-fe43310c795e/data/20261111_034413_00004_vfvrt-0289c494-5256-44a9-9b21-36ed71672d2e.parquet", "s3://warehouse/01a1c8b4-baa1-7eb3-b1cf-fe43310c795e/data/20261111_034410_00002_vfvrt-e921cc6a-a9cf-4588-8b07-d74683d17124.parquet"], "file_io": "pyiceberg.io.fsspec.FsspecFileIO", "signer": "S3V4RestSigner", "delegation": "remote-signing", "client_s3_credentials": false}}
+ Container feasibility-trino-1  Stopping
+ Container feasibility-trino-1  Stopped
+ Container feasibility-trino-1  Removing
+ Container feasibility-trino-1  Removed
+ Container feasibility-catalog-1  Stopping
+ Container feasibility-s3-1  Stopping
+ Container feasibility-s3-1  Stopped
+ Container feasibility-s3-1  Removing
+ Container feasibility-s3-1  Removed
+ Container feasibility-filer-1  Stopping
+ Container feasibility-catalog-1  Stopped
+ Container feasibility-catalog-1  Removing
+ Container feasibility-catalog-1  Removed
+ Container feasibility-postgres-1  Stopping
+ Container feasibility-postgres-1  Stopped
+ Container feasibility-postgres-1  Removing
+ Container feasibility-postgres-1  Removed
+ Container feasibility-filer-1  Stopped
+ Container feasibility-filer-1  Removing
+ Container feasibility-filer-1  Removed
+ Container feasibility-volume-1  Stopping
+ Container feasibility-volume-1  Stopped
+ Container feasibility-volume-1  Removing
+ Container feasibility-volume-1  Removed
+ Container feasibility-master-1  Stopping
+ Container feasibility-master-1  Stopped
+ Container feasibility-master-1  Removing
+ Container feasibility-master-1  Removed
+ Network feasibility_private  Removing
+ Network feasibility_private  Removed
+ Network feasibility_private  Creating
+ Network feasibility_private  Created
+ Container feasibility-master-1  Creating
+ Container feasibility-postgres-1  Creating
+ Container feasibility-postgres-1  Created
+ Container feasibility-master-1  Created
+ Container feasibility-volume-1  Creating
+ Container feasibility-catalog-1  Creating
+ Container feasibility-volume-1  Created
+ Container feasibility-filer-1  Creating
+ Container feasibility-catalog-1  Created
+ Container feasibility-filer-1  Created
+ Container feasibility-s3-1  Creating
+ Container feasibility-s3-1  Created
+ Container feasibility-trino-1  Creating
+ Container feasibility-trino-1  Created
+ Container feasibility-master-1  Starting
+ Container feasibility-postgres-1  Starting
+ Container feasibility-master-1  Started
+ Container feasibility-volume-1  Starting
+ Container feasibility-postgres-1  Started
+ Container feasibility-catalog-1  Starting
+ Container feasibility-volume-1  Started
+ Container feasibility-filer-1  Starting
+ Container feasibility-catalog-1  Started
+ Container feasibility-filer-1  Started
+ Container feasibility-s3-1  Starting
+ Container feasibility-s3-1  Started
+ Container feasibility-trino-1  Starting
+ Container feasibility-trino-1  Started
+SQL SELECT * FROM iceberg.spike.from_trino ORDER BY id => [[1, 'alpha'], [2, 'updated']]
+SQL SELECT * FROM iceberg.spike.from_python ORDER BY id => [[10, 'py-alpha'], [20, 'py-beta']]
+SQL INSERT INTO iceberg.spike.from_python VALUES (30, 'after-restart') => [[1]]
+RESTART_RESULT={"static_mode": "Both engines reread both tables; new Trino write read by PyIceberg", "fresh_client_remote_signing": {"rows": [{"id": 1, "label": "alpha"}, {"id": 2, "label": "updated"}], "files": ["s3://warehouse/01a1c8b4-baa1-7eb3-b1cf-fe43310c795e/data/20261111_034413_00004_vfvrt-0289c494-5256-44a9-9b21-36ed71672d2e.parquet", "s3://warehouse/01a1c8b4-baa1-7eb3-b1cf-fe43310c795e/data/20261111_034410_00002_vfvrt-e921cc6a-a9cf-4588-8b07-d74683d17124.parquet"], "file_io": "pyiceberg.io.fsspec.FsspecFileIO", "signer": "S3V4RestSigner", "delegation": "remote-signing", "client_s3_credentials": false}}
+
+
+hardening: {"postgres": {"Uid": "26\t26\t26\t26", "CapEff": "0000000000000000", "NoNewPrivs": "1"}, "master": {"Uid": "1000\t1000\t1000\t1000", "CapEff": "0000000000000000", "NoNewPrivs": "1"}, "volume": {"Uid": "1000\t1000\t1000\t1000", "CapEff": "0000000000000000", "NoNewPrivs": "1"}, "filer": {"Uid": "1000\t1000\t1000\t1000", "CapEff": "0000000000000000", "NoNewPrivs": "1"}, "s3": {"Uid": "1000\t1000\t1000\t1000", "CapEff": "0000000000000000", "NoNewPrivs": "1"}, "catalog": {"Uid": "999\t999\t999\t999", "CapEff": "0000000000000000", "NoNewPrivs": "1"}, "trino": {"Uid": "10001\t10001\t10001\t10001", "CapEff": "0000000000000000", "NoNewPrivs": "1"}}
+all_services_recreated: {"status": "pass", "seconds": 57.44, "value": {"static_mode": "Both engines reread both tables; new Trino write read by PyIceberg", "fresh_client_remote_signing": {"rows": [{"id": 1, "label": "alpha"}, {"id": 2, "label": "updated"}], "files": ["s3://warehouse/01a1c8b4-baa1-7eb3-b1cf-fe43310c795e/data/20261111_034413_00004_vfvrt-0289c494-5256-44a9-9b21-36ed71672d2e.parquet", "s3://warehouse/01a1c8b4-baa1-7eb3-b1cf-fe43310c795e/data/20261111_034410_00002_vfvrt-e921cc6a-a9cf-4588-8b07-d74683d17124.parquet"], "file_io": "pyiceberg.io.fsspec.FsspecFileIO", "signer": "S3V4RestSigner", "delegation": "remote-signing", "client_s3_credentials": false}}}
+total_runtime_seconds: 90.83

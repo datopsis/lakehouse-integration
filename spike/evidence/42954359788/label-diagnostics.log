@@ -1,0 +1,3 @@
+LABEL MISMATCH: lakekeeper-ubi revision=9d7bd388a99de116058bd54b77737e2863cb3d45 belongs to UBI, expected dac1d6b06ef30690a8784bf7e8490bec1f58a1cf
+LABEL GAP: lakekeeper-ubi does not emit io.datopsis.artifact-lock.sha256
+LABEL GAP: seaweedfs-ubi does not emit io.datopsis.artifact-lock.sha256
