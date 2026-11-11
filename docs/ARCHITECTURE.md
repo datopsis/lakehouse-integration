@@ -25,7 +25,7 @@ runtime store and inspected there.
 | Role | UID:GID | Internal listeners | Persistent/writable paths | Secret delivery |
 | --- | --- | --- | --- | --- |
 | PostgreSQL | 26:0 | 5432 | pg-data at /var/lib/pgsql; /tmp tmpfs | PostgreSQL-only directory: admin and Lakekeeper passwords |
-| Lakekeeper / migrate | 999:0 | 8181 (serve) | none | Lakekeeper-only env file: database URL/password and encryption key |
+| Lakekeeper / migrate | 999:0 | 8181 API, 9000 metrics (serve) | none | Lakekeeper-only env file: database URL/password and encryption key |
 | Seaweed master | 1000:0 | 9333, 19333 gRPC | master-data at /data | none |
 | Seaweed volume | 1000:0 | 8080, 18080 gRPC | volume-data at /data | none |
 | Seaweed filer | 1000:0 | 8888, 18888 gRPC | filer-data at /data (embedded store) | none |

@@ -125,7 +125,7 @@ def check_container_config(item):
     assert "no-new-privileges:true" in config["SecurityOpt"]
     assert not config["PortBindings"]
     assert not config.get("Privileged")
-    assert len(item["NetworkSettings"]["Networks"]) == 1
+    assert set(item["NetworkSettings"]["Networks"]) == {"lakehouse-integration_private"}
 
 
 def check_hardening():
@@ -138,7 +138,8 @@ def check_hardening():
         )
         fields = dict(line.split(":", 1) for line in status.splitlines() if ":" in line)
         assert all(int(uid) > 0 for uid in fields["Uid"].split())
-        assert fields["CapEff"].strip() == "0000000000000000"
+        for field in ("CapInh", "CapPrm", "CapEff", "CapBnd", "CapAmb"):
+            assert int(fields[field].strip(), 16) == 0, (service, field, fields[field])
         assert fields["NoNewPrivs"].strip() == "1"
         report[service] = {key: fields[key].strip() for key in ("Uid", "CapEff", "NoNewPrivs")}
     net = json.loads(

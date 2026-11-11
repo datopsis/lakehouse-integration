@@ -10,6 +10,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "integration"))
 from build import provenance_errors
 from gates import DECODER_ERROR, EXPECTED_ROWS, encoding_read, redact
+from probe import check_container_config
 
 
 class Gates(unittest.TestCase):
@@ -57,6 +58,22 @@ class Gates(unittest.TestCase):
             redact("url:secret-long@host secret", ["secret", "secret-long"]),
             "url:[REDACTED]@host [REDACTED]",
         )
+
+    def test_runtime_must_join_only_the_private_network(self):
+        item = {
+            "Config": {"User": "1000:0"},
+            "HostConfig": {
+                "ReadonlyRootfs": True,
+                "CapDrop": ["ALL"],
+                "SecurityOpt": ["no-new-privileges:true"],
+                "PortBindings": {},
+            },
+            "NetworkSettings": {"Networks": {"lakehouse-integration_private": {}}},
+        }
+        check_container_config(item)
+        for networks in ({}, {"bridge": {}}, {"lakehouse-integration_private": {}, "bridge": {}}):
+            with self.subTest(networks=networks), self.assertRaises(AssertionError):
+                check_container_config({**item, "NetworkSettings": {"Networks": networks}})
 
     def test_compose_isolation_including_setup_containers(self):
         compose = yaml.safe_load(Path("integration/compose.yaml").read_text())
