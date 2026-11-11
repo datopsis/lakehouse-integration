@@ -11,6 +11,7 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "integration"))
 from build import provenance_errors
 from sail_build import lock_evidence
+from sail_probe import wire_evidence
 
 
 class SailGates(unittest.TestCase):
@@ -45,6 +46,22 @@ class SailGates(unittest.TestCase):
             (source / "artifacts/rpms.lock.json").unlink()
             with self.assertRaises(FileNotFoundError):
                 lock_evidence(source)
+
+    def test_wire_evidence_rejects_signing_or_missing_credentials(self):
+        trace = (
+            "...POST /catalog/v1/warehouse/namespaces/integration/tables HTTP/1.1\n"
+            "x-iceberg-access-delegation: vended-credentials\n"
+            "authorization: AWS4-HMAC-SHA256 Credential=fixture-key/20261111/local/s3/aws4_request\n"
+        )
+        self.assertEqual(wire_evidence(trace, "fixture-key")["signer_posts"], 0)
+        for broken in (
+            "",
+            trace.replace("fixture-key", "wrong-key"),
+            trace.replace("vended-credentials", "client-managed"),
+            trace + "...POST /catalog/v1/warehouse/s3/sign HTTP/1.1\n",
+        ):
+            with self.subTest(trace=broken), self.assertRaises(AssertionError):
+                wire_evidence(broken, "fixture-key")
 
     def test_sail_only_secret_file_and_hardened_service(self):
         compose = yaml.safe_load(Path("integration/compose.sail.yaml").read_text())

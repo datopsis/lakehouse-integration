@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -115,17 +116,22 @@ def interoperability(h):
             subprocess.run(["sudo", "kill", "-INT", str(capture.pid)], check=True)
             assert capture.wait(timeout=15) == 0, capture_log.read_text()
     assert "0 packets dropped by kernel" in capture_log.read_text(), capture_log.read_text()
-    trace = traffic.read_text()
+    result["wire"] = wire_evidence(traffic.read_text(), h.CREDS["access"])
+    return result
+
+
+def wire_evidence(trace, access):
     assert "x-iceberg-access-delegation: vended-credentials" in trace.lower()
-    assert "Credential=" + h.CREDS["access"] + "/" in trace
-    assert not any("/sign" in line for line in trace.splitlines() if line.startswith("POST "))
-    result["wire"] = {
+    assert "Credential=" + access + "/" in trace
+    posts = re.findall(r"\bPOST ([^ \r\n]+) HTTP/1\.[01]", trace)
+    assert posts, "No Sail catalog commit captured"
+    assert not any("/sign" in path for path in posts), posts
+    return {
         "delegation": "vended-credentials (observed on wire)",
         "s3_authorization": "AWS SigV4 with fixture's static access key (observed on wire)",
         "signer_posts": 0,
         "trace": "sail-traffic.log (redacted, filtered to Sail container IP)",
     }
-    return result
 
 
 def exercise(h):
