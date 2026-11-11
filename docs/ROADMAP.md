@@ -1,14 +1,17 @@
 # Roadmap
 
-- Merge the owning Lakekeeper/SeaweedFS provenance fixes, review coordinator-supplied
-  pins as one-line lock changes, and require strict labels to pass. Never add allowances.
+Sail 0.7.3 is qualified as the second query engine alongside Trino, with PyIceberg
+as an independent client: [T10, restart and credential evidence](SAIL-EVIDENCE.md).
+All five current image pins passed strict provenance; future pin changes still
+require review and exact labels, with no allowances.
+
 - TLS between all services: REST, S3, PostgreSQL, Seaweed control HTTP/gRPC, and Trino;
   include certificate verification, lifecycle and negative tests.
 - OpenID login for Lakekeeper **with authorization**, plus authenticated Trino access.
-- Qualify Sail 0.7.3 as the second query engine with T10 (PR CI evidence pending).
-  Track upstream configurable delegation commit `0c8333a349e5438e4b37fe984b9e3a45befc7bff`;
-  review a sail-ubi bump to the first release containing it and explicitly omit
-  vending. Do not assume an unreleased version number or change the static main path.
+- Review a sail-ubi bump to the first release containing configurable delegation
+  (`0c8333a349e5438e4b37fe984b9e3a45befc7bff`) and explicitly omit vending.
+  Current 0.7.3 works with static credentials despite requesting vending. Do not
+  assume an unreleased version number or change the static main path.
 - ARM64 images and execution, after amd64 qualification; no emulated green claims.
 - Investigate remote-signing restart behaviour: the spike's long-lived PyIceberg
   remote-signing reader hit HeadObject 403 after recreation. Fresh-client success

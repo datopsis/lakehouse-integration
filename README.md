@@ -15,8 +15,7 @@ own build script, and inspected after loading. Trino falls back to fetching
 
 **Strict provenance is mandatory for every image.** There is no allowance for
 inherited or missing labels. All five current pins passed this gate in the
-[initial Sail run](https://github.com/datopsis/lakehouse-integration/actions/runs/42968152884)
-(the runtime step in that run failed; see the PR for final qualification). The mandatory gate checks
+[qualified Sail run](docs/SAIL-EVIDENCE.md). The mandatory gate checks
 `org.opencontainers.image.revision` against the pin and
 `io.datopsis.artifact-lock.sha256` against the exact repository artifact lock.
 Runtime probes still collect evidence when all images built, but cannot turn a
@@ -66,7 +65,7 @@ that remains a [roadmap item](docs/ROADMAP.md).
 ## Run locally
 
 Use a disposable **Linux x86_64** machine with Python 3.11 or 3.12, Git, Bash,
-Docker CLI + Compose v2, Podman, RPM tooling, and sudo. Repository-owned builds
+Docker CLI + Compose v2, Podman, RPM/GnuPG tooling, tcpdump, and sudo. Repository-owned builds
 use both Docker and Podman; the runner must reach its private bridge IPs.
 macOS/Windows users should run inside an amd64 Linux VM, not publish listeners.
 Allow several GB of disk and memory (Trino is capped at 3 GiB). No GitHub secrets
@@ -155,7 +154,10 @@ no published port. Lakekeeper's `sts-enabled=false` profile is unchanged.
 Sail 0.7.3 hard-codes `X-Iceberg-Access-Delegation: vended-credentials`.
 T10 records the real Lakekeeper response, the actual request header and S3 signing
 traffic in sanitized artifacts; startup alone is insufficient evidence.
-Runtime qualification is pending the PR's Actions run. Configurable delegation
+The [qualified run](docs/SAIL-EVIDENCE.md) proves Sail uses its static AWS keys
+successfully: Lakekeeper returns signing properties but no keys, and the trace
+shows direct S3 signing with zero signer calls. T10 is a mandatory success test.
+Configurable delegation
 was added upstream in [0c8333a](https://github.com/lakehq/sail/commit/0c8333a349e5438e4b37fe984b9e3a45befc7bff);
 a future reviewed sail-ubi release containing that change can explicitly omit
 vending. This integration does not patch or upgrade the pinned engine.
