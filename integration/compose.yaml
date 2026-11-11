@@ -43,7 +43,9 @@ services:
     <<: *hardened
     image: localhost/seaweedfs-ubi:integration
     user: '1000:0'
-    command: ['-v=4', s3, '-filer=filer:8888', '-ip.bind=0.0.0.0', '-config=/run/secrets/s3.json']
+    environment:
+      WEED_V: '4' # Upstream fla9 logging flag via environment; keep the image entrypoint.
+    command: [s3, '-filer=filer:8888', '-ip.bind=0.0.0.0', '-config=/run/secrets/s3.json']
     volumes: [../.runtime/s3:/run/secrets:ro]
     depends_on: [filer]
   migrate:

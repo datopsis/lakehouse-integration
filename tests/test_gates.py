@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "integration"))
 from build import provenance_errors
 from gates import DECODER_ERROR, EXPECTED_ROWS, encoding_read, redact
 from probe import check_container_config
+from remote_signing import sanitize
 
 
 class Gates(unittest.TestCase):
@@ -58,6 +59,30 @@ class Gates(unittest.TestCase):
             redact("url:secret-long@host secret", ["secret", "secret-long"]),
             "url:[REDACTED]@host [REDACTED]",
         )
+
+    def test_remote_diagnostics_redact_signatures_and_bearer_tokens(self):
+        raw = (
+            "Credential=fixture-key/20261111/local/s3/aws4_request, "
+            "SignedHeaders=host;x-amz-date, Signature="
+            + "a" * 64
+            + " Calculated: "
+            + "b" * 64
+            + ", Provided: "
+            + "c" * 64
+            + " Authorization: Bearer private-token fixture-secret"
+        )
+        safe = sanitize(raw, ["fixture-key", "fixture-secret"])
+        for secret in (
+            "fixture-key",
+            "fixture-secret",
+            "private-token",
+            "a" * 64,
+            "b" * 64,
+            "c" * 64,
+        ):
+            self.assertNotIn(secret, safe)
+        self.assertIn("SignedHeaders=host;x-amz-date", safe)
+        self.assertIn("/20261111/local/s3/aws4_request", safe)
 
     def test_runtime_must_join_only_the_private_network(self):
         item = {
