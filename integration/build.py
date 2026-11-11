@@ -45,6 +45,7 @@ def artifact_lock(source, repo, architecture):
         "lakekeeper-ubi": "artifacts/lakekeeper.lock.json",
         "seaweedfs-ubi": "artifacts/seaweedfs.lock.json",
         "trino-ubi": "artifacts/trino.lock.json",
+        "sail-ubi": "artifacts/sail.lock.json",
     }
     return source / paths[repo]
 
@@ -107,6 +108,10 @@ def build(repo, revision, architecture):
         verifier.chmod(0o755)
         env["COSIGN"] = str(verifier)
         command = ["bash", "scripts/build.sh", architecture]
+    elif repo == "sail-ubi":
+        from sail_build import prepare_build
+
+        command = prepare_build(source, env, run, architecture)
     else:
         command = ["bash", "scripts/build.sh", architecture]
     run(command, cwd=source, env=env)
@@ -127,7 +132,13 @@ def build(repo, revision, architecture):
         "lock_sha256": sha(lock),
         "labels": labels,
     }
-    result["provenance_errors"] = provenance_errors(inspected, revision, sha(lock), architecture)
+    if repo == "sail-ubi":
+        from sail_build import lock_evidence
+
+        result.update(lock_evidence(source))
+    result["provenance_errors"] = provenance_errors(
+        inspected, revision, result["lock_sha256"], architecture
+    )
     result["status"] = "fail" if result["provenance_errors"] else "pass"
     # Preserve the spike's binary checks as additional evidence, never as a
     # substitute for the strict revision and artifact-lock labels.
@@ -174,7 +185,7 @@ def provenance_errors(inspected, revision, lock_hash, architecture):
 def main():
     if not __debug__:
         raise RuntimeError("Assertions must be enabled; remove -O/PYTHONOPTIMIZE")
-    assert len(PINS) == 4 and all(re.fullmatch(r"[0-9a-f]{40}", pin) for pin in PINS.values())
+    assert len(PINS) == 5 and all(re.fullmatch(r"[0-9a-f]{40}", pin) for pin in PINS.values())
     architecture = native_architecture()
     print(f"Native runner: {platform.machine()}; image architecture: {architecture}", flush=True)
     results = {}

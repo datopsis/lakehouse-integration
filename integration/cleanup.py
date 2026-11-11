@@ -22,7 +22,14 @@ def main():
     values = list(json.loads(creds.read_text()).values()) if creds.exists() else []
     teardown_failed = False
     if creds.exists():
-        dc = ["docker", "compose", "-f", str(ROOT / "integration/compose.yaml")]
+        dc = [
+            "docker",
+            "compose",
+            "-f",
+            str(ROOT / "integration/compose.yaml"),
+            "-f",
+            str(ROOT / "integration/compose.sail.yaml"),
+        ]
         logs = subprocess.run(
             dc + ["logs", "--no-color"], text=True, capture_output=True, check=False
         )

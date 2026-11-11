@@ -9,7 +9,8 @@ Strict provenance is independently mandatory and is not vulnerability scanning.
 Lakekeeper login is disabled: anyone reaching its REST/management listener can
 act on the catalog. This known gap is acceptable only on the internal private
 test network. Trino explicitly opts into its documented insecure test mode.
-No service publishes a port. HTTP and PostgreSQL traffic are not encrypted.
+Sail also explicitly opts into unauthenticated Spark Connect on the private
+network. No service publishes a port. HTTP and PostgreSQL traffic are not encrypted.
 The runner/host and all containers on that network are trusted; an internal
 network does not protect against its host or another admitted member.
 
@@ -19,8 +20,9 @@ provisioning uses a trusted administrative weed shell, not an admin S3 identity.
 PostgreSQL has random admin and separate non-superuser Lakekeeper passwords;
 local socket provisioning is trusted. Lakekeeper receives a fresh encryption key
 retained across graceful recreation. No credentials are committed or GitHub
-repository secrets required. Each container sees only its own secret mount or
-environment; S3 cannot read PostgreSQL secrets. Runtime root filesystems are
+repository secrets required. Sail receives static AWS keys through its own `0600`
+env file. Each container sees only its own secret mount or environment; S3 cannot
+read PostgreSQL secrets. Runtime root filesystems are
 read-only, all services are non-root, capabilities are dropped, and privilege
 escalation is disabled. Writable volumes/tmpfs are documented in ARCHITECTURE.md.
 
@@ -35,3 +37,8 @@ Report a suspected vulnerability privately through the owning repository's
 security reporting channel when available; do not put credentials or exploit
 material in the weekly public failure issue. This repo does not grant permission
 to change another repository's security policy or suppress its findings.
+
+T10 passively captures only the Sail container's REST/S3 traffic to identify its
+credential path. Raw HTTP evidence contains fixture credentials and remains
+local until the same fail-closed inventory redaction as all other reports. No
+packet files or source/environment directories are uploaded.

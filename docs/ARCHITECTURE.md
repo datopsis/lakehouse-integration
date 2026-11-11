@@ -4,6 +4,8 @@
 flowchart LR
   P[PyIceberg runner] -->|REST| L[Lakekeeper]
   T[Trino] -->|REST| L
+  A[Sail] -->|REST| L
+  A -->|S3 static credentials| S
   L -->|password auth| DB[PostgreSQL]
   P -->|S3 static credentials| S[S3 gateway]
   T -->|S3 static credentials| S
@@ -14,9 +16,9 @@ flowchart LR
   V --> M
 ```
 
-All seven long-running containers share one internal network, with zero published
+All eight long-running containers share one internal network, with zero published
 ports. The trusted Linux runner reaches bridge addresses and resolves catalog,
-s3, and trino through a temporary marked /etc/hosts block. A short-lived migration
+s3, trino, and sail through a temporary marked /etc/hosts block. A short-lived migration
 container uses the same hardening and network. Negative-test containers also use
 that profile and are explicitly removed. All images are built from images.lock.json
 using their owning repository scripts; Podman-built images are exported into the
@@ -31,6 +33,14 @@ runtime store and inspected there.
 | Seaweed filer | 1000:0 | 8888, 18888 gRPC | filer-data at /data (embedded store) | none |
 | Seaweed S3 | 1000:0 | 8333, 18333 gRPC | none | S3-only directory with s3.json |
 | Trino | 10001:0 | 8080 | /var/lib/trino tmpfs; executable /tmp/trino tmpfs for native libraries | Trino-only env file with static S3 keys |
+| Sail | 10001:10001 | 50051 Spark Connect | /tmp and /var/lib/sail tmpfs (noexec) | Sail-only env file with static AWS keys; read-only listener JSON |
+
+Sail is defined in `integration/compose.sail.yaml`, always composed with the base
+file for startup, recreation, diagnostics and teardown. Its separate probe/client
+modules keep Spark dependencies out of the PyIceberg environment. T10 uses fresh
+Spark sessions and fresh PyIceberg processes at every mutation boundary. Passive
+HTTP capture provides evidence of the hard-coded vending header, Lakekeeper's
+response and the credential used to sign S3; only redacted text is uploaded.
 
 Ports are internal configuration, not published host listeners. All roots are
 read-only; every service drops ALL capabilities and sets no-new-privileges.
@@ -43,16 +53,20 @@ The S3 fixture identity has Read:warehouse, Write:warehouse, List:warehouse.
 supports bucket-scoped actions. Admin/Tagging are not granted. A trusted weed
 shell precreates the bucket. PostgreSQL stores catalog rows and encrypted S3
 credentials; SeaweedFS stores Iceberg metadata JSON, manifests, Parquet data and
-positional deletes. Table locations are assigned by Lakekeeper.
+positional deletes. Trino/PyIceberg table locations are assigned by Lakekeeper;
+Sail proposes `s3://warehouse/from_sail`, which Lakekeeper registers in that same warehouse.
 
 Trust boundaries: service file mounts limit accidental cross-service secret
 exposure; they do not isolate an already-compromised network member from the
 unauthenticated Lakekeeper or Seaweed control APIs. Host/runner access is fully
 trusted. Lakekeeper login off and plaintext internal traffic are known test-only
 gaps. Trino uses TRINO_UBI_ALLOW_INSECURE=true, vending is disabled, and PyIceberg
-explicitly selects client-managed credentials. No remote signer is needed on the main path. T9 separately exercises a no-key
-remote-signing client and records the known concurrent signer-registration race;
-see [the draft report](known-issues/remote-signing.md).
+explicitly selects client-managed credentials. Sail 0.7.3 requests vending, receives
+remote-signing properties without keys, and uses its own static AWS environment
+credentials successfully. The [T10 capture](SAIL-EVIDENCE.md) observes no signer
+requests; the gate rejects any such request. No remote signer is needed on the main path.
+T9 separately exercises a no-key remote-signing client and records the known
+concurrent signer-registration race; see [the draft report](known-issues/remote-signing.md).
 
 T5 removes containers/network using compose down without --volumes, then creates
 a new stack. The four volumes and generated keys survive. Every nonempty container
@@ -61,10 +75,17 @@ The encoding canary retains its exact decoder expectation across restart. Final
 cleanup destroys volumes and restores the marked hosts block. This is graceful
 recreation, not crash, power-loss, replication, or host-loss durability evidence.
 
+Sail 0.7.3 mutations use explicit copy-on-write on an unpartitioned table. T10
+requires no delete files from these mutations and distinct committed snapshots,
+without imposing Trino's snapshot sequence on Sail. Sail also reads Trino's
+mutated files with the adopted delta-length encoding setting. The separate
+default-encoding canary stays mandatory. T5 checks Sail's new container ID,
+rereads all four tables and verifies a new Sail write with both other clients.
+Sail's own unauthenticated remote-listener opt-out is another private-test gap.
 
 T8 follows T5 on the same private fixture. It creates a dedicated Iceberg v2 /
 Parquet table and journals three successful 16-row INSERTs on the runner. One
-`docker kill --signal=KILL` invocation targets all seven service IDs; every target
+`docker kill --signal=KILL` invocation targets all eight service IDs; every target
 must stop with exit code 137. `compose start` reuses the same containers and named
 volumes. Both Trino and a fresh PyIceberg process must read all 48 exact rows and
 exactly four append snapshots (one empty CREATE plus three INSERTs) with matching IDs and parents.
@@ -116,7 +137,9 @@ Repository-owned build commands receive the native architecture; PostgreSQL's
 build script detects it itself. Its provenance hash uses
 `artifacts/locks/amd64.json` or `artifacts/locks/arm64.json`. Lakekeeper, SeaweedFS,
 and Trino hash their shared `artifacts/<service>.lock.json` files and select the
-native architecture's artifacts. Extracted Lakekeeper/SeaweedFS binary hashes
+native architecture's artifacts. Sail's shared Sail/RPM lock pair is hashed in
+owner-defined order and its build receives the same verified native architecture.
+Extracted Lakekeeper/SeaweedFS binary hashes
 must also match that architecture's lock entry. The pinned cosign helper is
 selected and checked for the native architecture before extracting its binary.
 Every loaded image must have matching OCI architecture metadata, source revision,

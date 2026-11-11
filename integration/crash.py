@@ -9,7 +9,7 @@ import time
 import urllib.error
 from pathlib import Path
 
-SERVICES = ("postgres", "master", "volume", "filer", "s3", "catalog", "trino")
+SERVICES = ("postgres", "master", "volume", "filer", "s3", "catalog", "trino", "sail")
 BATCH_SIZE = 16
 RECOVERY_SECONDS = 180
 
@@ -310,7 +310,7 @@ def crash_durability(p):
             os.fsync(output.fileno())
 
     manifest = {}
-    for name in ("from_trino", "from_python", "encoding_canary"):
+    for name in ("from_trino", "from_python", "encoding_canary", "from_sail"):
         manifest[name] = {
             "rows": p.sql(f"SELECT * FROM iceberg.integration.{name} ORDER BY id"),
             "snapshots": snapshot_rows(p, name),

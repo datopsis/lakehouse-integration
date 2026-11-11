@@ -43,7 +43,7 @@ jobs:
           test "$(uname -m)" = "$EXPECTED_MACHINE"
           df -h
           sudo apt-get update -qq
-          sudo apt-get install -y rpm podman
+          sudo apt-get install -y rpm podman gnupg tcpdump
           python3 -m venv .venv
           .venv/bin/pip install --require-hashes -r requirements.txt
           mkdir -p reports
@@ -67,7 +67,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 integration/verify.py 2>&1 | tee reports/provenance.log
-      - name: T1–T9 and encoding canaries
+      - name: T1–T10 and encoding canaries
         # Collect runtime evidence even if provenance fails; the job stays failed.
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |
