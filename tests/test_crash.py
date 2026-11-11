@@ -48,9 +48,23 @@ class CrashOracle(unittest.TestCase):
                 check_batches(rows, self.attempts, self.snapshots)
 
     def test_snapshot_count_and_operation_fail_closed(self):
-        for snapshots in ([], self.snapshots * 2, [[101, None, "overwrite"]]):
+        for snapshots in (
+            [],
+            self.snapshots * 2,
+            [[101, None, "overwrite"]],
+            [[101, 99, "append"]],
+        ):
             with self.subTest(snapshots=snapshots), self.assertRaises(AssertionError):
                 check_batches(batch_rows(1), self.attempts, snapshots)
+
+    def test_broken_or_duplicate_snapshot_chain_fails(self):
+        rows = batch_rows(1) + batch_rows(2)
+        for snapshots in (
+            self.snapshots + [[102, None, "append"]],
+            self.snapshots + [[101, 101, "append"]],
+        ):
+            with self.assertRaises(AssertionError):
+                check_batches(rows, self.attempts, snapshots)
 
     def test_settled_outcome_cannot_change_on_later_kills(self):
         self.attempts[1]["visible"] = "absent"

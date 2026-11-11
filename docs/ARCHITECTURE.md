@@ -70,12 +70,12 @@ exactly three append snapshots with matching IDs and parents.
 Next, separate tables exercise PostgreSQL, Lakekeeper (`catalog`), SeaweedFS
 `volume`, and `filer` in that order. A continuous writer assigns every INSERT a
 unique batch ID and 16 deterministic rows. After at least two acknowledgements,
-the injector waits for a nonterminal Trino RUNNING response. It pauses response
-consumption, kills that component, resumes the writer, and starts the component.
-Server execution continues during the pause: this targets an unacknowledged
-statement, not a guaranteed storage-instruction boundary. Even if the server
-finishes before the signal arrives, every subsequent client acknowledgement is
-binding. The test fails if it cannot observe a RUNNING INSERT.
+the injector polls Trino query state independently of the writer until it
+observes RUNNING, then kills and starts that component while the loop continues.
+Polling query state avoids missing short queries between statement response
+pages. This targets an active workload, not a guaranteed storage-instruction
+boundary. Even if the server finishes before the signal arrives, every client
+acknowledgement is binding. The test fails if it cannot observe a RUNNING INSERT.
 
 The runner flushes the attempt/acknowledgement journal outside the killed
 containers. A failed client statement is ambiguous: after it reaches a terminal

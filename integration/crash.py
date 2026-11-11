@@ -45,6 +45,9 @@ def check_batches(rows, attempts, snapshots):
     assert len(snapshots) == sum(v == "fully-visible" for v in outcomes.values()), snapshots
     assert len({s[0] for s in snapshots}) == len(snapshots), snapshots
     assert all(s[2] == "append" for s in snapshots), snapshots
+    assert [s[1] for s in snapshots] == (
+        [None] + [s[0] for s in snapshots[:-1]] if snapshots else []
+    ), snapshots
     return outcomes
 
 
@@ -70,9 +73,8 @@ def verify(p, manifest):
         assert py_snapshots == snapshots, (name, py_snapshots, snapshots)
         # An append-only crash table must have one unbroken chain, no orphan snapshots.
         if "attempts" in spec:
-            assert [s[1] for s in snapshots] == [None] + [s[0] for s in snapshots[:-1]]
-            assert table.metadata.current_snapshot_id == snapshots[-1][0]
             outcomes = check_batches(rows, spec["attempts"], snapshots)
+            assert table.metadata.current_snapshot_id == (snapshots[-1][0] if snapshots else None)
         else:
             assert rows == spec["rows"], (name, rows)
             outcomes = {}
@@ -139,8 +141,8 @@ def identity(items):
     }
 
 
-def kill(p, services):
-    before = containers(p, services)
+def kill(p, services, before=None):
+    before = containers(p, services) if before is None else before
     assert all(item["State"]["Running"] for item in before)
     started = time.monotonic()
     # One invocation targets all IDs; no stop/down, grace period, or volume removal.
@@ -162,11 +164,12 @@ def settle(p, attempt):
         return
     query_id = attempt.get("query_id")
     assert query_id, "Submission outcome unknown: cannot prove the query has settled"
-    status, _ = p.http("DELETE", f"http://trino:8080/v1/query/{query_id}")
+    headers = {"X-Trino-User": "integration"}
+    status, _ = p.http("DELETE", f"http://trino:8080/v1/query/{query_id}", headers=headers)
     assert status == 204, ("Could not cancel unsettled query", status, query_id)
     deadline = time.monotonic() + 30
     while time.monotonic() < deadline:
-        status, body = p.http("GET", f"http://trino:8080/v1/query/{query_id}")
+        status, body = p.http("GET", f"http://trino:8080/v1/query/{query_id}", headers=headers)
         assert status == 200, (status, body)
         if body["state"] in ("FINISHED", "FAILED"):
             attempt["settled_state"] = body["state"]
@@ -177,14 +180,18 @@ def settle(p, attempt):
 
 def component(p, service, manifest, journal):
     table = "crash_" + service
-    p.sql(
-        f"CREATE TABLE iceberg.integration.{table} (batch BIGINT, row_id BIGINT, label VARCHAR) "
-        "WITH (format='PARQUET', format_version=2)"
+    assert (
+        p.sql(
+            f"CREATE TABLE iceberg.integration.{table} (batch BIGINT, row_id BIGINT, label VARCHAR) "
+            "WITH (format='PARQUET', format_version=2)"
+        )
+        == []
     )
+    assert snapshot_rows(p, table) == []
     attempts = []
     manifest[table] = {"attempts": attempts}
-    running = threading.Event()
-    release = threading.Event()
+    injected = threading.Event()
+    before = containers(p, [service])
     restarted = threading.Event()
     stop = threading.Event()
     errors = []
@@ -204,17 +211,6 @@ def component(p, service, manifest, journal):
                     attempt["query_id"] = page["id"]
                     attempt["terminal"] = "nextUri" not in page
                     attempt["state"] = page.get("stats", {}).get("state")
-                    if (
-                        batch >= 3
-                        and not running.is_set()
-                        and attempt["state"] == "RUNNING"
-                        and not attempt["terminal"]
-                    ):
-                        # The controller kills while this statement is unacknowledged.
-                        # Server work continues; this only pauses response consumption.
-                        journal("running_at_injection", service=service, **attempt)
-                        running.set()
-                        assert release.wait(30), "Kill controller failed to release writer"
 
                 try:
                     result = p.sql(insert(table, batch), observe=observe)
@@ -233,7 +229,7 @@ def component(p, service, manifest, journal):
                 ):
                     recovery["new_write_batch"] = batch
                     return
-                if not running.is_set():
+                if not injected.is_set():
                     assert attempt["outcome"] == "acknowledged", "Pre-fault workload failed"
                 time.sleep(0.05)
             raise AssertionError("Write workload did not recover within its deadline")
@@ -243,11 +239,35 @@ def component(p, service, manifest, journal):
     worker = threading.Thread(target=writer, name="crash-writer")
     worker.start()
     try:
-        assert running.wait(60), ("No RUNNING INSERT observed", errors)
-        assert sum(a["outcome"] == "acknowledged" for a in attempts) >= 2
-        started, previous = kill(p, [service])
-        journal("killed", service=service, elapsed=0, containers=previous)
-        release.set()
+        deadline = time.monotonic() + 60
+        while time.monotonic() < deadline:
+            if errors:
+                raise errors[0]
+            if len(attempts) >= 3 and sum(a["outcome"] == "acknowledged" for a in attempts) >= 2:
+                current = attempts[-1]
+                query_id = current.get("query_id")
+                if query_id and not current.get("terminal"):
+                    status, body = p.http(
+                        "GET",
+                        f"http://trino:8080/v1/query/{query_id}",
+                        headers={"X-Trino-User": "integration"},
+                    )
+                    # Full query info is unavailable (410) before dispatch completes.
+                    assert status in (200, 410), (status, body)
+                    if status == 200 and body["state"] == "RUNNING":
+                        journal(
+                            "running_at_injection",
+                            service=service,
+                            batch=current["batch"],
+                            query_id=query_id,
+                            state=body["state"],
+                        )
+                        injected.set()
+                        break
+            time.sleep(0.01)
+        assert injected.is_set(), "No RUNNING INSERT observed"
+        started, previous = kill(p, [service], before)
+        journal("killed", service=service, signal="SIGKILL", exit_code=137, containers=previous)
         recover(p, [service], previous)
         recovery["restarted_at"] = time.monotonic()
         restarted.set()
@@ -263,7 +283,6 @@ def component(p, service, manifest, journal):
         return {**recovery, "attempts": attempts, "verified": verified}
     finally:
         stop.set()
-        release.set()
         worker.join(210)
         assert not worker.is_alive(), "Writer remained active after test"
 
@@ -299,7 +318,7 @@ def crash_durability(p):
         manifest[name]["attempts"].append(attempt)
         journal("completed", service="all", **attempt)
     started, previous = kill(p, SERVICES)
-    journal("killed", service="all", containers=previous)
+    journal("killed", service="all", signal="SIGKILL", exit_code=137, containers=previous)
     recover(p, SERVICES, previous)
     p.wait(
         "Trino after SIGKILL",
