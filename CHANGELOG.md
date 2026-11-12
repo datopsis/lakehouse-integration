@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add T11 compaction, snapshot expiry and orphan removal through Trino/Lakekeeper,
+  with exact three-client rows and physical S3 inventory/manifest assertions.
+  Preserve default retention negative checks; lower minimums only in the disposable
+  maintenance test catalog. Include the maintained table in T5 and every T8 recovery.
 - Add T12 Trino schema evolution with exact three-client schemas and old/new rows,
   including nested field addition and integer widening. Query six historical
   snapshots by ID/timestamp after all changes, with fresh PyIceberg snapshot scans

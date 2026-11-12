@@ -5,6 +5,10 @@ as an independent client: [T10, restart and credential evidence](SAIL-EVIDENCE.m
 All five current image pins passed strict provenance; future pin changes still
 require review and exact labels, with no allowances.
 
+- [x] T11 table maintenance: compaction, snapshot expiry with physical S3 deletion,
+  orphan removal with manifest protection, exact three-client reads, default
+  retention refusals, and persistence after T5/T8 on both native architectures.
+- [ ] Interrupt maintenance mid-operation; current T8 preserves completed maintenance.
 - [x] T12 schema evolution and historical snapshots: exact schemas, field identity,
   old/new rows and time travel across add/rename/drop/widen/nested-add; mandatory
   three-client assertions and exact-outcome Sail canaries where needed.
