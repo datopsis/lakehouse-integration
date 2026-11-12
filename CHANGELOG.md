@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Add T11 compaction, snapshot expiry and orphan removal through Trino/Lakekeeper,
+  with exact three-client rows and physical S3 inventory/manifest assertions.
+  Preserve default retention negative checks; lower minimums only in the disposable
+  maintenance test catalog. Include the maintained table in T5 and every T8 recovery.
+
 - Enforce LF line endings: `.gitattributes` normalizes text to LF, a local
   pre-commit hook and CI reject any committed CRLF.
 - Add a polished SVG of the Phase A target TLS architecture (services, verified and

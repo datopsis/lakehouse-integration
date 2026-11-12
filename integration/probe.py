@@ -254,6 +254,15 @@ def prepare():
         + "\n"
     )
 
+    # Destructive-maintenance fixture ONLY. Main and encoding-canary catalogs retain
+    # Trino's default seven-day minimums; T11 asserts both default refusals.
+    (RUNTIME / "trino/catalog/maintenance.properties").write_text(
+        content
+        + "\n# TEST ONLY: disposable T11 table; never use these values in production.\n"
+        + "iceberg.expire-snapshots.min-retention=0s\n"
+        + "iceberg.remove-orphan-files.min-retention=0s\n"
+    )
+
     for path in (RUNTIME / "trino").rglob("*"):
         path.chmod(0o755 if path.is_dir() else 0o644)
     (RUNTIME / "trino").chmod(0o755)
@@ -532,7 +541,10 @@ def verify_restart():
     from sail_probe import verify_restart as sail_restart
 
     sail_result = sail_restart(sys.modules[__name__])
+    from maintenance import read as maintenance_read
+
     result = {
+        "maintenance": maintenance_read(sys.modules[__name__]),
         "sail": sail_result,
         "static_mode": "Both engines reread main tables; new Trino write read by PyIceberg",
         "encoding_canary": canary_outcome,
@@ -775,6 +787,9 @@ def main():
 
         probe("T10_sail", lambda: interoperability(sys.modules[__name__]))
         probe("T4_location", location)
+        from maintenance import exercise as maintenance_exercise
+
+        probe("T11_maintenance", lambda: maintenance_exercise(sys.modules[__name__]))
         probe("T6_negative", negatives)
         probe("T7_secret_isolation", secret_isolation)
         from remote_signing import RestartDiagnostic
@@ -804,6 +819,7 @@ def main():
         "T8_crash_durability",
         "encoding_canary",
         "T10_sail",
+        "T11_maintenance",
         "T9_remote_signing_before",
         "T9_remote_signing_restart",
     }
