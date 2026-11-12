@@ -790,6 +790,9 @@ def main():
         from maintenance import exercise as maintenance_exercise
 
         probe("T11_maintenance", lambda: maintenance_exercise(sys.modules[__name__]))
+        from evolution import exercise as evolution_exercise
+
+        probe("T12_evolution", lambda: evolution_exercise(sys.modules[__name__]))
         probe("T6_negative", negatives)
         probe("T7_secret_isolation", secret_isolation)
         from remote_signing import RestartDiagnostic
@@ -820,6 +823,7 @@ def main():
         "encoding_canary",
         "T10_sail",
         "T11_maintenance",
+        "T12_evolution",
         "T9_remote_signing_before",
         "T9_remote_signing_restart",
     }

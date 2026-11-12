@@ -253,3 +253,33 @@ T5 rereads this table with all three clients; T8 includes it in the existing
 exact row/snapshot crash manifest and additionally checks all three clients and
 S3 references after the all-service kill and every component kill. Maintenance
 itself is not interrupted mid-operation; that crash timing remains unqualified.
+## T12 schema evolution and time travel
+
+`integration/evolution.py` creates an Iceberg v2/Parquet table through Trino 484
+and Lakekeeper with integer `id`, string `label`/`obsolete`, and `details` containing
+integer `code`. It adds `note`, renames `label` to `title`, drops `obsolete`, widens
+`id` to bigint, and adds nested `details.extra`. Each DDL is followed by exact
+schema and row checks before any new write, then an INSERT and another exact
+check. Old rows must have null new fields and retain their renamed values. The
+wide INSERT uses 2147483648, beyond signed integer range. The nested INSERT carries
+a non-null new field. PyIceberg also asserts field IDs and optionality: rename
+and widening preserve identity; additions get new IDs. Schema-only commits must
+not create data snapshots.
+
+Six acknowledged data snapshots capture the original schema and each evolution
+step. After all changes, Trino `FOR VERSION AS OF` and `FOR TIMESTAMP AS OF` must
+return each snapshot's exact historical schema and rows, including the dropped
+column and old names/types. UTC timestamp literals use snapshot commit milliseconds,
+which must be strictly increasing. Fresh PyIceberg processes use
+`scan(snapshot_id=...)` and assert the historical projection, field IDs and rows.
+This checks the pinned clients' historical-schema behavior, not a latest-schema
+projection of historical data. No table maintenance expires these snapshots.
+
+Sail runs fresh Spark sessions and attempts every current-schema read and both
+`VERSION AS OF` and `TIMESTAMP AS OF` reads. Its result schema includes names,
+types, nesting and nullability. Any failure must match a measured per-query
+exception class and complete message; an unknown error fails. Exact successful
+schema/rows for a known failure emit a CI notice and summary. Wrong schemas or
+rows always fail. No Sail query is silently skipped. Per-stage reader logs and
+`results.json` retain evidence, including unexpected failures. T1–T10, T5/T8 and
+the existing encoding/remote-signing canaries keep their assertions unchanged.

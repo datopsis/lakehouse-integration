@@ -6,6 +6,10 @@
   with exact three-client rows and physical S3 inventory/manifest assertions.
   Preserve default retention negative checks; lower minimums only in the disposable
   maintenance test catalog. Include the maintained table in T5 and every T8 recovery.
+- Add T12 Trino schema evolution with exact three-client schemas and old/new rows,
+  including nested field addition and integer widening. Query six historical
+  snapshots by ID/timestamp after all changes, with fresh PyIceberg snapshot scans
+  and mandatory Sail queries; unknown Sail errors and incorrect rows/schema fail.
 
 - Enforce LF line endings: `.gitattributes` normalizes text to LF, a local
   pre-commit hook and CI reject any committed CRLF.

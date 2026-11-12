@@ -9,6 +9,9 @@ require review and exact labels, with no allowances.
   orphan removal with manifest protection, exact three-client reads, default
   retention refusals, and persistence after T5/T8 on both native architectures.
 - [ ] Interrupt maintenance mid-operation; current T8 preserves completed maintenance.
+- [x] T12 schema evolution and historical snapshots: exact schemas, field identity,
+  old/new rows and time travel across add/rename/drop/widen/nested-add; mandatory
+  three-client assertions and exact-outcome Sail canaries where needed.
 - TLS between all services: REST, S3, PostgreSQL, Seaweed control HTTP/gRPC, and Trino;
   include certificate verification, lifecycle and negative tests.
 - OpenID login for Lakekeeper **with authorization**, plus authenticated Trino access.

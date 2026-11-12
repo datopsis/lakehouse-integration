@@ -46,6 +46,7 @@ security gate, and does not authorize release or modify the jars.
 | T9 | No-key remote-signing client retained across recreation; serial exact-row controls and deterministic concurrent-initialization canary with unsigned HEAD 403 / GET AccessDenied evidence |
 | T10 | Sail CREATE/INSERT, exact Trino/fresh-PyIceberg reads after INSERT/UPDATE/DELETE; Sail reads Trino/PyIceberg tables, with passive REST/S3 credential evidence |
 | T11 | Six small INSERTs; optimize reduces data-file count with exact rows in Trino/PyIceberg/Sail; expire all noncurrent snapshots, reject expired time travel, verify old files deleted in S3; remove a planted orphan while preserving every manifest reference; default seven-day retention refusals; repeat exact reads and S3 references after T5 and every T8 crash |
+| T12 | Trino add/rename/drop/widen/nested-add; exact schemas and old/new rows after every DDL and INSERT in Trino, fresh-process PyIceberg and fresh-session Sail; six historical snapshots by ID and timestamp, with historical schemas after evolution; exact Sail failure canaries only where measured |
 | Canary | Default Trino encoding, INSERT/UPDATE/DELETE, then PyIceberg read; only the exact known Arrow decoder error is an expected failure |
 
 The main Iceberg catalog sets
@@ -166,7 +167,7 @@ Never run Python with `-O` or `PYTHONOPTIMIZE`: assertions are the test contract
 One workflow runs on pull requests, weekly Mondays at 06:23 UTC, and manual
 dispatch. `Integration (amd64)` on `ubuntu-24.04` and `Integration (arm64)` on
 `ubuntu-24.04-arm` run in parallel, each with a 30-minute cap and fail-fast disabled.
-Both assert `uname -m` and run the same builds, strict provenance, T1–T11, T8 crash
+Both assert `uname -m` and run the same builds, strict provenance, T1–T12, T8 crash
 scenarios, encoding canary, and remote-signing canary without exemptions. The
 required check named exactly `Integration` waits for both matrix jobs and fails
 unless both succeed (including skipped/cancelled outcomes). All actions use full SHAs.
