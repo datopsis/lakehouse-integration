@@ -45,6 +45,7 @@ security gate, and does not authorize release or modify the jars.
 | T8 | SIGKILL all eight services after three acknowledged 16-row INSERTs; exact rows and four snapshots (CREATE plus three INSERTs) after restart on the same volumes. SIGKILL PostgreSQL, Lakekeeper, volume, and filer during continuous INSERTs; retain every acknowledged batch, require ambiguous batches fully visible or absent, verify snapshot counts/chains and fresh PyIceberg/Trino reads, and require a new successful write after each restart. Report recovery seconds per component. |
 | T9 | No-key remote-signing client retained across recreation; serial exact-row controls and deterministic concurrent-initialization canary with unsigned HEAD 403 / GET AccessDenied evidence |
 | T10 | Sail CREATE/INSERT, exact Trino/fresh-PyIceberg reads after INSERT/UPDATE/DELETE; Sail reads Trino/PyIceberg tables, with passive REST/S3 credential evidence |
+| T11 | Six small INSERTs; optimize reduces data-file count with exact rows in Trino/PyIceberg/Sail; expire all noncurrent snapshots, reject expired time travel, verify old files deleted in S3; remove a planted orphan while preserving every manifest reference; default seven-day retention refusals; repeat exact reads and S3 references after T5 and every T8 crash |
 | Canary | Default Trino encoding, INSERT/UPDATE/DELETE, then PyIceberg read; only the exact known Arrow decoder error is an expected failure |
 
 The main Iceberg catalog sets
@@ -81,6 +82,13 @@ emits a notice; any other failure fails the job. See the
 [draft report and reproduction](docs/known-issues/remote-signing.md); nothing was
 filed upstream. Reloading a table or starting a fresh process is not a general
 fix for the race. Remote signing remains OFF the main data path.
+
+T11 alone uses the generated `maintenance` test catalog with
+`iceberg.expire-snapshots.min-retention=0s` and
+`iceberg.remove-orphan-files.min-retention=0s`. These are **test-only destructive
+settings**, never production recommendations. The normal `iceberg` catalog keeps
+both seven-day defaults; T11 requires the exact default rejection for each
+procedure before invoking it through the maintenance catalog.
 
 ## Run locally
 
@@ -158,7 +166,7 @@ Never run Python with `-O` or `PYTHONOPTIMIZE`: assertions are the test contract
 One workflow runs on pull requests, weekly Mondays at 06:23 UTC, and manual
 dispatch. `Integration (amd64)` on `ubuntu-24.04` and `Integration (arm64)` on
 `ubuntu-24.04-arm` run in parallel, each with a 30-minute cap and fail-fast disabled.
-Both assert `uname -m` and run the same builds, strict provenance, T1–T9, T8 crash
+Both assert `uname -m` and run the same builds, strict provenance, T1–T11, T8 crash
 scenarios, encoding canary, and remote-signing canary without exemptions. The
 required check named exactly `Integration` waits for both matrix jobs and fails
 unless both succeed (including skipped/cancelled outcomes). All actions use full SHAs.

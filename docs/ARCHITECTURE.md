@@ -212,3 +212,44 @@ and skipping. The scheduled issue job depends on this aggregate and the unchange
 read-only upstream report, so either architecture's failure opens/updates the
 existing weekly issue. Each job's Actions timestamps provide wall time and runner
 minutes; sum runner durations for consumption, not overlapping elapsed wall time.
+
+## T11 table maintenance
+
+`integration/maintenance.py` writes twelve deterministic rows in six separate
+INSERTs to an unpartitioned Iceberg v2/Parquet table through Trino 484 and
+Lakekeeper. At least six current data files and seven snapshots (CREATE plus
+INSERTs) must exist. `ALTER TABLE ... EXECUTE optimize` must reduce the data-file
+count, replace the old files, and preserve every row in Trino, a newly loaded
+PyIceberg table and a fresh Sail session.
+
+Only the generated `maintenance` catalog lowers
+`iceberg.expire-snapshots.min-retention=0s` and
+`iceberg.remove-orphan-files.min-retention=0s`. These overrides are test-only,
+for a disposable table with no concurrent writers. The main `iceberg` catalog
+and default-encoding `canary` retain Trino's seven-day defaults. Both procedures
+must reject zero retention through the main catalog with the exact
+`INVALID_PROCEDURE_ARGUMENT` message; snapshots and S3 objects must be unchanged.
+The property names and error contracts come from
+[Trino 484 IcebergMetadata](https://github.com/trinodb/trino/blob/484/plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergMetadata.java).
+
+After compaction, an acknowledged thirteenth row advances the current snapshot.
+Iceberg incremental cleanup retains files marked deleted by a still-retained
+snapshot; advancing makes the rewrite snapshot and its deletion entries eligible
+for expiry. This was observed in the first native CI run on both architectures.
+Expiry must leave exactly the post-compaction append snapshot in `$snapshots`, keep
+all thirteen rows in all three readers, and reject every expired snapshot ID with
+`INVALID_ARGUMENTS` and its exact missing-snapshot message. Paginated S3 prefix
+listings must prove that all data files referenced only by expired snapshots
+are physically gone, and that current data files remain. No eventual-consistency
+retry can hide a failed deletion assertion.
+
+Orphan removal plants a distinct unreferenced object under the table's `data/`
+prefix. Before and after listings are compared against live manifest entries
+from every retained snapshot, manifest lists, manifests and current metadata.
+The planted object must disappear, every reference must remain, reference sets
+and the current snapshot must be unchanged, and all three clients must still
+read exact rows. `results.json` retains the snapshot IDs and object inventories.
+T5 rereads this table with all three clients; T8 includes it in the existing
+exact row/snapshot crash manifest and additionally checks all three clients and
+S3 references after the all-service kill and every component kill. Maintenance
+itself is not interrupted mid-operation; that crash timing remains unqualified.

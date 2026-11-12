@@ -105,6 +105,10 @@ def verify(p, manifest):
             "batch_outcomes": outcomes,
             "pyiceberg": reader,
         }
+        if name == "maintenance":
+            from maintenance import read as maintenance_read
+
+            evidence[name]["three_clients_and_s3"] = maintenance_read(p)
     return evidence
 
 
@@ -310,7 +314,7 @@ def crash_durability(p):
             os.fsync(output.fileno())
 
     manifest = {}
-    for name in ("from_trino", "from_python", "encoding_canary", "from_sail"):
+    for name in ("from_trino", "from_python", "encoding_canary", "from_sail", "maintenance"):
         manifest[name] = {
             "rows": p.sql(f"SELECT * FROM iceberg.integration.{name} ORDER BY id"),
             "snapshots": snapshot_rows(p, name),

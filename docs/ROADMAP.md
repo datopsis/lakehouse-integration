@@ -5,6 +5,10 @@ as an independent client: [T10, restart and credential evidence](SAIL-EVIDENCE.m
 All five current image pins passed strict provenance; future pin changes still
 require review and exact labels, with no allowances.
 
+- [x] T11 table maintenance: compaction, snapshot expiry with physical S3 deletion,
+  orphan removal with manifest protection, exact three-client reads, default
+  retention refusals, and persistence after T5/T8 on both native architectures.
+- [ ] Interrupt maintenance mid-operation; current T8 preserves completed maintenance.
 - TLS between all services: REST, S3, PostgreSQL, Seaweed control HTTP/gRPC, and Trino;
   include certificate verification, lifecycle and negative tests.
 - OpenID login for Lakekeeper **with authorization**, plus authenticated Trino access.
