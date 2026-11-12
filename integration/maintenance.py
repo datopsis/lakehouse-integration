@@ -6,7 +6,8 @@ from urllib.parse import urlsplit
 from sail_probe import queries
 
 NAME = "maintenance"
-ROWS = [[i, f"row-{i}"] for i in range(12)]
+COMPACT_ROWS = [[i, f"row-{i}"] for i in range(12)]
+ROWS = COMPACT_ROWS + [[12, "after-optimize"]]
 
 
 def key(path):
@@ -50,16 +51,16 @@ def exact_error(h, statement, name, message):
     raise AssertionError("Expected rejection: " + statement)
 
 
-def read(h):
-    assert h.sql(f"SELECT * FROM iceberg.integration.{NAME} ORDER BY id") == ROWS
+def read(h, rows=ROWS):
+    assert h.sql(f"SELECT * FROM iceberg.integration.{NAME} ORDER BY id") == rows
     table = h.rest_catalog().load_table("integration." + NAME)
     actual = table.scan().to_arrow().sort_by("id").to_pylist()
-    assert actual == [dict(zip(("id", "label"), row, strict=True)) for row in ROWS], actual
-    assert queries(h, [f"SELECT * FROM qualification.integration.{NAME} ORDER BY id"]) == [ROWS]
+    assert actual == [dict(zip(("id", "label"), row, strict=True)) for row in rows], actual
+    assert queries(h, [f"SELECT * FROM qualification.integration.{NAME} ORDER BY id"]) == [rows]
     refs, _ = references(table)
     objects = listing(h, table)
     assert refs <= objects, sorted(refs - objects)
-    return {"rows": ROWS, "referenced": sorted(refs), "objects": sorted(objects)}
+    return {"rows": rows, "referenced": sorted(refs), "objects": sorted(objects)}
 
 
 def exercise(h):
@@ -74,7 +75,7 @@ def exercise(h):
     for start in range(0, 12, 2):
         values = ", ".join(f"({i}, 'row-{i}')" for i in range(start, start + 2))
         assert h.sql(f"INSERT INTO {table_name} VALUES {values}") == [[2]]
-    before = read(h)
+    before = read(h, COMPACT_ROWS)
     table = h.rest_catalog().load_table("integration." + NAME)
     snapshots = {s.snapshot_id for s in table.metadata.snapshots}
     assert len(snapshots) == 7, snapshots  # CREATE and six acknowledged INSERTs.
@@ -84,7 +85,7 @@ def exercise(h):
         [len(old_data)]
     ]
     h.sql(f"ALTER TABLE {table_name} EXECUTE optimize")
-    compacted = read(h)
+    compacted = read(h, COMPACT_ROWS)
     table = h.rest_catalog().load_table("integration." + NAME)
     current = table.current_snapshot().snapshot_id
     current_data = {key(task.file.file_path) for task in table.scan().plan_files()}
@@ -93,6 +94,17 @@ def exercise(h):
     assert h.sql(f'SELECT count(*) FROM maintenance.integration."{NAME}$files"') == [
         [len(current_data)]
     ]
+    assert {s.snapshot_id for s in table.metadata.snapshots} == snapshots | {current}
+    # Iceberg incremental GC retains deletes made by a retained snapshot. Advance
+    # past the rewrite so its deletion entries become eligible during expiry.
+    snapshots.add(current)
+    assert h.sql(f"INSERT INTO {table_name} VALUES (12, 'after-optimize')") == [[1]]
+    before_expiry = read(h)
+    table = h.rest_catalog().load_table("integration." + NAME)
+    current = table.current_snapshot().snapshot_id
+    compacted_data = current_data
+    current_data = {key(task.file.file_path) for task in table.scan().plan_files()}
+    assert compacted_data < current_data
     assert {s.snapshot_id for s in table.metadata.snapshots} == snapshots | {current}
     refs_before, all_data = references(table)
     assert all_data - current_data == old_data
@@ -152,7 +164,9 @@ def exercise(h):
         "before": before,
         "compacted": compacted,
         "data_files_before": sorted(old_data),
-        "data_files_after": sorted(current_data),
+        "data_files_after": sorted(compacted_data),
+        "before_expiry": before_expiry,
+        "current_data_files": sorted(current_data),
         "default_retention_rejections": rejected,
         "expired_snapshots": sorted(snapshots),
         "current_snapshot": current,

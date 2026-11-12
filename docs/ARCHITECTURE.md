@@ -232,8 +232,12 @@ must reject zero retention through the main catalog with the exact
 The property names and error contracts come from
 [Trino 484 IcebergMetadata](https://github.com/trinodb/trino/blob/484/plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergMetadata.java).
 
-Expiry must leave exactly the optimized current snapshot in `$snapshots`, keep
-all twelve rows in all three readers, and reject every expired snapshot ID with
+After compaction, an acknowledged thirteenth row advances the current snapshot.
+Iceberg incremental cleanup retains files marked deleted by a still-retained
+snapshot; advancing makes the rewrite snapshot and its deletion entries eligible
+for expiry. This was observed in the first native CI run on both architectures.
+Expiry must leave exactly the post-compaction append snapshot in `$snapshots`, keep
+all thirteen rows in all three readers, and reject every expired snapshot ID with
 `INVALID_ARGUMENTS` and its exact missing-snapshot message. Paginated S3 prefix
 listings must prove that all data files referenced only by expired snapshots
 are physically gone, and that current data files remain. No eventual-consistency
