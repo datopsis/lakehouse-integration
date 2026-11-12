@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Add T12 Trino schema evolution with exact three-client schemas and old/new rows,
+  including nested field addition and integer widening. Query six historical
+  snapshots by ID/timestamp after all changes, with fresh PyIceberg snapshot scans
+  and mandatory Sail queries; unknown Sail errors and incorrect rows/schema fail.
+
 - Enforce LF line endings: `.gitattributes` normalizes text to LF, a local
   pre-commit hook and CI reject any committed CRLF.
 - Add a polished SVG of the Phase A target TLS architecture (services, verified and

@@ -775,6 +775,9 @@ def main():
 
         probe("T10_sail", lambda: interoperability(sys.modules[__name__]))
         probe("T4_location", location)
+        from evolution import exercise as evolution_exercise
+
+        probe("T12_evolution", lambda: evolution_exercise(sys.modules[__name__]))
         probe("T6_negative", negatives)
         probe("T7_secret_isolation", secret_isolation)
         from remote_signing import RestartDiagnostic
@@ -804,6 +807,7 @@ def main():
         "T8_crash_durability",
         "encoding_canary",
         "T10_sail",
+        "T12_evolution",
         "T9_remote_signing_before",
         "T9_remote_signing_restart",
     }
