@@ -19,6 +19,11 @@ require review and exact labels, with no allowances.
   tested fallback; see the [IdP bake-off decision and evidence](IDP-BAKEOFF.md).
   Sail 0.7.3 needs an externally supplied token-file path with token lifecycle
   management; it has no native client-credentials grant provider.
+  The [Phase B identity diagram](diagrams/lakehouse-identity-architecture.svg) shows
+  human PKCE login, machine tokens, Sail's external token file, and Lakekeeper JWT
+  validation over verified TLS, with PostgreSQL as Rauthy's target storage.
+  Groups are carried for future authorization; Phase C (OpenFGA or Cedar,
+  undecided) and Phase D (SeaweedFS STS credential vending) are marked not built.
 - OpenID login for Lakekeeper **with authorization**, plus authenticated Trino access.
   Prerequisite decision: while engines hold bucket-wide static S3 keys, catalog
   permissions do not protect data (see "How each engine gets S3 access" in

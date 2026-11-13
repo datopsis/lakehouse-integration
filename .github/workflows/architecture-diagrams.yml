@@ -1,0 +1,78 @@
+name: Architecture diagrams
+on:
+  pull_request:
+    paths:
+      - 'docs/diagrams/**'
+      - '.github/workflows/architecture-diagrams.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: architecture-diagrams-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  render:
+    name: Validate and render architecture diagrams
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Test SVG XML and LF endings
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import unittest
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          class DiagramTests(unittest.TestCase):
+              def test_architecture_svgs(self):
+                  for phase in ("tls", "identity"):
+                      path = Path(f"docs/diagrams/lakehouse-{phase}-architecture.svg")
+                      with self.subTest(path=path):
+                          data = path.read_bytes()
+                          self.assertNotIn(b"\r", data)
+                          self.assertTrue(data.endswith(b"\n"))
+                          root = ET.fromstring(data)
+                          self.assertEqual(root.tag, "{http://www.w3.org/2000/svg}svg")
+                          self.assertIsNotNone(root.find("{http://www.w3.org/2000/svg}title"))
+                          self.assertIsNotNone(root.find("{http://www.w3.org/2000/svg}desc"))
+
+          unittest.main()
+          PY
+      - name: Render PNG previews
+        run: |
+          set -euo pipefail
+          # Chrome preserves the source SVG's feDropShadow cards, which older
+          # librsvg versions omit. Use the browser supplied by the hosted runner.
+          google-chrome --version
+          mkdir -p diagram-previews
+          for phase in tls identity; do
+            height=1330
+            if [ "$phase" = tls ]; then height=1490; fi
+            profile=$(mktemp -d)
+            google-chrome --headless --disable-gpu --no-sandbox \
+              --disable-dev-shm-usage --hide-scrollbars --force-device-scale-factor=1 \
+              --user-data-dir="$profile" --window-size="1720,$height" \
+              --screenshot="$PWD/diagram-previews/lakehouse-${phase}-architecture.png" \
+              "file://$PWD/docs/diagrams/lakehouse-${phase}-architecture.svg"
+            rm -rf "$profile"
+          done
+      - name: Upload PNG review artifacts
+        id: previews
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: architecture-diagrams-${{ github.run_id }}-${{ github.run_attempt }}
+          path: diagram-previews/*.png
+          retention-days: 14
+          if-no-files-found: error
+      - name: Link previews in workflow summary
+        env:
+          ARTIFACT_URL: ${{ steps.previews.outputs.artifact-url }}
+        run: |
+          printf '[Download rendered architecture PNGs](%s)\n' "$ARTIFACT_URL" >> "$GITHUB_STEP_SUMMARY"

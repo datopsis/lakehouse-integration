@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- Update the Phase A TLS diagram with the approved 2026-11-12 loopback exception,
+  merged nginx-ubi proxy and per-component qualification status; cross-service
+  integration step 7 remains unrun and the existing SeaweedFS gap note is unchanged.
+- Add the Phase B identity target diagram: chosen Rauthy, Keycloak fallback,
+  verified TLS, PostgreSQL storage, human and machine token flows, Sail's external
+  token file, and Lakekeeper JWT checks. Mark authorization and STS vending as
+  future work, and link the diagram from the architecture and Phase B roadmap.
+- Add a separate documentation workflow that tests SVG XML and LF endings,
+  renders both diagrams, and uploads PNG review artifacts without changing
+  the required Integration check, image pins or existing test code.
+
 - Record the owner's 2026-11-13 Phase B choice: Rauthy, with Keycloak as the tested
   fallback. Plan a hardened `rauthy-ubi` image and Sail's externally supplied
   token-file path, based on the native amd64/arm64 IdP bake-off evidence.
