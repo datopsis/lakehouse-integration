@@ -32,7 +32,10 @@ def test(name, fn):
     start = time.monotonic()
     try:
         value = fn()
-        result = {"status": "pass", "value": value}
+        result = {
+            "status": value.get("status", "pass") if isinstance(value, dict) else "pass",
+            "value": value,
+        }
     except Exception as exc:
         result = {"status": "fail", "error_type": type(exc).__name__, "error": str(exc)}
     result["seconds"] = round(time.monotonic() - start, 3)
@@ -204,15 +207,52 @@ def machine(provider):
         raise AssertionError({"http_status": r.status_code, "response": r.text})
     token = r.json()
     secret(token["access_token"])
-    header, claims = decode(token["access_token"])
+    assert token["token_type"].lower() == "bearer"
+    assert token["expires_in"] > 0
+    provider.machine_token = token["access_token"]
+    return {
+        "http_status": r.status_code,
+        "token_type": token["token_type"],
+        "expires_in": token["expires_in"],
+        "segments": len(token["access_token"].split(".")),
+    }
+
+
+def machine_claims(provider):
+    segments = len(provider.machine_token.split("."))
+    assert segments == 3, (
+        f"Expected signed JWT (3 segments), received {segments}-segment token (JWE is not a Lakekeeper JWT)"
+    )
+    header, claims = decode(provider.machine_token)
     assert claims["iss"] == provider.issuer
     assert claims["aud"] == "lakekeeper" or "lakekeeper" in claims["aud"]
     assert claims["exp"] > time.time()
     assert header["kid"] in {
         key["kid"] for key in provider.http.json("GET", provider.discovery["jwks_uri"])["keys"]
     }
-    provider.machine_token = token["access_token"]
-    return {"header": header, "claims": claims, "token_type": token["token_type"]}
+    return {"header": header, "claims": claims}
+
+
+def pyiceberg_token(provider):
+    from pyiceberg.catalog.rest.auth import LegacyOAuth2AuthManager
+
+    session = requests.Session()
+    session.verify = str(provider.ca)
+    session.trust_env = False
+    session.max_redirects = 0
+    auth = LegacyOAuth2AuthManager(
+        session=session,
+        auth_url=provider.discovery["token_endpoint"],
+        credential="lakekeeper:" + provider.client_secret,
+    )
+    value = auth.auth_header()
+    assert value.startswith("Bearer ")
+    token = secret(value.removeprefix("Bearer "))
+    return {
+        "client": "PyIceberg 0.12.0 LegacyOAuth2AuthManager",
+        "segments": len(token.split(".")),
+        "scope": "Token acquisition only; NOT a Lakekeeper list/read test",
+    }
 
 
 def human(provider):
@@ -297,6 +337,29 @@ def operations(provider):
     }
 
 
+def tls_boundary(provider):
+    hostname = provider.hostname
+    trusted = ssl.create_default_context(cafile=str(provider.ca))
+    with socket.create_connection((hostname, 8443), timeout=10) as sock:
+        with trusted.wrap_socket(sock, server_hostname=hostname) as secure:
+            cert = secure.getpeercert()
+            version = secure.version()
+    errors = {}
+    for label, context, target in (
+        ("untrusted_ca", ssl.create_default_context(), hostname),
+        ("wrong_hostname", trusted, "wrong.idp.test"),
+    ):
+        try:
+            with socket.create_connection((hostname, 8443), timeout=10) as sock:
+                with context.wrap_socket(sock, server_hostname=target):
+                    pass
+        except ssl.SSLCertVerificationError as exc:
+            errors[label] = str(exc)
+        else:
+            raise AssertionError(label + " accepted")
+    return {"tls_version": version, "certificate": cert, "negative_errors": errors}
+
+
 def main():
     assert __debug__
     arch = {"x86_64": "amd64", "aarch64": "arm64"}[platform.machine()]
@@ -319,7 +382,10 @@ def main():
                 "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent",
             }
         if started["status"] == "pass":
+            test(name + "/verified_tls", lambda: tls_boundary(provider))
             test(name + "/machine_token_endpoint", lambda: machine(provider))
+            test(name + "/machine_jwt_claims", lambda: machine_claims(provider))
+            test(name + "/pyiceberg_token_only", lambda: pyiceberg_token(provider))
             if name == "kanidm":
                 test(name + "/service_account_exchange", lambda: exchange(provider))
             test(name + "/human_pkce_idp", lambda: human(provider))

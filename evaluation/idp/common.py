@@ -177,6 +177,7 @@ def challenge():
 
 def cleanup():
     global SECRETS
+    OUT.mkdir(parents=True, exist_ok=True)
     inventory = WORK / "secrets.json"
     if inventory.exists():
         SECRETS = json.loads(inventory.read_text())

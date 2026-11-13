@@ -93,6 +93,21 @@ def counts(scanner, report):
     return {s: sum(row[0] == s for row in found) for s in ("HIGH", "CRITICAL")}
 
 
+def jars(image):
+    cid = run("docker", "create", "--label", "datopsis.idp-bakeoff=true", image)
+    try:
+        process = subprocess.Popen(["docker", "export", cid], stdout=subprocess.PIPE)
+        paths = []
+        with tarfile.open(fileobj=process.stdout, mode="r|") as archive:
+            for item in archive:
+                if item.isfile() and item.name.endswith(".jar"):
+                    paths.append(item.name)
+        assert process.wait(timeout=30) == 0
+        return {"count": len(paths), "paths": sorted(paths)}
+    finally:
+        run("docker", "rm", "-v", cid)
+
+
 def main():
     arch = {"x86_64": "amd64", "aarch64": "arm64"}[platform.machine()]
     assert arch == os.environ["INTEGRATION_ARCH"]
@@ -142,6 +157,8 @@ def main():
                     "scanner_version": TOOLS[name][1],
                     "version_output": run(binary, "--version"),
                 }
+                if provider == "keycloak" and name == "trivy":
+                    save("keycloak-jars.json", jars(image))
             except Exception as exc:
                 results[key] = {"status": "error", "error": str(exc)}
             save("scans.json", results)

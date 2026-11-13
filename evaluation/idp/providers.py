@@ -69,7 +69,8 @@ class Provider:
         data = self.path / "data"
         data.mkdir()
         env, command, mounts = getattr(self, "config_" + self.name)()
-        envfile = self.path / "server.env"
+        # Docker CLI reads this as the runner; only mounted files change owner.
+        envfile = WORK / (self.name + ".env")
         write(envfile, "".join(f"{k}={v}\n" for k, v in env.items()))
         uid = {"keycloak": "1000:0", "rauthy": "10001:10001", "kanidm": "0:0"}[self.name]
         run("sudo", "chown", "-R", uid, self.path)
@@ -393,7 +394,7 @@ class Provider:
                 "grant_type": "client_credentials",
                 "client_id": client,
                 "client_secret": self.client_secret,
-                "scope": "openid" if self.name == "keycloak" else SCOPE,
+                "scope": "",
             },
         )
 
@@ -432,8 +433,8 @@ class Provider:
             )
             assert r.status_code == 200, (r.status_code, r.text)
             body = r.json()
-            if "consent_requested" in body:
-                consent = secret(body["consent_requested"]["consent_token"])
+            if "ConsentRequested" in body:
+                consent = secret(body["ConsentRequested"]["consent_token"])
                 r = http.request(
                     "POST", self.base + "/oauth2/authorise/permit", json=consent, headers=headers
                 )
