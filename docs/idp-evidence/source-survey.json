@@ -1,0 +1,1210 @@
+{
+  "kanidm": {
+    "repo": "kanidm/kanidm",
+    "source_commit": "a52b723ce8efb1f4d0a6bc2a2c36b4071f95317d",
+    "window": [
+      "2025-11-13T00:00:00Z",
+      "2026-11-13T23:59:59Z"
+    ],
+    "stable_release_count": 21,
+    "stable_releases": [
+      {
+        "tag": "v1.12.0",
+        "date": "2026-11-01T03:22:05Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.12.0"
+      },
+      {
+        "tag": "v1.11.2",
+        "date": "2026-09-11T03:03:19Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.11.2"
+      },
+      {
+        "tag": "v1.11.1",
+        "date": "2026-08-14T05:38:58Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.11.1"
+      },
+      {
+        "tag": "v1.11.0",
+        "date": "2026-08-02T02:58:34Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.11.0"
+      },
+      {
+        "tag": "v1.10.5",
+        "date": "2026-08-02T02:57:09Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.10.5"
+      },
+      {
+        "tag": "v1.10.4",
+        "date": "2026-06-23T03:18:29Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.10.4"
+      },
+      {
+        "tag": "v1.10.3",
+        "date": "2026-05-22T02:06:54Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.10.3"
+      },
+      {
+        "tag": "v1.10.2",
+        "date": "2026-05-14T07:03:55Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.10.2"
+      },
+      {
+        "tag": "v1.9.4",
+        "date": "2026-05-14T07:03:27Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.9.4"
+      },
+      {
+        "tag": "v1.10.1",
+        "date": "2026-05-07T02:20:01Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.10.1"
+      },
+      {
+        "tag": "v1.10.0",
+        "date": "2026-05-01T07:23:05Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.10.0"
+      },
+      {
+        "tag": "v1.9.3",
+        "date": "2026-04-30T02:48:22Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.9.3"
+      },
+      {
+        "tag": "v1.9.2",
+        "date": "2026-03-13T05:28:21Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.9.2"
+      },
+      {
+        "tag": "v1.9.1",
+        "date": "2026-02-24T03:04:34Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.9.1"
+      },
+      {
+        "tag": "v1.9.0",
+        "date": "2026-02-17T01:44:12Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.9.0"
+      },
+      {
+        "tag": "v1.8.6",
+        "date": "2026-02-10T04:55:00Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.8.6"
+      },
+      {
+        "tag": "v1.8.5",
+        "date": "2025-12-13T02:42:40Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.8.5"
+      },
+      {
+        "tag": "v1.8.4",
+        "date": "2025-12-10T06:09:15Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.8.4"
+      },
+      {
+        "tag": "v1.8.3",
+        "date": "2025-11-28T06:02:02Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.8.3"
+      },
+      {
+        "tag": "v1.8.2",
+        "date": "2025-11-28T03:53:30Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.8.2"
+      },
+      {
+        "tag": "v1.8.1",
+        "date": "2025-11-19T04:13:45Z",
+        "url": "https://github.com/kanidm/kanidm/releases/tag/v1.8.1"
+      }
+    ],
+    "cargo_lock_package_entries": 804,
+    "cargo_registry_or_git_entries": 771,
+    "cargo_unique_package_names": 704,
+    "median_release_gap_days": 8.39,
+    "identified_commit_authors_including_bots": 45,
+    "maintainer_activity": {
+      "Firstyear": 158,
+      "yaleman": 29
+    },
+    "public_advisory_count_all_time": 10,
+    "public_advisories_in_window": [
+      {
+        "ghsa_id": "GHSA-2pm5-6m23-h692",
+        "html_url": "https://github.com/kanidm/kanidm/security/advisories/GHSA-2pm5-6m23-h692",
+        "summary": "Unauthenticated stack-overflow crash of kanidmd via the SCIM filter parser ",
+        "severity": "high",
+        "published_at": "2026-08-02T03:06:41Z",
+        "updated_at": "2026-08-02T08:30:20Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "HEAD of master",
+            "patched_versions": "",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-qcrp-p3rq-pffr",
+        "html_url": "https://github.com/kanidm/kanidm/security/advisories/GHSA-qcrp-p3rq-pffr",
+        "summary": "Anonymous nested LDAP filter stack overflow aborts kanidmd process",
+        "severity": "high",
+        "published_at": "2026-06-23T02:53:18Z",
+        "updated_at": "2026-06-23T02:53:18Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "rust",
+              "name": "kanidm"
+            },
+            "vulnerable_version_range": "<= 1.10.3",
+            "patched_versions": "",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-hh34-7jqq-3f73",
+        "html_url": "https://github.com/kanidm/kanidm/security/advisories/GHSA-hh34-7jqq-3f73",
+        "summary": "OAuth 2.0 Analysis with Oauch",
+        "severity": "low",
+        "published_at": "2026-06-23T03:20:04Z",
+        "updated_at": "2026-06-23T03:20:04Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "rust",
+              "name": "kanidm"
+            },
+            "vulnerable_version_range": "1.10.3",
+            "patched_versions": "",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-j4gj-f54h-56j5",
+        "html_url": "https://github.com/kanidm/kanidm/security/advisories/GHSA-j4gj-f54h-56j5",
+        "summary": "Python RADIUS module logs RADIUS passwords and returned cleartext RADIUS secrets",
+        "severity": "low",
+        "published_at": "2026-05-27T05:14:01Z",
+        "updated_at": "2026-07-22T19:05:53Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "<= 1.10",
+            "patched_versions": ">= 1.11.0",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-x8cg-3c8h-gw55",
+        "html_url": "https://github.com/kanidm/kanidm/security/advisories/GHSA-x8cg-3c8h-gw55",
+        "summary": "Oauth2 trust login provider subject not validated",
+        "severity": "low",
+        "published_at": "2026-05-27T05:11:21Z",
+        "updated_at": "2026-05-27T05:11:21Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "rust",
+              "name": ""
+            },
+            "vulnerable_version_range": "none",
+            "patched_versions": "1.11.0-dev",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-xxwr-vvr3-2g9f",
+        "html_url": "https://github.com/kanidm/kanidm/security/advisories/GHSA-xxwr-vvr3-2g9f",
+        "summary": "Incorrect handling of set modifications allows authenticated arbitrary writes to database content",
+        "severity": "critical",
+        "published_at": "2026-05-14T07:04:09Z",
+        "updated_at": "2026-05-14T07:04:09Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "rust",
+              "name": "kanidm"
+            },
+            "vulnerable_version_range": "< 1.9.3, 1.10.1",
+            "patched_versions": ">= 1.9.4, >= 1.10.2",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-gpxg-fx2g-qxj2",
+        "html_url": "https://github.com/kanidm/kanidm/security/advisories/GHSA-gpxg-fx2g-qxj2",
+        "summary": "Stored HTML injection in passkey-enrolment partial via displayname \u2192 htmx-driven authenticated request forgery",
+        "severity": "medium",
+        "published_at": "2026-04-30T02:48:00Z",
+        "updated_at": "2026-04-30T02:48:01Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "< 1.9.2",
+            "patched_versions": ">= 1.9.3",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-53hj-r94p-8c8f",
+        "html_url": "https://github.com/kanidm/kanidm/security/advisories/GHSA-53hj-r94p-8c8f",
+        "summary": "Non-constant-time comparison of OAuth2 client_secret",
+        "severity": "low",
+        "published_at": "2026-04-30T02:48:05Z",
+        "updated_at": "2026-04-30T02:48:05Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "< 1.9.2",
+            "patched_versions": ">= 1.9.3",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-r5fr-9gmv-jggh",
+        "html_url": "https://github.com/kanidm/kanidm/security/advisories/GHSA-r5fr-9gmv-jggh",
+        "summary": "Unauthenticated process abort via SCIM filter stack exhaustion",
+        "severity": "high",
+        "published_at": "2026-04-30T02:48:09Z",
+        "updated_at": "2026-08-02T08:36:48Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "rust",
+              "name": "scim_proto"
+            },
+            "vulnerable_version_range": "< 1.9.2",
+            "patched_versions": ">= 1.9.3",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "rust",
+              "name": "kanidm_proto"
+            },
+            "vulnerable_version_range": "< 1.9.2",
+            "patched_versions": ">= 1.9.3",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-84jc-3hj2-hwc7",
+        "html_url": "https://github.com/kanidm/kanidm/security/advisories/GHSA-84jc-3hj2-hwc7",
+        "summary": "Image upload validators run before authorization; PNG validator panics on malformed input",
+        "severity": "medium",
+        "published_at": "2026-04-30T02:48:12Z",
+        "updated_at": "2026-04-30T02:48:13Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "rust",
+              "name": "kanidmd_lib"
+            },
+            "vulnerable_version_range": "< 1.9.2",
+            "patched_versions": ">= 1.9.3",
+            "vulnerable_functions": []
+          }
+        ]
+      }
+    ]
+  },
+  "rauthy": {
+    "repo": "sebadob/rauthy",
+    "source_commit": "fe6bcb95192e8a83c29e2b525bf4960933bea3bd",
+    "window": [
+      "2025-11-13T00:00:00Z",
+      "2026-11-13T23:59:59Z"
+    ],
+    "stable_release_count": 18,
+    "stable_releases": [
+      {
+        "tag": "v0.37.2",
+        "date": "2026-10-19T12:43:46Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.37.2"
+      },
+      {
+        "tag": "v0.37.1",
+        "date": "2026-10-07T15:55:56Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.37.1"
+      },
+      {
+        "tag": "v0.37.0",
+        "date": "2026-10-03T12:31:14Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.37.0"
+      },
+      {
+        "tag": "v0.36.2",
+        "date": "2026-08-08T18:16:43Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.36.2"
+      },
+      {
+        "tag": "v0.36.1",
+        "date": "2026-07-24T18:28:30Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.36.1"
+      },
+      {
+        "tag": "v0.36.0",
+        "date": "2026-07-06T14:45:18Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.36.0"
+      },
+      {
+        "tag": "v0.35.2",
+        "date": "2026-05-19T11:23:17Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.35.2"
+      },
+      {
+        "tag": "v0.35.1",
+        "date": "2026-04-14T15:54:05Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.35.1"
+      },
+      {
+        "tag": "v0.35.0",
+        "date": "2026-03-27T23:07:17Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.35.0"
+      },
+      {
+        "tag": "v0.34.3",
+        "date": "2026-02-04T17:18:35Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.34.3"
+      },
+      {
+        "tag": "v0.34.2",
+        "date": "2026-01-26T12:01:12Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.34.2"
+      },
+      {
+        "tag": "v0.34.1",
+        "date": "2026-01-23T18:19:06Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.34.1"
+      },
+      {
+        "tag": "v0.34.0",
+        "date": "2026-01-21T09:49:01Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.34.0"
+      },
+      {
+        "tag": "v0.33.4",
+        "date": "2025-12-30T09:28:24Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.33.4"
+      },
+      {
+        "tag": "v0.33.3",
+        "date": "2025-12-27T16:31:35Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.33.3"
+      },
+      {
+        "tag": "v0.33.2",
+        "date": "2025-12-22T09:53:20Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.33.2"
+      },
+      {
+        "tag": "v0.33.1",
+        "date": "2025-12-11T16:16:59Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.33.1"
+      },
+      {
+        "tag": "v0.33.0",
+        "date": "2025-12-09T18:03:55Z",
+        "url": "https://github.com/sebadob/rauthy/releases/tag/v0.33.0"
+      }
+    ],
+    "cargo_lock_package_entries": 762,
+    "cargo_registry_or_git_entries": 749,
+    "cargo_unique_package_names": 689,
+    "median_release_gap_days": 11.87,
+    "identified_commit_authors_including_bots": 55,
+    "maintainer_activity": {
+      "sebadob": 211
+    },
+    "public_advisory_count_all_time": 6,
+    "public_advisories_in_window": [
+      {
+        "ghsa_id": "GHSA-cprq-r4fp-jx46",
+        "html_url": "https://github.com/sebadob/rauthy/security/advisories/GHSA-cprq-r4fp-jx46",
+        "summary": "DPoP nonce is accepted when the server never issued it (DPOP_FORCE_NONCE not enforced)",
+        "severity": "low",
+        "published_at": "2026-11-05T08:36:27Z",
+        "updated_at": "2026-11-05T08:36:27Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "rust",
+              "name": "rauthy"
+            },
+            "vulnerable_version_range": ">= 0.18.0, <= 0.36.2",
+            "patched_versions": "",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-3655-qc66-8pmp",
+        "html_url": "https://github.com/sebadob/rauthy/security/advisories/GHSA-3655-qc66-8pmp",
+        "summary": "Unauthenticated open redirect via protocol-relative redirect_uri (//evil.com) in the password-reset / registration flow",
+        "severity": "medium",
+        "published_at": "2026-11-05T08:35:53Z",
+        "updated_at": "2026-11-05T08:35:53Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "other",
+              "name": "sebadob/rauthy"
+            },
+            "vulnerable_version_range": "<= 0.36.2",
+            "patched_versions": "0.37.0",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-55g7-fq48-7mr4",
+        "html_url": "https://github.com/sebadob/rauthy/security/advisories/GHSA-55g7-fq48-7mr4",
+        "summary": "Authorization code is not bound to the redirect_uri it was issued for (RFC 6749 4.1.3)",
+        "severity": "low",
+        "published_at": "2026-11-05T08:36:13Z",
+        "updated_at": "2026-11-05T08:36:13Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "<= 0.36.2",
+            "patched_versions": "0.37.0",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-wx92-7mmw-5x82",
+        "html_url": "https://github.com/sebadob/rauthy/security/advisories/GHSA-wx92-7mmw-5x82",
+        "summary": "Unauthenticated remote panic aborts the whole process on two token endpoints (short refresh_token / device_code)",
+        "severity": "high",
+        "published_at": "2026-09-16T16:27:49Z",
+        "updated_at": "2026-09-16T16:27:49Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "rust",
+              "name": "rauthy"
+            },
+            "vulnerable_version_range": "<= 0.36.1",
+            "patched_versions": "0.36.2",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-7qh2-3hc5-2vqp",
+        "html_url": "https://github.com/sebadob/rauthy/security/advisories/GHSA-7qh2-3hc5-2vqp",
+        "summary": "Refresh-token grant accepts a caller-supplied client without verifying it matches the token's `azp`, allowing cross-client token minting and identity/scope confusion",
+        "severity": "medium",
+        "published_at": "2026-08-08T18:18:34Z",
+        "updated_at": "2026-10-01T18:05:41Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": "sebadob/rauthy"
+            },
+            "vulnerable_version_range": ">= 0.30.0, < 0.36.1",
+            "patched_versions": "0.36.1",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-x8jp-v2j6-6vjf",
+        "html_url": "https://github.com/sebadob/rauthy/security/advisories/GHSA-x8jp-v2j6-6vjf",
+        "summary": "WebAuthn authentication code is not bound to the user",
+        "severity": "medium",
+        "published_at": "2026-08-05T11:08:39Z",
+        "updated_at": "2026-08-05T11:08:39Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "<0.36.0",
+            "patched_versions": "0.36.0",
+            "vulnerable_functions": []
+          }
+        ]
+      }
+    ]
+  },
+  "keycloak": {
+    "repo": "keycloak/keycloak",
+    "source_commit": "e514445f9dcdabc5bdcf67cab56c1e49655de067",
+    "window": [
+      "2025-11-13T00:00:00Z",
+      "2026-11-13T23:59:59Z"
+    ],
+    "stable_release_count": 24,
+    "stable_releases": [
+      {
+        "tag": "26.8.2",
+        "date": "2026-11-05T16:00:19Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.8.2"
+      },
+      {
+        "tag": "26.8.1",
+        "date": "2026-10-13T08:58:15Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.8.1"
+      },
+      {
+        "tag": "26.8.0",
+        "date": "2026-10-01T05:57:20Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.8.0"
+      },
+      {
+        "tag": "26.7.5",
+        "date": "2026-09-30T17:44:19Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.7.5"
+      },
+      {
+        "tag": "26.7.4",
+        "date": "2026-09-16T14:44:06Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.7.4"
+      },
+      {
+        "tag": "26.7.3",
+        "date": "2026-08-31T09:29:37Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.7.3"
+      },
+      {
+        "tag": "26.7.2",
+        "date": "2026-08-19T05:26:20Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.7.2"
+      },
+      {
+        "tag": "26.7.1",
+        "date": "2026-08-05T15:54:37Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.7.1"
+      },
+      {
+        "tag": "26.7.0",
+        "date": "2026-07-09T06:58:13Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.7.0"
+      },
+      {
+        "tag": "26.6.4",
+        "date": "2026-06-26T19:19:51Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.6.4"
+      },
+      {
+        "tag": "26.6.3",
+        "date": "2026-06-04T17:00:13Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.6.3"
+      },
+      {
+        "tag": "26.6.2",
+        "date": "2026-05-19T12:41:03Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.6.2"
+      },
+      {
+        "tag": "26.6.1",
+        "date": "2026-04-15T13:58:02Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.6.1"
+      },
+      {
+        "tag": "26.6.0",
+        "date": "2026-04-08T08:54:19Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.6.0"
+      },
+      {
+        "tag": "26.5.7",
+        "date": "2026-04-02T14:47:13Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.5.7"
+      },
+      {
+        "tag": "26.5.6",
+        "date": "2026-03-19T06:45:39Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.5.6"
+      },
+      {
+        "tag": "26.5.5",
+        "date": "2026-03-05T15:40:30Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.5.5"
+      },
+      {
+        "tag": "26.5.4",
+        "date": "2026-02-20T09:19:45Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.5.4"
+      },
+      {
+        "tag": "26.5.3",
+        "date": "2026-02-10T07:30:08Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.5.3"
+      },
+      {
+        "tag": "26.5.2",
+        "date": "2026-01-23T14:26:58Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.5.2"
+      },
+      {
+        "tag": "26.5.1",
+        "date": "2026-01-14T18:09:13Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.5.1"
+      },
+      {
+        "tag": "26.5.0",
+        "date": "2026-01-06T07:42:32Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.5.0"
+      },
+      {
+        "tag": "26.4.7",
+        "date": "2025-12-01T08:14:11Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.4.7"
+      },
+      {
+        "tag": "26.4.6",
+        "date": "2025-11-25T17:32:43Z",
+        "url": "https://github.com/keycloak/keycloak/releases/tag/26.4.6"
+      }
+    ],
+    "median_release_gap_days": 13.56,
+    "identified_commit_authors_including_bots": 336,
+    "maintainer_activity": {
+      "ahus1": 269,
+      "mposolda": 108,
+      "pedroigor": 141,
+      "rmartinc": 142,
+      "sschu": 4,
+      "ssilvert": 84,
+      "shawkins": 135,
+      "stianst": 135,
+      "tnorimat": 20,
+      "thomasdarimont": 28,
+      "vmuzikar": 26
+    },
+    "public_advisory_count_all_time": 83,
+    "public_advisories_in_window": [
+      {
+        "ghsa_id": "GHSA-xpwp-2pcm-8xq3",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-xpwp-2pcm-8xq3",
+        "summary": "Replay protection bypass leads to unauthorized access via database driver semantics mismatch",
+        "severity": "high",
+        "published_at": "2026-09-16T19:36:30Z",
+        "updated_at": "2026-09-16T19:36:30Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-model-jpa"
+            },
+            "vulnerable_version_range": ">= 26.7.0, < 26.7.4",
+            "patched_versions": "26.7.4",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-95cx-vmr5-3cmr",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-95cx-vmr5-3cmr",
+        "summary": "Keycloak-services: keycloak-services: default dcr policy allows role forgery via user property mappers",
+        "severity": "high",
+        "published_at": "2026-08-06T07:34:22Z",
+        "updated_at": "2026-08-06T07:34:22Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.4.14",
+            "patched_versions": "26.4.14",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.6.5",
+            "patched_versions": "26.6.5",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.7.1",
+            "patched_versions": "26.7.1",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-hmr6-pxx9-552p",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-hmr6-pxx9-552p",
+        "summary": "Keycloak-services: keycloak-services: ldap entry-dn user search bypasses configured users dn boundary",
+        "severity": "medium",
+        "published_at": "2026-08-06T07:34:33Z",
+        "updated_at": "2026-08-06T07:34:33Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.4.14",
+            "patched_versions": "26.4.14",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.6.5",
+            "patched_versions": "26.6.5",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.7.1",
+            "patched_versions": "26.7.1",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-f8m4-v488-rmrm",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-f8m4-v488-rmrm",
+        "summary": "Keycloak-services: keycloak-services: saml broker metadata import disables response signature validation",
+        "severity": "high",
+        "published_at": "2026-08-06T07:34:42Z",
+        "updated_at": "2026-08-06T07:34:42Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.4.14",
+            "patched_versions": "26.4.14",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.6.5",
+            "patched_versions": "26.6.5",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.37.1",
+            "patched_versions": "26.7.1",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-fgq2-hxm5-8xg2",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-fgq2-hxm5-8xg2",
+        "summary": "Keycloak-services: keycloak-services: saml idp-initiated broker login bypasses link-only restriction",
+        "severity": "high",
+        "published_at": "2026-08-06T07:34:51Z",
+        "updated_at": "2026-08-06T07:34:51Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.4.14",
+            "patched_versions": "26.4.14",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.6.5",
+            "patched_versions": "26.6.5",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.7.1",
+            "patched_versions": "26.7.1",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-3692-rrj9-24qw",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-3692-rrj9-24qw",
+        "summary": "Keycloak-services: keycloak-services: unbounded metric cardinality in user event metrics via request-controlled error text",
+        "severity": "medium",
+        "published_at": "2026-08-06T07:35:00Z",
+        "updated_at": "2026-08-06T07:35:00Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.6.5",
+            "patched_versions": "26.6.5",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.7.1",
+            "patched_versions": "26.7.1",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-95rm-h7g9-rhcf",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-95rm-h7g9-rhcf",
+        "summary": "Keycloak-services: keycloak-services: dcr protocol mapper type-swap policy bypass allows privilege escalation",
+        "severity": "high",
+        "published_at": "2026-08-06T07:35:09Z",
+        "updated_at": "2026-08-06T07:35:09Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.4.14",
+            "patched_versions": "26.4.14",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.6.5",
+            "patched_versions": "26.6.5",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.7.1",
+            "patched_versions": "26.7.1",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-2888-g6qc-w4mj",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-2888-g6qc-w4mj",
+        "summary": "Keycloak-services: keycloak-services: authorization bypass via unnormalized uri matching in pathmatcher",
+        "severity": "high",
+        "published_at": "2026-08-06T07:35:18Z",
+        "updated_at": "2026-08-06T07:35:18Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.4.14",
+            "patched_versions": "26.4.14",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.6.5",
+            "patched_versions": "26.6.5",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.7.0",
+            "patched_versions": "26.7.1",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-j97h-3f8r-mrjr",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-j97h-3f8r-mrjr",
+        "summary": "Authentication bypass via jwt algorithm confusion",
+        "severity": "high",
+        "published_at": "2026-06-26T22:50:37Z",
+        "updated_at": "2026-06-26T22:50:37Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.6.4",
+            "patched_versions": "26.6.4",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-f5p5-6xmx-p252",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-f5p5-6xmx-p252",
+        "summary": "Authorization bypass via incorrect uri comparison",
+        "severity": "high",
+        "published_at": "2026-06-26T22:50:55Z",
+        "updated_at": "2026-06-26T22:50:55Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "< 26.6.4",
+            "patched_versions": "26.6.4",
+            "vulnerable_functions": []
+          },
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-policy-enforcer"
+            },
+            "vulnerable_version_range": "< 26.0.10",
+            "patched_versions": "26.0.10",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-w3p3-7cjg-vgfw",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-w3p3-7cjg-vgfw",
+        "summary": "Unauthorized access to resources via uma permission ticket bypass",
+        "severity": "medium",
+        "published_at": "2026-06-26T22:51:12Z",
+        "updated_at": "2026-06-26T22:51:12Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "< 26.6.4",
+            "patched_versions": "26.6.4",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-32h4-44jj-c5vx",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-32h4-44jj-c5vx",
+        "summary": "Privilege escalation via improper scope mapping enforcement",
+        "severity": "high",
+        "published_at": "2026-06-26T22:51:21Z",
+        "updated_at": "2026-06-26T22:51:21Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "< 26.6.4",
+            "patched_versions": "26.6.4",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-r7rc-c989-86g6",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-r7rc-c989-86g6",
+        "summary": "Attacker can re-enable and take over disabled clients via registration access token",
+        "severity": "medium",
+        "published_at": "2026-06-26T22:51:29Z",
+        "updated_at": "2026-06-26T22:51:29Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "< 26.6.4",
+            "patched_versions": "26.6.4",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-v3f7-2p4r-mwfw",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-v3f7-2p4r-mwfw",
+        "summary": "Cross-site scripting (xss) via case-insensitive uri validation bypass",
+        "severity": "high",
+        "published_at": "2026-06-26T22:51:39Z",
+        "updated_at": "2026-06-26T22:51:39Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "< 26.6.4",
+            "patched_versions": "26.6.4",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-9jrw-8xf7-xqhq",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-9jrw-8xf7-xqhq",
+        "summary": "Information disclosure through arbitrary filesystem path probing",
+        "severity": "medium",
+        "published_at": "2026-06-26T22:51:48Z",
+        "updated_at": "2026-06-26T22:51:48Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "< 26.6.4",
+            "patched_versions": "26.6.4",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-2qxf-v3g6-73v9",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-2qxf-v3g6-73v9",
+        "summary": "group-admin escalation to realm-admin",
+        "severity": "high",
+        "published_at": "2026-06-26T22:51:57Z",
+        "updated_at": "2026-06-26T22:51:58Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "",
+              "name": ""
+            },
+            "vulnerable_version_range": "< 26.6.4",
+            "patched_versions": "26.6.4",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-794g-x443-36f7",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-794g-x443-36f7",
+        "summary": "Keycloak: Unauthorized access via improper validation of encrypted SAML assertions",
+        "severity": "high",
+        "published_at": "2026-05-29T15:20:22Z",
+        "updated_at": "2026-05-29T15:20:22Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak:keycloak-services"
+            },
+            "vulnerable_version_range": "< 26.2.14, >= 26.3.0, < 26.4.10, >= 26.5.0, < 26.5.5",
+            "patched_versions": "26.2.14, 26.4.10, 26.5.5, 26.6.0",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-4hx9-48xh-5mxr",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-4hx9-48xh-5mxr",
+        "summary": "Deserialization of Untrusted Data in LDAP User Federation",
+        "severity": "medium",
+        "published_at": "2025-12-19T07:35:18Z",
+        "updated_at": "2025-12-19T07:35:18Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak/keycloak-ldap-federation"
+            },
+            "vulnerable_version_range": "<26.2.11, <26.4.6",
+            "patched_versions": "26.2.11, 26.4.6",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-j4vq-q93m-4683",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-j4vq-q93m-4683",
+        "summary": "Debug default bind address",
+        "severity": "medium",
+        "published_at": "2025-12-01T13:23:27Z",
+        "updated_at": "2025-12-01T13:23:27Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak/keycloak-quarkus-dist"
+            },
+            "vulnerable_version_range": "<26.4.4",
+            "patched_versions": "26.4.4",
+            "vulnerable_functions": []
+          }
+        ]
+      },
+      {
+        "ghsa_id": "GHSA-vjr8-56p3-fmqq",
+        "html_url": "https://github.com/keycloak/keycloak/security/advisories/GHSA-vjr8-56p3-fmqq",
+        "summary": "Unable to restrict access to the admin console",
+        "severity": "low",
+        "published_at": "2025-12-01T13:24:33Z",
+        "updated_at": "2025-12-01T13:24:33Z",
+        "vulnerabilities": [
+          {
+            "package": {
+              "ecosystem": "maven",
+              "name": "org.keycloak/keycloak-quarkus-server"
+            },
+            "vulnerable_version_range": "<26.4.4",
+            "patched_versions": "26.4.4",
+            "vulnerable_functions": []
+          }
+        ]
+      }
+    ]
+  }
+}
