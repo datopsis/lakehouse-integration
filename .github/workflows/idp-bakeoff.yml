@@ -1,17 +1,17 @@
-name: Identity provider bake-off
+name: Authorization backend evaluation
 on:
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: idp-bakeoff-${{ github.ref }}
+  group: authz-evaluation-${{ github.ref }}
   cancel-in-progress: false
 defaults:
   run:
     shell: bash
 jobs:
   evaluate:
-    name: IdP evaluation (${{ matrix.arch }})
+    name: Authorization evaluation (${{ matrix.arch }})
     strategy:
       fail-fast: false
       matrix:
@@ -41,36 +41,36 @@ jobs:
           sudo apt-get install -y rpm podman gnupg
           python3 -m venv .venv
           .venv/bin/pip install --require-hashes -r requirements.txt
-          .venv/bin/ruff check evaluation/idp
-          .venv/bin/ruff format --check evaluation/idp
-          .venv/bin/python -m unittest discover -s evaluation/idp -p 'test_*.py' -v
-          .venv/bin/zizmor --offline --persona pedantic .github/workflows/idp-bakeoff.yml
+          .venv/bin/ruff check evaluation/authz
+          .venv/bin/ruff format --check evaluation/authz
+          .venv/bin/python -m unittest discover -s evaluation/authz -p 'test_*.py' -v
+          .venv/bin/zizmor --offline --persona pedantic .github/workflows/authz-evaluation.yml
       - name: Build pinned engines, storage and approved NGINX proxy with strict provenance
         id: build
         run: |
           set -euo pipefail
-          .venv/bin/python evaluation/idp/run.py build
-      - name: Identical TLS and identity assertions
+          .venv/bin/python evaluation/authz/run.py build
+      - name: Identical TLS and authorization assertions
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |
           set -euo pipefail
-          .venv/bin/python evaluation/idp/run.py
+          .venv/bin/python evaluation/authz/run.py
       - name: Trivy and Grype upstream-image evidence
         if: ${{ !cancelled() }}
         run: |
           set -euo pipefail
-          .venv/bin/python evaluation/idp/scans.py
+          .venv/bin/python evaluation/authz/scans.py
       - name: Remove disposable containers and redact evidence
         id: cleanup
         if: always()
         run: |
           set -euo pipefail
-          .venv/bin/python evaluation/idp/common.py
+          .venv/bin/python evaluation/authz/run.py cleanup
       - name: Retain only sanitized evidence
         if: ${{ !cancelled() && steps.cleanup.outcome == 'success' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: idp-bakeoff-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: reports/idp/
+          name: authz-evaluation-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/authz/
           retention-days: 14
           if-no-files-found: error
