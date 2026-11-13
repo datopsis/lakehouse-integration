@@ -10,6 +10,17 @@ from catalog import LABEL, ROWS, stop
 from common import NETWORK, ROOT, WORK, host, run, secret, wait, write
 
 
+def ready_or_error(name, ready, seconds=180):
+    def running():
+        return json.loads(run("docker", "inspect", name))[0]["State"]["Running"]
+
+    # Surface an exited engine's actual error, not a misleading readiness timeout.
+    wait(lambda: not running() or ready(), seconds)
+    if not running():
+        logs = subprocess.run(["docker", "logs", name], capture_output=True, text=True)
+        raise AssertionError({"container": name, "startup_error": logs.stdout + logs.stderr})
+
+
 def trino(catalog, mode="credential"):
     provider = catalog.provider
     directory = WORK / ("trino-" + provider.name + "-" + mode)
@@ -92,7 +103,9 @@ def trino(catalog, mode="credential"):
         base = "http://" + address + ":8080"
         session = requests.Session()
         session.trust_env = False
-        wait(lambda: session.get(base + "/v1/info", timeout=5).json().get("starting") is False, 180)
+        ready_or_error(
+            name, lambda: session.get(base + "/v1/info", timeout=5).json().get("starting") is False
+        )
 
         def sql(statement):
             response = session.post(
@@ -187,7 +200,8 @@ def sail(catalog, external_token=False):
     run(*args, "localhost/sail-ubi:integration")
     try:
         address = host(name, name + ".idp.test")
-        wait(
+        ready_or_error(
+            name,
             lambda: (
                 subprocess.run(
                     [
@@ -202,7 +216,7 @@ def sail(catalog, external_token=False):
                     capture_output=True,
                 ).returncode
                 == 0
-            )
+            ),
         )
         result = subprocess.run(
             [

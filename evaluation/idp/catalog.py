@@ -379,7 +379,10 @@ class Catalog:
                 },
             },
         )
-        self.warehouse = body["warehouse-id"]
+        self.warehouse_id = body["warehouse-id"]
+        # Lakekeeper's config endpoint resolves this parameter as a warehouse
+        # name (the management UUID is used in the returned REST path prefix).
+        self.warehouse = "bakeoff"
         catalog = self.pyiceberg(token=token)
         catalog.create_namespace("bakeoff")
         import pyarrow as pa
