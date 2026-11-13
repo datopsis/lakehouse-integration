@@ -190,6 +190,9 @@ def evaluate(arch):
     record("machine_trino", lambda: trino(catalog))
     # No denied write may have altered the fixture.
     record("unchanged_rows", lambda: catalog.read(admin))
+    from phase_d import evaluate as phase_d
+
+    record("phase_d_sts", lambda: phase_d(catalog, operator, tuples))
 
     def operations():
         pids = run("docker", "top", "openfga", "-eo", "pid").splitlines()[1:]

@@ -79,7 +79,7 @@ def transport(name, port, ca, client=None):
     with socket.create_connection((name, port), timeout=5) as sock:
         with ctx.wrap_socket(sock, server_hostname=name) as tls:
             version = tls.version()
-    for context, hostname in ((ssl.create_default_context(), name), (ctx, "wrong.test")):
+    for context, hostname in ((ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT), name), (ctx, "wrong.test")):
         try:
             with socket.create_connection((name, port), timeout=5) as sock:
                 with context.wrap_socket(sock, server_hostname=hostname):
@@ -313,6 +313,7 @@ class Storage:
                     "-filer=filer:8888",
                     "-ip.bind=0.0.0.0",
                     "-config=/secrets/s3.json",
+                    "-iam.readOnly=false",
                     "-cert.file=/tls/cert.pem",
                     "-key.file=/tls/key.pem",
                 ],
@@ -436,7 +437,6 @@ class AuthCatalog(Catalog):
 def setup(arch, record):
     ca = pki()
     os.environ["AWS_CA_BUNDLE"] = str(ca)
-    os.environ["SSL_CERT_FILE"] = str(ca)
     run("docker", "network", "create", "--internal", NETWORK)
     provider = Rauthy("rauthy", ca)
     record("rauthy", lambda: provider.start(arch), required=True)
