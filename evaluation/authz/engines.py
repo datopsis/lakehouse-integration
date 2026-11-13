@@ -3,7 +3,8 @@
 import shutil
 
 from catalog import ROWS
-from common import HTTPS, ROOT, WORK, run, secret, wait, write
+from clients import ready_or_error
+from common import HTTPS, ROOT, WORK, run, secret, write
 from fixture import container, leaf, transport
 
 
@@ -34,7 +35,7 @@ def trino(catalog):
         "coordinator=true\nnode-scheduler.include-coordinator=true\n"
         "http-server.http.enabled=false\nhttp-server.https.enabled=true\nhttp-server.https.port=8443\n"
         "http-server.https.keystore.path=/etc/trino/server.pem\ndiscovery.uri=https://trino:8443\n"
-        "internal-communication.shared-secret=${ENV:INTERNAL_SECRET}\n"
+        f"internal-communication.shared-secret={secret()}\n"
         "query.max-memory=256MB\nquery.max-memory-per-node=256MB\nmemory.heap-headroom-per-node=256MB\n"
         "http-server.log.enabled=false\n",
     )
@@ -56,12 +57,13 @@ def trino(catalog):
     for path in directory.rglob("*"):
         if path != pem:
             path.chmod(0o755 if path.is_dir() else 0o644)
+    run("sudo", "chown", "10001:0", directory / "config.properties")
+    run("sudo", "chmod", "0400", directory / "config.properties")
     env = {
         "TRINO_UBI_ALLOW_INSECURE": "true",
         "S3_ACCESS_KEY_ID": catalog.storage.access,
         "S3_SECRET_ACCESS_KEY": catalog.storage.password,
         "IDP_CLIENT_SECRET": provider.client_secret,
-        "INTERNAL_SECRET": secret(),
     }
     container(
         "trino",
@@ -81,7 +83,11 @@ def trino(catalog):
         ],
     )
     http = HTTPS(provider.ca)
-    wait(lambda: http.json("GET", "https://trino:8443/v1/info").get("starting") is False, 180)
+    ready_or_error(
+        "trino",
+        lambda: http.json("GET", "https://trino:8443/v1/info").get("starting") is False,
+        180,
+    )
     tls_evidence = transport("trino", 8443, provider.ca)
 
     def sql(statement):

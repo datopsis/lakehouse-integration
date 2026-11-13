@@ -172,7 +172,10 @@ is predominantly Okta, with Grafana Labs, Netlight and independent representatio
 Its recent releases are 1.19.0 (Aug 25), 1.20.0 (Sep 8), 1.21.0 (Sep 20), 1.22.0
 (Oct 6) and 1.22.1 (Oct 28), 2026: active development, not a promised SLA.
 Cedar is maintained in the [cedar-policy organization](https://github.com/cedar-policy/cedar)
-with public contribution/security processes; releases 4.14.0 (Oct 17) and 4.14.1
+with public contribution/security processes. Active contributors include John Kastner
+(`john-h-kastner-aws`), Craig Disselkoen (`cdisselkoen`), and Shaobo He
+(`shaobo-he-aws`); contributor activity is not a formal support roster. Releases
+4.14.0 (Oct 17) and 4.14.1
 (Nov 2) show continuing library and CLI maintenance. Neither is a commercial
 support commitment. See the retained release/API inventory for exact dates.
 
@@ -199,7 +202,9 @@ For Cedar, prefer embedding a locked `cedar-policy` dependency in the actual
 integration. If an agent is chosen, build that wrapper and Cedar together with a
 pinned Rust toolchain and vendored checksummed crates; package only the native
 binary and verified runtime dependencies on UBI 9. Include the wrapper, policy
-schema and entity-source contract in the SBOM/provenance boundary. The CLI is an
+schema and entity-source contract in the SBOM/provenance boundary. Static ELF inspection of both pinned CLI artifacts finds `libc.so.6`,
+`libgcc_s.so.1`, and a maximum GLIBC symbol version of 2.34; this is useful
+UBI 9 compatibility evidence, not a runtime qualification. The CLI is an
 evaluation tool, not a production access-control service. No hardened candidate
 image is built in this PR.
 
@@ -210,7 +215,7 @@ open-source backend of the pin, understands Lakekeeper's hierarchy and grants,
 and feeds the same decision into credential scope. Keep Rauthy and its Keycloak
 fallback. **Do not declare the requested token-group requirement satisfied**:
 it requires explicit membership provisioning/synchronization or a reviewed
-Lakekeeper authorizer change that supplies contextual group relationships. Such
+Lakekeeper authorizer change that supplies contextual group relationships. Neither backend meets every requested requirement as-is. Such
 a change is outside this evaluation and must address removal/revocation too.
 
 Keep Cedar as a future alternative when policy-as-code requirements justify an

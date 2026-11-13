@@ -989,6 +989,62 @@
             }
           ]
         }
+      ],
+      "cli_elf": {
+        "amd64": {
+          "binary_sha256": "c2a6ba89e13f17d3381b647a879366acb26ef62392f96d847442679f675b1d11",
+          "binary_bytes": 18585272,
+          "needed_libraries": [
+            "libgcc_s.so.1",
+            "libc.so.6"
+          ],
+          "max_glibc_symbol": "2.34",
+          "method": "Static ELF inspection; no execution or emulation"
+        },
+        "arm64": {
+          "binary_sha256": "3074627b387a3418d75d3145549c5315b5852512f7260990611b1a9e3afe0541",
+          "binary_bytes": 17875544,
+          "needed_libraries": [
+            "libgcc_s.so.1",
+            "libc.so.6"
+          ],
+          "max_glibc_symbol": "2.34",
+          "method": "Static ELF inspection; no execution or emulation"
+        }
+      },
+      "contributor_snapshot": [
+        {
+          "login": "john-h-kastner-aws",
+          "contributions": 397
+        },
+        {
+          "login": "cdisselkoen",
+          "contributions": 290
+        },
+        {
+          "login": "shaobo-he-aws",
+          "contributions": 162
+        },
+        {
+          "login": "dependabot[bot]",
+          "contributions": 155
+        },
+        {
+          "login": "victornicolet",
+          "contributions": 96
+        },
+        {
+          "login": "katherine-hough",
+          "contributions": 63
+        },
+        {
+          "login": "andrewmwells-amazon",
+          "contributions": 59
+        },
+        {
+          "login": "adpaco",
+          "contributions": 32
+        }
       ]
     }
   }

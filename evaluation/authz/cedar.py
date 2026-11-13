@@ -13,6 +13,13 @@ from common import ROOT, WORK, decode, run, write
 def evaluate(arch, catalog, token):
     # Lakekeeper's real OIDC verifier authenticates the unmodified Rauthy JWT.
     # Decoding alone is never treated as authentication for this prototype.
+    catalog.http.json(
+        "POST",
+        catalog.base + "/management/v1/user",
+        headers={"Authorization": "Bearer " + token},
+        statuses=(200, 201),
+        json={"update-if-exists": True},
+    )
     identity = catalog.http.json(
         "GET", catalog.base + "/management/v1/whoami", headers={"Authorization": "Bearer " + token}
     )

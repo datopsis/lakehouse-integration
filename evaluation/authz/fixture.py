@@ -1,5 +1,6 @@
 """Disposable TLS fixture reusing only IdP provisioning and provenance helpers."""
 
+import base64
 import json
 import os
 import socket
@@ -304,6 +305,22 @@ class Storage:
         )
         run("sudo", "chown", "root:root", config)
         run("sudo", "chmod", "0440", config)
+        iam = WORK / "storage/iam.json"
+        write(
+            iam,
+            {
+                "sts": {
+                    "issuer": "evaluation-sts",
+                    "signingKey": secret(base64.b64encode(os.urandom(32)).decode()),
+                    "tokenDuration": "1h",
+                    "maxSessionLength": "12h",
+                },
+                "policy": {"defaultEffect": "Deny", "storeType": "memory"},
+                "roleStore": {"storeType": "memory"},
+            },
+        )
+        run("sudo", "chown", "root:root", iam)
+        run("sudo", "chmod", "0440", iam)
         for name in ("master", "volume", "filer", "s3"):
             tls = leaf(name)
             security = WORK / name / "security.toml"
@@ -325,6 +342,7 @@ class Storage:
                     "-ip.bind=0.0.0.0",
                     "-config=/secrets/s3.json",
                     "-iam.readOnly=false",
+                    "-iam.config=/secrets/iam.json",
                     "-cert.file=/tls/cert.pem",
                     "-key.file=/tls/key.pem",
                 ],
@@ -337,10 +355,15 @@ class Storage:
                     (tls, "/tls"),
                     (self.ca, "/ca/ca.pem"),
                     (security, "/etc/seaweedfs/security.toml"),
-                    (config, "/secrets/s3.json"),
-                ],
+                ]
+                + (
+                    [(config, "/secrets/s3.json"), (iam, "/secrets/iam.json")]
+                    if name == "s3"
+                    else []
+                ),
             )
         import botocore.session
+        from botocore.config import Config
 
         self.s3 = botocore.session.get_session().create_client(
             "s3",
@@ -349,6 +372,7 @@ class Storage:
             aws_access_key_id=self.access,
             aws_secret_access_key=self.password,
             verify=str(self.ca),
+            config=Config(connect_timeout=3, read_timeout=5, retries={"max_attempts": 1}),
         )
         wait(lambda: self.s3.list_buckets())
         self.s3.create_bucket(Bucket="warehouse")
