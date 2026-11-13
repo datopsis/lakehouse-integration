@@ -34,6 +34,11 @@ catalog or local JWT verifier is substituted for Lakekeeper. Those assertions
 are absent from the executable harness beyond their blocked evidence entries;
 this PR is not a completed end-to-end qualification suite.
 
+Trino and Sail are not built or launched by this blocked fixture. There is no
+native-client error transcript for them, and PyIceberg's successful token-only
+request is not catalog compatibility. The Kanidm JWE-format failure is an exact
+harness assertion, not a fabricated Lakekeeper or engine response.
+
 The workflow fails qualification while any such entry is blocked. An IdP-only
 pass means only the named subtest passed. The existing Integration check can be
 green while this separate evaluation is red.
@@ -60,6 +65,10 @@ tokens are generated per run and excluded from artifacts. Decoded claims concern
 only synthetic identities. No GitHub secrets, permissions or settings are changed.
 
 Rauthy's internal Hiqlite ports 8100 and 8200 also use this CA and verified TLS.
+Its upstream `CLIENT_CREDENTIALS_MAP_SUB=true` setting maps the client ID to the
+machine-token subject; by default that grant omits `sub`. Keycloak clients include
+the built-in `basic` scope so machine tokens also contain a subject. These are
+provider configuration requirements, not client-side token rewriting.
 Keycloak's single-node fixture uses Narayana's upstream
 [MBeanProcessId](https://github.com/jbosstm/narayana/blob/7.3.4.Final/ArjunaCore/arjuna/classes/com/arjuna/ats/internal/arjuna/utils/MBeanProcessId.java)
 through `JAVA_OPTS_APPEND`, replacing the default socket-based process identifier.
@@ -93,6 +102,12 @@ externally acquired token into a file would require another token-lifecycle
 component and does not satisfy the requested stock-client grant test.
 PyIceberg's existing legacy OAuth manager is exercised separately for token
 acquisition; this is explicitly not a table-read pass.
+
+Kanidm's direct exchange succeeds in the custom HTTP harness, but **stock-client
+exchange compatibility is not established**. In particular, this Sail revision
+has no built-in grant/exchange provider in the inspected implementation. Trino's
+exchange configuration was not exercised. Do not describe the direct RFC 8693
+request as a solution that works across all three engines without custom code.
 
 Group claims are input for Phase C, not authorization by themselves. The pinned
 [Lakekeeper configuration](https://github.com/lakekeeper/lakekeeper/blob/9bd377162345b64a716f0a4fcffe4e7e7f3c7534/docs/docs/configuration.md)
@@ -230,13 +245,36 @@ No vulnerability reports were sent upstream.
 
 ## Recommendation and remaining verification
 
-Pending final native runtime evidence. No production selection or security
-qualification is justified by the source survey or image scans alone.
+**Provisional recommendation: carry Rauthy into the next Rust-focused qualification
+stage; retain Keycloak as the control and fallback. Do not select a production IdP
+from this incomplete qualification.** Rauthy supplies the conventional signed
+client-credentials token and human access-token groups this design needs, supports
+native bootstrap JSON, and has a substantially smaller measured footprint than
+Keycloak. The tradeoffs are its pre-1.0/no-backport policy, concentrated maintenance
+and upstream image findings. These require an explicit ownership/patching plan in
+any later hardened-image effort.
+
+Keycloak has the strongest substantiated maintainer breadth and mature production
+deployment options, with the same successful independent OAuth flows and claims.
+Its larger resource and Java dependency footprint are costs, not disqualifiers.
+Prefer it if operational maturity outweighs the Rust preference. Kanidm is the
+least direct fit here: the client-credentials JWE and groups confined to ID tokens
+in this fixture introduce client and authorization-layer work that is absent from
+the other two configurations. Its successful PKCE and service-account exchange
+still make it viable for different requirements.
+
+The next prerequisite is a separately reviewed, fully encrypted Lakekeeper serving
+path consistent with Phase A. Then implement and run every blocked engine/security
+assertion against the real catalog, including explicit Sail grant support. No
+provider gets credit for rejecting forged tokens merely because its own token
+endpoint works. The owner remains responsible for the IdP choice; this PR changes
+no production or main-integration authentication setting.
 
 Not tested: all Lakekeeper token-acceptance/rejection and table-read assertions
 listed above; Trino/Sail runtime token acquisition; production database profiles;
 backup restoration and encryption-key recovery; multi-node HA, partitions or
-failover; load, long-lived refresh and logout/revocation; MFA/passkeys; production
+failover; load, long-lived refresh and logout/revocation; a comparative MFA/passkey
+evaluation (Kanidm TOTP enrollment/login is exercised to satisfy its policy); production
 secret-management/drift reconciliation; UBI 9 IdP source builds; transitive license
 review; full Rust source/SBOM vulnerability coverage; Phase C authorization and
 STS/table isolation. Tokens and private keys are never published as evidence.

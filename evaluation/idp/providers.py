@@ -282,6 +282,7 @@ class Provider:
                 "PUB_URL": self.hostname + ":8443",
                 "LISTEN_SCHEME": "https",
                 "LISTEN_PORT_HTTPS": "8443",
+                "CLIENT_CREDENTIALS_MAP_SUB": "true",
                 "TLS_CERT": "/tls/cert.pem",
                 "TLS_KEY": "/tls/key.pem",
                 "HQL_NODE_ID": "1",

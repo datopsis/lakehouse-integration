@@ -225,7 +225,7 @@ def machine_claims(provider):
     )
     header, claims = decode(provider.machine_token)
     assert claims["iss"] == provider.issuer
-    assert claims["aud"] == "lakekeeper" or "lakekeeper" in claims["aud"]
+    assert claims["aud"] == "lakekeeper" or claims["aud"] == ["lakekeeper"]
     assert claims["exp"] > time.time()
     assert isinstance(claims["sub"], str) and claims["sub"]
     assert header["kid"] in {
