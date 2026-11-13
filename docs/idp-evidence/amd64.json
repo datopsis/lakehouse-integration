@@ -1,0 +1,1770 @@
+{
+  "run_url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43372083311",
+  "harness_revision": "e28aa4a57596b8ded5640730020ea3a0ad456eff",
+  "results": {
+    "run": {
+      "architecture": "amd64",
+      "uname": "x86_64",
+      "url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43372083311"
+    },
+    "keycloak/startup_provision_discovery": {
+      "status": "pass",
+      "value": {
+        "image": "quay.io/keycloak/keycloak@sha256:c68e286cacd87b942ac1939a0a1481461109d6acd3a57dc496969a319a76bbf0",
+        "image_id": "sha256:1ac63e04fe5d895e189df88efd4a097609b54b602ddbf1866a8ef21ef3d097af",
+        "architecture": "amd64",
+        "version": "26.8.2",
+        "startup_seconds": 31.438,
+        "discovery": {
+          "issuer": "https://keycloak.idp.test:8443/realms/bakeoff",
+          "authorization_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/auth",
+          "token_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/token",
+          "introspection_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/token/introspect",
+          "userinfo_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/userinfo",
+          "end_session_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/logout",
+          "frontchannel_logout_session_supported": true,
+          "frontchannel_logout_supported": true,
+          "jwks_uri": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/certs",
+          "check_session_iframe": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/login-status-iframe.html",
+          "grant_types_supported": [
+            "authorization_code",
+            "client_credentials",
+            "implicit",
+            "password",
+            "refresh_token",
+            "urn:ietf:params:oauth:grant-type:device_code",
+            "urn:ietf:params:oauth:grant-type:jwt-bearer",
+            "urn:ietf:params:oauth:grant-type:token-exchange",
+            "urn:ietf:params:oauth:grant-type:uma-ticket",
+            "urn:openid:params:grant-type:ciba"
+          ],
+          "acr_values_supported": [
+            "0",
+            "1"
+          ],
+          "response_types_supported": [
+            "code",
+            "none",
+            "id_token",
+            "token",
+            "id_token token",
+            "code id_token",
+            "code token",
+            "code id_token token"
+          ],
+          "subject_types_supported": [
+            "public",
+            "pairwise"
+          ],
+          "prompt_values_supported": [
+            "none",
+            "login",
+            "consent"
+          ],
+          "id_token_signing_alg_values_supported": [
+            "PS384",
+            "RS384",
+            "EdDSA",
+            "ES384",
+            "HS256",
+            "HS512",
+            "ES256",
+            "RS256",
+            "HS384",
+            "ES512",
+            "PS256",
+            "PS512",
+            "RS512"
+          ],
+          "id_token_encryption_alg_values_supported": [
+            "ECDH-ES+A256KW",
+            "ECDH-ES+A192KW",
+            "ECDH-ES+A128KW",
+            "RSA-OAEP",
+            "RSA-OAEP-256",
+            "RSA1_5",
+            "ECDH-ES"
+          ],
+          "id_token_encryption_enc_values_supported": [
+            "A256GCM",
+            "A192GCM",
+            "A128GCM",
+            "A128CBC-HS256",
+            "A192CBC-HS384",
+            "A256CBC-HS512"
+          ],
+          "userinfo_signing_alg_values_supported": [
+            "PS384",
+            "RS384",
+            "EdDSA",
+            "ES384",
+            "HS256",
+            "HS512",
+            "ES256",
+            "RS256",
+            "HS384",
+            "ES512",
+            "PS256",
+            "PS512",
+            "RS512",
+            "none"
+          ],
+          "userinfo_encryption_alg_values_supported": [
+            "ECDH-ES+A256KW",
+            "ECDH-ES+A192KW",
+            "ECDH-ES+A128KW",
+            "RSA-OAEP",
+            "RSA-OAEP-256",
+            "RSA1_5",
+            "ECDH-ES"
+          ],
+          "userinfo_encryption_enc_values_supported": [
+            "A256GCM",
+            "A192GCM",
+            "A128GCM",
+            "A128CBC-HS256",
+            "A192CBC-HS384",
+            "A256CBC-HS512"
+          ],
+          "request_object_signing_alg_values_supported": [
+            "PS384",
+            "RS384",
+            "EdDSA",
+            "ES384",
+            "HS256",
+            "HS512",
+            "ES256",
+            "RS256",
+            "HS384",
+            "ES512",
+            "PS256",
+            "PS512",
+            "RS512",
+            "none"
+          ],
+          "request_object_encryption_alg_values_supported": [
+            "ECDH-ES+A256KW",
+            "ECDH-ES+A192KW",
+            "ECDH-ES+A128KW",
+            "RSA-OAEP",
+            "RSA-OAEP-256",
+            "RSA1_5",
+            "ECDH-ES"
+          ],
+          "request_object_encryption_enc_values_supported": [
+            "A256GCM",
+            "A192GCM",
+            "A128GCM",
+            "A128CBC-HS256",
+            "A192CBC-HS384",
+            "A256CBC-HS512"
+          ],
+          "response_modes_supported": [
+            "query",
+            "fragment",
+            "form_post",
+            "query.jwt",
+            "fragment.jwt",
+            "form_post.jwt",
+            "jwt"
+          ],
+          "registration_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/clients-registrations/openid-connect",
+          "token_endpoint_auth_methods_supported": [
+            "private_key_jwt",
+            "client_secret_basic",
+            "client_secret_post",
+            "tls_client_auth",
+            "client_secret_jwt"
+          ],
+          "token_endpoint_auth_signing_alg_values_supported": [
+            "PS384",
+            "RS384",
+            "EdDSA",
+            "ES384",
+            "HS256",
+            "HS512",
+            "ES256",
+            "RS256",
+            "HS384",
+            "ES512",
+            "PS256",
+            "PS512",
+            "RS512"
+          ],
+          "introspection_endpoint_auth_methods_supported": [
+            "private_key_jwt",
+            "client_secret_basic",
+            "client_secret_post",
+            "tls_client_auth",
+            "client_secret_jwt"
+          ],
+          "introspection_endpoint_auth_signing_alg_values_supported": [
+            "PS384",
+            "RS384",
+            "EdDSA",
+            "ES384",
+            "HS256",
+            "HS512",
+            "ES256",
+            "RS256",
+            "HS384",
+            "ES512",
+            "PS256",
+            "PS512",
+            "RS512"
+          ],
+          "authorization_signing_alg_values_supported": [
+            "PS384",
+            "RS384",
+            "EdDSA",
+            "ES384",
+            "HS256",
+            "HS512",
+            "ES256",
+            "RS256",
+            "HS384",
+            "ES512",
+            "PS256",
+            "PS512",
+            "RS512"
+          ],
+          "authorization_encryption_alg_values_supported": [
+            "ECDH-ES+A256KW",
+            "ECDH-ES+A192KW",
+            "ECDH-ES+A128KW",
+            "RSA-OAEP",
+            "RSA-OAEP-256",
+            "RSA1_5",
+            "ECDH-ES"
+          ],
+          "authorization_encryption_enc_values_supported": [
+            "A256GCM",
+            "A192GCM",
+            "A128GCM",
+            "A128CBC-HS256",
+            "A192CBC-HS384",
+            "A256CBC-HS512"
+          ],
+          "claims_supported": [
+            "iss",
+            "sub",
+            "aud",
+            "exp",
+            "iat",
+            "auth_time",
+            "name",
+            "given_name",
+            "family_name",
+            "preferred_username",
+            "email",
+            "acr",
+            "azp",
+            "nonce"
+          ],
+          "claim_types_supported": [
+            "normal"
+          ],
+          "claims_parameter_supported": true,
+          "scopes_supported": [
+            "openid",
+            "organization",
+            "acr",
+            "roles",
+            "web-origins",
+            "offline_access",
+            "address",
+            "phone",
+            "basic",
+            "email",
+            "microprofile-jwt",
+            "kc-admin-api",
+            "service_account",
+            "profile"
+          ],
+          "request_parameter_supported": true,
+          "request_uri_parameter_supported": true,
+          "require_request_uri_registration": true,
+          "code_challenge_methods_supported": [
+            "plain",
+            "S256"
+          ],
+          "tls_client_certificate_bound_access_tokens": true,
+          "dpop_signing_alg_values_supported": [
+            "PS384",
+            "RS384",
+            "EdDSA",
+            "ES384",
+            "ES256",
+            "RS256",
+            "ES512",
+            "PS256",
+            "PS512",
+            "RS512"
+          ],
+          "revocation_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/revoke",
+          "revocation_endpoint_auth_methods_supported": [
+            "private_key_jwt",
+            "client_secret_basic",
+            "client_secret_post",
+            "tls_client_auth",
+            "client_secret_jwt"
+          ],
+          "revocation_endpoint_auth_signing_alg_values_supported": [
+            "PS384",
+            "RS384",
+            "EdDSA",
+            "ES384",
+            "HS256",
+            "HS512",
+            "ES256",
+            "RS256",
+            "HS384",
+            "ES512",
+            "PS256",
+            "PS512",
+            "RS512"
+          ],
+          "backchannel_logout_supported": true,
+          "backchannel_logout_session_supported": true,
+          "device_authorization_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/auth/device",
+          "backchannel_token_delivery_modes_supported": [
+            "poll",
+            "ping"
+          ],
+          "backchannel_authentication_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/ext/ciba/auth",
+          "backchannel_authentication_request_signing_alg_values_supported": [
+            "PS384",
+            "RS384",
+            "EdDSA",
+            "ES384",
+            "ES256",
+            "RS256",
+            "ES512",
+            "PS256",
+            "PS512",
+            "RS512"
+          ],
+          "require_pushed_authorization_requests": false,
+          "pushed_authorization_request_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/ext/par/request",
+          "mtls_endpoint_aliases": {
+            "token_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/token",
+            "revocation_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/revoke",
+            "introspection_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/token/introspect",
+            "device_authorization_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/auth/device",
+            "registration_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/clients-registrations/openid-connect",
+            "userinfo_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/userinfo",
+            "pushed_authorization_request_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/ext/par/request",
+            "backchannel_authentication_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/ext/ciba/auth"
+          },
+          "authorization_response_iss_parameter_supported": true
+        },
+        "image_bytes": 473316468
+      },
+      "seconds": 37.246
+    },
+    "keycloak/trino_client_credentials_list_read": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "keycloak/pyiceberg_client_credentials_list_read": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "keycloak/sail_client_credentials_list_read": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "keycloak/human_pkce_lakekeeper": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "keycloak/valid_token": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "keycloak/wrong_audience": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "keycloak/expired_token": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "keycloak/different_key": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "keycloak/alg_none": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "keycloak/rotation_lakekeeper": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "keycloak/verified_tls": {
+      "status": "pass",
+      "value": {
+        "listeners": [
+          "127.0.0.11:40333",
+          "*:8443"
+        ],
+        "ports": {
+          "8443": {
+            "tls_version": "TLSv1.3",
+            "certificate": {
+              "subject": [
+                [
+                  [
+                    "commonName",
+                    "keycloak.idp.test"
+                  ]
+                ]
+              ],
+              "issuer": [
+                [
+                  [
+                    "commonName",
+                    "Disposable bakeoff CA"
+                  ]
+                ]
+              ],
+              "version": 3,
+              "serialNumber": "1721DFBD5B34DA85E702CCE181E96D8835872FE2",
+              "notBefore": "Nov 13 05:28:25 2026 GMT",
+              "notAfter": "Nov 14 05:28:25 2026 GMT",
+              "subjectAltName": [
+                [
+                  "DNS",
+                  "keycloak.idp.test"
+                ]
+              ]
+            },
+            "negative_errors": {
+              "untrusted_ca": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1000)",
+              "wrong_hostname": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'wrong.idp.test'. (_ssl.c:1000)"
+            },
+            "plaintext_response": "b''"
+          }
+        }
+      },
+      "seconds": 0.119
+    },
+    "keycloak/machine_token_endpoint": {
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "token_type": "Bearer",
+        "expires_in": 300,
+        "segments": 3
+      },
+      "seconds": 0.043
+    },
+    "keycloak/machine_jwt_claims": {
+      "status": "pass",
+      "value": {
+        "header": {
+          "alg": "RS256",
+          "typ": "JWT",
+          "kid": "WEhLEGadWzviY71bKm6YE8UGrnk36-0zrFfzlFIDFTI"
+        },
+        "claims": {
+          "exp": 1794548044,
+          "iat": 1794547744,
+          "jti": "trrtcc:46160c6b-997e-a07e-0ba0-0a4d3386a6fc",
+          "iss": "https://keycloak.idp.test:8443/realms/bakeoff",
+          "aud": "lakekeeper",
+          "sub": "ea80a8a5-4877-4d4d-beb8-5ad7fb722b2c",
+          "typ": "Bearer",
+          "azp": "lakekeeper",
+          "scope": "email profile",
+          "clientHost": "172.18.0.1",
+          "email_verified": false,
+          "preferred_username": "service-account-lakekeeper",
+          "clientAddress": "172.18.0.1",
+          "client_id": "lakekeeper"
+        }
+      },
+      "seconds": 0.014
+    },
+    "keycloak/pyiceberg_token_only": {
+      "status": "pass",
+      "value": {
+        "client": "PyIceberg 0.12.0 LegacyOAuth2AuthManager",
+        "segments": 3,
+        "scope": "Token acquisition only; NOT a Lakekeeper list/read test"
+      },
+      "seconds": 0.354
+    },
+    "keycloak/human_pkce_idp": {
+      "status": "pass",
+      "value": {
+        "access_token_header": {
+          "alg": "RS256",
+          "typ": "JWT",
+          "kid": "WEhLEGadWzviY71bKm6YE8UGrnk36-0zrFfzlFIDFTI"
+        },
+        "access_token_claims": {
+          "exp": 1794548045,
+          "iat": 1794547745,
+          "auth_time": 1794547745,
+          "jti": "onrtac:92b258f6-fc9f-a251-a10b-5272fe6e7eca",
+          "iss": "https://keycloak.idp.test:8443/realms/bakeoff",
+          "aud": "lakekeeper",
+          "sub": "3ade7490-fc9e-4ce9-94c6-50af7e0b8944",
+          "typ": "Bearer",
+          "azp": "lakekeeper",
+          "sid": "9czxpWI5MbWxuQRZilHIqe87",
+          "scope": "openid email profile",
+          "email_verified": true,
+          "name": "Alice Test",
+          "groups": [
+            "lake-readers"
+          ],
+          "preferred_username": "alice",
+          "given_name": "Alice",
+          "family_name": "Test",
+          "email": "alice@idp.test"
+        },
+        "id_token_claims": {
+          "exp": 1794548045,
+          "iat": 1794547745,
+          "auth_time": 1794547745,
+          "jti": "3200dc53-117f-a987-295c-6b93c60d828a",
+          "iss": "https://keycloak.idp.test:8443/realms/bakeoff",
+          "aud": "lakekeeper",
+          "sub": "3ade7490-fc9e-4ce9-94c6-50af7e0b8944",
+          "typ": "ID",
+          "azp": "lakekeeper",
+          "nonce": "[REDACTED]",
+          "sid": "9czxpWI5MbWxuQRZilHIqe87",
+          "at_hash": "kCeKtSJ0wgFVdH5_ujI6hQ",
+          "email_verified": true,
+          "name": "Alice Test",
+          "groups": [
+            "lake-readers"
+          ],
+          "preferred_username": "alice",
+          "given_name": "Alice",
+          "family_name": "Test",
+          "email": "alice@idp.test"
+        },
+        "flow": "authorization_code + S256 + state + nonce"
+      },
+      "seconds": 0.592
+    },
+    "keycloak/groups_claim": {
+      "status": "pass",
+      "value": {
+        "access_token_groups": [
+          "lake-readers"
+        ],
+        "id_token_groups": [
+          "lake-readers"
+        ]
+      },
+      "seconds": 0.0
+    },
+    "keycloak/id_token_groups": {
+      "status": "pass",
+      "value": {
+        "id_token_groups": [
+          "lake-readers"
+        ],
+        "scope": "ID token only; not an API access token"
+      },
+      "seconds": 0.0
+    },
+    "keycloak/rotation_idp": {
+      "status": "pass",
+      "value": {
+        "old_kid": "WEhLEGadWzviY71bKm6YE8UGrnk36-0zrFfzlFIDFTI",
+        "new_kid": "Y6P9XtJpoyySEto9tvAQW8viWvjwfHpeEpreh9jwtvw",
+        "before": {
+          "keys": [
+            {
+              "kid": "WEhLEGadWzviY71bKm6YE8UGrnk36-0zrFfzlFIDFTI",
+              "kty": "RSA",
+              "alg": "RS256",
+              "use": "sig",
+              "x5c": [
+                "MIICnTCCAYUCBgGh02F36zANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA1MjcyMloXDTM2MTExMzA1MjkwMlowEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANP0TAQRBjZ2IdkbxlT4c6nj5j5urBoHEfukdzilpCRwgNxSZ+1T6Mz3kFrlKX8Fgtr9oGAjSQ+J07Zkj66R5wNh8FwYdA3f4DjHvhkeri5SeSjoKnG0lwsvLHTJU6yYh2fDHRwL2DsEztjqqxSU3qI4JXZgp+dd87LqZEAwhQXPbAn2dj+0K3NnrS94pZQsObBIYN3Zmv28h5ujX7crUES9OuSE46NkN5tgvqwVGlqENToNQSuIJJuDuAytbFUDnwYqxcCqWqli4HPjvRuEUs3L76gJ/+RbEmGYUgWH1hZNe24oUnB9l+v3B3HiF1eSTMujI9s9NVWym1BJU3hPOfMCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAAgMf37ErfqFLDB+0N0W5Mqwvy2ny1DlniWm4gdEeus4RvLhWH3ZfjYbEZ000rNhiscAWgPudjCx81joqAVcjVVGnzYJdKRucHVozwB2yDmoP6k18zYZBNllPJlDDVKg+oMDtjbJOanq/gMi19eIuf3ZZcDiy2Tj55sI3w3vhQtLEOzh+8q1AdCfz3pPsBG2yJeSvk2+BF/Irx/jcPDtgmmxhupQa8L18BsTxYJDB6wZ4dLarTAh6eGDUJCNDjTKNdi/rr2u+KAcOcPHyXcUg+zk2ED9bY7QWON1zTKGgrDRZw7WefYfli5wXjH2vg+Q3KXw95FLH0weySLMnxb2F1w=="
+              ],
+              "x5t": "JbYTqaaD7nWBEisBTgD3ehhCQ6g",
+              "x5t#S256": "Dt9n9DdNA9Z0qWcliH1A9yu3aGGR3bt_H3_5VMOUvfI",
+              "n": "0_RMBBEGNnYh2RvGVPhzqePmPm6sGgcR-6R3OKWkJHCA3FJn7VPozPeQWuUpfwWC2v2gYCNJD4nTtmSPrpHnA2HwXBh0Dd_gOMe-GR6uLlJ5KOgqcbSXCy8sdMlTrJiHZ8MdHAvYOwTO2OqrFJTeojgldmCn513zsupkQDCFBc9sCfZ2P7Qrc2etL3illCw5sEhg3dma_byHm6NftytQRL065ITjo2Q3m2C-rBUaWoQ1Og1BK4gkm4O4DK1sVQOfBirFwKpaqWLgc-O9G4RSzcvvqAn_5FsSYZhSBYfWFk17bihScH2X6_cHceIXV5JMy6Mj2z01VbKbUElTeE858w",
+              "e": "AQAB"
+            },
+            {
+              "kid": "pToHEiIzYRBURphG3wVBQkGiT8-RUnaqlr4rrcIG8po",
+              "kty": "RSA",
+              "alg": "RSA-OAEP",
+              "use": "enc",
+              "x5c": [
+                "MIICnTCCAYUCBgGh02F4WjANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA1MjcyMloXDTM2MTExMzA1MjkwMlowEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALw58y6InkCGBJsQNMvTI+QeccYhdXmM40wPIpUcxV56bpUGJlIgPaunS+hsLTI94TAj4+q3tQG+3p6XotTVrMn7D8oetRqYY+wNABVQ9zXjbGqWdQnTWPjbdvMx02+iN7p41oSLqA1P/KtcaWd4QwUxm3uTbBXLPNgVmn4IvKxphyKlALq1zn7bKVa7K9f5gTDtzXD1pwtPFSF/d3iysZElEo4pq4Kst3ywmoicHbvvqwvPpekxar20T/fl89cdU907fgw1rvoKKdqav03GFTfun8EZWtrSlRJFgjbgMc5YMEKlOJ58wxnO6MuD2tx22NIV2gFzEGR9z4wtWw403W0CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAg2CJcbQ/Ycswqc/T8KT10JKhb5ixOTiG3P4W9wI19DLB6AQ3LpdeMgAmMnMedcgc5O/GLYngYQlZKgUZhI0rBi3GPWErhJNU03bPKqt9aT9xPs/g6aWdsoSBPbGLqGj6IpygBEZNRp+eH5ujIedG79XjUC2FJMztqxnL6hP807w70UPRaacxfMMsyXslGZW41592bjs06Nf3AtEre3FDEeWdsbkk2zG4pC31u2MTtUkFSUXi04WGr0tfgL6uUTbReQRc0Bgv12mOvXBGUvMBS8haxcYj18CQm67I+ZIOEwv5yWIoLRdKwaiWx32up5LvlSJevjvRAct9ydGK28AHQw=="
+              ],
+              "x5t": "nlfStyPSx8HTWZ_4pcEk-g1bP_A",
+              "x5t#S256": "50nmyRUELDXkURh99fv6klFPGwmQ79mtQLZDsHcDcx4",
+              "n": "vDnzLoieQIYEmxA0y9Mj5B5xxiF1eYzjTA8ilRzFXnpulQYmUiA9q6dL6GwtMj3hMCPj6re1Ab7enpei1NWsyfsPyh61Gphj7A0AFVD3NeNsapZ1CdNY-Nt28zHTb6I3unjWhIuoDU_8q1xpZ3hDBTGbe5NsFcs82BWafgi8rGmHIqUAurXOftspVrsr1_mBMO3NcPWnC08VIX93eLKxkSUSjimrgqy3fLCaiJwdu--rC8-l6TFqvbRP9-Xz1x1T3Tt-DDWu-gop2pq_TcYVN-6fwRla2tKVEkWCNuAxzlgwQqU4nnzDGc7oy4Pa3HbY0hXaAXMQZH3PjC1bDjTdbQ",
+              "e": "AQAB"
+            }
+          ]
+        },
+        "after": {
+          "keys": [
+            {
+              "kid": "Y6P9XtJpoyySEto9tvAQW8viWvjwfHpeEpreh9jwtvw",
+              "kty": "RSA",
+              "alg": "RS256",
+              "use": "sig",
+              "x5c": [
+                "MIICnTCCAYUCBgGh02GEnjANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA1MjcyNVoXDTM2MTExMzA1MjkwNVowEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM/b+q7vhQZ00IvIYld1SQLlRL/JSHf8b//9oaktbfb1UiFCq/vSLZnEBzZ1MuV2fTPvEOqWl/9ppymqL0IW79+qCRHBmiI9BRlrMNbLlYvHMaw43O3U2mlFCJUNd3XWUeIprdWLXZ3TfhNkkZsHctcrWRy8sR1d2HbUcJ+w8TKyTnp1svUv5C7XRz6Zb4lS8gLaPCjo3yHIRb0100tHPjzbH6nGdo/X/U8kuzzHqYTBXqzjCgfU4e8zLK8Xg5SmbaO6TmLPuIrShDIkzvJW6LrMDiJK60ECLUSSuuNDNbTYofOiZ0jIc1PHF/Dve5LBGeUu7obY4R0vw3IYPKfdo9cCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEArPzm3oHNtEt8+S2n6BVNdg1c+BOWM7XYec/jJHfMfgxPtEW9dpcDLGmsNfoSKNFSyxMiL9+3eFAduCQcZAr7UWD6GobETkS6TKyNnoz3mQSIAQke8nda8LcwhGuz+ZVkqW9JRZpo7NOFDGSguke/HpMLkgPct6mseVa+KBu7ci1p147st1gjBLZY4cpZhirxegCwsbISFXPBkUqjg18lWgrqgH3C/c8UT4m/Wf2i21JjCJWeWKAgMkY377CZvOd+7PhnueL6aB3ETzFKpL/k0+29kmUmL2WHJaxLqedub/RoBZyDQ+dSkRckY4hJWcrGr4XqSOfvU3TNe5OnlYgsEg=="
+              ],
+              "x5t": "SluwHBOCFq3gF1BB73FUqjl_uHw",
+              "x5t#S256": "--WYm9JuN_XsIkJ7dj4AR5HKycoDCljkhKQP508Rrbg",
+              "n": "z9v6ru-FBnTQi8hiV3VJAuVEv8lId_xv__2hqS1t9vVSIUKr-9ItmcQHNnUy5XZ9M-8Q6paX_2mnKaovQhbv36oJEcGaIj0FGWsw1suVi8cxrDjc7dTaaUUIlQ13ddZR4imt1YtdndN-E2SRmwdy1ytZHLyxHV3YdtRwn7DxMrJOenWy9S_kLtdHPplviVLyAto8KOjfIchFvTXTS0c-PNsfqcZ2j9f9TyS7PMephMFerOMKB9Th7zMsrxeDlKZto7pOYs-4itKEMiTO8lbouswOIkrrQQItRJK640M1tNih86JnSMhzU8cX8O97ksEZ5S7uhtjhHS_Dchg8p92j1w",
+              "e": "AQAB"
+            },
+            {
+              "kid": "WEhLEGadWzviY71bKm6YE8UGrnk36-0zrFfzlFIDFTI",
+              "kty": "RSA",
+              "alg": "RS256",
+              "use": "sig",
+              "x5c": [
+                "MIICnTCCAYUCBgGh02F36zANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA1MjcyMloXDTM2MTExMzA1MjkwMlowEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANP0TAQRBjZ2IdkbxlT4c6nj5j5urBoHEfukdzilpCRwgNxSZ+1T6Mz3kFrlKX8Fgtr9oGAjSQ+J07Zkj66R5wNh8FwYdA3f4DjHvhkeri5SeSjoKnG0lwsvLHTJU6yYh2fDHRwL2DsEztjqqxSU3qI4JXZgp+dd87LqZEAwhQXPbAn2dj+0K3NnrS94pZQsObBIYN3Zmv28h5ujX7crUES9OuSE46NkN5tgvqwVGlqENToNQSuIJJuDuAytbFUDnwYqxcCqWqli4HPjvRuEUs3L76gJ/+RbEmGYUgWH1hZNe24oUnB9l+v3B3HiF1eSTMujI9s9NVWym1BJU3hPOfMCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAAgMf37ErfqFLDB+0N0W5Mqwvy2ny1DlniWm4gdEeus4RvLhWH3ZfjYbEZ000rNhiscAWgPudjCx81joqAVcjVVGnzYJdKRucHVozwB2yDmoP6k18zYZBNllPJlDDVKg+oMDtjbJOanq/gMi19eIuf3ZZcDiy2Tj55sI3w3vhQtLEOzh+8q1AdCfz3pPsBG2yJeSvk2+BF/Irx/jcPDtgmmxhupQa8L18BsTxYJDB6wZ4dLarTAh6eGDUJCNDjTKNdi/rr2u+KAcOcPHyXcUg+zk2ED9bY7QWON1zTKGgrDRZw7WefYfli5wXjH2vg+Q3KXw95FLH0weySLMnxb2F1w=="
+              ],
+              "x5t": "JbYTqaaD7nWBEisBTgD3ehhCQ6g",
+              "x5t#S256": "Dt9n9DdNA9Z0qWcliH1A9yu3aGGR3bt_H3_5VMOUvfI",
+              "n": "0_RMBBEGNnYh2RvGVPhzqePmPm6sGgcR-6R3OKWkJHCA3FJn7VPozPeQWuUpfwWC2v2gYCNJD4nTtmSPrpHnA2HwXBh0Dd_gOMe-GR6uLlJ5KOgqcbSXCy8sdMlTrJiHZ8MdHAvYOwTO2OqrFJTeojgldmCn513zsupkQDCFBc9sCfZ2P7Qrc2etL3illCw5sEhg3dma_byHm6NftytQRL065ITjo2Q3m2C-rBUaWoQ1Og1BK4gkm4O4DK1sVQOfBirFwKpaqWLgc-O9G4RSzcvvqAn_5FsSYZhSBYfWFk17bihScH2X6_cHceIXV5JMy6Mj2z01VbKbUElTeE858w",
+              "e": "AQAB"
+            },
+            {
+              "kid": "pToHEiIzYRBURphG3wVBQkGiT8-RUnaqlr4rrcIG8po",
+              "kty": "RSA",
+              "alg": "RSA-OAEP",
+              "use": "enc",
+              "x5c": [
+                "MIICnTCCAYUCBgGh02F4WjANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA1MjcyMloXDTM2MTExMzA1MjkwMlowEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALw58y6InkCGBJsQNMvTI+QeccYhdXmM40wPIpUcxV56bpUGJlIgPaunS+hsLTI94TAj4+q3tQG+3p6XotTVrMn7D8oetRqYY+wNABVQ9zXjbGqWdQnTWPjbdvMx02+iN7p41oSLqA1P/KtcaWd4QwUxm3uTbBXLPNgVmn4IvKxphyKlALq1zn7bKVa7K9f5gTDtzXD1pwtPFSF/d3iysZElEo4pq4Kst3ywmoicHbvvqwvPpekxar20T/fl89cdU907fgw1rvoKKdqav03GFTfun8EZWtrSlRJFgjbgMc5YMEKlOJ58wxnO6MuD2tx22NIV2gFzEGR9z4wtWw403W0CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAg2CJcbQ/Ycswqc/T8KT10JKhb5ixOTiG3P4W9wI19DLB6AQ3LpdeMgAmMnMedcgc5O/GLYngYQlZKgUZhI0rBi3GPWErhJNU03bPKqt9aT9xPs/g6aWdsoSBPbGLqGj6IpygBEZNRp+eH5ujIedG79XjUC2FJMztqxnL6hP807w70UPRaacxfMMsyXslGZW41592bjs06Nf3AtEre3FDEeWdsbkk2zG4pC31u2MTtUkFSUXi04WGr0tfgL6uUTbReQRc0Bgv12mOvXBGUvMBS8haxcYj18CQm67I+ZIOEwv5yWIoLRdKwaiWx32up5LvlSJevjvRAct9ydGK28AHQw=="
+              ],
+              "x5t": "nlfStyPSx8HTWZ_4pcEk-g1bP_A",
+              "x5t#S256": "50nmyRUELDXkURh99fv6klFPGwmQ79mtQLZDsHcDcx4",
+              "n": "vDnzLoieQIYEmxA0y9Mj5B5xxiF1eYzjTA8ilRzFXnpulQYmUiA9q6dL6GwtMj3hMCPj6re1Ab7enpei1NWsyfsPyh61Gphj7A0AFVD3NeNsapZ1CdNY-Nt28zHTb6I3unjWhIuoDU_8q1xpZ3hDBTGbe5NsFcs82BWafgi8rGmHIqUAurXOftspVrsr1_mBMO3NcPWnC08VIX93eLKxkSUSjimrgqy3fLCaiJwdu--rC8-l6TFqvbRP9-Xz1x1T3Tt-DDWu-gop2pq_TcYVN-6fwRla2tKVEkWCNuAxzlgwQqU4nnzDGc7oy4Pa3HbY0hXaAXMQZH3PjC1bDjTdbQ",
+              "e": "AQAB"
+            }
+          ]
+        },
+        "scope": "IdP publishes new key and signs a new token; Lakekeeper cache refresh NOT tested"
+      },
+      "seconds": 0.401
+    },
+    "keycloak/operations": {
+      "status": "pass",
+      "value": {
+        "startup_to_https_ready_seconds": 31.438,
+        "idle_rss_kib_samples": [
+          602236,
+          605068,
+          605068,
+          605076,
+          605076
+        ],
+        "idle_rss_kib_median": 605068,
+        "data_directory_bytes": 2420555,
+        "container_cpu_limit": 2,
+        "container_memory_limit_bytes": 2147483648,
+        "startup_definition": "docker start through first verified HTTPS readiness (pull excluded)",
+        "data_definition": "apparent bytes after provisioning and auth tests; not production capacity"
+      },
+      "seconds": 5.18
+    },
+    "keycloak/lakekeeper_transport": {
+      "status": "blocked",
+      "value": {
+        "status": "blocked",
+        "anonymous_http_status": 401,
+        "tls_error": "[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1000)",
+        "reason": "Pinned Lakekeeper has no TLS listener; tokens never sent over HTTP."
+      },
+      "seconds": 1.461
+    },
+    "rauthy/startup_provision_discovery": {
+      "status": "pass",
+      "value": {
+        "image": "ghcr.io/sebadob/rauthy@sha256:d733b7580f53c1601c286b5504853b2774e70245f5f9427d9bcda32496b753ee",
+        "image_id": "sha256:58c3ffaacc5ae223b036d5bf08a5d98a41b4bacb8c39cf45bc617433569ecec5",
+        "architecture": "amd64",
+        "version": "0.37.2",
+        "startup_seconds": 15.164,
+        "discovery": {
+          "issuer": "https://rauthy.idp.test:8443/auth/v1/",
+          "authorization_endpoint": "https://rauthy.idp.test:8443/auth/v1/oidc/authorize",
+          "backchannel_logout_supported": true,
+          "backchannel_logout_session_supported": true,
+          "device_authorization_endpoint": "https://rauthy.idp.test:8443/auth/v1/oidc/device",
+          "token_endpoint": "https://rauthy.idp.test:8443/auth/v1/oidc/token",
+          "introspection_endpoint": "https://rauthy.idp.test:8443/auth/v1/oidc/introspect",
+          "revocation_endpoint": "https://rauthy.idp.test:8443/auth/v1/oidc/token/revoke",
+          "userinfo_endpoint": "https://rauthy.idp.test:8443/auth/v1/oidc/userinfo",
+          "end_session_endpoint": "https://rauthy.idp.test:8443/auth/v1/oidc/logout",
+          "jwks_uri": "https://rauthy.idp.test:8443/auth/v1/oidc/certs",
+          "grant_types_supported": [
+            "authorization_code",
+            "client_credentials",
+            "password",
+            "refresh_token",
+            "urn:ietf:params:oauth:grant-type:device_code",
+            "urn:ietf:params:oauth:grant-type:token-exchange"
+          ],
+          "response_types_supported": [
+            "code"
+          ],
+          "subject_types_supported": [
+            "public"
+          ],
+          "id_token_signing_alg_values_supported": [
+            "RS256",
+            "RS384",
+            "RS512",
+            "EdDSA",
+            "Ed25519"
+          ],
+          "token_endpoint_auth_methods_supported": [
+            "client_secret_post",
+            "client_secret_basic"
+          ],
+          "token_endpoint_auth_signing_alg_values_supported": [
+            "RS256",
+            "RS384",
+            "RS512",
+            "EdDSA",
+            "Ed25519"
+          ],
+          "claims_supported": [
+            "iss",
+            "azp",
+            "amr",
+            "sub",
+            "preferred_username",
+            "email",
+            "email_verified",
+            "given_name",
+            "family_name",
+            "roles",
+            "groups",
+            "custom"
+          ],
+          "claim_types_supported": [
+            "normal",
+            "aggregated",
+            "distributed"
+          ],
+          "scopes_supported": [
+            "email",
+            "openid",
+            "profile",
+            "groups",
+            "address",
+            "phone"
+          ],
+          "code_challenge_methods_supported": [
+            "plain",
+            "S256"
+          ],
+          "dpop_signing_alg_values_supported": [
+            "RS256",
+            "RS384",
+            "RS512",
+            "EdDSA",
+            "Ed25519"
+          ],
+          "service_documentation": "https://sebadob.github.io/rauthy/",
+          "ui_locales_supported": [
+            "en",
+            "en-US",
+            "de",
+            "de-DE",
+            "es",
+            "es-ES",
+            "fr",
+            "fr-FR",
+            "ja",
+            "ja-JP",
+            "ko",
+            "ko-KR",
+            "nb",
+            "nb-NO",
+            "nl",
+            "nl-NL",
+            "pt",
+            "pt-PT",
+            "ru",
+            "ru-RU",
+            "uk",
+            "uk-UA",
+            "zh",
+            "zh-Hans"
+          ],
+          "claims_parameter_supported": true,
+          "authorization_response_iss_parameter_supported": true,
+          "client_id_metadata_document_supported": true
+        },
+        "image_bytes": 95040096
+      },
+      "seconds": 17.457
+    },
+    "rauthy/trino_client_credentials_list_read": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "rauthy/pyiceberg_client_credentials_list_read": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "rauthy/sail_client_credentials_list_read": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "rauthy/human_pkce_lakekeeper": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "rauthy/valid_token": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "rauthy/wrong_audience": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "rauthy/expired_token": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "rauthy/different_key": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "rauthy/alg_none": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "rauthy/rotation_lakekeeper": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "rauthy/verified_tls": {
+      "status": "pass",
+      "value": {
+        "listeners": [
+          "0.0.0.0:8200",
+          "0.0.0.0:8443",
+          "127.0.0.11:33639",
+          "0.0.0.0:8100"
+        ],
+        "ports": {
+          "8100": {
+            "tls_version": "TLSv1.3",
+            "certificate": {
+              "subject": [
+                [
+                  [
+                    "commonName",
+                    "rauthy.idp.test"
+                  ]
+                ]
+              ],
+              "issuer": [
+                [
+                  [
+                    "commonName",
+                    "Disposable bakeoff CA"
+                  ]
+                ]
+              ],
+              "version": 3,
+              "serialNumber": "1721DFBD5B34DA85E702CCE181E96D8835872FE1",
+              "notBefore": "Nov 13 05:28:24 2026 GMT",
+              "notAfter": "Nov 14 05:28:24 2026 GMT",
+              "subjectAltName": [
+                [
+                  "DNS",
+                  "rauthy.idp.test"
+                ]
+              ]
+            },
+            "negative_errors": {
+              "untrusted_ca": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1000)",
+              "wrong_hostname": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'wrong.idp.test'. (_ssl.c:1000)"
+            },
+            "plaintext_response": "b'\\x15\\x03\\x03\\x00\\x02\\x022'"
+          },
+          "8200": {
+            "tls_version": "TLSv1.3",
+            "certificate": {
+              "subject": [
+                [
+                  [
+                    "commonName",
+                    "rauthy.idp.test"
+                  ]
+                ]
+              ],
+              "issuer": [
+                [
+                  [
+                    "commonName",
+                    "Disposable bakeoff CA"
+                  ]
+                ]
+              ],
+              "version": 3,
+              "serialNumber": "1721DFBD5B34DA85E702CCE181E96D8835872FE1",
+              "notBefore": "Nov 13 05:28:24 2026 GMT",
+              "notAfter": "Nov 14 05:28:24 2026 GMT",
+              "subjectAltName": [
+                [
+                  "DNS",
+                  "rauthy.idp.test"
+                ]
+              ]
+            },
+            "negative_errors": {
+              "untrusted_ca": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1000)",
+              "wrong_hostname": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'wrong.idp.test'. (_ssl.c:1000)"
+            },
+            "plaintext_response": "b'\\x15\\x03\\x03\\x00\\x02\\x022'"
+          },
+          "8443": {
+            "tls_version": "TLSv1.3",
+            "certificate": {
+              "subject": [
+                [
+                  [
+                    "commonName",
+                    "rauthy.idp.test"
+                  ]
+                ]
+              ],
+              "issuer": [
+                [
+                  [
+                    "commonName",
+                    "Disposable bakeoff CA"
+                  ]
+                ]
+              ],
+              "version": 3,
+              "serialNumber": "1721DFBD5B34DA85E702CCE181E96D8835872FE1",
+              "notBefore": "Nov 13 05:28:24 2026 GMT",
+              "notAfter": "Nov 14 05:28:24 2026 GMT",
+              "subjectAltName": [
+                [
+                  "DNS",
+                  "rauthy.idp.test"
+                ]
+              ]
+            },
+            "negative_errors": {
+              "untrusted_ca": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1000)",
+              "wrong_hostname": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'wrong.idp.test'. (_ssl.c:1000)"
+            },
+            "plaintext_response": "b'\\x15\\x03\\x03\\x00\\x02\\x022'"
+          }
+        }
+      },
+      "seconds": 0.104
+    },
+    "rauthy/machine_token_endpoint": {
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "token_type": "Bearer",
+        "expires_in": 120,
+        "segments": 3
+      },
+      "seconds": 0.005
+    },
+    "rauthy/machine_jwt_claims": {
+      "status": "pass",
+      "value": {
+        "header": {
+          "alg": "RS256",
+          "kid": "PR5SzUstUNwdBIt4SOGxkSf5",
+          "typ": "at+jwt"
+        },
+        "claims": {
+          "iat": 1794547770,
+          "nbf": 1794547770,
+          "exp": 1794547890,
+          "iss": "https://rauthy.idp.test:8443/auth/v1/",
+          "jti": "wfJYgpixXrSQ",
+          "aud": "lakekeeper",
+          "sub": "lakekeeper",
+          "typ": "Bearer",
+          "azp": "lakekeeper",
+          "scope": "openid profile groups"
+        }
+      },
+      "seconds": 0.002
+    },
+    "rauthy/pyiceberg_token_only": {
+      "status": "pass",
+      "value": {
+        "client": "PyIceberg 0.12.0 LegacyOAuth2AuthManager",
+        "segments": 3,
+        "scope": "Token acquisition only; NOT a Lakekeeper list/read test"
+      },
+      "seconds": 0.006
+    },
+    "rauthy/human_pkce_idp": {
+      "status": "pass",
+      "value": {
+        "access_token_header": {
+          "alg": "RS256",
+          "kid": "PR5SzUstUNwdBIt4SOGxkSf5",
+          "typ": "at+jwt"
+        },
+        "access_token_claims": {
+          "iat": 1794547770,
+          "nbf": 1794547770,
+          "exp": 1794547890,
+          "iss": "https://rauthy.idp.test:8443/auth/v1/",
+          "jti": "sOxCpYRTMxfg",
+          "aud": "lakekeeper",
+          "sub": "IMifmK5NCMYbku47FgAk7Xjz",
+          "typ": "Bearer",
+          "azp": "lakekeeper",
+          "scope": "openid profile groups",
+          "roles": [
+            "user"
+          ],
+          "groups": [
+            "lake-readers"
+          ]
+        },
+        "id_token_claims": {
+          "iat": 1794547770,
+          "nbf": 1794547770,
+          "exp": 1794547890,
+          "iss": "https://rauthy.idp.test:8443/auth/v1/",
+          "aud": "lakekeeper",
+          "sub": "IMifmK5NCMYbku47FgAk7Xjz",
+          "typ": "Id",
+          "azp": "lakekeeper",
+          "scope": "openid profile groups",
+          "amr": [
+            "pwd"
+          ],
+          "auth_time": 1794547770,
+          "at_hash": "feyTXUHd5JDW_LFlRvpHlQ",
+          "sid": "LKxbYnItlkObWmcuomf3odSCxqk9xUq8",
+          "preferred_username": "alice@idp.test",
+          "name": "Alice Test",
+          "given_name": "Alice",
+          "family_name": "Test",
+          "locale": "en",
+          "nonce": "[REDACTED]",
+          "roles": [
+            "user"
+          ],
+          "groups": [
+            "lake-readers"
+          ]
+        },
+        "flow": "authorization_code + S256 + state + nonce"
+      },
+      "seconds": 0.638
+    },
+    "rauthy/groups_claim": {
+      "status": "pass",
+      "value": {
+        "access_token_groups": [
+          "lake-readers"
+        ],
+        "id_token_groups": [
+          "lake-readers"
+        ]
+      },
+      "seconds": 0.0
+    },
+    "rauthy/id_token_groups": {
+      "status": "pass",
+      "value": {
+        "id_token_groups": [
+          "lake-readers"
+        ],
+        "scope": "ID token only; not an API access token"
+      },
+      "seconds": 0.0
+    },
+    "rauthy/rotation_idp": {
+      "status": "pass",
+      "value": {
+        "old_kid": "PR5SzUstUNwdBIt4SOGxkSf5",
+        "new_kid": "z0PnI06pz4dbxGaqtFNneR5I",
+        "before": {
+          "keys": [
+            {
+              "kty": "RSA",
+              "use": "sig",
+              "alg": "RS256",
+              "kid": "PR5SzUstUNwdBIt4SOGxkSf5",
+              "n": "vBehW8rBxBwtdBQ251zto_9Nkqw4PVBSyRRwSKUg5pH4RPvepDCYXeLxrzdH_AP89ZPtHX1jCXmkSniLFIuiMfMDFj5rn-1Q2K3d31Du1H6CYHNbNU4OTsrRXA0TDxG35pZEsX7M1GVLzeyeAg8Enn54rWhYO9X42fK5QVb-2b3v8xAjgWcs4sZhVd9dkys2MC9unMS6k7cW1jRLhmlVEIZzBLFUA3K06yQu6rd1CVhZl5Rr4A2gNzA46p1LtlsonBvp_vO2x0nO0j4sJsoSTjqHFVDGejmaLEkwSzdZG6Q83X5oxEMoKGgRsD_t-bdTFWBMUFsGutQ8Flb2AdeGuQ",
+              "e": "AQAB"
+            },
+            {
+              "kty": "RSA",
+              "use": "sig",
+              "alg": "RS384",
+              "kid": "RvaUOlqlcb3VYVEGPyss3mDV",
+              "n": "s_71-VyLCX26vtv1aKhY1-5LZjDBpcfoMXauyhvr5byJDa064inkKYkG_cDeyqvti5ntMX405m7zMqNrK2IY-I5JswBz-SRk0L5TTF0teX_J6YMPd4afRPv8mXJCDQvW6ejxBxNnMhkKYXbLw5TITjdLpqDfXiCU78i-yWS-pWkVnVB8dpOFXKfEGr9ULdOv_dNgTBV2safLQdE8aLIZw-XQX2jXRQf5Ti5c4EKYLYlIVfcfkDbp5dmh9Yqq_jmU_6ndAT1Yuw6V_aThKQktpYInCAu1OtiNiv7MPQI5EEyFVUSjB-DiJdUiW6Qi8GqjkzMOon4LitmfdsfN5E022SlZWBJMeDo6ryC1gSseysdGJQ8HbMXyexKoYEX-rKM5EpCi_yS93SvVUnHp55oVRNtksPh6nSBOPK-MiooV78DTCymPI6bRuqJwGG3S1reaCyPTG7gpVdLUCrcTjlBEftw05MtRMDc30J5BFRJXDGpOgIH7I3P1pyC4-EkYTGqF",
+              "e": "AQAB"
+            },
+            {
+              "kty": "RSA",
+              "use": "sig",
+              "alg": "RS512",
+              "kid": "H4ug9OcZmwjn2p21TkAXN27w",
+              "n": "qS108zaJGacFOOkaFRsdiwU4WVYirXHgPeDV5NJuoZQb5pEoFSUAkzTw6hTPvkRk-AoXn1AxgbvspB8y7abi-P7ageIWvEXfc7PqZMa7LcjL6kDGcnQWF6BSlw4uMAldWq_rylssz0xZYOufVh8Co4xDUpJqHZbiAYpQUlmZS2BmIvg2VaWDHXqVNzd2xca4aOCuZTDaRvGeMcsrPWmhH_RpdvGoelE8_jfMVdh_u1n-xcz5VepjnsXSF6gARzPY3oWkvV9kGwEC9f4KoaDQNpmNBzpsDL7UHVAk_i6zsP1UUO2ehY3OKulxHSqYhWlWB5Zr-ChABcwmBibjzwIwCF8lP7EFN8C22mQdT-HbzaotVL4cm_JUa_ETxHqw18eEvy3c-KQow_g7QxpqeLe0upN0mhpEDXlFDezeEoC8B7YOCVOefrsy_upan79Kmi59dCxXFrHT6SGhRx2sYWVc7Z7DD6qaXKbCoTQQAvRxPUe7jI1aKmWBKmkyvoteufXLDiLmW80ol2MMFIS0fMrS0aDA4wQw77NBo0KVnwAyksSeQl9tdkE_jtyVDtsMW54egjMjVxK7NMRoLyI_-5sdeY2Vdi8IgIi85pc1SzzoV9kI4q7c34tDLNy55VrGhXi7d1iSspTUZqVMEDJ4hMBnvHie4WX91v6l55ymWpvUnas",
+              "e": "AQAB"
+            },
+            {
+              "kty": "OKP",
+              "use": "sig",
+              "alg": "EdDSA",
+              "crv": "Ed25519",
+              "kid": "a8qeASQwlSTenjiijsfUfAwB",
+              "x": "-qG2RiXnSzFvd8Q0PW7U29Ws0ojkOoQlj_xSkb-rzYA"
+            }
+          ]
+        },
+        "after": {
+          "keys": [
+            {
+              "kty": "RSA",
+              "use": "sig",
+              "alg": "RS256",
+              "kid": "PR5SzUstUNwdBIt4SOGxkSf5",
+              "n": "vBehW8rBxBwtdBQ251zto_9Nkqw4PVBSyRRwSKUg5pH4RPvepDCYXeLxrzdH_AP89ZPtHX1jCXmkSniLFIuiMfMDFj5rn-1Q2K3d31Du1H6CYHNbNU4OTsrRXA0TDxG35pZEsX7M1GVLzeyeAg8Enn54rWhYO9X42fK5QVb-2b3v8xAjgWcs4sZhVd9dkys2MC9unMS6k7cW1jRLhmlVEIZzBLFUA3K06yQu6rd1CVhZl5Rr4A2gNzA46p1LtlsonBvp_vO2x0nO0j4sJsoSTjqHFVDGejmaLEkwSzdZG6Q83X5oxEMoKGgRsD_t-bdTFWBMUFsGutQ8Flb2AdeGuQ",
+              "e": "AQAB"
+            },
+            {
+              "kty": "RSA",
+              "use": "sig",
+              "alg": "RS384",
+              "kid": "RvaUOlqlcb3VYVEGPyss3mDV",
+              "n": "s_71-VyLCX26vtv1aKhY1-5LZjDBpcfoMXauyhvr5byJDa064inkKYkG_cDeyqvti5ntMX405m7zMqNrK2IY-I5JswBz-SRk0L5TTF0teX_J6YMPd4afRPv8mXJCDQvW6ejxBxNnMhkKYXbLw5TITjdLpqDfXiCU78i-yWS-pWkVnVB8dpOFXKfEGr9ULdOv_dNgTBV2safLQdE8aLIZw-XQX2jXRQf5Ti5c4EKYLYlIVfcfkDbp5dmh9Yqq_jmU_6ndAT1Yuw6V_aThKQktpYInCAu1OtiNiv7MPQI5EEyFVUSjB-DiJdUiW6Qi8GqjkzMOon4LitmfdsfN5E022SlZWBJMeDo6ryC1gSseysdGJQ8HbMXyexKoYEX-rKM5EpCi_yS93SvVUnHp55oVRNtksPh6nSBOPK-MiooV78DTCymPI6bRuqJwGG3S1reaCyPTG7gpVdLUCrcTjlBEftw05MtRMDc30J5BFRJXDGpOgIH7I3P1pyC4-EkYTGqF",
+              "e": "AQAB"
+            },
+            {
+              "kty": "RSA",
+              "use": "sig",
+              "alg": "RS512",
+              "kid": "H4ug9OcZmwjn2p21TkAXN27w",
+              "n": "qS108zaJGacFOOkaFRsdiwU4WVYirXHgPeDV5NJuoZQb5pEoFSUAkzTw6hTPvkRk-AoXn1AxgbvspB8y7abi-P7ageIWvEXfc7PqZMa7LcjL6kDGcnQWF6BSlw4uMAldWq_rylssz0xZYOufVh8Co4xDUpJqHZbiAYpQUlmZS2BmIvg2VaWDHXqVNzd2xca4aOCuZTDaRvGeMcsrPWmhH_RpdvGoelE8_jfMVdh_u1n-xcz5VepjnsXSF6gARzPY3oWkvV9kGwEC9f4KoaDQNpmNBzpsDL7UHVAk_i6zsP1UUO2ehY3OKulxHSqYhWlWB5Zr-ChABcwmBibjzwIwCF8lP7EFN8C22mQdT-HbzaotVL4cm_JUa_ETxHqw18eEvy3c-KQow_g7QxpqeLe0upN0mhpEDXlFDezeEoC8B7YOCVOefrsy_upan79Kmi59dCxXFrHT6SGhRx2sYWVc7Z7DD6qaXKbCoTQQAvRxPUe7jI1aKmWBKmkyvoteufXLDiLmW80ol2MMFIS0fMrS0aDA4wQw77NBo0KVnwAyksSeQl9tdkE_jtyVDtsMW54egjMjVxK7NMRoLyI_-5sdeY2Vdi8IgIi85pc1SzzoV9kI4q7c34tDLNy55VrGhXi7d1iSspTUZqVMEDJ4hMBnvHie4WX91v6l55ymWpvUnas",
+              "e": "AQAB"
+            },
+            {
+              "kty": "OKP",
+              "use": "sig",
+              "alg": "EdDSA",
+              "crv": "Ed25519",
+              "kid": "a8qeASQwlSTenjiijsfUfAwB",
+              "x": "-qG2RiXnSzFvd8Q0PW7U29Ws0ojkOoQlj_xSkb-rzYA"
+            },
+            {
+              "kty": "RSA",
+              "use": "sig",
+              "alg": "RS256",
+              "kid": "z0PnI06pz4dbxGaqtFNneR5I",
+              "n": "whwcEZJTcx6k1cG5Ka4xTiIhHux9uinokdvthfYTobZ-ZljKhj7DB4-0n375iC6T2-Q4_xvl5Chd3WL0YtFBXmf0UGQ_ZJSS5sMUEmqpWZKf8ZhuMdgy2zTvYSJeq24GGQGPaCBEeAyd-58I22Xur9X0DyQ32Iw7tTnrc5w9B9N8IIRHcoW5QYtajNJIUvN2iD9EZhsHp8JyUr7FQaXeiqd6WpgyBQ_M7f503z4esP0b8_Y1fr1Xi48Fdbdjco-EGiPmmT7MJqyIyG70UklEqu8mFoy0FsxJ4CnCto-N6qs-Nyvoy9DxU6ATNounM7z5dDyBuNpQtFGww4DyQNQ9PQ",
+              "e": "AQAB"
+            },
+            {
+              "kty": "RSA",
+              "use": "sig",
+              "alg": "RS384",
+              "kid": "r0PMaDC1Yk1Ts6hw1y828RUH",
+              "n": "zLZHrXrLZGGnHWGPCk7FPBpeBfxnTwkFX59wtDJrWnYlv3EOeRJ5dNXjOX0Cx47xfL9B6QR7HUwHLs-kPSPSgo-JMa0_cB2kX6yDGgnzjS0QECGoQk0eHziA8iy-YsDj2q8gU0-7OAJWOcxD-_BYGGknJhVwliNTHsHQNKmm3Ks5jT5xb6m3hkzH8KfxsUGoD5ufeOuxHDQihpwFVS3AwM_QeP_FQIm72vYp_b7d521shkqBkYlR3q5JeWnzsbBMKhl1lPz8_qZehfoyQuG9cYJpwebatayQJCtQKFtXUaq8ua4Grv1eH_pEUK5WKboB4l3PBDkWfDLKsdgsxcZDYYmQIQtzyFZHy11yTh5jUYMMiVTJbJsBaLHG-ljfi2orTUsih7NiM4eshss6wRgtjwHATe5sekK-HQp3Ds6-0TDjwKqcE7tPKitp_DAVPwmyUwvaqQpn6sf8ovb3FVYvVYcKerZyG0B-UQ1CI3RYfEW39vBz7Wf20sYu-cAI9UYL",
+              "e": "AQAB"
+            },
+            {
+              "kty": "RSA",
+              "use": "sig",
+              "alg": "RS512",
+              "kid": "9AYSN1CypZKX80lUXGiKfnXh",
+              "n": "v2oU4fPq_YVh0uB7vcxdx82iQl2IYs-BPU3mPqJzVlyo6dwiRfqZmd6WZBAU-JLLTL6wymU_eaVelEySx3b7MZp6biwtsGFx5x2niH2CrrjeIEaph_r6Mj5lcTjHFuLMqEgS-whSeBJv3tRipUK2sy-NdeshmuJsWDhR6vu562TJ2UClLxLlByEgdTVjylEljHyyA9cwMXOCFCQwWZKeij6wJRLZxrCiw6Ll4kpPMY8vUTa38cnHAy2U9c9-4gkwnDlpxV-5S6ax5XXfwfKXOEIxk-sfFBPlS0OqNDS0T1_HkovTxJQ2ZQdTGErHUdFMipQ-ZeyXH3RRMq4T-o_ZT6NMog4fpKXruGBNTZAP1--tR0Fd2xhHMgJv2SHxSjJ_eGLZsvd8HhutiG-GFQE4iHGbCCaBUbEbXvi6MoOsj8OwUXAHZXA2SM1vjuJ3WL6obuRPzT1Hp9cdbTTFVWuwoos7VB60lAGiZi_M7HVewFyt95KKs8_NllWFXVRxXMXVrEQltrOlyNyyATWl-E40ix0RF9p9qzFlb_Qe6OQEUEM0PWUnYmLhSHWb5LFmNWlVeHZc3fYJ11T3j_1PTT_U92WwQzvi0HAUkeVCwzckpwN4W3TCl1xoHrHqnAXar5RYjmn7M1PExbhNeI6YRQ5TN2nHTkR6L3cN3DdNeYUHAUc",
+              "e": "AQAB"
+            },
+            {
+              "kty": "OKP",
+              "use": "sig",
+              "alg": "EdDSA",
+              "crv": "Ed25519",
+              "kid": "i7MwjfPJDBJ7TSwZKEU2rEk2",
+              "x": "IyhlhvI63V4Gfm6cYzrpfxp8LKqVhU7vlZEcBxBHuhg"
+            }
+          ]
+        },
+        "scope": "IdP publishes new key and signs a new token; Lakekeeper cache refresh NOT tested"
+      },
+      "seconds": 5.347
+    },
+    "rauthy/operations": {
+      "status": "pass",
+      "value": {
+        "startup_to_https_ready_seconds": 15.164,
+        "idle_rss_kib_samples": [
+          75644,
+          75644,
+          75644,
+          75736,
+          75736
+        ],
+        "idle_rss_kib_median": 75644,
+        "data_directory_bytes": 6649998,
+        "container_cpu_limit": 2,
+        "container_memory_limit_bytes": 2147483648,
+        "startup_definition": "docker start through first verified HTTPS readiness (pull excluded)",
+        "data_definition": "apparent bytes after provisioning and auth tests; not production capacity"
+      },
+      "seconds": 5.178
+    },
+    "rauthy/lakekeeper_transport": {
+      "status": "blocked",
+      "value": {
+        "status": "blocked",
+        "anonymous_http_status": 401,
+        "tls_error": "[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1000)",
+        "reason": "Pinned Lakekeeper has no TLS listener; tokens never sent over HTTP."
+      },
+      "seconds": 1.42
+    },
+    "kanidm/startup_provision_discovery": {
+      "status": "pass",
+      "value": {
+        "image": "docker.io/kanidm/server@sha256:71b6ff5a9c9c32b632894d8acef5a2afc77941b35a0aa95dcee959fe688d5ce9",
+        "image_id": "sha256:d3714b0bcc0f8e5be8af12397e98b876be245cf6f78f566bc509b1f15eb921a2",
+        "architecture": "amd64",
+        "version": "1.12.0",
+        "startup_seconds": 1.192,
+        "discovery": {
+          "issuer": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper",
+          "authorization_endpoint": "https://kanidm.idp.test:8443/ui/oauth2",
+          "token_endpoint": "https://kanidm.idp.test:8443/oauth2/token",
+          "userinfo_endpoint": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper/userinfo",
+          "jwks_uri": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper/public_key.jwk",
+          "scopes_supported": [
+            "groups",
+            "openid",
+            "profile"
+          ],
+          "response_types_supported": [
+            "code"
+          ],
+          "response_modes_supported": [
+            "query",
+            "fragment"
+          ],
+          "grant_types_supported": [
+            "authorization_code",
+            "urn:ietf:params:oauth:grant-type:token-exchange",
+            "refresh_token"
+          ],
+          "subject_types_supported": [
+            "public"
+          ],
+          "id_token_signing_alg_values_supported": [
+            "ES256"
+          ],
+          "token_endpoint_auth_methods_supported": [
+            "client_secret_basic",
+            "client_secret_post"
+          ],
+          "display_values_supported": [
+            "page"
+          ],
+          "claim_types_supported": [
+            "normal"
+          ],
+          "service_documentation": "https://kanidm.github.io/kanidm/master/integrations/oauth2.html",
+          "claims_parameter_supported": false,
+          "request_parameter_supported": false,
+          "request_uri_parameter_supported": false,
+          "require_request_uri_registration": false,
+          "code_challenge_methods_supported": [
+            "S256"
+          ],
+          "revocation_endpoint": "https://kanidm.idp.test:8443/oauth2/token/revoke",
+          "revocation_endpoint_auth_methods_supported": [
+            "none"
+          ],
+          "introspection_endpoint": "https://kanidm.idp.test:8443/oauth2/token/introspect",
+          "introspection_endpoint_auth_methods_supported": [
+            "none"
+          ]
+        },
+        "image_bytes": 273974693
+      },
+      "seconds": 4.234
+    },
+    "kanidm/trino_client_credentials_list_read": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "kanidm/pyiceberg_client_credentials_list_read": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "kanidm/sail_client_credentials_list_read": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "kanidm/human_pkce_lakekeeper": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "kanidm/valid_token": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "kanidm/wrong_audience": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "kanidm/expired_token": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "kanidm/different_key": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "kanidm/alg_none": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "kanidm/rotation_lakekeeper": {
+      "status": "blocked",
+      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+    },
+    "kanidm/verified_tls": {
+      "status": "pass",
+      "value": {
+        "listeners": [
+          "127.0.0.11:37469",
+          "0.0.0.0:8443"
+        ],
+        "ports": {
+          "8443": {
+            "tls_version": "TLSv1.3",
+            "certificate": {
+              "subject": [
+                [
+                  [
+                    "commonName",
+                    "kanidm.idp.test"
+                  ]
+                ]
+              ],
+              "issuer": [
+                [
+                  [
+                    "commonName",
+                    "Disposable bakeoff CA"
+                  ]
+                ]
+              ],
+              "version": 3,
+              "serialNumber": "1721DFBD5B34DA85E702CCE181E96D8835872FE0",
+              "notBefore": "Nov 13 05:28:24 2026 GMT",
+              "notAfter": "Nov 14 05:28:24 2026 GMT",
+              "subjectAltName": [
+                [
+                  "DNS",
+                  "kanidm.idp.test"
+                ]
+              ]
+            },
+            "negative_errors": {
+              "untrusted_ca": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1000)",
+              "wrong_hostname": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'wrong.idp.test'. (_ssl.c:1000)"
+            },
+            "plaintext_response": "b'\\x15\\x03\\x03\\x00\\x02\\x022'"
+          }
+        }
+      },
+      "seconds": 0.056
+    },
+    "kanidm/machine_token_endpoint": {
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "token_type": "Bearer",
+        "expires_in": 900,
+        "segments": 5
+      },
+      "seconds": 0.004
+    },
+    "kanidm/machine_jwt_claims": {
+      "status": "fail",
+      "error_type": "AssertionError",
+      "error": "Expected signed JWT (3 segments), received 5-segment token (JWE is not a Lakekeeper JWT)",
+      "seconds": 0.0
+    },
+    "kanidm/pyiceberg_token_only": {
+      "status": "pass",
+      "value": {
+        "client": "PyIceberg 0.12.0 LegacyOAuth2AuthManager",
+        "segments": 5,
+        "scope": "Token acquisition only; NOT a Lakekeeper list/read test"
+      },
+      "seconds": 0.005
+    },
+    "kanidm/service_account_exchange": {
+      "status": "pass",
+      "value": {
+        "header": {
+          "alg": "ES256",
+          "kid": "d7f52e5a8aef",
+          "typ": "at+jwt"
+        },
+        "claims": {
+          "iss": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper",
+          "sub": "1ee4d438-dc18-43f1-a79b-07c98812c94d",
+          "aud": "lakekeeper",
+          "exp": 1794548687,
+          "nbf": 1794547787,
+          "iat": 1794547787,
+          "jti": "cc77b4ac-f03b-45d6-9c3f-dab30f8842d2",
+          "client_id": "lakekeeper",
+          "scope": "groups openid profile",
+          "session_id": "cc77b4ac-f03b-45d6-9c3f-dab30f8842d2"
+        },
+        "custom_harness_request": true,
+        "stock_client_compatibility": "NOT established by this direct RFC8693 request"
+      },
+      "seconds": 0.003
+    },
+    "kanidm/human_pkce_idp": {
+      "status": "pass",
+      "value": {
+        "access_token_header": {
+          "alg": "ES256",
+          "kid": "d7f52e5a8aef",
+          "typ": "at+jwt"
+        },
+        "access_token_claims": {
+          "iss": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper",
+          "sub": "e0edfd9a-da9d-4e9e-8240-8d1b1f7edb44",
+          "aud": "lakekeeper",
+          "exp": 1794548687,
+          "nbf": 1794547787,
+          "iat": 1794547787,
+          "jti": "5af5c926-e50c-4c5d-87ee-b1b986326d3b",
+          "client_id": "lakekeeper",
+          "auth_time": 1794547787,
+          "scope": "groups openid profile",
+          "nonce": "[REDACTED]",
+          "session_id": "5af5c926-e50c-4c5d-87ee-b1b986326d3b",
+          "parent_session_id": "111e77eb-7445-42cf-b47b-fcbac33cdc95"
+        },
+        "id_token_claims": {
+          "iss": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper",
+          "sub": "e0edfd9a-da9d-4e9e-8240-8d1b1f7edb44",
+          "aud": "lakekeeper",
+          "exp": 1794548687,
+          "nbf": 1794547787,
+          "iat": 1794547787,
+          "auth_time": 1794547787,
+          "nonce": "[REDACTED]",
+          "azp": "lakekeeper",
+          "jti": "5af5c926-e50c-4c5d-87ee-b1b986326d3b",
+          "scopes": [
+            "groups",
+            "openid",
+            "profile"
+          ],
+          "name": "Alice Test",
+          "preferred_username": "alice@kanidm.idp.test",
+          "updated_at": 1794547787,
+          "groups": [
+            "00000000-0000-0000-0000-000000000035",
+            "idm_all_persons@kanidm.idp.test",
+            "00000000-0000-0000-0000-000000000036",
+            "idm_all_accounts@kanidm.idp.test",
+            "00000000-0000-0000-0000-000000000048",
+            "idm_people_self_name_write@kanidm.idp.test",
+            "629fafcd-1e6b-431f-8139-63d5ad984201",
+            "lake-readers@kanidm.idp.test"
+          ]
+        },
+        "flow": "authorization_code + S256 + state + nonce"
+      },
+      "seconds": 0.028
+    },
+    "kanidm/groups_claim": {
+      "status": "fail",
+      "error_type": "AssertionError",
+      "error": "{'iss': 'https://kanidm.idp.test:8443/oauth2/openid/lakekeeper', 'sub': 'e0edfd9a-da9d-4e9e-8240-8d1b1f7edb44', 'aud': 'lakekeeper', 'exp': 1794548687, 'nbf': 1794547787, 'iat': 1794547787, 'jti': '5af5c926-e50c-4c5d-87ee-b1b986326d3b', 'client_id': 'lakekeeper', 'auth_time': 1794547787, 'scope': 'groups openid profile', 'nonce': '[REDACTED]', 'session_id': '5af5c926-e50c-4c5d-87ee-b1b986326d3b', 'parent_session_id': '111e77eb-7445-42cf-b47b-fcbac33cdc95'}",
+      "seconds": 0.0
+    },
+    "kanidm/id_token_groups": {
+      "status": "pass",
+      "value": {
+        "id_token_groups": [
+          "00000000-0000-0000-0000-000000000035",
+          "idm_all_persons@kanidm.idp.test",
+          "00000000-0000-0000-0000-000000000036",
+          "idm_all_accounts@kanidm.idp.test",
+          "00000000-0000-0000-0000-000000000048",
+          "idm_people_self_name_write@kanidm.idp.test",
+          "629fafcd-1e6b-431f-8139-63d5ad984201",
+          "lake-readers@kanidm.idp.test"
+        ],
+        "scope": "ID token only; not an API access token"
+      },
+      "seconds": 0.0
+    },
+    "kanidm/rotation_idp": {
+      "status": "pass",
+      "value": {
+        "old_kid": "d7f52e5a8aef",
+        "new_kid": "5fbf28417919",
+        "before": {
+          "keys": [
+            {
+              "kty": "EC",
+              "crv": "P-256",
+              "x": "ET03l5e58MVShlrCW8gLlAQfaXiDQkjQ5_geBwNr-DE",
+              "y": "rb_vxsp-C2Ygu0I4bdxI8pWYXu6tzK0jzU0yc4RUYIs",
+              "alg": "ES256",
+              "use": "sig",
+              "kid": "d7f52e5a8aef"
+            }
+          ]
+        },
+        "after": {
+          "keys": [
+            {
+              "kty": "EC",
+              "crv": "P-256",
+              "x": "S2whh8lDexYvnSqRbRpMX6Zo0_6W69_Y6DR5pe4ik10",
+              "y": "Pdy0npaBY55eTi3dKvZDFLDIqxNiA0LqeLaPjeanmzY",
+              "alg": "ES256",
+              "use": "sig",
+              "kid": "5fbf28417919"
+            },
+            {
+              "kty": "EC",
+              "crv": "P-256",
+              "x": "ET03l5e58MVShlrCW8gLlAQfaXiDQkjQ5_geBwNr-DE",
+              "y": "rb_vxsp-C2Ygu0I4bdxI8pWYXu6tzK0jzU0yc4RUYIs",
+              "alg": "ES256",
+              "use": "sig",
+              "kid": "d7f52e5a8aef"
+            }
+          ]
+        },
+        "scope": "IdP publishes new key and signs a new token; Lakekeeper cache refresh NOT tested"
+      },
+      "seconds": 0.008
+    },
+    "kanidm/operations": {
+      "status": "pass",
+      "value": {
+        "startup_to_https_ready_seconds": 1.192,
+        "idle_rss_kib_samples": [
+          67644,
+          67644,
+          67644,
+          67644,
+          67644
+        ],
+        "idle_rss_kib_median": 67644,
+        "data_directory_bytes": 3127087,
+        "container_cpu_limit": 2,
+        "container_memory_limit_bytes": 2147483648,
+        "startup_definition": "docker start through first verified HTTPS readiness (pull excluded)",
+        "data_definition": "apparent bytes after provisioning and auth tests; not production capacity"
+      },
+      "seconds": 5.176
+    },
+    "kanidm/lakekeeper_transport": {
+      "status": "blocked",
+      "value": {
+        "status": "blocked",
+        "anonymous_http_status": 401,
+        "tls_error": "[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1000)",
+        "reason": "Pinned Lakekeeper has no TLS listener; tokens never sent over HTTP."
+      },
+      "seconds": 1.411
+    }
+  },
+  "builds": {
+    "postgresql-lakekeeper-ubi": {
+      "revision": "93666c251ca2c4e6618ddd35a669c4c3ea380313",
+      "image_id": "sha256:0ea87f67f58957b6dc05fed6081efe3f764571ea0b61d5300fbf8b528c091d54",
+      "architecture": "amd64",
+      "runner_machine": "x86_64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/locks/amd64.json",
+      "lock_sha256": "0e632a5a5e3ad0d8ec3e31ae39e73c3169dad6898dce94cb88b6fc35b415b261",
+      "labels": {
+        "io.datopsis.artifact-lock.sha256": "0e632a5a5e3ad0d8ec3e31ae39e73c3169dad6898dce94cb88b6fc35b415b261",
+        "io.datopsis.postgresql.publisher": "PostgreSQL Global Development Group (PGDG)",
+        "io.datopsis.postgresql.rpm-version": "18.6-1PGDG.rhel9.8",
+        "io.datopsis.postgresql.signing-key-fingerprint": "D4BF08AE67A0B4C7A1DBCCD240BCA2B408B40D20",
+        "io.datopsis.postgresql.version": "18.6",
+        "io.datopsis.ubi.builder": "registry.access.redhat.com/ubi9/ubi-minimal:9.8@sha256:f26ef64172ea61f5ac5ba4be8c5c738bf8760b22b3e5148ce7b40f7308ab32db",
+        "io.datopsis.ubi.runtime": "registry.access.redhat.com/ubi9/ubi-micro:9.8@sha256:d3499a0896e2d6a1642f922615831bc5c2fd513bbb34f3446cabba530d9d54a2",
+        "org.opencontainers.image.created": "1970-01-01T00:00:00Z",
+        "org.opencontainers.image.description": "Rootless PostgreSQL for Lakekeeper metadata with five allowlisted extensions on UBI 9 Micro",
+        "org.opencontainers.image.documentation": "https://github.com/datopsis/postgresql-lakekeeper-ubi/blob/93666c251ca2c4e6618ddd35a669c4c3ea380313/README.md",
+        "org.opencontainers.image.licenses": "Apache-2.0",
+        "org.opencontainers.image.revision": "93666c251ca2c4e6618ddd35a669c4c3ea380313",
+        "org.opencontainers.image.source": "https://github.com/datopsis/postgresql-lakekeeper-ubi",
+        "org.opencontainers.image.title": "PostgreSQL for Lakekeeper on Red Hat UBI 9",
+        "org.opencontainers.image.url": "https://github.com/datopsis/postgresql-lakekeeper-ubi",
+        "org.opencontainers.image.vendor": "Datopsis",
+        "org.opencontainers.image.version": "development"
+      },
+      "provenance_errors": [],
+      "status": "pass"
+    },
+    "lakekeeper-ubi": {
+      "revision": "2200c516919a9667e9761a6581b848de32b693d1",
+      "image_id": "sha256:128a6a9ab5f1caa237f7c64b0810cf5688108697cfdda07549a73df04e73954e",
+      "architecture": "amd64",
+      "runner_machine": "x86_64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/lakekeeper.lock.json",
+      "lock_sha256": "66554b3208310055b329697960043327ce37d082b7d93af336cdba3a20c0636e",
+      "labels": {
+        "architecture": "x86_64",
+        "build-date": "2026-11-05T06:34:46Z",
+        "com.redhat.component": "ubi9-micro-container",
+        "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+        "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+        "description": "Very small image which doesn't install the package manager.",
+        "distribution-scope": "public",
+        "io.buildah.version": "1.33.7",
+        "io.datopsis.artifact-lock.sha256": "66554b3208310055b329697960043327ce37d082b7d93af336cdba3a20c0636e",
+        "io.datopsis.lakekeeper.upstream-version": "0.13.4",
+        "io.k8s.description": "Very small image which doesn't install the package manager.",
+        "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+        "io.openshift.expose-services": "",
+        "maintainer": "Red Hat, Inc.",
+        "name": "ubi9/ubi-micro",
+        "org.opencontainers.image.created": "2026-11-05T06:34:46Z",
+        "org.opencontainers.image.description": "A security-oriented, rootless Lakekeeper Apache Iceberg REST catalog built on Red Hat UBI 9 Micro",
+        "org.opencontainers.image.documentation": "https://github.com/datopsis/lakekeeper-ubi#readme",
+        "org.opencontainers.image.licenses": "Apache-2.0",
+        "org.opencontainers.image.revision": "2200c516919a9667e9761a6581b848de32b693d1",
+        "org.opencontainers.image.source": "https://github.com/datopsis/lakekeeper-ubi",
+        "org.opencontainers.image.title": "Lakekeeper on Red Hat UBI 9",
+        "org.opencontainers.image.vendor": "Datopsis",
+        "org.opencontainers.image.version": "0.13.4",
+        "release": "1793860449",
+        "summary": "ubi9 micro image",
+        "url": "https://catalog.redhat.com/en/search?searchType=containers",
+        "vcs-ref": "9d7bd388a99de116058bd54b77737e2863cb3d45",
+        "vcs-type": "git",
+        "vendor": "Red Hat, Inc.",
+        "version": "9.8"
+      },
+      "provenance_errors": [],
+      "status": "pass",
+      "image_binary_sha256": "52cdaa0be3724158ce7943f211fcff09a1ae451b5e88916a42b367bdaf1fd705"
+    }
+  },
+  "scans": {
+    "trivy/keycloak": {
+      "status": "complete",
+      "fixable": {
+        "HIGH": 1,
+        "CRITICAL": 0
+      },
+      "image": "quay.io/keycloak/keycloak@sha256:c68e286cacd87b942ac1939a0a1481461109d6acd3a57dc496969a319a76bbf0",
+      "architecture": "amd64",
+      "scanner_version": "0.76.2",
+      "version_output": "Version: 0.76.2\nVulnerability DB:\n  Version: 2\n  UpdatedAt: 2026-11-13 00:58:46.183130125 +0000 UTC\n  NextUpdate: 2026-11-14 00:58:46.183129905 +0000 UTC\n  DownloadedAt: 2026-11-13 05:30:01.878598742 +0000 UTC\nJava DB:\n  Version: 1\n  UpdatedAt: 2026-11-13 01:08:15.464357406 +0000 UTC\n  NextUpdate: 2026-11-16 01:08:15.464357255 +0000 UTC\n  DownloadedAt: 2026-11-13 05:30:23.884833318 +0000 UTC"
+    },
+    "trivy/rauthy": {
+      "status": "complete",
+      "fixable": {
+        "HIGH": 1,
+        "CRITICAL": 0
+      },
+      "image": "ghcr.io/sebadob/rauthy@sha256:d733b7580f53c1601c286b5504853b2774e70245f5f9427d9bcda32496b753ee",
+      "architecture": "amd64",
+      "scanner_version": "0.76.2",
+      "version_output": "Version: 0.76.2\nVulnerability DB:\n  Version: 2\n  UpdatedAt: 2026-11-13 00:58:46.183130125 +0000 UTC\n  NextUpdate: 2026-11-14 00:58:46.183129905 +0000 UTC\n  DownloadedAt: 2026-11-13 05:30:01.878598742 +0000 UTC\nJava DB:\n  Version: 1\n  UpdatedAt: 2026-11-13 01:08:15.464357406 +0000 UTC\n  NextUpdate: 2026-11-16 01:08:15.464357255 +0000 UTC\n  DownloadedAt: 2026-11-13 05:30:23.884833318 +0000 UTC"
+    },
+    "trivy/kanidm": {
+      "status": "complete",
+      "fixable": {
+        "HIGH": 0,
+        "CRITICAL": 0
+      },
+      "image": "docker.io/kanidm/server@sha256:71b6ff5a9c9c32b632894d8acef5a2afc77941b35a0aa95dcee959fe688d5ce9",
+      "architecture": "amd64",
+      "scanner_version": "0.76.2",
+      "version_output": "Version: 0.76.2\nVulnerability DB:\n  Version: 2\n  UpdatedAt: 2026-11-13 00:58:46.183130125 +0000 UTC\n  NextUpdate: 2026-11-14 00:58:46.183129905 +0000 UTC\n  DownloadedAt: 2026-11-13 05:30:01.878598742 +0000 UTC\nJava DB:\n  Version: 1\n  UpdatedAt: 2026-11-13 01:08:15.464357406 +0000 UTC\n  NextUpdate: 2026-11-16 01:08:15.464357255 +0000 UTC\n  DownloadedAt: 2026-11-13 05:30:23.884833318 +0000 UTC"
+    },
+    "grype/keycloak": {
+      "status": "complete",
+      "fixable": {
+        "HIGH": 1,
+        "CRITICAL": 0
+      },
+      "image": "quay.io/keycloak/keycloak@sha256:c68e286cacd87b942ac1939a0a1481461109d6acd3a57dc496969a319a76bbf0",
+      "architecture": "amd64",
+      "scanner_version": "0.121.3",
+      "version_output": "grype 0.121.3"
+    },
+    "grype/rauthy": {
+      "status": "complete",
+      "fixable": {
+        "HIGH": 4,
+        "CRITICAL": 1
+      },
+      "image": "ghcr.io/sebadob/rauthy@sha256:d733b7580f53c1601c286b5504853b2774e70245f5f9427d9bcda32496b753ee",
+      "architecture": "amd64",
+      "scanner_version": "0.121.3",
+      "version_output": "grype 0.121.3"
+    },
+    "grype/kanidm": {
+      "status": "complete",
+      "fixable": {
+        "HIGH": 0,
+        "CRITICAL": 0
+      },
+      "image": "docker.io/kanidm/server@sha256:71b6ff5a9c9c32b632894d8acef5a2afc77941b35a0aa95dcee959fe688d5ce9",
+      "architecture": "amd64",
+      "scanner_version": "0.121.3",
+      "version_output": "grype 0.121.3"
+    }
+  },
+  "keycloak_jar_count": 484,
+  "artifact_files_sha256": {
+    "SANITIZED": "6060835e312059a1fd89fd3ce35e24bb67ab29b9d221344ca78fdda3558eb63e",
+    "builds.json": "c7b7c2858452d5b29dadf659ebefc8d1d27cab2bd4477e0e1d3a0e0f978c036e",
+    "grype-kanidm.json": "5bc5b10bcb42691c6fdd6980a84dd92996b96da43ecf75816e47c1f68bb1a2dd",
+    "grype-keycloak.json": "7d650ab42463e4435b5f187f81dc1e35242410607b5b8c270400f875e74eb046",
+    "grype-rauthy.json": "d815e24d063aae8238bc4f4e616676df2cf6a2e994c93ee4e665891a754663b7",
+    "idp-kanidm.log.json": "98cbaa57bf37a8e9cd401a00eabe7f117df6ab6c07f71d524f9374cec3d2da4e",
+    "idp-keycloak.log.json": "205e01761e9e448e62abde26a366bdbabc21032a69fd20e339b6a6bf89445248",
+    "idp-lakekeeper-kanidm.log.json": "53d1c38d87a01df26c6ed409db13a07dce3343402a3b76e2e7796a9f03f02778",
+    "idp-lakekeeper-keycloak.log.json": "f6f1650bd823abfe3b639f58bbe32f7a6eebbd3c6ab9c263e61038c2e9511fb4",
+    "idp-lakekeeper-rauthy.log.json": "598578cb4056f20d708bc739b51d736442c012b001d54c387463942d857b8096",
+    "idp-postgres.log.json": "72edcbe65d2273d4e558e16cc44aa750c1b96c153b94bc480ff988f968c6cca2",
+    "idp-rauthy.log.json": "36c09faeb12ae41aadcfad1aac02823ceb8cc80964b13752d72538f486245dbb",
+    "keycloak-jars.json": "59b57c669bc6a62b43e10728009e82e7a62b19123b6808a1b24b63d1b9e2b92b",
+    "results.json": "04bdc7100e26da4f7bbdda5c5182a7892b161829e8c257a62ad5c893203659eb",
+    "scans.json": "bf49a031fa2489bb12f0364085fdb43804c9d9d7585801e1adac576a51b739f3",
+    "trivy-kanidm.json": "894032aa8dae60abb87f0f306f63ee51e75be71e196f424086a9f807851a5345",
+    "trivy-keycloak.json": "51528ab83fe2e232b7e8f891a9299e0bf9e8c63fe264fdfa0f8a834f214b90c7",
+    "trivy-rauthy.json": "bfe5fd136c605dfd5aafa89cd203a2c396582f8b4b10e09270e8ad17e6cc8fa0"
+  }
+}

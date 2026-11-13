@@ -65,7 +65,8 @@ tokens are generated per run and excluded from artifacts. Decoded claims concern
 only synthetic identities. No GitHub secrets, permissions or settings are changed.
 
 Rauthy's internal Hiqlite ports 8100 and 8200 also use this CA and verified TLS.
-Its upstream `CLIENT_CREDENTIALS_MAP_SUB=true` setting maps the client ID to the
+Its upstream [`CLIENT_CREDENTIALS_MAP_SUB=true`](https://github.com/sebadob/rauthy/blob/v0.37.2/src/service/src/token_set.rs)
+setting maps the client ID to the
 machine-token subject; by default that grant omits `sub`. Keycloak clients include
 the built-in `basic` scope so machine tokens also contain a subject. These are
 provider configuration requirements, not client-side token rewriting.
@@ -80,10 +81,133 @@ anonymous plaintext requests. A TLS fatal decode-error alert is a rejection.
 
 ## Runtime comparison
 
-Results and run links will be populated from the final native artifacts. Early
-run [43368663460](https://github.com/datopsis/lakehouse-integration/actions/runs/43368663460)
-found a common harness env-file ownership bug before IdP startup; that is not
-candidate evidence. Its complete scans are valid independent evidence.
+Final native [run 43372083311](https://github.com/datopsis/lakehouse-integration/actions/runs/43372083311), harness revision
+`e28aa4a57596b8ded5640730020ea3a0ad456eff`. **PASS** is scoped to the named
+assertion; **BLOCKED** is not a pass or an IdP-specific failure. The JWT-format
+row decodes and checks fields against discovery/JWKS; it does not establish
+signature validation by Lakekeeper. **N/T** means not tested.
+
+| Assertion | Kanidm amd64 | Kanidm arm64 | Rauthy amd64 | Rauthy arm64 | Keycloak amd64 | Keycloak arm64 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Startup, provisioning and discovery | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Verified TLS; CA/hostname/plaintext negatives; exact listeners | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Client-credentials token endpoint (HTTP 200) | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Machine signed-JWT format/iss/aud/sub/exp/JWKS kid | [FAIL][amd64] | [FAIL][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| PyIceberg token acquisition only | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Human code + S256 PKCE at IdP only | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Groups in human access token | [FAIL][amd64] | [FAIL][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Groups in human ID token | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Service-account RFC 8693 exchange, custom harness | [PASS][amd64] | [PASS][arm64] | [N/T][amd64] | [N/T][arm64] | [N/T][amd64] | [N/T][arm64] |
+| New signing key and new-token kid published | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Startup/RSS/storage measurement | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Lakekeeper verified-TLS prerequisite | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
+| Trino 484 grant + list/read | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
+| PyIceberg grant + list/read | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
+| Sail 0.7.3 grant + list/read | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
+| Human token accepted by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
+| Valid token accepted by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
+| Wrong audience rejected by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
+| Expired token rejected by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
+| Different signing key rejected by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
+| Unsigned/alg=none rejected by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
+| New token accepted after IdP rotation by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
+
+[amd64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43372083311/job/131709936602
+[arm64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43372083311/job/131709936992
+
+Durable sanitized summaries, decoded claims, public JWKS, exact errors, source
+build/provenance results, scan versions/counts and full-artifact SHA-256 manifests:
+[amd64](idp-evidence/amd64.json), [arm64](idp-evidence/arm64.json).
+The run's `idp-bakeoff-amd64-43372083311-1` and `idp-bakeoff-arm64-43372083311-1`
+artifacts retain the complete scanner JSON and sanitized service logs for 14 days.
+The committed summaries remain after those artifacts expire.
+
+Both architectures report the same Kanidm machine-format error:
+`Expected signed JWT (3 segments), received 5-segment token (JWE is not a Lakekeeper JWT)`.
+Its access-token groups assertion fails because the `groups` field is absent;
+the ID token does contain group UUIDs and names. The configured Lakekeeper reports
+anonymous HTTP **401** and TLS **`[SSL: WRONG_VERSION_NUMBER]`** for every provider
+on both CPUs. No token is sent during this transport preflight.
+
+Earlier runs exposed fixture errors, not candidate failures: env-file ownership
+([43368663460](https://github.com/datopsis/lakehouse-integration/actions/runs/43368663460));
+empty scope, issuer normalization and Kanidm MFA provisioning
+([43369108418](https://github.com/datopsis/lakehouse-integration/actions/runs/43369108418));
+TLS-alert classification, Keycloak's socket process identifier and missing `basic`
+scope ([43369788776](https://github.com/datopsis/lakehouse-integration/actions/runs/43369788776)).
+The stricter subject assertion also identified Rauthy's default omission of `sub`
+([43371308288](https://github.com/datopsis/lakehouse-integration/actions/runs/43371308288));
+the final fixture enables its upstream subject mapping setting.
+The intermediate diagnostic run was superseded/cancelled. Only the final run above
+supports the table; both architectures use identical assertions.
+
+### Decoded claims
+
+These are selected fields from the final amd64 synthetic human login. Full decoded
+access/ID claims for **both** architectures are in the summaries above. ID-token
+groups are not silently substituted for API access-token groups.
+
+Kanidm access token:
+
+```json
+{
+  "iss": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper",
+  "aud": "lakekeeper",
+  "sub": "e0edfd9a-da9d-4e9e-8240-8d1b1f7edb44",
+  "exp": 1794548687,
+  "scope": "groups openid profile"
+}
+```
+
+Kanidm ID-token groups:
+
+```json
+{
+  "groups": [
+    "00000000-0000-0000-0000-000000000035",
+    "idm_all_persons@kanidm.idp.test",
+    "00000000-0000-0000-0000-000000000036",
+    "idm_all_accounts@kanidm.idp.test",
+    "00000000-0000-0000-0000-000000000048",
+    "idm_people_self_name_write@kanidm.idp.test",
+    "629fafcd-1e6b-431f-8139-63d5ad984201",
+    "lake-readers@kanidm.idp.test"
+  ]
+}
+```
+
+Rauthy access token:
+
+```json
+{
+  "iss": "https://rauthy.idp.test:8443/auth/v1/",
+  "aud": "lakekeeper",
+  "sub": "IMifmK5NCMYbku47FgAk7Xjz",
+  "exp": 1794547890,
+  "scope": "openid profile groups",
+  "roles": [
+    "user"
+  ],
+  "groups": [
+    "lake-readers"
+  ]
+}
+```
+
+Keycloak access token:
+
+```json
+{
+  "iss": "https://keycloak.idp.test:8443/realms/bakeoff",
+  "aud": "lakekeeper",
+  "sub": "3ade7490-fc9e-4ce9-94c6-50af7e0b8944",
+  "exp": 1794548045,
+  "scope": "openid email profile",
+  "groups": [
+    "lake-readers"
+  ]
+}
+```
 
 ## Grant and authorization-layer implications
 
@@ -131,6 +255,18 @@ includes first-start Quarkus augmentation and realm import in its readiness time
 Kanidm's API provisioning occurs afterward, so startup times are not equivalent
 production deployment costs.
 
+| IdP | CPU | Startup seconds | Median idle RSS MiB | Data directory MiB | Image MiB |
+| --- | --- | --- | --- | --- | --- |
+| Kanidm | [amd64][amd64] | 1.192 | 66.1 | 2.98 | 261.3 |
+| Kanidm | [arm64][arm64] | 1.150 | 74.2 | 2.98 | 268.6 |
+| Rauthy | [amd64][amd64] | 15.164 | 73.9 | 6.34 | 90.6 |
+| Rauthy | [arm64][arm64] | 8.143 | 74.4 | 6.34 | 93.2 |
+| Keycloak | [amd64][amd64] | 31.438 | 590.9 | 2.31 | 451.4 |
+| Keycloak | [arm64][arm64] | 27.433 | 574.7 | 2.25 | 452.6 |
+
+Keycloak contains **484 jars on each architecture**. Image sizes are Docker image
+inspection totals, not compressed registry transfer sizes.
+
 | Concern | Kanidm | Rauthy | Keycloak |
 | --- | --- | --- | --- |
 | Storage | Embedded database, no PostgreSQL dependency | Embedded Hiqlite/SQLite by default; PostgreSQL optional; Hiqlite cache persists even with PostgreSQL | H2 dev-file in this disposable evaluation; supported external relational DB such as PostgreSQL for production |
@@ -160,7 +296,7 @@ Lakekeeper with its owning scripts is a separate prerequisite, not an IdP build.
 | --- | --- | --- | --- |
 | Project license | MPL-2.0 | Apache-2.0 | Apache-2.0 |
 | Source-build evidence | Cargo workspace MSRV 1.96; rust-toolchain says mutable `stable`; native system libraries and UI build inputs also need locks | MSRV 1.95.0; upstream builder uses Rust 1.95.0 on Debian bookworm, Node 22, C/C++/Clang; some build helpers are unpinned | Maven/Java build; upstream container already uses UBI 9 micro and Java 21, but copies a prebuilt distribution |
-| Dependency-size method | 804 Cargo.lock package entries | 762 Cargo.lock package entries | Count every `.jar` regular file in the upstream image filesystem, per architecture; runtime evidence below |
+| Dependency-size method | 804 Cargo.lock package entries | 762 Cargo.lock package entries | 484 `.jar` regular files in each native upstream image filesystem |
 | What a hardened UBI 9 effort still needs | Pin Rust and all RPM/native/UI inputs; build from source natively on both CPUs; preserve MPL obligations and qualify reproducibility | Pin Rust, native/Node/UI/wasm inputs; build on UBI 9 rather than assume Debian binary ABI compatibility; qualify both CPUs | Pin JDK/Maven/frontend dependencies/RPMs and distribution build; upstream UBI base alone is not source-build/reproducibility proof |
 
 Counts include workspace packages and multiple versions of a crate; they are not
@@ -183,7 +319,7 @@ across the image. Scanner failure is an error, never a zero. Findings do not gat
 this evaluation; scanner execution failures do. Full JSON includes database dates,
 package evidence and scanner-specific matching. No suppression or fix was applied.
 
-Initial [actual scan run](https://github.com/datopsis/lakehouse-integration/actions/runs/43368663460):
+Final [actual scan run](https://github.com/datopsis/lakehouse-integration/actions/runs/43372083311), completed on both architectures:
 
 | IdP | Trivy amd64 H/C | Trivy arm64 H/C | Grype amd64 H/C | Grype arm64 H/C |
 | --- | --- | --- | --- | --- |
