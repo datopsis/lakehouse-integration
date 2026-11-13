@@ -139,7 +139,7 @@ class Provider:
                     "serviceAccountsEnabled": True,
                     "standardFlowEnabled": True,
                     "redirectUris": [CALLBACK],
-                    "defaultClientScopes": ["profile", "email"],
+                    "defaultClientScopes": ["basic", "profile", "email"],
                     "attributes": {"pkce.code.challenge.method": "S256"},
                     "protocolMappers": [
                         {

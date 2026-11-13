@@ -227,6 +227,7 @@ def machine_claims(provider):
     assert claims["iss"] == provider.issuer
     assert claims["aud"] == "lakekeeper" or "lakekeeper" in claims["aud"]
     assert claims["exp"] > time.time()
+    assert isinstance(claims["sub"], str) and claims["sub"]
     assert header["kid"] in {
         key["kid"] for key in provider.http.json("GET", provider.discovery["jwks_uri"])["keys"]
     }
@@ -259,6 +260,8 @@ def human(provider):
     tokens = provider.human()
     header, claims = decode(tokens["access_token"])
     assert claims["iss"] == provider.issuer and claims["exp"] > time.time()
+    assert isinstance(claims["sub"], str) and claims["sub"]
+    assert claims["aud"] == "lakekeeper" or claims["aud"] == ["lakekeeper"]
     provider.human_claims = claims
     provider.id_claims = decode(tokens["id_token"])[1]
     return {
@@ -271,11 +274,18 @@ def human(provider):
 
 def groups(provider):
     claims = provider.human_claims
-    assert "lake-readers" in json.dumps(claims.get("groups", [])), claims
+    assert "lake-readers" in claims.get("groups", []), claims
     return {
         "access_token_groups": claims["groups"],
         "id_token_groups": provider.id_claims.get("groups"),
     }
+
+
+def id_groups(provider):
+    groups = provider.id_claims.get("groups", [])
+    expected = "lake-readers@kanidm.idp.test" if provider.name == "kanidm" else "lake-readers"
+    assert expected in groups, provider.id_claims
+    return {"id_token_groups": groups, "scope": "ID token only; not an API access token"}
 
 
 def exchange(provider):
@@ -348,6 +358,9 @@ def tls_boundary(provider):
         for address in listeners
         if not address.startswith("127.0.0.11:")
     }
+    if application != ports and provider.name == "keycloak":
+        # JVM thread dump identifies an unexpected listener without exempting it.
+        run("docker", "kill", "--signal=QUIT", provider.container)
     assert application == ports, (application, ports, sockets)
     result = {"listeners": listeners, "ports": {}}
     for port in sorted(ports):
@@ -376,7 +389,12 @@ def tls_boundary(provider):
                 reply = sock.recv(4096)
             except ConnectionResetError:
                 reply = b""
-        assert not reply or reply.startswith(b"HTTP/1.1 400 "), reply
+        # Rustls returns this TLS fatal decode_error alert for a plaintext request.
+        assert (
+            not reply
+            or reply.startswith(b"HTTP/1.1 400 ")
+            or reply == b"\x15\x03\x03\x00\x02\x02\x32"
+        ), reply
         result["ports"][str(port)] = {
             "tls_version": version,
             "certificate": cert,
@@ -416,6 +434,7 @@ def main():
                 test(name + "/service_account_exchange", lambda: exchange(provider))
             test(name + "/human_pkce_idp", lambda: human(provider))
             test(name + "/groups_claim", lambda: groups(provider))
+            test(name + "/id_token_groups", lambda: id_groups(provider))
             test(name + "/rotation_idp", lambda: rotation(provider))
             test(name + "/operations", lambda: operations(provider))
             test(name + "/lakekeeper_transport", lambda: lakekeeper(provider, env))

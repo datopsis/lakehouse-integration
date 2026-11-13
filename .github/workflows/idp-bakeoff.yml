@@ -5,7 +5,6 @@ on:
     paths:
       - '.github/workflows/idp-bakeoff.yml'
       - 'evaluation/idp/**'
-      - 'docs/IDP-BAKEOFF.md'
 permissions:
   contents: read
 concurrency:
