@@ -14,6 +14,11 @@ require review and exact labels, with no allowances.
   three-client assertions and exact-outcome Sail canaries where needed.
 - TLS between all services: REST, S3, PostgreSQL, Seaweed control HTTP/gRPC, and Trino;
   include certificate verification, lifecycle and negative tests.
+- [ ] Phase B: build a hardened `rauthy-ubi` image and qualify OpenID login on both
+  native architectures. Owner chose Rauthy on 2026-11-13, with Keycloak as the
+  tested fallback; see the [IdP bake-off decision and evidence](IDP-BAKEOFF.md).
+  Sail 0.7.3 needs an externally supplied token-file path with token lifecycle
+  management; it has no native client-credentials grant provider.
 - OpenID login for Lakekeeper **with authorization**, plus authenticated Trino access.
   Prerequisite decision: while engines hold bucket-wide static S3 keys, catalog
   permissions do not protect data (see "How each engine gets S3 access" in

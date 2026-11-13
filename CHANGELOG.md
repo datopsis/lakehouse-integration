@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Record the owner's 2026-11-13 Phase B choice: Rauthy, with Keycloak as the tested
+  fallback. Plan a hardened `rauthy-ubi` image and Sail's externally supplied
+  token-file path, based on the native amd64/arm64 IdP bake-off evidence.
+- Make the separate IdP bake-off `workflow_dispatch` only, so its documented
+  compatibility failures do not appear on future PRs. Keep required `Integration`
+  unchanged.
+
 - Add T11 compaction, snapshot expiry and orphan removal through Trino/Lakekeeper,
   with exact three-client rows and physical S3 inventory/manifest assertions.
   Preserve default retention negative checks; lower minimums only in the disposable
