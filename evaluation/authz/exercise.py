@@ -77,6 +77,7 @@ def evaluate(arch):
         "authorization_models"
     ]
     model = models[0]["id"]
+    save("openfga-model.json", models[0])
 
     def tuples(user, relation, obj, delete=False):
         body = {

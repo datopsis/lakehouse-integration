@@ -58,7 +58,18 @@ def leaf(name):
 
 
 def container(name, image, command=(), env=None, mounts=(), extra=(), network=NETWORK):
-    args = ["docker", "run", "-d", "--name", name, "--label", LABEL, "--network", network]
+    args = [
+        "docker",
+        "run",
+        "-d",
+        "--no-healthcheck",
+        "--name",
+        name,
+        "--label",
+        LABEL,
+        "--network",
+        network,
+    ]
     if network == NETWORK:
         args += ["--network-alias", name]
     if env:
@@ -94,7 +105,7 @@ def transport(name, port, ca, client=None):
             reply = sock.recv(1024)
         except ConnectionResetError:
             reply = b""
-    assert not reply or reply.startswith((b"HTTP/1.1 400", b"\x15\x03")), reply
+    assert not reply or reply.startswith((b"HTTP/1.0 400", b"HTTP/1.1 400", b"\x15\x03")), reply
     return {
         "version": version,
         "unknown_ca_rejected": True,
