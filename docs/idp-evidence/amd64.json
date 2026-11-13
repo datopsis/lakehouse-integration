@@ -1,11 +1,16 @@
 {
-  "run_url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43372083311",
-  "harness_revision": "e28aa4a57596b8ded5640730020ea3a0ad456eff",
+  "run_url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43378071591",
+  "harness_revision": "398f50e6fd6d1e41e08f735802eb964d69dc30c0",
   "results": {
     "run": {
       "architecture": "amd64",
       "uname": "x86_64",
-      "url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43372083311"
+      "url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43378071591"
+    },
+    "storage": {
+      "status": "pass",
+      "value": null,
+      "seconds": 2.014
     },
     "keycloak/startup_provision_discovery": {
       "status": "pass",
@@ -14,7 +19,7 @@
         "image_id": "sha256:1ac63e04fe5d895e189df88efd4a097609b54b602ddbf1866a8ef21ef3d097af",
         "architecture": "amd64",
         "version": "26.8.2",
-        "startup_seconds": 31.438,
+        "startup_seconds": 25.385,
         "discovery": {
           "issuer": "https://keycloak.idp.test:8443/realms/bakeoff",
           "authorization_endpoint": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/auth",
@@ -267,19 +272,19 @@
           "claims_parameter_supported": true,
           "scopes_supported": [
             "openid",
-            "organization",
-            "acr",
-            "roles",
             "web-origins",
-            "offline_access",
-            "address",
+            "profile",
+            "acr",
             "phone",
-            "basic",
-            "email",
             "microprofile-jwt",
+            "email",
             "kc-admin-api",
+            "offline_access",
+            "basic",
+            "organization",
+            "address",
             "service_account",
-            "profile"
+            "roles"
           ],
           "request_parameter_supported": true,
           "request_uri_parameter_supported": true,
@@ -360,53 +365,281 @@
         },
         "image_bytes": 473316468
       },
-      "seconds": 37.246
+      "seconds": 32.716
     },
     "keycloak/trino_client_credentials_list_read": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "tables": [
+          [
+            "sample"
+          ]
+        ],
+        "rows": [
+          [
+            1,
+            "alpha"
+          ],
+          [
+            2,
+            "beta"
+          ]
+        ],
+        "mode": "credential",
+        "catalog_uri": "https://catalog-keycloak.idp.test:8181",
+        "oauth_server_uri": "https://keycloak.idp.test:8443/realms/bakeoff/protocol/openid-connect/token",
+        "tls_trust": "per-run CA in JVM truststore; verification enabled"
+      },
+      "seconds": 11.118
     },
     "keycloak/pyiceberg_client_credentials_list_read": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "tables": [
+          [
+            "bakeoff",
+            "sample"
+          ]
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "beta"
+          }
+        ]
+      },
+      "seconds": 0.084
     },
     "keycloak/sail_client_credentials_list_read": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "fail",
+      "error_type": "AssertionError",
+      "error": "{'mode': 'no-native-grant-provider', 'stdout': '', 'stderr': 'Traceback (most recent call last):\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/evaluation/idp/sail_read.py\", line 10, in <module>\\n    tables = [list(row) for row in spark.sql(\"SHOW TABLES IN bakeoff.bakeoff\").collect()]\\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/session.py\", line 836, in sql\\n    data, properties, ei = self.client.execute_command(cmd.command(self._client))\\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 1218, in execute_command\\n    data, _, metrics, observed_metrics, properties = self._execute_and_fetch(\\n                                                     ^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 1745, in _execute_and_fetch\\n    for response in self._execute_and_fetch_as_iterator(\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 1722, in _execute_and_fetch_as_iterator\\n    self._handle_error(error)\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 2084, in _handle_error\\n    self._handle_rpc_error(error)\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 2168, in _handle_rpc_error\\n    raise convert_exception(\\npyspark.errors.exceptions.connect.AnalysisException: external error: Failed to load config: response error: status code 401 Unauthorized\\n', 'source_limitation': 'Sail 0.7.3 has static/file bearer providers, no client-credentials grant'}",
+      "seconds": 1.01
     },
     "keycloak/human_pkce_lakekeeper": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "body": {
+          "overrides": {
+            "uri": "https://catalog-keycloak.idp.test:8181/catalog",
+            "idempotency-key-lifetime": "PT30M"
+          },
+          "defaults": {
+            "rest-page-size": "100",
+            "prefix": "13e3a10a-df2b-11f1-addc-072bebae30e1"
+          },
+          "endpoints": [
+            "GET /v1/config",
+            "GET /v1/{prefix}/namespaces",
+            "HEAD /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces",
+            "GET /v1/{prefix}/namespaces/{namespace}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces/{namespace}/properties",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials",
+            "POST /v1/{prefix}/tables/rename",
+            "POST /v1/{prefix}/namespaces/{namespace}/register",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics",
+            "POST /v1/{prefix}/transactions/commit",
+            "POST /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/views/rename"
+          ]
+        },
+        "url": "https://catalog-keycloak.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.003
     },
     "keycloak/valid_token": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "body": {
+          "overrides": {
+            "uri": "https://catalog-keycloak.idp.test:8181/catalog",
+            "idempotency-key-lifetime": "PT30M"
+          },
+          "defaults": {
+            "prefix": "13e3a10a-df2b-11f1-addc-072bebae30e1",
+            "rest-page-size": "100"
+          },
+          "endpoints": [
+            "GET /v1/config",
+            "GET /v1/{prefix}/namespaces",
+            "HEAD /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces",
+            "GET /v1/{prefix}/namespaces/{namespace}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces/{namespace}/properties",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials",
+            "POST /v1/{prefix}/tables/rename",
+            "POST /v1/{prefix}/namespaces/{namespace}/register",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics",
+            "POST /v1/{prefix}/transactions/commit",
+            "POST /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/views/rename"
+          ]
+        },
+        "url": "https://catalog-keycloak.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.002
     },
     "keycloak/wrong_audience": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d395-8bbf-76d1-85f4-c0bbcf2820a0"
+            ]
+          }
+        },
+        "url": "https://catalog-keycloak.idp.test:8181/catalog/v1/config?warehouse=bakeoff",
+        "method": "Same genuine token/key/issuer; only expected audience changed",
+        "token_audience": "lakekeeper",
+        "expected_audience": "wrong-audience",
+        "positive_control_before_and_after": 200
+      },
+      "seconds": 2.42
     },
     "keycloak/expired_token": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d39b-185c-72f3-8628-bd4220954f37"
+            ]
+          }
+        },
+        "url": "https://catalog-keycloak.idp.test:8181/catalog/v1/config?warehouse=bakeoff",
+        "token_exp": 1794551458,
+        "tested_at": 1794551519.3994334,
+        "kid_still_published": true,
+        "fresh_token_positive_control": 200
+      },
+      "seconds": 260.086
     },
     "keycloak/different_key": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d395-870d-70a0-a87c-8dc2e9b00760"
+            ]
+          }
+        },
+        "url": "https://catalog-keycloak.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.422
     },
     "keycloak/alg_none": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d395-8710-77b3-9886-8d54a26a2421"
+            ]
+          }
+        },
+        "url": "https://catalog-keycloak.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.002
     },
     "keycloak/rotation_lakekeeper": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "body": {
+          "overrides": {
+            "idempotency-key-lifetime": "PT30M",
+            "uri": "https://catalog-keycloak.idp.test:8181/catalog"
+          },
+          "defaults": {
+            "prefix": "13e3a10a-df2b-11f1-addc-072bebae30e1",
+            "rest-page-size": "100"
+          },
+          "endpoints": [
+            "GET /v1/config",
+            "GET /v1/{prefix}/namespaces",
+            "HEAD /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces",
+            "GET /v1/{prefix}/namespaces/{namespace}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces/{namespace}/properties",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials",
+            "POST /v1/{prefix}/tables/rename",
+            "POST /v1/{prefix}/namespaces/{namespace}/register",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics",
+            "POST /v1/{prefix}/transactions/commit",
+            "POST /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/views/rename"
+          ]
+        },
+        "url": "https://catalog-keycloak.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.008
     },
     "keycloak/verified_tls": {
       "status": "pass",
       "value": {
         "listeners": [
-          "127.0.0.11:40333",
+          "127.0.0.11:34503",
           "*:8443"
         ],
         "ports": {
@@ -430,9 +663,9 @@
                 ]
               ],
               "version": 3,
-              "serialNumber": "1721DFBD5B34DA85E702CCE181E96D8835872FE2",
-              "notBefore": "Nov 13 05:28:25 2026 GMT",
-              "notAfter": "Nov 14 05:28:25 2026 GMT",
+              "serialNumber": "320A98DEFC1CAAC2B8AEB9A16B5A4FC9138AA169",
+              "notBefore": "Nov 13 06:25:06 2026 GMT",
+              "notAfter": "Nov 14 06:25:06 2026 GMT",
               "subjectAltName": [
                 [
                   "DNS",
@@ -448,7 +681,7 @@
           }
         }
       },
-      "seconds": 0.119
+      "seconds": 0.115
     },
     "keycloak/machine_token_endpoint": {
       "status": "pass",
@@ -458,7 +691,7 @@
         "expires_in": 300,
         "segments": 3
       },
-      "seconds": 0.043
+      "seconds": 0.037
     },
     "keycloak/machine_jwt_claims": {
       "status": "pass",
@@ -466,26 +699,26 @@
         "header": {
           "alg": "RS256",
           "typ": "JWT",
-          "kid": "WEhLEGadWzviY71bKm6YE8UGrnk36-0zrFfzlFIDFTI"
+          "kid": "EOtvF33AfRoJmtuJy4YJIohVOae2j2PrcRqelj023MM"
         },
         "claims": {
-          "exp": 1794548044,
-          "iat": 1794547744,
-          "jti": "trrtcc:46160c6b-997e-a07e-0ba0-0a4d3386a6fc",
+          "exp": 1794551445,
+          "iat": 1794551145,
+          "jti": "trrtcc:0488b302-e074-2315-93e3-6f5d85680f29",
           "iss": "https://keycloak.idp.test:8443/realms/bakeoff",
           "aud": "lakekeeper",
-          "sub": "ea80a8a5-4877-4d4d-beb8-5ad7fb722b2c",
+          "sub": "0c67effe-4a55-4fef-a6c7-543a5a24804d",
           "typ": "Bearer",
           "azp": "lakekeeper",
           "scope": "email profile",
-          "clientHost": "172.18.0.1",
           "email_verified": false,
+          "clientHost": "172.18.0.1",
           "preferred_username": "service-account-lakekeeper",
           "clientAddress": "172.18.0.1",
           "client_id": "lakekeeper"
         }
       },
-      "seconds": 0.014
+      "seconds": 0.013
     },
     "keycloak/pyiceberg_token_only": {
       "status": "pass",
@@ -494,7 +727,7 @@
         "segments": 3,
         "scope": "Token acquisition only; NOT a Lakekeeper list/read test"
       },
-      "seconds": 0.354
+      "seconds": 0.256
     },
     "keycloak/human_pkce_idp": {
       "status": "pass",
@@ -502,19 +735,19 @@
         "access_token_header": {
           "alg": "RS256",
           "typ": "JWT",
-          "kid": "WEhLEGadWzviY71bKm6YE8UGrnk36-0zrFfzlFIDFTI"
+          "kid": "EOtvF33AfRoJmtuJy4YJIohVOae2j2PrcRqelj023MM"
         },
         "access_token_claims": {
-          "exp": 1794548045,
-          "iat": 1794547745,
-          "auth_time": 1794547745,
-          "jti": "onrtac:92b258f6-fc9f-a251-a10b-5272fe6e7eca",
+          "exp": 1794551446,
+          "iat": 1794551146,
+          "auth_time": 1794551146,
+          "jti": "onrtac:b762f5c4-3f7b-1e71-edf0-204a45fd5c8f",
           "iss": "https://keycloak.idp.test:8443/realms/bakeoff",
           "aud": "lakekeeper",
-          "sub": "3ade7490-fc9e-4ce9-94c6-50af7e0b8944",
+          "sub": "c68cc6a5-8268-4400-a8f0-783de1581c7e",
           "typ": "Bearer",
           "azp": "lakekeeper",
-          "sid": "9czxpWI5MbWxuQRZilHIqe87",
+          "sid": "XproVVUwRTsNoxDakU5tD1BP",
           "scope": "openid email profile",
           "email_verified": true,
           "name": "Alice Test",
@@ -527,18 +760,18 @@
           "email": "alice@idp.test"
         },
         "id_token_claims": {
-          "exp": 1794548045,
-          "iat": 1794547745,
-          "auth_time": 1794547745,
-          "jti": "3200dc53-117f-a987-295c-6b93c60d828a",
+          "exp": 1794551446,
+          "iat": 1794551146,
+          "auth_time": 1794551146,
+          "jti": "f8784d7d-1c44-851f-636f-495fc95c1fad",
           "iss": "https://keycloak.idp.test:8443/realms/bakeoff",
           "aud": "lakekeeper",
-          "sub": "3ade7490-fc9e-4ce9-94c6-50af7e0b8944",
+          "sub": "c68cc6a5-8268-4400-a8f0-783de1581c7e",
           "typ": "ID",
           "azp": "lakekeeper",
           "nonce": "[REDACTED]",
-          "sid": "9czxpWI5MbWxuQRZilHIqe87",
-          "at_hash": "kCeKtSJ0wgFVdH5_ujI6hQ",
+          "sid": "XproVVUwRTsNoxDakU5tD1BP",
+          "at_hash": "M54wms8HVprE11kXECeMwA",
           "email_verified": true,
           "name": "Alice Test",
           "groups": [
@@ -551,7 +784,7 @@
         },
         "flow": "authorization_code + S256 + state + nonce"
       },
-      "seconds": 0.592
+      "seconds": 0.598
     },
     "keycloak/groups_claim": {
       "status": "pass",
@@ -575,37 +808,141 @@
       },
       "seconds": 0.0
     },
+    "keycloak/operations": {
+      "status": "pass",
+      "value": {
+        "startup_to_https_ready_seconds": 25.385,
+        "idle_rss_kib_samples": [
+          578860,
+          584400,
+          584404,
+          584404,
+          584404
+        ],
+        "idle_rss_kib_median": 584404,
+        "data_directory_bytes": 2201727,
+        "container_cpu_limit": 2,
+        "container_memory_limit_bytes": 2147483648,
+        "startup_definition": "docker start through first verified HTTPS readiness (pull excluded)",
+        "data_definition": "apparent bytes after provisioning and auth tests; not production capacity"
+      },
+      "seconds": 5.155
+    },
+    "keycloak/lakekeeper_transport": {
+      "status": "pass",
+      "value": {
+        "proxy_revision": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+        "url": "https://catalog-keycloak.idp.test:8181",
+        "shared_namespace": true,
+        "listeners": "LISTEN 0      128     127.0.0.1:9000  0.0.0.0:*\nLISTEN 0      511       0.0.0.0:8181  0.0.0.0:*\nLISTEN 0      128     127.0.0.1:8182  0.0.0.0:*\nLISTEN 0      4096   127.0.0.11:44703 0.0.0.0:*\nLISTEN 0      511          [::]:8181     [::]:*",
+        "negative_errors": {
+          "untrusted_ca": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1000)",
+          "wrong_hostname": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'wrong.idp.test'. (_ssl.c:1000)"
+        },
+        "anonymous_https_status": 401,
+        "plaintext_frontend_status": 400,
+        "approved_exception": "HTTP only on 127.0.0.1:8182 inside shared network namespace"
+      },
+      "seconds": 2.072
+    },
+    "keycloak/seed_table": {
+      "status": "pass",
+      "value": {
+        "tables": [
+          [
+            "bakeoff",
+            "sample"
+          ]
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "beta"
+          }
+        ]
+      },
+      "seconds": 0.709
+    },
+    "keycloak/machine_token_lakekeeper": {
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "body": {
+          "overrides": {
+            "uri": "https://catalog-keycloak.idp.test:8181/catalog",
+            "idempotency-key-lifetime": "PT30M"
+          },
+          "defaults": {
+            "prefix": "13e3a10a-df2b-11f1-addc-072bebae30e1",
+            "rest-page-size": "100"
+          },
+          "endpoints": [
+            "GET /v1/config",
+            "GET /v1/{prefix}/namespaces",
+            "HEAD /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces",
+            "GET /v1/{prefix}/namespaces/{namespace}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces/{namespace}/properties",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials",
+            "POST /v1/{prefix}/tables/rename",
+            "POST /v1/{prefix}/namespaces/{namespace}/register",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics",
+            "POST /v1/{prefix}/transactions/commit",
+            "POST /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/views/rename"
+          ]
+        },
+        "url": "https://catalog-keycloak.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.003
+    },
     "keycloak/rotation_idp": {
       "status": "pass",
       "value": {
-        "old_kid": "WEhLEGadWzviY71bKm6YE8UGrnk36-0zrFfzlFIDFTI",
-        "new_kid": "Y6P9XtJpoyySEto9tvAQW8viWvjwfHpeEpreh9jwtvw",
+        "old_kid": "EOtvF33AfRoJmtuJy4YJIohVOae2j2PrcRqelj023MM",
+        "new_kid": "bB2M7DTNOoVllCP1ixem7e9YnM_Rlq5yIaLVqyV1Wf8",
         "before": {
           "keys": [
             {
-              "kid": "WEhLEGadWzviY71bKm6YE8UGrnk36-0zrFfzlFIDFTI",
-              "kty": "RSA",
-              "alg": "RS256",
-              "use": "sig",
-              "x5c": [
-                "MIICnTCCAYUCBgGh02F36zANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA1MjcyMloXDTM2MTExMzA1MjkwMlowEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANP0TAQRBjZ2IdkbxlT4c6nj5j5urBoHEfukdzilpCRwgNxSZ+1T6Mz3kFrlKX8Fgtr9oGAjSQ+J07Zkj66R5wNh8FwYdA3f4DjHvhkeri5SeSjoKnG0lwsvLHTJU6yYh2fDHRwL2DsEztjqqxSU3qI4JXZgp+dd87LqZEAwhQXPbAn2dj+0K3NnrS94pZQsObBIYN3Zmv28h5ujX7crUES9OuSE46NkN5tgvqwVGlqENToNQSuIJJuDuAytbFUDnwYqxcCqWqli4HPjvRuEUs3L76gJ/+RbEmGYUgWH1hZNe24oUnB9l+v3B3HiF1eSTMujI9s9NVWym1BJU3hPOfMCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAAgMf37ErfqFLDB+0N0W5Mqwvy2ny1DlniWm4gdEeus4RvLhWH3ZfjYbEZ000rNhiscAWgPudjCx81joqAVcjVVGnzYJdKRucHVozwB2yDmoP6k18zYZBNllPJlDDVKg+oMDtjbJOanq/gMi19eIuf3ZZcDiy2Tj55sI3w3vhQtLEOzh+8q1AdCfz3pPsBG2yJeSvk2+BF/Irx/jcPDtgmmxhupQa8L18BsTxYJDB6wZ4dLarTAh6eGDUJCNDjTKNdi/rr2u+KAcOcPHyXcUg+zk2ED9bY7QWON1zTKGgrDRZw7WefYfli5wXjH2vg+Q3KXw95FLH0weySLMnxb2F1w=="
-              ],
-              "x5t": "JbYTqaaD7nWBEisBTgD3ehhCQ6g",
-              "x5t#S256": "Dt9n9DdNA9Z0qWcliH1A9yu3aGGR3bt_H3_5VMOUvfI",
-              "n": "0_RMBBEGNnYh2RvGVPhzqePmPm6sGgcR-6R3OKWkJHCA3FJn7VPozPeQWuUpfwWC2v2gYCNJD4nTtmSPrpHnA2HwXBh0Dd_gOMe-GR6uLlJ5KOgqcbSXCy8sdMlTrJiHZ8MdHAvYOwTO2OqrFJTeojgldmCn513zsupkQDCFBc9sCfZ2P7Qrc2etL3illCw5sEhg3dma_byHm6NftytQRL065ITjo2Q3m2C-rBUaWoQ1Og1BK4gkm4O4DK1sVQOfBirFwKpaqWLgc-O9G4RSzcvvqAn_5FsSYZhSBYfWFk17bihScH2X6_cHceIXV5JMy6Mj2z01VbKbUElTeE858w",
-              "e": "AQAB"
-            },
-            {
-              "kid": "pToHEiIzYRBURphG3wVBQkGiT8-RUnaqlr4rrcIG8po",
+              "kid": "HtV7_4MlkyuR08LQa5JJi0U7OhwEohV0KZYzM0cwmEw",
               "kty": "RSA",
               "alg": "RSA-OAEP",
               "use": "enc",
               "x5c": [
-                "MIICnTCCAYUCBgGh02F4WjANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA1MjcyMloXDTM2MTExMzA1MjkwMlowEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALw58y6InkCGBJsQNMvTI+QeccYhdXmM40wPIpUcxV56bpUGJlIgPaunS+hsLTI94TAj4+q3tQG+3p6XotTVrMn7D8oetRqYY+wNABVQ9zXjbGqWdQnTWPjbdvMx02+iN7p41oSLqA1P/KtcaWd4QwUxm3uTbBXLPNgVmn4IvKxphyKlALq1zn7bKVa7K9f5gTDtzXD1pwtPFSF/d3iysZElEo4pq4Kst3ywmoicHbvvqwvPpekxar20T/fl89cdU907fgw1rvoKKdqav03GFTfun8EZWtrSlRJFgjbgMc5YMEKlOJ58wxnO6MuD2tx22NIV2gFzEGR9z4wtWw403W0CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAg2CJcbQ/Ycswqc/T8KT10JKhb5ixOTiG3P4W9wI19DLB6AQ3LpdeMgAmMnMedcgc5O/GLYngYQlZKgUZhI0rBi3GPWErhJNU03bPKqt9aT9xPs/g6aWdsoSBPbGLqGj6IpygBEZNRp+eH5ujIedG79XjUC2FJMztqxnL6hP807w70UPRaacxfMMsyXslGZW41592bjs06Nf3AtEre3FDEeWdsbkk2zG4pC31u2MTtUkFSUXi04WGr0tfgL6uUTbReQRc0Bgv12mOvXBGUvMBS8haxcYj18CQm67I+ZIOEwv5yWIoLRdKwaiWx32up5LvlSJevjvRAct9ydGK28AHQw=="
+                "MIICnTCCAYUCBgGh05VcCDANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA2MjQwM1oXDTM2MTExMzA2MjU0M1owEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJB01jEq5C4Wz/Xiwy/F5QEsDJGQ613fvmpCxLLfsBlMLdmFofODII9jSY09XuiwJqpcy72lp45VppySV+2JJBZecpuBDAmmN5AX6gG7RWMzP4+rC5/WdyAbHKWdEQDUOgwWDVx9T99pQ5wmRKvjdHpZbM2y4rERp2YDbgWuelsAkKqN0sG9kx5ARCq4bD/8zoSXETYUERHnH2D7f7ntRHy+XDSqmxgaPi/m1Yk4B26FFK8WJHtLKPMCgA8dm5w9YQaCxzqeGk0aq0n/CUaRt4ikHG/VaiBnu2x50yrRHE7HPisIMNu+ytfvd/nTFftr+wb8dkOUR721c6lKwT/Ms0UCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAZDWhivccxEu5S+JV1V3EC8mYEfthptLf9bmAgZ/yxNe6P8zN7iyDzsI8ncFse3O0C0TUTqUlZmNyr/ZfDkfLsMVaWmgGxDSN3RCdlIAER9DBxvbnz0RqEvWYo0DVMxkZttd+zx6EBfDq6IKXiL8kd9+F9EQSMAmHXp1u3KmewJnUutF8IOkEQQiqRaP3Do04hkZ7u98wcqyNxczTxPwFd8Anl0w/X8kIBbqkudpbtiC28RYGkT5HjfxT/EYFslESuI8FNFOe0syBmqAZ/xwKpgSV/ZYJAEusHvPFVNjO76uQUQ8WXJ/3rsbKwA9+e9DEH6JFWX8B8gGd+Jr5fKBKfQ=="
               ],
-              "x5t": "nlfStyPSx8HTWZ_4pcEk-g1bP_A",
-              "x5t#S256": "50nmyRUELDXkURh99fv6klFPGwmQ79mtQLZDsHcDcx4",
-              "n": "vDnzLoieQIYEmxA0y9Mj5B5xxiF1eYzjTA8ilRzFXnpulQYmUiA9q6dL6GwtMj3hMCPj6re1Ab7enpei1NWsyfsPyh61Gphj7A0AFVD3NeNsapZ1CdNY-Nt28zHTb6I3unjWhIuoDU_8q1xpZ3hDBTGbe5NsFcs82BWafgi8rGmHIqUAurXOftspVrsr1_mBMO3NcPWnC08VIX93eLKxkSUSjimrgqy3fLCaiJwdu--rC8-l6TFqvbRP9-Xz1x1T3Tt-DDWu-gop2pq_TcYVN-6fwRla2tKVEkWCNuAxzlgwQqU4nnzDGc7oy4Pa3HbY0hXaAXMQZH3PjC1bDjTdbQ",
+              "x5t": "YXB59_PMnfvjEE5uet6k1wv2AnI",
+              "x5t#S256": "WmGNShwD3mYcdAlZGxbpKvBnlpdnVyPqZjo50Sof3x8",
+              "n": "kHTWMSrkLhbP9eLDL8XlASwMkZDrXd--akLEst-wGUwt2YWh84Mgj2NJjT1e6LAmqlzLvaWnjlWmnJJX7YkkFl5ym4EMCaY3kBfqAbtFYzM_j6sLn9Z3IBscpZ0RANQ6DBYNXH1P32lDnCZEq-N0ellszbLisRGnZgNuBa56WwCQqo3Swb2THkBEKrhsP_zOhJcRNhQREecfYPt_ue1EfL5cNKqbGBo-L-bViTgHboUUrxYke0so8wKADx2bnD1hBoLHOp4aTRqrSf8JRpG3iKQcb9VqIGe7bHnTKtEcTsc-Kwgw277K1-93-dMV-2v7Bvx2Q5RHvbVzqUrBP8yzRQ",
+              "e": "AQAB"
+            },
+            {
+              "kid": "EOtvF33AfRoJmtuJy4YJIohVOae2j2PrcRqelj023MM",
+              "kty": "RSA",
+              "alg": "RS256",
+              "use": "sig",
+              "x5c": [
+                "MIICnTCCAYUCBgGh05VbHDANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA2MjQwM1oXDTM2MTExMzA2MjU0M1owEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALHZuWzm8zI36cg2WqpL7V3/82tW3feNi0aQV/1Kr2ljSGUBxOnTiBnvgvQBWisCV5vj0hgAE6GOTeY/8rOfxFb3RfGP+nOgtvP0zxaZRu+2hrda+YqwdH5idF6I+ynCvOT6YjdUxE/GuWZgFnW6McLbPy0dTrDL8HzfIe3QxR7ZjYmpOtM8oAGychl8jQAm5j8hAhq/OCdShxyOTrTgvaG4LsVMb4ox9enKbeqhZuE46VkGoSk3IqrbHlmmudi8du5VxVWwU+qFBR3eYqDuED1QLFB9rsIyELW28HVNLyQ+51yuocITlWvKuoG8CaP9TTWuSiwtQ/mdbRPjMosoEn8CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEARXHxSD+e5eqjlAunVjzAtEJiWMIl+JFFeiCZbKEC8ed5MXsA8RpBiyb1Mfl4Wtseztj21t0zewjhVc0xO93puKMOhmyoeRUkKEsKFRJW28Tlduqa3s3c4UmH8OfWGzuT9lRKR/pcmeWWf5sFlIybelTyiPpcS5AaOD4s53erqCMiIwV/L+t4GJiXLMaTXCWB/ubrBEs4qQPWC7m9TnKTUtes/GWaeceRAEpjjXMgnTAnkFsAqMrdwjCILBxwhQt+q5Kgvt2WX8HZARGgeJRuYGBmXmquCi2GjvkQcgdA5TD534Xh2trfBWBiq4nHEi0B3KIwu8BbWzcMOL5hUronaA=="
+              ],
+              "x5t": "n0fg9W8QCsvS2BG9AusX9S1NbWY",
+              "x5t#S256": "QYozNDmex6yOfLRgWT-lUHOl25HeRTQ3xODiN_Q7ljM",
+              "n": "sdm5bObzMjfpyDZaqkvtXf_za1bd942LRpBX_UqvaWNIZQHE6dOIGe-C9AFaKwJXm-PSGAAToY5N5j_ys5_EVvdF8Y_6c6C28_TPFplG77aGt1r5irB0fmJ0Xoj7KcK85PpiN1TET8a5ZmAWdboxwts_LR1OsMvwfN8h7dDFHtmNiak60zygAbJyGXyNACbmPyECGr84J1KHHI5OtOC9obguxUxvijH16cpt6qFm4TjpWQahKTciqtseWaa52Lx27lXFVbBT6oUFHd5ioO4QPVAsUH2uwjIQtbbwdU0vJD7nXK6hwhOVa8q6gbwJo_1NNa5KLC1D-Z1tE-MyiygSfw",
               "e": "AQAB"
             }
           ]
@@ -613,79 +950,105 @@
         "after": {
           "keys": [
             {
-              "kid": "Y6P9XtJpoyySEto9tvAQW8viWvjwfHpeEpreh9jwtvw",
+              "kid": "bB2M7DTNOoVllCP1ixem7e9YnM_Rlq5yIaLVqyV1Wf8",
               "kty": "RSA",
               "alg": "RS256",
               "use": "sig",
               "x5c": [
-                "MIICnTCCAYUCBgGh02GEnjANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA1MjcyNVoXDTM2MTExMzA1MjkwNVowEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAM/b+q7vhQZ00IvIYld1SQLlRL/JSHf8b//9oaktbfb1UiFCq/vSLZnEBzZ1MuV2fTPvEOqWl/9ppymqL0IW79+qCRHBmiI9BRlrMNbLlYvHMaw43O3U2mlFCJUNd3XWUeIprdWLXZ3TfhNkkZsHctcrWRy8sR1d2HbUcJ+w8TKyTnp1svUv5C7XRz6Zb4lS8gLaPCjo3yHIRb0100tHPjzbH6nGdo/X/U8kuzzHqYTBXqzjCgfU4e8zLK8Xg5SmbaO6TmLPuIrShDIkzvJW6LrMDiJK60ECLUSSuuNDNbTYofOiZ0jIc1PHF/Dve5LBGeUu7obY4R0vw3IYPKfdo9cCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEArPzm3oHNtEt8+S2n6BVNdg1c+BOWM7XYec/jJHfMfgxPtEW9dpcDLGmsNfoSKNFSyxMiL9+3eFAduCQcZAr7UWD6GobETkS6TKyNnoz3mQSIAQke8nda8LcwhGuz+ZVkqW9JRZpo7NOFDGSguke/HpMLkgPct6mseVa+KBu7ci1p147st1gjBLZY4cpZhirxegCwsbISFXPBkUqjg18lWgrqgH3C/c8UT4m/Wf2i21JjCJWeWKAgMkY377CZvOd+7PhnueL6aB3ETzFKpL/k0+29kmUmL2WHJaxLqedub/RoBZyDQ+dSkRckY4hJWcrGr4XqSOfvU3TNe5OnlYgsEg=="
+                "MIICnTCCAYUCBgGh05WRFjANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA2MjQxN1oXDTM2MTExMzA2MjU1N1owEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJygztfD1bf9ljgsNIbrSyVfo8YGFyLoP0MKLMCxRMh/WnwLEeDIVqitchzzy1llCN9dtSY11FWZJX2vqR5+24gAkDaNN+eEZZNnive782FB78iFesbR1dJ1epCDmAMosHfGexpxESpp+Nx18msKPy7nhGCZdVRRAJhY+pVEr2OoqG4o/2C6PBfy6/7WXutRPUXeBbon8tVVno40xB3WA9xyR82mI3CVg3kowLomGv55MifsmzYgbp+Fp4F5gfXjXMcGaivAJDLM+J9mNhHlPaTKo02ZZMTq3y47cXVSC/kFNawV169DcGDMienYOocls7DPrhgVZjWiOWwk87BaoVkCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAVO5JLBrhyhePoK3KmTgFqtBN16AzlNut0SeyjOb449N2KX4uwun1I6M+dHK9EuMxnIrjPLqUPD1psiEmOS7dY8cBsBECGy9ohsxxsURwXdzSgNKOtqTCHIdbsAHiZL8YFoM7LXEJHM9w+lPvKpqoxBFy9OGLT1LZ4ic3WRwwwkQcvLgfkboyEY2vHGsGa0JG7EfCq7kdHhRPLLMaA+hREWAxKSeXYuYUFE39H2/C2PjDDU2IhM6ly8HYOHMb2lHpemhfuVokg1IqOhvbdKZrzPdZPaX/MeS8aDSM2oHwQQgKb+oQ7GDaUX3OzSVEOq2QCEgYb/hsi3CM5G8+v4/WDQ=="
               ],
-              "x5t": "SluwHBOCFq3gF1BB73FUqjl_uHw",
-              "x5t#S256": "--WYm9JuN_XsIkJ7dj4AR5HKycoDCljkhKQP508Rrbg",
-              "n": "z9v6ru-FBnTQi8hiV3VJAuVEv8lId_xv__2hqS1t9vVSIUKr-9ItmcQHNnUy5XZ9M-8Q6paX_2mnKaovQhbv36oJEcGaIj0FGWsw1suVi8cxrDjc7dTaaUUIlQ13ddZR4imt1YtdndN-E2SRmwdy1ytZHLyxHV3YdtRwn7DxMrJOenWy9S_kLtdHPplviVLyAto8KOjfIchFvTXTS0c-PNsfqcZ2j9f9TyS7PMephMFerOMKB9Th7zMsrxeDlKZto7pOYs-4itKEMiTO8lbouswOIkrrQQItRJK640M1tNih86JnSMhzU8cX8O97ksEZ5S7uhtjhHS_Dchg8p92j1w",
+              "x5t": "RUn7dxcQs1uhNFgj3nWPRfcVxkA",
+              "x5t#S256": "ZxLUzsJGH69MFAeklBhMjGQi4mSy9jzmw_cQXuaKPMw",
+              "n": "nKDO18PVt_2WOCw0hutLJV-jxgYXIug_QwoswLFEyH9afAsR4MhWqK1yHPPLWWUI3121JjXUVZklfa-pHn7biACQNo0354Rlk2eK97vzYUHvyIV6xtHV0nV6kIOYAyiwd8Z7GnERKmn43HXyawo_LueEYJl1VFEAmFj6lUSvY6iobij_YLo8F_Lr_tZe61E9Rd4Fuify1VWejjTEHdYD3HJHzaYjcJWDeSjAuiYa_nkyJ-ybNiBun4WngXmB9eNcxwZqK8AkMsz4n2Y2EeU9pMqjTZlkxOrfLjtxdVIL-QU1rBXXr0NwYMyJ6dg6hyWzsM-uGBVmNaI5bCTzsFqhWQ",
               "e": "AQAB"
             },
             {
-              "kid": "WEhLEGadWzviY71bKm6YE8UGrnk36-0zrFfzlFIDFTI",
-              "kty": "RSA",
-              "alg": "RS256",
-              "use": "sig",
-              "x5c": [
-                "MIICnTCCAYUCBgGh02F36zANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA1MjcyMloXDTM2MTExMzA1MjkwMlowEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANP0TAQRBjZ2IdkbxlT4c6nj5j5urBoHEfukdzilpCRwgNxSZ+1T6Mz3kFrlKX8Fgtr9oGAjSQ+J07Zkj66R5wNh8FwYdA3f4DjHvhkeri5SeSjoKnG0lwsvLHTJU6yYh2fDHRwL2DsEztjqqxSU3qI4JXZgp+dd87LqZEAwhQXPbAn2dj+0K3NnrS94pZQsObBIYN3Zmv28h5ujX7crUES9OuSE46NkN5tgvqwVGlqENToNQSuIJJuDuAytbFUDnwYqxcCqWqli4HPjvRuEUs3L76gJ/+RbEmGYUgWH1hZNe24oUnB9l+v3B3HiF1eSTMujI9s9NVWym1BJU3hPOfMCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAAgMf37ErfqFLDB+0N0W5Mqwvy2ny1DlniWm4gdEeus4RvLhWH3ZfjYbEZ000rNhiscAWgPudjCx81joqAVcjVVGnzYJdKRucHVozwB2yDmoP6k18zYZBNllPJlDDVKg+oMDtjbJOanq/gMi19eIuf3ZZcDiy2Tj55sI3w3vhQtLEOzh+8q1AdCfz3pPsBG2yJeSvk2+BF/Irx/jcPDtgmmxhupQa8L18BsTxYJDB6wZ4dLarTAh6eGDUJCNDjTKNdi/rr2u+KAcOcPHyXcUg+zk2ED9bY7QWON1zTKGgrDRZw7WefYfli5wXjH2vg+Q3KXw95FLH0weySLMnxb2F1w=="
-              ],
-              "x5t": "JbYTqaaD7nWBEisBTgD3ehhCQ6g",
-              "x5t#S256": "Dt9n9DdNA9Z0qWcliH1A9yu3aGGR3bt_H3_5VMOUvfI",
-              "n": "0_RMBBEGNnYh2RvGVPhzqePmPm6sGgcR-6R3OKWkJHCA3FJn7VPozPeQWuUpfwWC2v2gYCNJD4nTtmSPrpHnA2HwXBh0Dd_gOMe-GR6uLlJ5KOgqcbSXCy8sdMlTrJiHZ8MdHAvYOwTO2OqrFJTeojgldmCn513zsupkQDCFBc9sCfZ2P7Qrc2etL3illCw5sEhg3dma_byHm6NftytQRL065ITjo2Q3m2C-rBUaWoQ1Og1BK4gkm4O4DK1sVQOfBirFwKpaqWLgc-O9G4RSzcvvqAn_5FsSYZhSBYfWFk17bihScH2X6_cHceIXV5JMy6Mj2z01VbKbUElTeE858w",
-              "e": "AQAB"
-            },
-            {
-              "kid": "pToHEiIzYRBURphG3wVBQkGiT8-RUnaqlr4rrcIG8po",
+              "kid": "HtV7_4MlkyuR08LQa5JJi0U7OhwEohV0KZYzM0cwmEw",
               "kty": "RSA",
               "alg": "RSA-OAEP",
               "use": "enc",
               "x5c": [
-                "MIICnTCCAYUCBgGh02F4WjANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA1MjcyMloXDTM2MTExMzA1MjkwMlowEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALw58y6InkCGBJsQNMvTI+QeccYhdXmM40wPIpUcxV56bpUGJlIgPaunS+hsLTI94TAj4+q3tQG+3p6XotTVrMn7D8oetRqYY+wNABVQ9zXjbGqWdQnTWPjbdvMx02+iN7p41oSLqA1P/KtcaWd4QwUxm3uTbBXLPNgVmn4IvKxphyKlALq1zn7bKVa7K9f5gTDtzXD1pwtPFSF/d3iysZElEo4pq4Kst3ywmoicHbvvqwvPpekxar20T/fl89cdU907fgw1rvoKKdqav03GFTfun8EZWtrSlRJFgjbgMc5YMEKlOJ58wxnO6MuD2tx22NIV2gFzEGR9z4wtWw403W0CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAg2CJcbQ/Ycswqc/T8KT10JKhb5ixOTiG3P4W9wI19DLB6AQ3LpdeMgAmMnMedcgc5O/GLYngYQlZKgUZhI0rBi3GPWErhJNU03bPKqt9aT9xPs/g6aWdsoSBPbGLqGj6IpygBEZNRp+eH5ujIedG79XjUC2FJMztqxnL6hP807w70UPRaacxfMMsyXslGZW41592bjs06Nf3AtEre3FDEeWdsbkk2zG4pC31u2MTtUkFSUXi04WGr0tfgL6uUTbReQRc0Bgv12mOvXBGUvMBS8haxcYj18CQm67I+ZIOEwv5yWIoLRdKwaiWx32up5LvlSJevjvRAct9ydGK28AHQw=="
+                "MIICnTCCAYUCBgGh05VcCDANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA2MjQwM1oXDTM2MTExMzA2MjU0M1owEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJB01jEq5C4Wz/Xiwy/F5QEsDJGQ613fvmpCxLLfsBlMLdmFofODII9jSY09XuiwJqpcy72lp45VppySV+2JJBZecpuBDAmmN5AX6gG7RWMzP4+rC5/WdyAbHKWdEQDUOgwWDVx9T99pQ5wmRKvjdHpZbM2y4rERp2YDbgWuelsAkKqN0sG9kx5ARCq4bD/8zoSXETYUERHnH2D7f7ntRHy+XDSqmxgaPi/m1Yk4B26FFK8WJHtLKPMCgA8dm5w9YQaCxzqeGk0aq0n/CUaRt4ikHG/VaiBnu2x50yrRHE7HPisIMNu+ytfvd/nTFftr+wb8dkOUR721c6lKwT/Ms0UCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAZDWhivccxEu5S+JV1V3EC8mYEfthptLf9bmAgZ/yxNe6P8zN7iyDzsI8ncFse3O0C0TUTqUlZmNyr/ZfDkfLsMVaWmgGxDSN3RCdlIAER9DBxvbnz0RqEvWYo0DVMxkZttd+zx6EBfDq6IKXiL8kd9+F9EQSMAmHXp1u3KmewJnUutF8IOkEQQiqRaP3Do04hkZ7u98wcqyNxczTxPwFd8Anl0w/X8kIBbqkudpbtiC28RYGkT5HjfxT/EYFslESuI8FNFOe0syBmqAZ/xwKpgSV/ZYJAEusHvPFVNjO76uQUQ8WXJ/3rsbKwA9+e9DEH6JFWX8B8gGd+Jr5fKBKfQ=="
               ],
-              "x5t": "nlfStyPSx8HTWZ_4pcEk-g1bP_A",
-              "x5t#S256": "50nmyRUELDXkURh99fv6klFPGwmQ79mtQLZDsHcDcx4",
-              "n": "vDnzLoieQIYEmxA0y9Mj5B5xxiF1eYzjTA8ilRzFXnpulQYmUiA9q6dL6GwtMj3hMCPj6re1Ab7enpei1NWsyfsPyh61Gphj7A0AFVD3NeNsapZ1CdNY-Nt28zHTb6I3unjWhIuoDU_8q1xpZ3hDBTGbe5NsFcs82BWafgi8rGmHIqUAurXOftspVrsr1_mBMO3NcPWnC08VIX93eLKxkSUSjimrgqy3fLCaiJwdu--rC8-l6TFqvbRP9-Xz1x1T3Tt-DDWu-gop2pq_TcYVN-6fwRla2tKVEkWCNuAxzlgwQqU4nnzDGc7oy4Pa3HbY0hXaAXMQZH3PjC1bDjTdbQ",
+              "x5t": "YXB59_PMnfvjEE5uet6k1wv2AnI",
+              "x5t#S256": "WmGNShwD3mYcdAlZGxbpKvBnlpdnVyPqZjo50Sof3x8",
+              "n": "kHTWMSrkLhbP9eLDL8XlASwMkZDrXd--akLEst-wGUwt2YWh84Mgj2NJjT1e6LAmqlzLvaWnjlWmnJJX7YkkFl5ym4EMCaY3kBfqAbtFYzM_j6sLn9Z3IBscpZ0RANQ6DBYNXH1P32lDnCZEq-N0ellszbLisRGnZgNuBa56WwCQqo3Swb2THkBEKrhsP_zOhJcRNhQREecfYPt_ue1EfL5cNKqbGBo-L-bViTgHboUUrxYke0so8wKADx2bnD1hBoLHOp4aTRqrSf8JRpG3iKQcb9VqIGe7bHnTKtEcTsc-Kwgw277K1-93-dMV-2v7Bvx2Q5RHvbVzqUrBP8yzRQ",
+              "e": "AQAB"
+            },
+            {
+              "kid": "EOtvF33AfRoJmtuJy4YJIohVOae2j2PrcRqelj023MM",
+              "kty": "RSA",
+              "alg": "RS256",
+              "use": "sig",
+              "x5c": [
+                "MIICnTCCAYUCBgGh05VbHDANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDDAdiYWtlb2ZmMB4XDTI2MTExMzA2MjQwM1oXDTM2MTExMzA2MjU0M1owEjEQMA4GA1UEAwwHYmFrZW9mZjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALHZuWzm8zI36cg2WqpL7V3/82tW3feNi0aQV/1Kr2ljSGUBxOnTiBnvgvQBWisCV5vj0hgAE6GOTeY/8rOfxFb3RfGP+nOgtvP0zxaZRu+2hrda+YqwdH5idF6I+ynCvOT6YjdUxE/GuWZgFnW6McLbPy0dTrDL8HzfIe3QxR7ZjYmpOtM8oAGychl8jQAm5j8hAhq/OCdShxyOTrTgvaG4LsVMb4ox9enKbeqhZuE46VkGoSk3IqrbHlmmudi8du5VxVWwU+qFBR3eYqDuED1QLFB9rsIyELW28HVNLyQ+51yuocITlWvKuoG8CaP9TTWuSiwtQ/mdbRPjMosoEn8CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEARXHxSD+e5eqjlAunVjzAtEJiWMIl+JFFeiCZbKEC8ed5MXsA8RpBiyb1Mfl4Wtseztj21t0zewjhVc0xO93puKMOhmyoeRUkKEsKFRJW28Tlduqa3s3c4UmH8OfWGzuT9lRKR/pcmeWWf5sFlIybelTyiPpcS5AaOD4s53erqCMiIwV/L+t4GJiXLMaTXCWB/ubrBEs4qQPWC7m9TnKTUtes/GWaeceRAEpjjXMgnTAnkFsAqMrdwjCILBxwhQt+q5Kgvt2WX8HZARGgeJRuYGBmXmquCi2GjvkQcgdA5TD534Xh2trfBWBiq4nHEi0B3KIwu8BbWzcMOL5hUronaA=="
+              ],
+              "x5t": "n0fg9W8QCsvS2BG9AusX9S1NbWY",
+              "x5t#S256": "QYozNDmex6yOfLRgWT-lUHOl25HeRTQ3xODiN_Q7ljM",
+              "n": "sdm5bObzMjfpyDZaqkvtXf_za1bd942LRpBX_UqvaWNIZQHE6dOIGe-C9AFaKwJXm-PSGAAToY5N5j_ys5_EVvdF8Y_6c6C28_TPFplG77aGt1r5irB0fmJ0Xoj7KcK85PpiN1TET8a5ZmAWdboxwts_LR1OsMvwfN8h7dDFHtmNiak60zygAbJyGXyNACbmPyECGr84J1KHHI5OtOC9obguxUxvijH16cpt6qFm4TjpWQahKTciqtseWaa52Lx27lXFVbBT6oUFHd5ioO4QPVAsUH2uwjIQtbbwdU0vJD7nXK6hwhOVa8q6gbwJo_1NNa5KLC1D-Z1tE-MyiygSfw",
               "e": "AQAB"
             }
           ]
         },
         "scope": "IdP publishes new key and signs a new token; Lakekeeper cache refresh NOT tested"
       },
-      "seconds": 0.401
+      "seconds": 0.192
     },
-    "keycloak/operations": {
+    "keycloak/expiry_positive_control": {
       "status": "pass",
       "value": {
-        "startup_to_https_ready_seconds": 31.438,
-        "idle_rss_kib_samples": [
-          602236,
-          605068,
-          605068,
-          605076,
-          605076
-        ],
-        "idle_rss_kib_median": 605068,
-        "data_directory_bytes": 2420555,
-        "container_cpu_limit": 2,
-        "container_memory_limit_bytes": 2147483648,
-        "startup_definition": "docker start through first verified HTTPS readiness (pull excluded)",
-        "data_definition": "apparent bytes after provisioning and auth tests; not production capacity"
+        "accepted_before_expiry": 200,
+        "claims": {
+          "exp": 1794551458,
+          "iat": 1794551158,
+          "auth_time": 1794551158,
+          "jti": "onrtac:c20a7dd5-9592-13c2-e081-ca675ab3d98a",
+          "iss": "https://keycloak.idp.test:8443/realms/bakeoff",
+          "aud": "lakekeeper",
+          "sub": "c68cc6a5-8268-4400-a8f0-783de1581c7e",
+          "typ": "Bearer",
+          "azp": "lakekeeper",
+          "sid": "PgesHIOIp3tW3rzOf6rtrUNK",
+          "scope": "openid email profile",
+          "email_verified": true,
+          "name": "Alice Test",
+          "groups": [
+            "lake-readers"
+          ],
+          "preferred_username": "alice",
+          "given_name": "Alice",
+          "family_name": "Test",
+          "email": "alice@idp.test"
+        },
+        "wait_until": 1794551519
       },
-      "seconds": 5.18
+      "seconds": 1.422
     },
-    "keycloak/lakekeeper_transport": {
-      "status": "blocked",
+    "keycloak/sail_external_token_list_read": {
+      "status": "pass",
       "value": {
-        "status": "blocked",
-        "anonymous_http_status": 401,
-        "tls_error": "[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1000)",
-        "reason": "Pinned Lakekeeper has no TLS listener; tokens never sent over HTTP."
+        "tables": [
+          [
+            "bakeoff",
+            "sample",
+            false
+          ]
+        ],
+        "rows": [
+          [
+            1,
+            "alpha"
+          ],
+          [
+            2,
+            "beta"
+          ]
+        ],
+        "external_token_lifecycle": true,
+        "native_client_credentials": false,
+        "tls_trust": "SSL_CERT_FILE per-run CA"
       },
-      "seconds": 1.461
+      "seconds": 0.988
     },
     "rauthy/startup_provision_discovery": {
       "status": "pass",
@@ -694,7 +1057,7 @@
         "image_id": "sha256:58c3ffaacc5ae223b036d5bf08a5d98a41b4bacb8c39cf45bc617433569ecec5",
         "architecture": "amd64",
         "version": "0.37.2",
-        "startup_seconds": 15.164,
+        "startup_seconds": 9.139,
         "discovery": {
           "issuer": "https://rauthy.idp.test:8443/auth/v1/",
           "authorization_endpoint": "https://rauthy.idp.test:8443/auth/v1/oidc/authorize",
@@ -810,56 +1173,284 @@
         },
         "image_bytes": 95040096
       },
-      "seconds": 17.457
+      "seconds": 12.04
     },
     "rauthy/trino_client_credentials_list_read": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "tables": [
+          [
+            "sample"
+          ]
+        ],
+        "rows": [
+          [
+            1,
+            "alpha"
+          ],
+          [
+            2,
+            "beta"
+          ]
+        ],
+        "mode": "credential",
+        "catalog_uri": "https://catalog-rauthy.idp.test:8181",
+        "oauth_server_uri": "https://rauthy.idp.test:8443/auth/v1/oidc/token",
+        "tls_trust": "per-run CA in JVM truststore; verification enabled"
+      },
+      "seconds": 10.91
     },
     "rauthy/pyiceberg_client_credentials_list_read": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "tables": [
+          [
+            "bakeoff",
+            "sample"
+          ]
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "beta"
+          }
+        ]
+      },
+      "seconds": 0.054
     },
     "rauthy/sail_client_credentials_list_read": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "fail",
+      "error_type": "AssertionError",
+      "error": "{'mode': 'no-native-grant-provider', 'stdout': '', 'stderr': 'Traceback (most recent call last):\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/evaluation/idp/sail_read.py\", line 10, in <module>\\n    tables = [list(row) for row in spark.sql(\"SHOW TABLES IN bakeoff.bakeoff\").collect()]\\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/session.py\", line 836, in sql\\n    data, properties, ei = self.client.execute_command(cmd.command(self._client))\\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 1218, in execute_command\\n    data, _, metrics, observed_metrics, properties = self._execute_and_fetch(\\n                                                     ^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 1745, in _execute_and_fetch\\n    for response in self._execute_and_fetch_as_iterator(\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 1722, in _execute_and_fetch_as_iterator\\n    self._handle_error(error)\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 2084, in _handle_error\\n    self._handle_rpc_error(error)\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 2168, in _handle_rpc_error\\n    raise convert_exception(\\npyspark.errors.exceptions.connect.AnalysisException: external error: Failed to load config: response error: status code 401 Unauthorized\\n', 'source_limitation': 'Sail 0.7.3 has static/file bearer providers, no client-credentials grant'}",
+      "seconds": 1.011
     },
     "rauthy/human_pkce_lakekeeper": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "body": {
+          "overrides": {
+            "uri": "https://catalog-rauthy.idp.test:8181/catalog",
+            "idempotency-key-lifetime": "PT30M"
+          },
+          "defaults": {
+            "prefix": "2abed462-df2b-11f1-9994-a3c9456da42a",
+            "rest-page-size": "100"
+          },
+          "endpoints": [
+            "GET /v1/config",
+            "GET /v1/{prefix}/namespaces",
+            "HEAD /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces",
+            "GET /v1/{prefix}/namespaces/{namespace}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces/{namespace}/properties",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials",
+            "POST /v1/{prefix}/tables/rename",
+            "POST /v1/{prefix}/namespaces/{namespace}/register",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics",
+            "POST /v1/{prefix}/transactions/commit",
+            "POST /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/views/rename"
+          ]
+        },
+        "url": "https://catalog-rauthy.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.003
     },
     "rauthy/valid_token": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "body": {
+          "overrides": {
+            "uri": "https://catalog-rauthy.idp.test:8181/catalog",
+            "idempotency-key-lifetime": "PT30M"
+          },
+          "defaults": {
+            "prefix": "2abed462-df2b-11f1-9994-a3c9456da42a",
+            "rest-page-size": "100"
+          },
+          "endpoints": [
+            "GET /v1/config",
+            "GET /v1/{prefix}/namespaces",
+            "HEAD /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces",
+            "GET /v1/{prefix}/namespaces/{namespace}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces/{namespace}/properties",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials",
+            "POST /v1/{prefix}/tables/rename",
+            "POST /v1/{prefix}/namespaces/{namespace}/register",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics",
+            "POST /v1/{prefix}/transactions/commit",
+            "POST /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/views/rename"
+          ]
+        },
+        "url": "https://catalog-rauthy.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.001
     },
     "rauthy/wrong_audience": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d396-1f85-7010-84c0-8629143efaf2"
+            ]
+          }
+        },
+        "url": "https://catalog-rauthy.idp.test:8181/catalog/v1/config?warehouse=bakeoff",
+        "method": "Same genuine token/key/issuer; only expected audience changed",
+        "token_audience": "lakekeeper",
+        "expected_audience": "wrong-audience",
+        "positive_control_before_and_after": 200
+      },
+      "seconds": 2.462
     },
     "rauthy/expired_token": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d39b-18b0-73c3-b0b5-dabfaa7b4138"
+            ]
+          }
+        },
+        "url": "https://catalog-rauthy.idp.test:8181/catalog/v1/config?warehouse=bakeoff",
+        "token_exp": 1794551319,
+        "tested_at": 1794551519.6404169,
+        "kid_still_published": true,
+        "fresh_token_positive_control": 200
+      },
+      "seconds": 0.238
     },
     "rauthy/different_key": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d396-1ace-77b2-977c-41e6230ab84e"
+            ]
+          }
+        },
+        "url": "https://catalog-rauthy.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.183
     },
     "rauthy/alg_none": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d396-1ad1-77b3-aa00-fdc6cf725671"
+            ]
+          }
+        },
+        "url": "https://catalog-rauthy.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.001
     },
     "rauthy/rotation_lakekeeper": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "body": {
+          "overrides": {
+            "uri": "https://catalog-rauthy.idp.test:8181/catalog",
+            "idempotency-key-lifetime": "PT30M"
+          },
+          "defaults": {
+            "rest-page-size": "100",
+            "prefix": "2abed462-df2b-11f1-9994-a3c9456da42a"
+          },
+          "endpoints": [
+            "GET /v1/config",
+            "GET /v1/{prefix}/namespaces",
+            "HEAD /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces",
+            "GET /v1/{prefix}/namespaces/{namespace}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces/{namespace}/properties",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials",
+            "POST /v1/{prefix}/tables/rename",
+            "POST /v1/{prefix}/namespaces/{namespace}/register",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics",
+            "POST /v1/{prefix}/transactions/commit",
+            "POST /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/views/rename"
+          ]
+        },
+        "url": "https://catalog-rauthy.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.004
     },
     "rauthy/verified_tls": {
       "status": "pass",
       "value": {
         "listeners": [
-          "0.0.0.0:8200",
+          "0.0.0.0:8100",
+          "127.0.0.11:40087",
           "0.0.0.0:8443",
-          "127.0.0.11:33639",
-          "0.0.0.0:8100"
+          "0.0.0.0:8200"
         ],
         "ports": {
           "8100": {
@@ -882,9 +1473,9 @@
                 ]
               ],
               "version": 3,
-              "serialNumber": "1721DFBD5B34DA85E702CCE181E96D8835872FE1",
-              "notBefore": "Nov 13 05:28:24 2026 GMT",
-              "notAfter": "Nov 14 05:28:24 2026 GMT",
+              "serialNumber": "320A98DEFC1CAAC2B8AEB9A16B5A4FC9138AA168",
+              "notBefore": "Nov 13 06:25:06 2026 GMT",
+              "notAfter": "Nov 14 06:25:06 2026 GMT",
               "subjectAltName": [
                 [
                   "DNS",
@@ -918,9 +1509,9 @@
                 ]
               ],
               "version": 3,
-              "serialNumber": "1721DFBD5B34DA85E702CCE181E96D8835872FE1",
-              "notBefore": "Nov 13 05:28:24 2026 GMT",
-              "notAfter": "Nov 14 05:28:24 2026 GMT",
+              "serialNumber": "320A98DEFC1CAAC2B8AEB9A16B5A4FC9138AA168",
+              "notBefore": "Nov 13 06:25:06 2026 GMT",
+              "notAfter": "Nov 14 06:25:06 2026 GMT",
               "subjectAltName": [
                 [
                   "DNS",
@@ -954,9 +1545,9 @@
                 ]
               ],
               "version": 3,
-              "serialNumber": "1721DFBD5B34DA85E702CCE181E96D8835872FE1",
-              "notBefore": "Nov 13 05:28:24 2026 GMT",
-              "notAfter": "Nov 14 05:28:24 2026 GMT",
+              "serialNumber": "320A98DEFC1CAAC2B8AEB9A16B5A4FC9138AA168",
+              "notBefore": "Nov 13 06:25:06 2026 GMT",
+              "notAfter": "Nov 14 06:25:06 2026 GMT",
               "subjectAltName": [
                 [
                   "DNS",
@@ -972,7 +1563,7 @@
           }
         }
       },
-      "seconds": 0.104
+      "seconds": 0.081
     },
     "rauthy/machine_token_endpoint": {
       "status": "pass",
@@ -982,22 +1573,22 @@
         "expires_in": 120,
         "segments": 3
       },
-      "seconds": 0.005
+      "seconds": 0.004
     },
     "rauthy/machine_jwt_claims": {
       "status": "pass",
       "value": {
         "header": {
           "alg": "RS256",
-          "kid": "PR5SzUstUNwdBIt4SOGxkSf5",
+          "kid": "r4afInDgIatkm8QNvpdOOo8z",
           "typ": "at+jwt"
         },
         "claims": {
-          "iat": 1794547770,
-          "nbf": 1794547770,
-          "exp": 1794547890,
+          "iat": 1794551183,
+          "nbf": 1794551183,
+          "exp": 1794551303,
           "iss": "https://rauthy.idp.test:8443/auth/v1/",
-          "jti": "wfJYgpixXrSQ",
+          "jti": "aKLCyBErUyvE",
           "aud": "lakekeeper",
           "sub": "lakekeeper",
           "typ": "Bearer",
@@ -1005,7 +1596,7 @@
           "scope": "openid profile groups"
         }
       },
-      "seconds": 0.002
+      "seconds": 0.001
     },
     "rauthy/pyiceberg_token_only": {
       "status": "pass",
@@ -1014,24 +1605,24 @@
         "segments": 3,
         "scope": "Token acquisition only; NOT a Lakekeeper list/read test"
       },
-      "seconds": 0.006
+      "seconds": 0.005
     },
     "rauthy/human_pkce_idp": {
       "status": "pass",
       "value": {
         "access_token_header": {
           "alg": "RS256",
-          "kid": "PR5SzUstUNwdBIt4SOGxkSf5",
+          "kid": "r4afInDgIatkm8QNvpdOOo8z",
           "typ": "at+jwt"
         },
         "access_token_claims": {
-          "iat": 1794547770,
-          "nbf": 1794547770,
-          "exp": 1794547890,
+          "iat": 1794551184,
+          "nbf": 1794551184,
+          "exp": 1794551304,
           "iss": "https://rauthy.idp.test:8443/auth/v1/",
-          "jti": "sOxCpYRTMxfg",
+          "jti": "kypxhFRyJHnf",
           "aud": "lakekeeper",
-          "sub": "IMifmK5NCMYbku47FgAk7Xjz",
+          "sub": "2cD1oZT9FVMt4Y9aWVFGkeJJ",
           "typ": "Bearer",
           "azp": "lakekeeper",
           "scope": "openid profile groups",
@@ -1043,21 +1634,21 @@
           ]
         },
         "id_token_claims": {
-          "iat": 1794547770,
-          "nbf": 1794547770,
-          "exp": 1794547890,
+          "iat": 1794551184,
+          "nbf": 1794551184,
+          "exp": 1794551304,
           "iss": "https://rauthy.idp.test:8443/auth/v1/",
           "aud": "lakekeeper",
-          "sub": "IMifmK5NCMYbku47FgAk7Xjz",
+          "sub": "2cD1oZT9FVMt4Y9aWVFGkeJJ",
           "typ": "Id",
           "azp": "lakekeeper",
           "scope": "openid profile groups",
           "amr": [
             "pwd"
           ],
-          "auth_time": 1794547770,
-          "at_hash": "feyTXUHd5JDW_LFlRvpHlQ",
-          "sid": "LKxbYnItlkObWmcuomf3odSCxqk9xUq8",
+          "auth_time": 1794551184,
+          "at_hash": "dD73gvJ3ykaF9Z_VFsr6XQ",
+          "sid": "gQlC4hOPaamuD5A0v0yMkcSLeOjCFYkf",
           "preferred_username": "alice@idp.test",
           "name": "Alice Test",
           "given_name": "Alice",
@@ -1073,7 +1664,7 @@
         },
         "flow": "authorization_code + S256 + state + nonce"
       },
-      "seconds": 0.638
+      "seconds": 0.889
     },
     "rauthy/groups_claim": {
       "status": "pass",
@@ -1097,35 +1688,139 @@
       },
       "seconds": 0.0
     },
+    "rauthy/operations": {
+      "status": "pass",
+      "value": {
+        "startup_to_https_ready_seconds": 9.139,
+        "idle_rss_kib_samples": [
+          76708,
+          76708,
+          76708,
+          76712,
+          76712
+        ],
+        "idle_rss_kib_median": 76708,
+        "data_directory_bytes": 6534638,
+        "container_cpu_limit": 2,
+        "container_memory_limit_bytes": 2147483648,
+        "startup_definition": "docker start through first verified HTTPS readiness (pull excluded)",
+        "data_definition": "apparent bytes after provisioning and auth tests; not production capacity"
+      },
+      "seconds": 5.157
+    },
+    "rauthy/lakekeeper_transport": {
+      "status": "pass",
+      "value": {
+        "proxy_revision": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+        "url": "https://catalog-rauthy.idp.test:8181",
+        "shared_namespace": true,
+        "listeners": "LISTEN 0      128     127.0.0.1:8182  0.0.0.0:*\nLISTEN 0      511       0.0.0.0:8181  0.0.0.0:*\nLISTEN 0      4096   127.0.0.11:39587 0.0.0.0:*\nLISTEN 0      128     127.0.0.1:9000  0.0.0.0:*\nLISTEN 0      511          [::]:8181     [::]:*",
+        "negative_errors": {
+          "untrusted_ca": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1000)",
+          "wrong_hostname": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'wrong.idp.test'. (_ssl.c:1000)"
+        },
+        "anonymous_https_status": 401,
+        "plaintext_frontend_status": 400,
+        "approved_exception": "HTTP only on 127.0.0.1:8182 inside shared network namespace"
+      },
+      "seconds": 1.96
+    },
+    "rauthy/seed_table": {
+      "status": "pass",
+      "value": {
+        "tables": [
+          [
+            "bakeoff",
+            "sample"
+          ]
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "beta"
+          }
+        ]
+      },
+      "seconds": 0.181
+    },
+    "rauthy/machine_token_lakekeeper": {
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "body": {
+          "overrides": {
+            "uri": "https://catalog-rauthy.idp.test:8181/catalog",
+            "idempotency-key-lifetime": "PT30M"
+          },
+          "defaults": {
+            "rest-page-size": "100",
+            "prefix": "2abed462-df2b-11f1-9994-a3c9456da42a"
+          },
+          "endpoints": [
+            "GET /v1/config",
+            "GET /v1/{prefix}/namespaces",
+            "HEAD /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces",
+            "GET /v1/{prefix}/namespaces/{namespace}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces/{namespace}/properties",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials",
+            "POST /v1/{prefix}/tables/rename",
+            "POST /v1/{prefix}/namespaces/{namespace}/register",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics",
+            "POST /v1/{prefix}/transactions/commit",
+            "POST /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/views/rename"
+          ]
+        },
+        "url": "https://catalog-rauthy.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.003
+    },
     "rauthy/rotation_idp": {
       "status": "pass",
       "value": {
-        "old_kid": "PR5SzUstUNwdBIt4SOGxkSf5",
-        "new_kid": "z0PnI06pz4dbxGaqtFNneR5I",
+        "old_kid": "r4afInDgIatkm8QNvpdOOo8z",
+        "new_kid": "coKckfu7islDEPNq5C4Noq08",
         "before": {
           "keys": [
             {
               "kty": "RSA",
               "use": "sig",
               "alg": "RS256",
-              "kid": "PR5SzUstUNwdBIt4SOGxkSf5",
-              "n": "vBehW8rBxBwtdBQ251zto_9Nkqw4PVBSyRRwSKUg5pH4RPvepDCYXeLxrzdH_AP89ZPtHX1jCXmkSniLFIuiMfMDFj5rn-1Q2K3d31Du1H6CYHNbNU4OTsrRXA0TDxG35pZEsX7M1GVLzeyeAg8Enn54rWhYO9X42fK5QVb-2b3v8xAjgWcs4sZhVd9dkys2MC9unMS6k7cW1jRLhmlVEIZzBLFUA3K06yQu6rd1CVhZl5Rr4A2gNzA46p1LtlsonBvp_vO2x0nO0j4sJsoSTjqHFVDGejmaLEkwSzdZG6Q83X5oxEMoKGgRsD_t-bdTFWBMUFsGutQ8Flb2AdeGuQ",
+              "kid": "r4afInDgIatkm8QNvpdOOo8z",
+              "n": "5tpRQTsyNeA_f9UVcPezYCOFvel7nT0z98oM4DStIp6xLtKWHag9Gs7FNe5z9wjRT-bgfxUwtdkYWtUUGjQHzGOFLkEtrGjbKToDlA9JA4rJN_SOVrOTdteI8NWQWAlDxDIkKWFZ8stvbITO5RD51FQB81gFQiTvR4r2CpR4ua69UGd4z9-pcOnnB9Qkmzv0N5_VQiry7F-ARUIwsMHrvvH7aIGlYpnYYxz2f7ikSlrULwrg67OOWoPGosc1BtSmYG5dXB_y5xIhRsz0a9gxeE7guloPS1Nf_22wQibVsOHEQcwQx-6hZPjcIBiNh0lO5AVekFIWN0T0aRrXsUagRw",
               "e": "AQAB"
             },
             {
               "kty": "RSA",
               "use": "sig",
               "alg": "RS384",
-              "kid": "RvaUOlqlcb3VYVEGPyss3mDV",
-              "n": "s_71-VyLCX26vtv1aKhY1-5LZjDBpcfoMXauyhvr5byJDa064inkKYkG_cDeyqvti5ntMX405m7zMqNrK2IY-I5JswBz-SRk0L5TTF0teX_J6YMPd4afRPv8mXJCDQvW6ejxBxNnMhkKYXbLw5TITjdLpqDfXiCU78i-yWS-pWkVnVB8dpOFXKfEGr9ULdOv_dNgTBV2safLQdE8aLIZw-XQX2jXRQf5Ti5c4EKYLYlIVfcfkDbp5dmh9Yqq_jmU_6ndAT1Yuw6V_aThKQktpYInCAu1OtiNiv7MPQI5EEyFVUSjB-DiJdUiW6Qi8GqjkzMOon4LitmfdsfN5E022SlZWBJMeDo6ryC1gSseysdGJQ8HbMXyexKoYEX-rKM5EpCi_yS93SvVUnHp55oVRNtksPh6nSBOPK-MiooV78DTCymPI6bRuqJwGG3S1reaCyPTG7gpVdLUCrcTjlBEftw05MtRMDc30J5BFRJXDGpOgIH7I3P1pyC4-EkYTGqF",
+              "kid": "QdLJNGYyfcPtqV8STlzUwyO9",
+              "n": "wVhDh5zX_fzLvVAPTPYTttse6RTm4SdmUAttOMEpw5BfHxqusSORleEB7OSaqeCEva18_jLTiyEiDyp1nN0PjAejJZ8CqD-8jD2Ya5vMTxh44PikgZyuwgtFJi8MiPZu7xgUKfViNH9JRj712G3f-EXhhlu3N4Wk_TBdQ4pqMzPLZsNM1IZaubUaSaiawYMK1d9D1sZ04C1B7A8M41PdXQ38kOZJhG_XYmtuXKDMueo_usqp_SPBbYhVwHQpaddMswvhU0rTmK3PEIm0n1fbEgdj6r4XMvl13e-I03HdnAaL54XGGvuCOJaVdgJ60rt0lfIyNKqVPFIPDiLHaRn5dq4HtgaB9A3sxMKFuHjIddKL-lq0W_TEFeE8iAcGaZUFbSIErwDHc0MSLpAhao9kqvqW5bL2ogVb5LuCldETqMihWUmKxEY_2kjSo28y39ic6Ud4RkNjaxXCCaXor5v4FAP6gUdnlm8t5CxVYCXADcU401BMyjH6ZW4w1BX_1XUr",
               "e": "AQAB"
             },
             {
               "kty": "RSA",
               "use": "sig",
               "alg": "RS512",
-              "kid": "H4ug9OcZmwjn2p21TkAXN27w",
-              "n": "qS108zaJGacFOOkaFRsdiwU4WVYirXHgPeDV5NJuoZQb5pEoFSUAkzTw6hTPvkRk-AoXn1AxgbvspB8y7abi-P7ageIWvEXfc7PqZMa7LcjL6kDGcnQWF6BSlw4uMAldWq_rylssz0xZYOufVh8Co4xDUpJqHZbiAYpQUlmZS2BmIvg2VaWDHXqVNzd2xca4aOCuZTDaRvGeMcsrPWmhH_RpdvGoelE8_jfMVdh_u1n-xcz5VepjnsXSF6gARzPY3oWkvV9kGwEC9f4KoaDQNpmNBzpsDL7UHVAk_i6zsP1UUO2ehY3OKulxHSqYhWlWB5Zr-ChABcwmBibjzwIwCF8lP7EFN8C22mQdT-HbzaotVL4cm_JUa_ETxHqw18eEvy3c-KQow_g7QxpqeLe0upN0mhpEDXlFDezeEoC8B7YOCVOefrsy_upan79Kmi59dCxXFrHT6SGhRx2sYWVc7Z7DD6qaXKbCoTQQAvRxPUe7jI1aKmWBKmkyvoteufXLDiLmW80ol2MMFIS0fMrS0aDA4wQw77NBo0KVnwAyksSeQl9tdkE_jtyVDtsMW54egjMjVxK7NMRoLyI_-5sdeY2Vdi8IgIi85pc1SzzoV9kI4q7c34tDLNy55VrGhXi7d1iSspTUZqVMEDJ4hMBnvHie4WX91v6l55ymWpvUnas",
+              "kid": "ABhA8c5E8HwtHnXqeh0psNtm",
+              "n": "7DNwYlixiaTk2sEXDUv8-iWrElkOYR2WmzbxQM423cqUH7ScKOOWF0OojAU_992mb2BJF_Pp3MIm7F_qXalQRL-D2_kt98Z0kxmNbl9nG1ks0uv0sXY82Skw5lAXj-PifiKBLYjbEwnfzVrXDu9yV5nopYFqOvg2YKpNlezsU4blA4rfIPsIEBord_q_k6kQipu8zKw-YjLYEAw_kUxQS1608LTY9KUIWL_YpAwOleNIQuoRFKAaCUldluSh-AYUtSnKemLgVzIrzgJ-j0_sbqw_AjRabHRTNDtZHwFySkLEKpf9hcAWaDOkyeuqFBaAsXfDeLVg-vqM318AA-KoDSq7Xu819bJ3a5F_phaFpl2DBdIBTTbkZjXrjelXvpl5GCfWA4UOLiGnVImGxdodW9oxjS3A7dFXs_SuR5Z5nZ2trqHSb5uA8HAyBmjVHX30-fdR5cUirA9cNmETl3qDHzvcyWsB3_yp617dMx59_tMZq1rTvbiRsqpoalSVTxYl2dVfTFERZFvFf9AvpU9yYwO2iI9RFSvQJxefW_lFTl-NsyMQV6wuST-3x_1cMeqTg8IUcefmMu_RkUcQvoQUV07BO-DqWcXscj7zmjA0qBoKcOmEvVER7wCXbMKipiEWXYjJhW-6cMv1CK7l_2K3Xsl9yJYf964TjxYiY6aapsE",
               "e": "AQAB"
             },
             {
@@ -1133,8 +1828,8 @@
               "use": "sig",
               "alg": "EdDSA",
               "crv": "Ed25519",
-              "kid": "a8qeASQwlSTenjiijsfUfAwB",
-              "x": "-qG2RiXnSzFvd8Q0PW7U29Ws0ojkOoQlj_xSkb-rzYA"
+              "kid": "zETFgzpOru8aHzhj3Hea8RGp",
+              "x": "-bsG3HHUYKVEcZY5xQjZw7FIlZbWnOzwmBKtuFI2CT4"
             }
           ]
         },
@@ -1144,24 +1839,24 @@
               "kty": "RSA",
               "use": "sig",
               "alg": "RS256",
-              "kid": "PR5SzUstUNwdBIt4SOGxkSf5",
-              "n": "vBehW8rBxBwtdBQ251zto_9Nkqw4PVBSyRRwSKUg5pH4RPvepDCYXeLxrzdH_AP89ZPtHX1jCXmkSniLFIuiMfMDFj5rn-1Q2K3d31Du1H6CYHNbNU4OTsrRXA0TDxG35pZEsX7M1GVLzeyeAg8Enn54rWhYO9X42fK5QVb-2b3v8xAjgWcs4sZhVd9dkys2MC9unMS6k7cW1jRLhmlVEIZzBLFUA3K06yQu6rd1CVhZl5Rr4A2gNzA46p1LtlsonBvp_vO2x0nO0j4sJsoSTjqHFVDGejmaLEkwSzdZG6Q83X5oxEMoKGgRsD_t-bdTFWBMUFsGutQ8Flb2AdeGuQ",
+              "kid": "r4afInDgIatkm8QNvpdOOo8z",
+              "n": "5tpRQTsyNeA_f9UVcPezYCOFvel7nT0z98oM4DStIp6xLtKWHag9Gs7FNe5z9wjRT-bgfxUwtdkYWtUUGjQHzGOFLkEtrGjbKToDlA9JA4rJN_SOVrOTdteI8NWQWAlDxDIkKWFZ8stvbITO5RD51FQB81gFQiTvR4r2CpR4ua69UGd4z9-pcOnnB9Qkmzv0N5_VQiry7F-ARUIwsMHrvvH7aIGlYpnYYxz2f7ikSlrULwrg67OOWoPGosc1BtSmYG5dXB_y5xIhRsz0a9gxeE7guloPS1Nf_22wQibVsOHEQcwQx-6hZPjcIBiNh0lO5AVekFIWN0T0aRrXsUagRw",
               "e": "AQAB"
             },
             {
               "kty": "RSA",
               "use": "sig",
               "alg": "RS384",
-              "kid": "RvaUOlqlcb3VYVEGPyss3mDV",
-              "n": "s_71-VyLCX26vtv1aKhY1-5LZjDBpcfoMXauyhvr5byJDa064inkKYkG_cDeyqvti5ntMX405m7zMqNrK2IY-I5JswBz-SRk0L5TTF0teX_J6YMPd4afRPv8mXJCDQvW6ejxBxNnMhkKYXbLw5TITjdLpqDfXiCU78i-yWS-pWkVnVB8dpOFXKfEGr9ULdOv_dNgTBV2safLQdE8aLIZw-XQX2jXRQf5Ti5c4EKYLYlIVfcfkDbp5dmh9Yqq_jmU_6ndAT1Yuw6V_aThKQktpYInCAu1OtiNiv7MPQI5EEyFVUSjB-DiJdUiW6Qi8GqjkzMOon4LitmfdsfN5E022SlZWBJMeDo6ryC1gSseysdGJQ8HbMXyexKoYEX-rKM5EpCi_yS93SvVUnHp55oVRNtksPh6nSBOPK-MiooV78DTCymPI6bRuqJwGG3S1reaCyPTG7gpVdLUCrcTjlBEftw05MtRMDc30J5BFRJXDGpOgIH7I3P1pyC4-EkYTGqF",
+              "kid": "QdLJNGYyfcPtqV8STlzUwyO9",
+              "n": "wVhDh5zX_fzLvVAPTPYTttse6RTm4SdmUAttOMEpw5BfHxqusSORleEB7OSaqeCEva18_jLTiyEiDyp1nN0PjAejJZ8CqD-8jD2Ya5vMTxh44PikgZyuwgtFJi8MiPZu7xgUKfViNH9JRj712G3f-EXhhlu3N4Wk_TBdQ4pqMzPLZsNM1IZaubUaSaiawYMK1d9D1sZ04C1B7A8M41PdXQ38kOZJhG_XYmtuXKDMueo_usqp_SPBbYhVwHQpaddMswvhU0rTmK3PEIm0n1fbEgdj6r4XMvl13e-I03HdnAaL54XGGvuCOJaVdgJ60rt0lfIyNKqVPFIPDiLHaRn5dq4HtgaB9A3sxMKFuHjIddKL-lq0W_TEFeE8iAcGaZUFbSIErwDHc0MSLpAhao9kqvqW5bL2ogVb5LuCldETqMihWUmKxEY_2kjSo28y39ic6Ud4RkNjaxXCCaXor5v4FAP6gUdnlm8t5CxVYCXADcU401BMyjH6ZW4w1BX_1XUr",
               "e": "AQAB"
             },
             {
               "kty": "RSA",
               "use": "sig",
               "alg": "RS512",
-              "kid": "H4ug9OcZmwjn2p21TkAXN27w",
-              "n": "qS108zaJGacFOOkaFRsdiwU4WVYirXHgPeDV5NJuoZQb5pEoFSUAkzTw6hTPvkRk-AoXn1AxgbvspB8y7abi-P7ageIWvEXfc7PqZMa7LcjL6kDGcnQWF6BSlw4uMAldWq_rylssz0xZYOufVh8Co4xDUpJqHZbiAYpQUlmZS2BmIvg2VaWDHXqVNzd2xca4aOCuZTDaRvGeMcsrPWmhH_RpdvGoelE8_jfMVdh_u1n-xcz5VepjnsXSF6gARzPY3oWkvV9kGwEC9f4KoaDQNpmNBzpsDL7UHVAk_i6zsP1UUO2ehY3OKulxHSqYhWlWB5Zr-ChABcwmBibjzwIwCF8lP7EFN8C22mQdT-HbzaotVL4cm_JUa_ETxHqw18eEvy3c-KQow_g7QxpqeLe0upN0mhpEDXlFDezeEoC8B7YOCVOefrsy_upan79Kmi59dCxXFrHT6SGhRx2sYWVc7Z7DD6qaXKbCoTQQAvRxPUe7jI1aKmWBKmkyvoteufXLDiLmW80ol2MMFIS0fMrS0aDA4wQw77NBo0KVnwAyksSeQl9tdkE_jtyVDtsMW54egjMjVxK7NMRoLyI_-5sdeY2Vdi8IgIi85pc1SzzoV9kI4q7c34tDLNy55VrGhXi7d1iSspTUZqVMEDJ4hMBnvHie4WX91v6l55ymWpvUnas",
+              "kid": "ABhA8c5E8HwtHnXqeh0psNtm",
+              "n": "7DNwYlixiaTk2sEXDUv8-iWrElkOYR2WmzbxQM423cqUH7ScKOOWF0OojAU_992mb2BJF_Pp3MIm7F_qXalQRL-D2_kt98Z0kxmNbl9nG1ks0uv0sXY82Skw5lAXj-PifiKBLYjbEwnfzVrXDu9yV5nopYFqOvg2YKpNlezsU4blA4rfIPsIEBord_q_k6kQipu8zKw-YjLYEAw_kUxQS1608LTY9KUIWL_YpAwOleNIQuoRFKAaCUldluSh-AYUtSnKemLgVzIrzgJ-j0_sbqw_AjRabHRTNDtZHwFySkLEKpf9hcAWaDOkyeuqFBaAsXfDeLVg-vqM318AA-KoDSq7Xu819bJ3a5F_phaFpl2DBdIBTTbkZjXrjelXvpl5GCfWA4UOLiGnVImGxdodW9oxjS3A7dFXs_SuR5Z5nZ2trqHSb5uA8HAyBmjVHX30-fdR5cUirA9cNmETl3qDHzvcyWsB3_yp617dMx59_tMZq1rTvbiRsqpoalSVTxYl2dVfTFERZFvFf9AvpU9yYwO2iI9RFSvQJxefW_lFTl-NsyMQV6wuST-3x_1cMeqTg8IUcefmMu_RkUcQvoQUV07BO-DqWcXscj7zmjA0qBoKcOmEvVER7wCXbMKipiEWXYjJhW-6cMv1CK7l_2K3Xsl9yJYf964TjxYiY6aapsE",
               "e": "AQAB"
             },
             {
@@ -1169,31 +1864,31 @@
               "use": "sig",
               "alg": "EdDSA",
               "crv": "Ed25519",
-              "kid": "a8qeASQwlSTenjiijsfUfAwB",
-              "x": "-qG2RiXnSzFvd8Q0PW7U29Ws0ojkOoQlj_xSkb-rzYA"
+              "kid": "zETFgzpOru8aHzhj3Hea8RGp",
+              "x": "-bsG3HHUYKVEcZY5xQjZw7FIlZbWnOzwmBKtuFI2CT4"
             },
             {
               "kty": "RSA",
               "use": "sig",
               "alg": "RS256",
-              "kid": "z0PnI06pz4dbxGaqtFNneR5I",
-              "n": "whwcEZJTcx6k1cG5Ka4xTiIhHux9uinokdvthfYTobZ-ZljKhj7DB4-0n375iC6T2-Q4_xvl5Chd3WL0YtFBXmf0UGQ_ZJSS5sMUEmqpWZKf8ZhuMdgy2zTvYSJeq24GGQGPaCBEeAyd-58I22Xur9X0DyQ32Iw7tTnrc5w9B9N8IIRHcoW5QYtajNJIUvN2iD9EZhsHp8JyUr7FQaXeiqd6WpgyBQ_M7f503z4esP0b8_Y1fr1Xi48Fdbdjco-EGiPmmT7MJqyIyG70UklEqu8mFoy0FsxJ4CnCto-N6qs-Nyvoy9DxU6ATNounM7z5dDyBuNpQtFGww4DyQNQ9PQ",
+              "kid": "coKckfu7islDEPNq5C4Noq08",
+              "n": "wALuYx_jSiT5OvWZBEiaV_NvHGWB4TLmTugnqsioZhL_qPk0Lqr9DVGAKoiYe10qcHbnYmz9PX2ysveTcLwY31aPKm_sdN_q-7ITcIQqNy86eIFPHQKCIU-3_QADRCWQoDRm29Mffg5DSPpoOUsxeTxHZdikd38wU8v1p7xy4w_p1GMS1f0qzQWiUs4ZpbtgXY4LVPwqK1BWDSPioWW0gEicfwyXsx9oE4dGIjibW7eoAVr9fOZ8m884AOf-pWePf5wK7pKJ8-gGPF_jbTzdZ-YxAkQgEaJ5N2JGBbax8-HY48DMwzqHqA1JA_3rB4J2gOpQsimmvfXv7HRkGp-fLQ",
               "e": "AQAB"
             },
             {
               "kty": "RSA",
               "use": "sig",
               "alg": "RS384",
-              "kid": "r0PMaDC1Yk1Ts6hw1y828RUH",
-              "n": "zLZHrXrLZGGnHWGPCk7FPBpeBfxnTwkFX59wtDJrWnYlv3EOeRJ5dNXjOX0Cx47xfL9B6QR7HUwHLs-kPSPSgo-JMa0_cB2kX6yDGgnzjS0QECGoQk0eHziA8iy-YsDj2q8gU0-7OAJWOcxD-_BYGGknJhVwliNTHsHQNKmm3Ks5jT5xb6m3hkzH8KfxsUGoD5ufeOuxHDQihpwFVS3AwM_QeP_FQIm72vYp_b7d521shkqBkYlR3q5JeWnzsbBMKhl1lPz8_qZehfoyQuG9cYJpwebatayQJCtQKFtXUaq8ua4Grv1eH_pEUK5WKboB4l3PBDkWfDLKsdgsxcZDYYmQIQtzyFZHy11yTh5jUYMMiVTJbJsBaLHG-ljfi2orTUsih7NiM4eshss6wRgtjwHATe5sekK-HQp3Ds6-0TDjwKqcE7tPKitp_DAVPwmyUwvaqQpn6sf8ovb3FVYvVYcKerZyG0B-UQ1CI3RYfEW39vBz7Wf20sYu-cAI9UYL",
+              "kid": "T0HTsfWgeFBddmVd71z7S0kg",
+              "n": "nNkDhIscXpw92FQdCfMZXdDPv0RHgPcS23MC-ZH4v0LdpY6LuDzXc6tgX-KQI1q7U4gedlJuW_J23vHTR1RzfN3IAOo32Pcwt65Fb8EnTl8RCW02HS3QPURmMlO0J4cP87Go1xdXQfPS4PyMd0LccUUwX9DYI0cHcWMZPgFQEAN1wj2p7M8OHkNczx9iw_SkBzkQY4Edx4pNSMyqXzef1C8jCSn9bdARGpPPVSfBpF-gCCzPA8P8WiyQBpgYd1Q6kyNKZRIw60xVog8MSWe-QErcReZHlx6LxBloI2L__WYyu9QGi12G93eVzIQXkzzOUCk9gFplIbbPopeWtIj2km6rfSjQto0HA25C15XV1hUTj7tWq4vipgEfhB1BrYud7NZynKzWk_kvNu8NhpSR9BJ7ypxaY3MasE8P1HETyeVvFEI7aMU3J7jBsgqRhAEFK1whsIxCCmKtbq1gQXUjyVDkzgzwvmOEoslOU4SZDB6Up6jg9Ksz6wP86qRWuZcX",
               "e": "AQAB"
             },
             {
               "kty": "RSA",
               "use": "sig",
               "alg": "RS512",
-              "kid": "9AYSN1CypZKX80lUXGiKfnXh",
-              "n": "v2oU4fPq_YVh0uB7vcxdx82iQl2IYs-BPU3mPqJzVlyo6dwiRfqZmd6WZBAU-JLLTL6wymU_eaVelEySx3b7MZp6biwtsGFx5x2niH2CrrjeIEaph_r6Mj5lcTjHFuLMqEgS-whSeBJv3tRipUK2sy-NdeshmuJsWDhR6vu562TJ2UClLxLlByEgdTVjylEljHyyA9cwMXOCFCQwWZKeij6wJRLZxrCiw6Ll4kpPMY8vUTa38cnHAy2U9c9-4gkwnDlpxV-5S6ax5XXfwfKXOEIxk-sfFBPlS0OqNDS0T1_HkovTxJQ2ZQdTGErHUdFMipQ-ZeyXH3RRMq4T-o_ZT6NMog4fpKXruGBNTZAP1--tR0Fd2xhHMgJv2SHxSjJ_eGLZsvd8HhutiG-GFQE4iHGbCCaBUbEbXvi6MoOsj8OwUXAHZXA2SM1vjuJ3WL6obuRPzT1Hp9cdbTTFVWuwoos7VB60lAGiZi_M7HVewFyt95KKs8_NllWFXVRxXMXVrEQltrOlyNyyATWl-E40ix0RF9p9qzFlb_Qe6OQEUEM0PWUnYmLhSHWb5LFmNWlVeHZc3fYJ11T3j_1PTT_U92WwQzvi0HAUkeVCwzckpwN4W3TCl1xoHrHqnAXar5RYjmn7M1PExbhNeI6YRQ5TN2nHTkR6L3cN3DdNeYUHAUc",
+              "kid": "3EkQ9avhlTzi86nlUfBikdpl",
+              "n": "xINTLlGjCh1jqCf4kL0gI3TfKop2aaFuwUHZPAcYZQTDCRpRnRJSkFegMF7gPasQVs3fagW9XqL8Qc68u76WYCpx2cd44VctbokDVUjG0v9ibrbG2F0oTGl0khyVG76WAbGNJvDl7MUEMfEe4a4DJjkodVmhGSIrZC7wPPkbBdCqrH2ZWDpuuYGB0wP2wtun1dUNoyG5MD82pvKlClXysMQgSufB3Sp5m4AlZjTLpI3NjUwSfyFaczo9fPgvXOThL_Q-Cu5Gi_po218Un2v4S3JnaDjvK4a1mVgnFmTV1Xn3tmt7riRKPz-3vetVT64Md8bHAHqzndYlxmzkvFltrKOukIGCj2mDipcZFXbxCas6Yq2XawxSgLwAstvUyMTuCeNAt9ITU2OqkOT5lCKHID5GUVEkYT86Rq6_IhrOzFp1LaItE29npjkdAHBGwRaPRL7PkjRY3EXwVwMV1MwR-TiYHZVnb8JZRSUHI-u-qQXhoOe3Z8TA4fm42-KwywEX4919v_b1AJK98uPK26haQ73iNIjRfVBXe5Z4YbmuJOyP167AVqZjCvH5xHl58vQHreu_ZliXAc1eFbH1FqsFbpW1nUjOABRnjuNnMyrOl0vJhOys6KZsIQxaX377wJ50C89fwkYXXze4vxJxMneZsCHREeNXBEe7azyop-GeY_s",
               "e": "AQAB"
             },
             {
@@ -1201,44 +1896,66 @@
               "use": "sig",
               "alg": "EdDSA",
               "crv": "Ed25519",
-              "kid": "i7MwjfPJDBJ7TSwZKEU2rEk2",
-              "x": "IyhlhvI63V4Gfm6cYzrpfxp8LKqVhU7vlZEcBxBHuhg"
+              "kid": "0n8phPZNH6CGRBYXUVsQHi8Q",
+              "x": "zik9ov28yFMU9oWmeTqovl38CpuNjAUCXIRI1auR6FU"
             }
           ]
         },
         "scope": "IdP publishes new key and signs a new token; Lakekeeper cache refresh NOT tested"
       },
-      "seconds": 5.347
+      "seconds": 1.852
     },
-    "rauthy/operations": {
+    "rauthy/expiry_positive_control": {
       "status": "pass",
       "value": {
-        "startup_to_https_ready_seconds": 15.164,
-        "idle_rss_kib_samples": [
-          75644,
-          75644,
-          75644,
-          75736,
-          75736
-        ],
-        "idle_rss_kib_median": 75644,
-        "data_directory_bytes": 6649998,
-        "container_cpu_limit": 2,
-        "container_memory_limit_bytes": 2147483648,
-        "startup_definition": "docker start through first verified HTTPS readiness (pull excluded)",
-        "data_definition": "apparent bytes after provisioning and auth tests; not production capacity"
+        "accepted_before_expiry": 200,
+        "claims": {
+          "iat": 1794551199,
+          "nbf": 1794551199,
+          "exp": 1794551319,
+          "iss": "https://rauthy.idp.test:8443/auth/v1/",
+          "jti": "kbqriYdtpPsm",
+          "aud": "lakekeeper",
+          "sub": "2cD1oZT9FVMt4Y9aWVFGkeJJ",
+          "typ": "Bearer",
+          "azp": "lakekeeper",
+          "scope": "openid profile groups",
+          "roles": [
+            "user"
+          ],
+          "groups": [
+            "lake-readers"
+          ]
+        },
+        "wait_until": 1794551380
       },
-      "seconds": 5.178
+      "seconds": 2.574
     },
-    "rauthy/lakekeeper_transport": {
-      "status": "blocked",
+    "rauthy/sail_external_token_list_read": {
+      "status": "pass",
       "value": {
-        "status": "blocked",
-        "anonymous_http_status": 401,
-        "tls_error": "[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1000)",
-        "reason": "Pinned Lakekeeper has no TLS listener; tokens never sent over HTTP."
+        "tables": [
+          [
+            "bakeoff",
+            "sample",
+            false
+          ]
+        ],
+        "rows": [
+          [
+            1,
+            "alpha"
+          ],
+          [
+            2,
+            "beta"
+          ]
+        ],
+        "external_token_lifecycle": true,
+        "native_client_credentials": false,
+        "tls_trust": "SSL_CERT_FILE per-run CA"
       },
-      "seconds": 1.42
+      "seconds": 1.332
     },
     "kanidm/startup_provision_discovery": {
       "status": "pass",
@@ -1247,7 +1964,7 @@
         "image_id": "sha256:d3714b0bcc0f8e5be8af12397e98b876be245cf6f78f566bc509b1f15eb921a2",
         "architecture": "amd64",
         "version": "1.12.0",
-        "startup_seconds": 1.192,
+        "startup_seconds": 1.451,
         "discovery": {
           "issuer": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper",
           "authorization_endpoint": "https://kanidm.idp.test:8443/ui/oauth2",
@@ -1306,54 +2023,247 @@
         },
         "image_bytes": 273974693
       },
-      "seconds": 4.234
+      "seconds": 5.384
     },
     "kanidm/trino_client_credentials_list_read": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "fail",
+      "error_type": "AssertionError",
+      "error": "{'message': 'Cannot obtain metadata', 'errorCode': 84148237, 'errorName': 'ICEBERG_CATALOG_ERROR', 'errorType': 'EXTERNAL', 'failureInfo': {'type': 'io.trino.spi.TrinoException', 'message': 'Cannot obtain metadata', 'cause': {'type': 'org.apache.iceberg.exceptions.NotAuthorizedException', 'message': 'Not authorized: Authentication failed', 'suppressed': [], 'stack': ['org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:343)', 'org.apache.iceberg.rest.ErrorHandlers$ConfigErrorHandler.accept(ErrorHandlers.java:313)', 'org.apache.iceberg.rest.ErrorHandlers$ConfigErrorHandler.accept(ErrorHandlers.java:304)', 'org.apache.iceberg.rest.HTTPClient.throwFailure(HTTPClient.java:242)', 'org.apache.iceberg.rest.HTTPClient.handleResponse(HTTPClient.java:367)', 'org.apache.iceberg.rest.HTTPClient.lambda$execute$1(HTTPClient.java:325)', 'org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:247)', 'org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:188)', 'org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:321)', 'org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:299)', 'org.apache.iceberg.rest.BaseHTTPClient.get(BaseHTTPClient.java:77)', 'org.apache.iceberg.rest.RESTSessionCatalog.fetchConfig(RESTSessionCatalog.java:1495)', 'org.apache.iceberg.rest.RESTSessionCatalog.initialize(RESTSessionCatalog.java:212)', 'io.trino.plugin.iceberg.catalog.rest.TrinoIcebergRestCatalogFactory.create(TrinoIcebergRestCatalogFactory.java:150)', 'io.trino.plugin.iceberg.IcebergMetadataFactory.create(IcebergMetadataFactory.java:115)', 'io.trino.plugin.iceberg.IcebergTransactionManager$MemoizedMetadata.get(IcebergTransactionManager.java:90)', 'io.trino.plugin.iceberg.IcebergTransactionManager.get(IcebergTransactionManager.java:56)', 'io.trino.plugin.iceberg.IcebergConnector.getMetadata(IcebergConnector.java:142)', 'io.trino.metadata.CatalogTransaction.getConnectorMetadata(CatalogTransaction.java:73)', 'io.trino.metadata.CatalogMetadata.getMetadata(CatalogMetadata.java:87)', 'io.trino.metadata.MetadataManager$QueryCatalogs.registerCatalog(MetadataManager.java:3039)', 'io.trino.metadata.MetadataManager.registerCatalogForQuery(MetadataManager.java:3012)', 'io.trino.metadata.MetadataManager.lambda$getOptionalCatalogMetadata$0(MetadataManager.java:2967)', 'java.base/java.util.Optional.ifPresent(Unknown Source)', 'io.trino.metadata.MetadataManager.getOptionalCatalogMetadata(MetadataManager.java:2967)', 'io.trino.metadata.MetadataManager.catalogExists(MetadataManager.java:244)', 'io.trino.tracing.TracingMetadata.catalogExists(TracingMetadata.java:168)', 'io.trino.sql.rewrite.ShowQueriesRewrite$Visitor.visitShowTables(ShowQueriesRewrite.java:261)', 'io.trino.sql.rewrite.ShowQueriesRewrite$Visitor.visitShowTables(ShowQueriesRewrite.java:230)', 'io.trino.sql.tree.ShowTables.accept(ShowTables.java:62)', 'io.trino.sql.tree.AstVisitor.process(AstVisitor.java:27)', 'io.trino.sql.rewrite.ShowQueriesRewrite.rewrite(ShowQueriesRewrite.java:227)', 'io.trino.sql.rewrite.StatementRewrite.rewrite(StatementRewrite.java:54)', 'io.trino.sql.analyzer.Analyzer.analyze(Analyzer.java:93)', 'io.trino.sql.analyzer.Analyzer.analyze(Analyzer.java:87)', 'io.trino.execution.SqlQueryExecution.analyze(SqlQueryExecution.java:288)', 'io.trino.execution.SqlQueryExecution.<init>(SqlQueryExecution.java:222)', 'io.trino.execution.SqlQueryExecution$SqlQueryExecutionFactory.createQueryExecution(SqlQueryExecution.java:893)', 'io.trino.dispatcher.LocalDispatchQueryFactory.lambda$createDispatchQuery$0(LocalDispatchQueryFactory.java:163)', 'io.trino.$gen.Trino_484___Callable.call(Unknown Source)', 'com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)', 'com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)', 'com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)', 'java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)', 'java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)', 'java.base/java.lang.Thread.run(Unknown Source)'], 'errorInfo': {'code': 65536, 'name': 'GENERIC_INTERNAL_ERROR', 'type': 'INTERNAL_ERROR'}}, 'suppressed': [], 'stack': ['io.trino.plugin.iceberg.IcebergConnector.getMetadata(IcebergConnector.java:146)', 'io.trino.metadata.CatalogTransaction.getConnectorMetadata(CatalogTransaction.java:73)', 'io.trino.metadata.CatalogMetadata.getMetadata(CatalogMetadata.java:87)', 'io.trino.metadata.MetadataManager$QueryCatalogs.registerCatalog(MetadataManager.java:3039)', 'io.trino.metadata.MetadataManager.registerCatalogForQuery(MetadataManager.java:3012)', 'io.trino.metadata.MetadataManager.lambda$getOptionalCatalogMetadata$0(MetadataManager.java:2967)', 'java.base/java.util.Optional.ifPresent(Unknown Source)', 'io.trino.metadata.MetadataManager.getOptionalCatalogMetadata(MetadataManager.java:2967)', 'io.trino.metadata.MetadataManager.catalogExists(MetadataManager.java:244)', 'io.trino.tracing.TracingMetadata.catalogExists(TracingMetadata.java:168)', 'io.trino.sql.rewrite.ShowQueriesRewrite$Visitor.visitShowTables(ShowQueriesRewrite.java:261)', 'io.trino.sql.rewrite.ShowQueriesRewrite$Visitor.visitShowTables(ShowQueriesRewrite.java:230)', 'io.trino.sql.tree.ShowTables.accept(ShowTables.java:62)', 'io.trino.sql.tree.AstVisitor.process(AstVisitor.java:27)', 'io.trino.sql.rewrite.ShowQueriesRewrite.rewrite(ShowQueriesRewrite.java:227)', 'io.trino.sql.rewrite.StatementRewrite.rewrite(StatementRewrite.java:54)', 'io.trino.sql.analyzer.Analyzer.analyze(Analyzer.java:93)', 'io.trino.sql.analyzer.Analyzer.analyze(Analyzer.java:87)', 'io.trino.execution.SqlQueryExecution.analyze(SqlQueryExecution.java:288)', 'io.trino.execution.SqlQueryExecution.<init>(SqlQueryExecution.java:222)', 'io.trino.execution.SqlQueryExecution$SqlQueryExecutionFactory.createQueryExecution(SqlQueryExecution.java:893)', 'io.trino.dispatcher.LocalDispatchQueryFactory.lambda$createDispatchQuery$0(LocalDispatchQueryFactory.java:163)', 'io.trino.$gen.Trino_484___Callable.call(Unknown Source)', 'com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)', 'com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)', 'com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)', 'java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)', 'java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)', 'java.base/java.lang.Thread.run(Unknown Source)'], 'errorInfo': {'code': 84148237, 'name': 'ICEBERG_CATALOG_ERROR', 'type': 'EXTERNAL'}}}",
+      "seconds": 8.708
     },
     "kanidm/pyiceberg_client_credentials_list_read": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "fail",
+      "error_type": "UnauthorizedError",
+      "error": "AuthenticationFailed: Authentication failed",
+      "seconds": 0.008
     },
     "kanidm/sail_client_credentials_list_read": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "fail",
+      "error_type": "AssertionError",
+      "error": "{'mode': 'no-native-grant-provider', 'stdout': '', 'stderr': 'Traceback (most recent call last):\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/evaluation/idp/sail_read.py\", line 10, in <module>\\n    tables = [list(row) for row in spark.sql(\"SHOW TABLES IN bakeoff.bakeoff\").collect()]\\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/session.py\", line 836, in sql\\n    data, properties, ei = self.client.execute_command(cmd.command(self._client))\\n                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 1218, in execute_command\\n    data, _, metrics, observed_metrics, properties = self._execute_and_fetch(\\n                                                     ^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 1745, in _execute_and_fetch\\n    for response in self._execute_and_fetch_as_iterator(\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 1722, in _execute_and_fetch_as_iterator\\n    self._handle_error(error)\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 2084, in _handle_error\\n    self._handle_rpc_error(error)\\n  File \"/home/runner/work/lakehouse-integration/lakehouse-integration/.sources/sail-venv/lib/python3.12/site-packages/pyspark/sql/connect/client/core.py\", line 2168, in _handle_rpc_error\\n    raise convert_exception(\\npyspark.errors.exceptions.connect.AnalysisException: external error: Failed to load config: response error: status code 401 Unauthorized\\n', 'source_limitation': 'Sail 0.7.3 has static/file bearer providers, no client-credentials grant'}",
+      "seconds": 0.98
     },
     "kanidm/human_pkce_lakekeeper": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "body": {
+          "overrides": {
+            "uri": "https://catalog-kanidm.idp.test:8181/catalog",
+            "idempotency-key-lifetime": "PT30M"
+          },
+          "defaults": {
+            "rest-page-size": "100",
+            "prefix": "3e969aa6-df2b-11f1-95ed-fb05fe5225e9"
+          },
+          "endpoints": [
+            "GET /v1/config",
+            "GET /v1/{prefix}/namespaces",
+            "HEAD /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces",
+            "GET /v1/{prefix}/namespaces/{namespace}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces/{namespace}/properties",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials",
+            "POST /v1/{prefix}/tables/rename",
+            "POST /v1/{prefix}/namespaces/{namespace}/register",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics",
+            "POST /v1/{prefix}/transactions/commit",
+            "POST /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/views/rename"
+          ]
+        },
+        "url": "https://catalog-kanidm.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.003
     },
     "kanidm/valid_token": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "body": {
+          "overrides": {
+            "idempotency-key-lifetime": "PT30M",
+            "uri": "https://catalog-kanidm.idp.test:8181/catalog"
+          },
+          "defaults": {
+            "prefix": "3e969aa6-df2b-11f1-95ed-fb05fe5225e9",
+            "rest-page-size": "100"
+          },
+          "endpoints": [
+            "GET /v1/config",
+            "GET /v1/{prefix}/namespaces",
+            "HEAD /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces",
+            "GET /v1/{prefix}/namespaces/{namespace}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces/{namespace}/properties",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials",
+            "POST /v1/{prefix}/tables/rename",
+            "POST /v1/{prefix}/namespaces/{namespace}/register",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics",
+            "POST /v1/{prefix}/transactions/commit",
+            "POST /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/views/rename"
+          ]
+        },
+        "url": "https://catalog-kanidm.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.002
     },
     "kanidm/wrong_audience": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d396-a112-7552-a3e4-bae1445f67a4"
+            ]
+          }
+        },
+        "url": "https://catalog-kanidm.idp.test:8181/catalog/v1/config?warehouse=bakeoff",
+        "method": "Same genuine token/key/issuer; only expected audience changed",
+        "token_audience": "lakekeeper",
+        "expected_audience": "wrong-audience",
+        "positive_control_before_and_after": 200
+      },
+      "seconds": 2.398
     },
     "kanidm/expired_token": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d3a5-581e-7ed1-8515-ab41ee6569c6"
+            ]
+          }
+        },
+        "url": "https://catalog-kanidm.idp.test:8181/catalog/v1/config?warehouse=bakeoff",
+        "token_exp": 1794552129,
+        "tested_at": 1794552191.063757,
+        "kid_still_published": true,
+        "fresh_token_positive_control": 200
+      },
+      "seconds": 671.42
     },
     "kanidm/different_key": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d396-9c54-7bf0-ac58-c992a022095e"
+            ]
+          }
+        },
+        "url": "https://catalog-kanidm.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.01
     },
     "kanidm/alg_none": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d396-9c58-7140-ab69-87fcbde04813"
+            ]
+          }
+        },
+        "url": "https://catalog-kanidm.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.001
     },
     "kanidm/rotation_lakekeeper": {
-      "status": "blocked",
-      "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent"
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "body": {
+          "overrides": {
+            "uri": "https://catalog-kanidm.idp.test:8181/catalog",
+            "idempotency-key-lifetime": "PT30M"
+          },
+          "defaults": {
+            "prefix": "3e969aa6-df2b-11f1-95ed-fb05fe5225e9",
+            "rest-page-size": "100"
+          },
+          "endpoints": [
+            "GET /v1/config",
+            "GET /v1/{prefix}/namespaces",
+            "HEAD /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces",
+            "GET /v1/{prefix}/namespaces/{namespace}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces/{namespace}/properties",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials",
+            "POST /v1/{prefix}/tables/rename",
+            "POST /v1/{prefix}/namespaces/{namespace}/register",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics",
+            "POST /v1/{prefix}/transactions/commit",
+            "POST /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/views/rename"
+          ]
+        },
+        "url": "https://catalog-kanidm.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.004
     },
     "kanidm/verified_tls": {
       "status": "pass",
       "value": {
         "listeners": [
-          "127.0.0.11:37469",
-          "0.0.0.0:8443"
+          "0.0.0.0:8443",
+          "127.0.0.11:37569"
         ],
         "ports": {
           "8443": {
@@ -1376,9 +2286,9 @@
                 ]
               ],
               "version": 3,
-              "serialNumber": "1721DFBD5B34DA85E702CCE181E96D8835872FE0",
-              "notBefore": "Nov 13 05:28:24 2026 GMT",
-              "notAfter": "Nov 14 05:28:24 2026 GMT",
+              "serialNumber": "320A98DEFC1CAAC2B8AEB9A16B5A4FC9138AA167",
+              "notBefore": "Nov 13 06:25:06 2026 GMT",
+              "notAfter": "Nov 14 06:25:06 2026 GMT",
               "subjectAltName": [
                 [
                   "DNS",
@@ -1394,7 +2304,7 @@
           }
         }
       },
-      "seconds": 0.056
+      "seconds": 0.043
     },
     "kanidm/machine_token_endpoint": {
       "status": "pass",
@@ -1404,7 +2314,7 @@
         "expires_in": 900,
         "segments": 5
       },
-      "seconds": 0.004
+      "seconds": 0.003
     },
     "kanidm/machine_jwt_claims": {
       "status": "fail",
@@ -1419,67 +2329,67 @@
         "segments": 5,
         "scope": "Token acquisition only; NOT a Lakekeeper list/read test"
       },
-      "seconds": 0.005
+      "seconds": 0.004
     },
     "kanidm/service_account_exchange": {
       "status": "pass",
       "value": {
         "header": {
           "alg": "ES256",
-          "kid": "d7f52e5a8aef",
+          "kid": "bdddd425f513",
           "typ": "at+jwt"
         },
         "claims": {
           "iss": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper",
-          "sub": "1ee4d438-dc18-43f1-a79b-07c98812c94d",
+          "sub": "5089f32a-a707-40a8-86e3-c69e7725f44e",
           "aud": "lakekeeper",
-          "exp": 1794548687,
-          "nbf": 1794547787,
-          "iat": 1794547787,
-          "jti": "cc77b4ac-f03b-45d6-9c3f-dab30f8842d2",
+          "exp": 1794552117,
+          "nbf": 1794551217,
+          "iat": 1794551217,
+          "jti": "acbb90d2-59f6-4fa7-8988-b93da6c86053",
           "client_id": "lakekeeper",
           "scope": "groups openid profile",
-          "session_id": "cc77b4ac-f03b-45d6-9c3f-dab30f8842d2"
+          "session_id": "acbb90d2-59f6-4fa7-8988-b93da6c86053"
         },
         "custom_harness_request": true,
         "stock_client_compatibility": "NOT established by this direct RFC8693 request"
       },
-      "seconds": 0.003
+      "seconds": 0.002
     },
     "kanidm/human_pkce_idp": {
       "status": "pass",
       "value": {
         "access_token_header": {
           "alg": "ES256",
-          "kid": "d7f52e5a8aef",
+          "kid": "bdddd425f513",
           "typ": "at+jwt"
         },
         "access_token_claims": {
           "iss": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper",
-          "sub": "e0edfd9a-da9d-4e9e-8240-8d1b1f7edb44",
+          "sub": "8c0df971-7e7d-4d81-94e3-d43d12cb7e37",
           "aud": "lakekeeper",
-          "exp": 1794548687,
-          "nbf": 1794547787,
-          "iat": 1794547787,
-          "jti": "5af5c926-e50c-4c5d-87ee-b1b986326d3b",
+          "exp": 1794552117,
+          "nbf": 1794551217,
+          "iat": 1794551217,
+          "jti": "e6e7dc9e-327d-4907-bec5-1c91709b941f",
           "client_id": "lakekeeper",
-          "auth_time": 1794547787,
+          "auth_time": 1794551217,
           "scope": "groups openid profile",
           "nonce": "[REDACTED]",
-          "session_id": "5af5c926-e50c-4c5d-87ee-b1b986326d3b",
-          "parent_session_id": "111e77eb-7445-42cf-b47b-fcbac33cdc95"
+          "session_id": "e6e7dc9e-327d-4907-bec5-1c91709b941f",
+          "parent_session_id": "2978eb9a-1e3a-479b-88e4-e84d431a27e2"
         },
         "id_token_claims": {
           "iss": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper",
-          "sub": "e0edfd9a-da9d-4e9e-8240-8d1b1f7edb44",
+          "sub": "8c0df971-7e7d-4d81-94e3-d43d12cb7e37",
           "aud": "lakekeeper",
-          "exp": 1794548687,
-          "nbf": 1794547787,
-          "iat": 1794547787,
-          "auth_time": 1794547787,
+          "exp": 1794552117,
+          "nbf": 1794551217,
+          "iat": 1794551217,
+          "auth_time": 1794551217,
           "nonce": "[REDACTED]",
           "azp": "lakekeeper",
-          "jti": "5af5c926-e50c-4c5d-87ee-b1b986326d3b",
+          "jti": "e6e7dc9e-327d-4907-bec5-1c91709b941f",
           "scopes": [
             "groups",
             "openid",
@@ -1487,7 +2397,7 @@
           ],
           "name": "Alice Test",
           "preferred_username": "alice@kanidm.idp.test",
-          "updated_at": 1794547787,
+          "updated_at": 1794551217,
           "groups": [
             "00000000-0000-0000-0000-000000000035",
             "idm_all_persons@kanidm.idp.test",
@@ -1495,18 +2405,18 @@
             "idm_all_accounts@kanidm.idp.test",
             "00000000-0000-0000-0000-000000000048",
             "idm_people_self_name_write@kanidm.idp.test",
-            "629fafcd-1e6b-431f-8139-63d5ad984201",
+            "58477ed2-2cdc-4947-8e9d-2d0cb2b46d52",
             "lake-readers@kanidm.idp.test"
           ]
         },
         "flow": "authorization_code + S256 + state + nonce"
       },
-      "seconds": 0.028
+      "seconds": 0.023
     },
     "kanidm/groups_claim": {
       "status": "fail",
       "error_type": "AssertionError",
-      "error": "{'iss': 'https://kanidm.idp.test:8443/oauth2/openid/lakekeeper', 'sub': 'e0edfd9a-da9d-4e9e-8240-8d1b1f7edb44', 'aud': 'lakekeeper', 'exp': 1794548687, 'nbf': 1794547787, 'iat': 1794547787, 'jti': '5af5c926-e50c-4c5d-87ee-b1b986326d3b', 'client_id': 'lakekeeper', 'auth_time': 1794547787, 'scope': 'groups openid profile', 'nonce': '[REDACTED]', 'session_id': '5af5c926-e50c-4c5d-87ee-b1b986326d3b', 'parent_session_id': '111e77eb-7445-42cf-b47b-fcbac33cdc95'}",
+      "error": "{'iss': 'https://kanidm.idp.test:8443/oauth2/openid/lakekeeper', 'sub': '8c0df971-7e7d-4d81-94e3-d43d12cb7e37', 'aud': 'lakekeeper', 'exp': 1794552117, 'nbf': 1794551217, 'iat': 1794551217, 'jti': 'e6e7dc9e-327d-4907-bec5-1c91709b941f', 'client_id': 'lakekeeper', 'auth_time': 1794551217, 'scope': 'groups openid profile', 'nonce': '[REDACTED]', 'session_id': 'e6e7dc9e-327d-4907-bec5-1c91709b941f', 'parent_session_id': '2978eb9a-1e3a-479b-88e4-e84d431a27e2'}",
       "seconds": 0.0
     },
     "kanidm/id_token_groups": {
@@ -1519,28 +2429,156 @@
           "idm_all_accounts@kanidm.idp.test",
           "00000000-0000-0000-0000-000000000048",
           "idm_people_self_name_write@kanidm.idp.test",
-          "629fafcd-1e6b-431f-8139-63d5ad984201",
+          "58477ed2-2cdc-4947-8e9d-2d0cb2b46d52",
           "lake-readers@kanidm.idp.test"
         ],
         "scope": "ID token only; not an API access token"
       },
       "seconds": 0.0
     },
+    "kanidm/operations": {
+      "status": "pass",
+      "value": {
+        "startup_to_https_ready_seconds": 1.451,
+        "idle_rss_kib_samples": [
+          72700,
+          72700,
+          72700,
+          72700,
+          72700
+        ],
+        "idle_rss_kib_median": 72700,
+        "data_directory_bytes": 3147687,
+        "container_cpu_limit": 2,
+        "container_memory_limit_bytes": 2147483648,
+        "startup_definition": "docker start through first verified HTTPS readiness (pull excluded)",
+        "data_definition": "apparent bytes after provisioning and auth tests; not production capacity"
+      },
+      "seconds": 5.152
+    },
+    "kanidm/lakekeeper_transport": {
+      "status": "pass",
+      "value": {
+        "proxy_revision": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+        "url": "https://catalog-kanidm.idp.test:8181",
+        "shared_namespace": true,
+        "listeners": "LISTEN 0      4096   127.0.0.11:42137 0.0.0.0:*\nLISTEN 0      128     127.0.0.1:9000  0.0.0.0:*\nLISTEN 0      511       0.0.0.0:8181  0.0.0.0:*\nLISTEN 0      128     127.0.0.1:8182  0.0.0.0:*\nLISTEN 0      511          [::]:8181     [::]:*",
+        "negative_errors": {
+          "untrusted_ca": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1000)",
+          "wrong_hostname": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'wrong.idp.test'. (_ssl.c:1000)"
+        },
+        "anonymous_https_status": 401,
+        "plaintext_frontend_status": 400,
+        "approved_exception": "HTTP only on 127.0.0.1:8182 inside shared network namespace"
+      },
+      "seconds": 1.97
+    },
+    "kanidm/seed_table": {
+      "status": "pass",
+      "value": {
+        "tables": [
+          [
+            "bakeoff",
+            "sample"
+          ]
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "beta"
+          }
+        ]
+      },
+      "seconds": 0.218
+    },
+    "kanidm/machine_token_lakekeeper": {
+      "status": "fail",
+      "error_type": "AssertionError",
+      "error": "{'http_status': 401, 'body': {'error': {'message': 'Authentication failed', 'type': 'AuthenticationFailed', 'code': 401, 'stack': ['Error ID: 01a1d396-9bf8-76f3-b9d6-8b70bad5406e']}}, 'url': 'https://catalog-kanidm.idp.test:8181/catalog/v1/config?warehouse=bakeoff'}",
+      "seconds": 0.001
+    },
+    "kanidm/jwe_rejected": {
+      "status": "pass",
+      "value": {
+        "http_status": 401,
+        "body": {
+          "error": {
+            "message": "Authentication failed",
+            "type": "AuthenticationFailed",
+            "code": 401,
+            "stack": [
+              "Error ID: 01a1d396-9bfb-76e1-ae30-9021edfd8d5f"
+            ]
+          }
+        },
+        "url": "https://catalog-kanidm.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.001
+    },
+    "kanidm/exchange_token_lakekeeper": {
+      "status": "pass",
+      "value": {
+        "http_status": 200,
+        "body": {
+          "overrides": {
+            "uri": "https://catalog-kanidm.idp.test:8181/catalog",
+            "idempotency-key-lifetime": "PT30M"
+          },
+          "defaults": {
+            "rest-page-size": "100",
+            "prefix": "3e969aa6-df2b-11f1-95ed-fb05fe5225e9"
+          },
+          "endpoints": [
+            "GET /v1/config",
+            "GET /v1/{prefix}/namespaces",
+            "HEAD /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces",
+            "GET /v1/{prefix}/namespaces/{namespace}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}",
+            "POST /v1/{prefix}/namespaces/{namespace}/properties",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/tables/{table}",
+            "GET /v1/{prefix}/namespaces/{namespace}/tables/{table}/credentials",
+            "POST /v1/{prefix}/tables/rename",
+            "POST /v1/{prefix}/namespaces/{namespace}/register",
+            "POST /v1/{prefix}/namespaces/{namespace}/tables/{table}/metrics",
+            "POST /v1/{prefix}/transactions/commit",
+            "POST /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views",
+            "GET /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "DELETE /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "HEAD /v1/{prefix}/namespaces/{namespace}/views/{view}",
+            "POST /v1/{prefix}/views/rename"
+          ]
+        },
+        "url": "https://catalog-kanidm.idp.test:8181/catalog/v1/config?warehouse=bakeoff"
+      },
+      "seconds": 0.005
+    },
     "kanidm/rotation_idp": {
       "status": "pass",
       "value": {
-        "old_kid": "d7f52e5a8aef",
-        "new_kid": "5fbf28417919",
+        "old_kid": "bdddd425f513",
+        "new_kid": "52f9b9559a9a",
         "before": {
           "keys": [
             {
               "kty": "EC",
               "crv": "P-256",
-              "x": "ET03l5e58MVShlrCW8gLlAQfaXiDQkjQ5_geBwNr-DE",
-              "y": "rb_vxsp-C2Ygu0I4bdxI8pWYXu6tzK0jzU0yc4RUYIs",
+              "x": "aUnFNOswhjMaWSK--MfGDfuuqFes_8xuVcY6POLZmUI",
+              "y": "L1aTCIQKCFnL9Zkc2p5qvPxvKIq87ZVwgY6OOniLLGs",
               "alg": "ES256",
               "use": "sig",
-              "kid": "d7f52e5a8aef"
+              "kid": "bdddd425f513"
             }
           ]
         },
@@ -1549,62 +2587,134 @@
             {
               "kty": "EC",
               "crv": "P-256",
-              "x": "S2whh8lDexYvnSqRbRpMX6Zo0_6W69_Y6DR5pe4ik10",
-              "y": "Pdy0npaBY55eTi3dKvZDFLDIqxNiA0LqeLaPjeanmzY",
+              "x": "7a9Aiso3ISnajZj-tjtOf6uCDs2yXBtZVo7C6-d-K1g",
+              "y": "45OXs5pHe5rFtTaYm589A6HamNQBVYzTrzisUG1XGZY",
               "alg": "ES256",
               "use": "sig",
-              "kid": "5fbf28417919"
+              "kid": "52f9b9559a9a"
             },
             {
               "kty": "EC",
               "crv": "P-256",
-              "x": "ET03l5e58MVShlrCW8gLlAQfaXiDQkjQ5_geBwNr-DE",
-              "y": "rb_vxsp-C2Ygu0I4bdxI8pWYXu6tzK0jzU0yc4RUYIs",
+              "x": "aUnFNOswhjMaWSK--MfGDfuuqFes_8xuVcY6POLZmUI",
+              "y": "L1aTCIQKCFnL9Zkc2p5qvPxvKIq87ZVwgY6OOniLLGs",
               "alg": "ES256",
               "use": "sig",
-              "kid": "d7f52e5a8aef"
+              "kid": "bdddd425f513"
             }
           ]
         },
         "scope": "IdP publishes new key and signs a new token; Lakekeeper cache refresh NOT tested"
       },
-      "seconds": 0.008
+      "seconds": 0.007
     },
-    "kanidm/operations": {
+    "kanidm/expiry_positive_control": {
       "status": "pass",
       "value": {
-        "startup_to_https_ready_seconds": 1.192,
-        "idle_rss_kib_samples": [
-          67644,
-          67644,
-          67644,
-          67644,
-          67644
-        ],
-        "idle_rss_kib_median": 67644,
-        "data_directory_bytes": 3127087,
-        "container_cpu_limit": 2,
-        "container_memory_limit_bytes": 2147483648,
-        "startup_definition": "docker start through first verified HTTPS readiness (pull excluded)",
-        "data_definition": "apparent bytes after provisioning and auth tests; not production capacity"
+        "accepted_before_expiry": 200,
+        "claims": {
+          "iss": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper",
+          "sub": "8c0df971-7e7d-4d81-94e3-d43d12cb7e37",
+          "aud": "lakekeeper",
+          "exp": 1794552129,
+          "nbf": 1794551229,
+          "iat": 1794551229,
+          "jti": "05dd025c-d37f-44a9-9fb1-61e6e4c1d1f5",
+          "client_id": "lakekeeper",
+          "auth_time": 1794551229,
+          "scope": "groups openid profile",
+          "nonce": "[REDACTED]",
+          "session_id": "05dd025c-d37f-44a9-9fb1-61e6e4c1d1f5",
+          "parent_session_id": "44a0e6c9-0d85-404b-8d1a-e76152aa0880"
+        },
+        "wait_until": 1794552190
       },
-      "seconds": 5.176
+      "seconds": 1.263
     },
-    "kanidm/lakekeeper_transport": {
-      "status": "blocked",
+    "kanidm/trino_service_token_exchange": {
+      "status": "fail",
+      "error_type": "AssertionError",
+      "error": "{'message': 'Cannot obtain metadata', 'errorCode': 84148237, 'errorName': 'ICEBERG_CATALOG_ERROR', 'errorType': 'EXTERNAL', 'failureInfo': {'type': 'io.trino.spi.TrinoException', 'message': 'Cannot obtain metadata', 'cause': {'type': 'org.apache.iceberg.exceptions.NotAuthorizedException', 'message': 'Not authorized: Authentication failed', 'suppressed': [], 'stack': ['org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:343)', 'org.apache.iceberg.rest.ErrorHandlers$ConfigErrorHandler.accept(ErrorHandlers.java:313)', 'org.apache.iceberg.rest.ErrorHandlers$ConfigErrorHandler.accept(ErrorHandlers.java:304)', 'org.apache.iceberg.rest.HTTPClient.throwFailure(HTTPClient.java:242)', 'org.apache.iceberg.rest.HTTPClient.handleResponse(HTTPClient.java:367)', 'org.apache.iceberg.rest.HTTPClient.lambda$execute$1(HTTPClient.java:325)', 'org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:247)', 'org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:188)', 'org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:321)', 'org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:299)', 'org.apache.iceberg.rest.BaseHTTPClient.get(BaseHTTPClient.java:77)', 'org.apache.iceberg.rest.RESTSessionCatalog.fetchConfig(RESTSessionCatalog.java:1495)', 'org.apache.iceberg.rest.RESTSessionCatalog.initialize(RESTSessionCatalog.java:212)', 'io.trino.plugin.iceberg.catalog.rest.TrinoIcebergRestCatalogFactory.create(TrinoIcebergRestCatalogFactory.java:150)', 'io.trino.plugin.iceberg.IcebergMetadataFactory.create(IcebergMetadataFactory.java:115)', 'io.trino.plugin.iceberg.IcebergTransactionManager$MemoizedMetadata.get(IcebergTransactionManager.java:90)', 'io.trino.plugin.iceberg.IcebergTransactionManager.get(IcebergTransactionManager.java:56)', 'io.trino.plugin.iceberg.IcebergConnector.getMetadata(IcebergConnector.java:142)', 'io.trino.metadata.CatalogTransaction.getConnectorMetadata(CatalogTransaction.java:73)', 'io.trino.metadata.CatalogMetadata.getMetadata(CatalogMetadata.java:87)', 'io.trino.metadata.MetadataManager$QueryCatalogs.registerCatalog(MetadataManager.java:3039)', 'io.trino.metadata.MetadataManager.registerCatalogForQuery(MetadataManager.java:3012)', 'io.trino.metadata.MetadataManager.lambda$getOptionalCatalogMetadata$0(MetadataManager.java:2967)', 'java.base/java.util.Optional.ifPresent(Unknown Source)', 'io.trino.metadata.MetadataManager.getOptionalCatalogMetadata(MetadataManager.java:2967)', 'io.trino.metadata.MetadataManager.catalogExists(MetadataManager.java:244)', 'io.trino.tracing.TracingMetadata.catalogExists(TracingMetadata.java:168)', 'io.trino.sql.rewrite.ShowQueriesRewrite$Visitor.visitShowTables(ShowQueriesRewrite.java:261)', 'io.trino.sql.rewrite.ShowQueriesRewrite$Visitor.visitShowTables(ShowQueriesRewrite.java:230)', 'io.trino.sql.tree.ShowTables.accept(ShowTables.java:62)', 'io.trino.sql.tree.AstVisitor.process(AstVisitor.java:27)', 'io.trino.sql.rewrite.ShowQueriesRewrite.rewrite(ShowQueriesRewrite.java:227)', 'io.trino.sql.rewrite.StatementRewrite.rewrite(StatementRewrite.java:54)', 'io.trino.sql.analyzer.Analyzer.analyze(Analyzer.java:93)', 'io.trino.sql.analyzer.Analyzer.analyze(Analyzer.java:87)', 'io.trino.execution.SqlQueryExecution.analyze(SqlQueryExecution.java:288)', 'io.trino.execution.SqlQueryExecution.<init>(SqlQueryExecution.java:222)', 'io.trino.execution.SqlQueryExecution$SqlQueryExecutionFactory.createQueryExecution(SqlQueryExecution.java:893)', 'io.trino.dispatcher.LocalDispatchQueryFactory.lambda$createDispatchQuery$0(LocalDispatchQueryFactory.java:163)', 'io.trino.$gen.Trino_484___Callable.call(Unknown Source)', 'com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)', 'com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)', 'com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)', 'java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)', 'java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)', 'java.base/java.lang.Thread.run(Unknown Source)'], 'errorInfo': {'code': 65536, 'name': 'GENERIC_INTERNAL_ERROR', 'type': 'INTERNAL_ERROR'}}, 'suppressed': [], 'stack': ['io.trino.plugin.iceberg.IcebergConnector.getMetadata(IcebergConnector.java:146)', 'io.trino.metadata.CatalogTransaction.getConnectorMetadata(CatalogTransaction.java:73)', 'io.trino.metadata.CatalogMetadata.getMetadata(CatalogMetadata.java:87)', 'io.trino.metadata.MetadataManager$QueryCatalogs.registerCatalog(MetadataManager.java:3039)', 'io.trino.metadata.MetadataManager.registerCatalogForQuery(MetadataManager.java:3012)', 'io.trino.metadata.MetadataManager.lambda$getOptionalCatalogMetadata$0(MetadataManager.java:2967)', 'java.base/java.util.Optional.ifPresent(Unknown Source)', 'io.trino.metadata.MetadataManager.getOptionalCatalogMetadata(MetadataManager.java:2967)', 'io.trino.metadata.MetadataManager.catalogExists(MetadataManager.java:244)', 'io.trino.tracing.TracingMetadata.catalogExists(TracingMetadata.java:168)', 'io.trino.sql.rewrite.ShowQueriesRewrite$Visitor.visitShowTables(ShowQueriesRewrite.java:261)', 'io.trino.sql.rewrite.ShowQueriesRewrite$Visitor.visitShowTables(ShowQueriesRewrite.java:230)', 'io.trino.sql.tree.ShowTables.accept(ShowTables.java:62)', 'io.trino.sql.tree.AstVisitor.process(AstVisitor.java:27)', 'io.trino.sql.rewrite.ShowQueriesRewrite.rewrite(ShowQueriesRewrite.java:227)', 'io.trino.sql.rewrite.StatementRewrite.rewrite(StatementRewrite.java:54)', 'io.trino.sql.analyzer.Analyzer.analyze(Analyzer.java:93)', 'io.trino.sql.analyzer.Analyzer.analyze(Analyzer.java:87)', 'io.trino.execution.SqlQueryExecution.analyze(SqlQueryExecution.java:288)', 'io.trino.execution.SqlQueryExecution.<init>(SqlQueryExecution.java:222)', 'io.trino.execution.SqlQueryExecution$SqlQueryExecutionFactory.createQueryExecution(SqlQueryExecution.java:893)', 'io.trino.dispatcher.LocalDispatchQueryFactory.lambda$createDispatchQuery$0(LocalDispatchQueryFactory.java:163)', 'io.trino.$gen.Trino_484___Callable.call(Unknown Source)', 'com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)', 'com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)', 'com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)', 'java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)', 'java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)', 'java.base/java.lang.Thread.run(Unknown Source)'], 'errorInfo': {'code': 84148237, 'name': 'ICEBERG_CATALOG_ERROR', 'type': 'EXTERNAL'}}}",
+      "seconds": 8.651
+    },
+    "kanidm/trino_external_exchange_token": {
+      "status": "pass",
       "value": {
-        "status": "blocked",
-        "anonymous_http_status": 401,
-        "tls_error": "[SSL: WRONG_VERSION_NUMBER] wrong version number (_ssl.c:1000)",
-        "reason": "Pinned Lakekeeper has no TLS listener; tokens never sent over HTTP."
+        "tables": [
+          [
+            "sample"
+          ]
+        ],
+        "rows": [
+          [
+            1,
+            "alpha"
+          ],
+          [
+            2,
+            "beta"
+          ]
+        ],
+        "mode": "external",
+        "catalog_uri": "https://catalog-kanidm.idp.test:8181",
+        "oauth_server_uri": "https://kanidm.idp.test:8443/oauth2/token",
+        "tls_trust": "per-run CA in JVM truststore; verification enabled"
       },
-      "seconds": 1.411
+      "seconds": 10.805
+    },
+    "kanidm/pyiceberg_external_exchange_token": {
+      "status": "pass",
+      "value": {
+        "tables": [
+          [
+            "bakeoff",
+            "sample"
+          ]
+        ],
+        "rows": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "beta"
+          }
+        ]
+      },
+      "seconds": 0.036
+    },
+    "kanidm/sail_external_token_list_read": {
+      "status": "pass",
+      "value": {
+        "tables": [
+          [
+            "bakeoff",
+            "sample",
+            false
+          ]
+        ],
+        "rows": [
+          [
+            1,
+            "alpha"
+          ],
+          [
+            2,
+            "beta"
+          ]
+        ],
+        "external_token_lifecycle": true,
+        "native_client_credentials": false,
+        "tls_trust": "SSL_CERT_FILE per-run CA"
+      },
+      "seconds": 0.983
     }
   },
   "builds": {
     "postgresql-lakekeeper-ubi": {
       "revision": "93666c251ca2c4e6618ddd35a669c4c3ea380313",
-      "image_id": "sha256:0ea87f67f58957b6dc05fed6081efe3f764571ea0b61d5300fbf8b528c091d54",
+      "image_id": "sha256:051341404ffe31ba563bc5a4265a2603e1d5b9b37615c90a9b35e3c6262e08f2",
       "architecture": "amd64",
       "runner_machine": "x86_64",
       "expected_architecture": "amd64",
@@ -1634,7 +2744,7 @@
     },
     "lakekeeper-ubi": {
       "revision": "2200c516919a9667e9761a6581b848de32b693d1",
-      "image_id": "sha256:128a6a9ab5f1caa237f7c64b0810cf5688108697cfdda07549a73df04e73954e",
+      "image_id": "sha256:cc0be1baedc657c8e7413ee9c5b6b94c6f6e4f0846d19c9924911e0b0f030b7d",
       "architecture": "amd64",
       "runner_machine": "x86_64",
       "expected_architecture": "amd64",
@@ -1676,6 +2786,182 @@
       "provenance_errors": [],
       "status": "pass",
       "image_binary_sha256": "52cdaa0be3724158ce7943f211fcff09a1ae451b5e88916a42b367bdaf1fd705"
+    },
+    "seaweedfs-ubi": {
+      "revision": "fd9b0001ee86a432faf773d40ab6f528dbfdad67",
+      "image_id": "sha256:81defcc8544737eaed7fd86c86ef4f5bc3ff0f200eac35326e3f2c0c7dde78cf",
+      "architecture": "amd64",
+      "runner_machine": "x86_64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/seaweedfs.lock.json",
+      "lock_sha256": "d0fc6c6303f58715068c419bfe9b083abc257416f4ca51e51763c501738b69c2",
+      "labels": {
+        "architecture": "x86_64",
+        "build-date": "2026-11-05T06:34:46Z",
+        "com.redhat.component": "ubi9-micro-container",
+        "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+        "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+        "description": "Very small image which doesn't install the package manager.",
+        "distribution-scope": "public",
+        "io.buildah.version": "1.33.7",
+        "io.datopsis.artifact-lock.sha256": "d0fc6c6303f58715068c419bfe9b083abc257416f4ca51e51763c501738b69c2",
+        "io.datopsis.seaweedfs.commit": "4ab66fb76da83700739f5839e62fcaf15fb7d02a",
+        "io.datopsis.seaweedfs.variant": "large_disk",
+        "io.datopsis.seaweedfs.version": "4.53",
+        "io.k8s.description": "Very small image which doesn't install the package manager.",
+        "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+        "io.openshift.expose-services": "",
+        "maintainer": "Red Hat, Inc.",
+        "name": "ubi9/ubi-micro",
+        "org.opencontainers.image.base.name": "registry.access.redhat.com/ubi9/ubi-micro",
+        "org.opencontainers.image.created": "2026-11-13T06:23:09Z",
+        "org.opencontainers.image.description": "Security-oriented, rootless SeaweedFS on Red Hat UBI 9",
+        "org.opencontainers.image.documentation": "https://github.com/datopsis/seaweedfs-ubi/blob/main/README.md",
+        "org.opencontainers.image.licenses": "Apache-2.0",
+        "org.opencontainers.image.revision": "fd9b0001ee86a432faf773d40ab6f528dbfdad67",
+        "org.opencontainers.image.source": "https://github.com/datopsis/seaweedfs-ubi",
+        "org.opencontainers.image.title": "seaweedfs-ubi",
+        "org.opencontainers.image.vendor": "Datopsis",
+        "org.opencontainers.image.version": "4.53",
+        "release": "1793860449",
+        "summary": "ubi9 micro image",
+        "url": "https://catalog.redhat.com/en/search?searchType=containers",
+        "vcs-ref": "9d7bd388a99de116058bd54b77737e2863cb3d45",
+        "vcs-type": "git",
+        "vendor": "Red Hat, Inc.",
+        "version": "9.8"
+      },
+      "provenance_errors": [],
+      "status": "pass",
+      "image_binary_sha256": "4b51c35ab81fd0913e2bf05db6771f1c7c82959d8b3129b54686a9a4998dd813"
+    },
+    "trino-ubi": {
+      "revision": "964802b7afd3ae526039ef7dc7fcf605ce3d5b26",
+      "image_id": "sha256:e8814c1ef89cd20268cf74810f8346a9390b2abf317757f2ff28cf51206b999d",
+      "architecture": "amd64",
+      "runner_machine": "x86_64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/trino.lock.json",
+      "lock_sha256": "be14e1f31673fbeffea5f36c3963b7d89a6e104fd19091017e8bf9db34121782",
+      "labels": {
+        "architecture": "x86_64",
+        "build-date": "2026-11-09T00:38:17Z",
+        "com.redhat.component": "ubi9-micro-container",
+        "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+        "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+        "description": "Very small image which doesn't install the package manager.",
+        "distribution-scope": "public",
+        "io.buildah.version": "1.45.0",
+        "io.datopsis.artifact-lock.sha256": "be14e1f31673fbeffea5f36c3963b7d89a6e104fd19091017e8bf9db34121782",
+        "io.datopsis.ubi.runtime": "registry.access.redhat.com/ubi9/ubi-micro:9.8@sha256:d3499a0896e2d6a1642f922615831bc5c2fd513bbb34f3446cabba530d9d54a2",
+        "io.k8s.description": "Very small image which doesn't install the package manager.",
+        "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+        "io.openshift.expose-services": "",
+        "maintainer": "Red Hat, Inc.",
+        "name": "ubi9/ubi-micro",
+        "org.opencontainers.image.created": "2026-11-10T13:20:07Z",
+        "org.opencontainers.image.licenses": "Apache-2.0 AND GPL-2.0-with-classpath-exception",
+        "org.opencontainers.image.revision": "964802b7afd3ae526039ef7dc7fcf605ce3d5b26",
+        "org.opencontainers.image.source": "https://github.com/datopsis/trino-ubi",
+        "org.opencontainers.image.title": "Trino on UBI 9",
+        "org.opencontainers.image.version": "484-development",
+        "release": "1794184668",
+        "summary": "ubi9 micro image",
+        "url": "https://catalog.redhat.com/en/search?searchType=containers",
+        "vcs-ref": "180abe1db345daeb7a00ed9fda71e3ad05c261b7",
+        "vcs-type": "git",
+        "vendor": "Red Hat, Inc.",
+        "version": "9.8"
+      },
+      "provenance_errors": [],
+      "status": "pass"
+    },
+    "sail-ubi": {
+      "revision": "6e6f65a69108f4c6870eab26f356dccb41efbf35",
+      "image_id": "sha256:caa743fac72d5e8a72cdc6b13825a5366eac2b83403d4dfc18125eb3ed5ea52a",
+      "architecture": "amd64",
+      "runner_machine": "x86_64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/sail.lock.json",
+      "lock_sha256": "bbb66d68cbb0a9533895612576bbbbd7b6b79c8df8c733eb0aa2c749c2ebd8ca",
+      "labels": {
+        "architecture": "x86_64",
+        "build-date": "2026-11-09T00:38:17Z",
+        "com.redhat.component": "ubi9-micro-container",
+        "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+        "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+        "description": "Very small image which doesn't install the package manager.",
+        "distribution-scope": "public",
+        "io.buildah.version": "1.45.0",
+        "io.datopsis.artifact-lock.sha256": "bbb66d68cbb0a9533895612576bbbbd7b6b79c8df8c733eb0aa2c749c2ebd8ca",
+        "io.k8s.description": "Very small image which doesn't install the package manager.",
+        "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+        "io.openshift.expose-services": "",
+        "maintainer": "Red Hat, Inc.",
+        "name": "ubi9/ubi-micro",
+        "org.opencontainers.image.base.name": "registry.access.redhat.com/ubi9/ubi-micro:9.8@sha256:d3499a0896e2d6a1642f922615831bc5c2fd513bbb34f3446cabba530d9d54a2",
+        "org.opencontainers.image.created": "2026-11-10T23:43:59-06:00",
+        "org.opencontainers.image.description": "Rootless local Spark Connect server",
+        "org.opencontainers.image.licenses": "Apache-2.0",
+        "org.opencontainers.image.revision": "6e6f65a69108f4c6870eab26f356dccb41efbf35",
+        "org.opencontainers.image.source": "https://github.com/datopsis/sail-ubi",
+        "org.opencontainers.image.title": "Sail on Red Hat UBI 9",
+        "org.opencontainers.image.version": "0.7.3",
+        "release": "1794184668",
+        "summary": "ubi9 micro image",
+        "url": "https://catalog.redhat.com/en/search?searchType=containers",
+        "vcs-ref": "180abe1db345daeb7a00ed9fda71e3ad05c261b7",
+        "vcs-type": "git",
+        "vendor": "Red Hat, Inc.",
+        "version": "9.8"
+      },
+      "lock_inputs": {
+        "artifacts/sail.lock.json": "8f25a1bcccfc475f87fc5239056fb56926e1d56672effa4e3e493e510c95bcc6",
+        "artifacts/rpms.lock.json": "fda45c5f8fe2721b6870c5ccfc4335e8665fa5339b50dce109d13b79d6a93bac"
+      },
+      "provenance_errors": [],
+      "status": "pass"
+    },
+    "nginx-ubi": {
+      "status": "pass",
+      "revision": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+      "architecture": "amd64",
+      "lock_sha256": "5eda00936d279befa19bce2dff5592dbcff3bf6d5067899025dbd431d8a54216",
+      "labels": {
+        "architecture": "x86_64",
+        "build-date": "2026-11-05T06:34:46Z",
+        "com.redhat.component": "ubi9-micro-container",
+        "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+        "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+        "description": "Very small image which doesn't install the package manager.",
+        "distribution-scope": "public",
+        "io.buildah.version": "1.33.7",
+        "io.datopsis.artifact-lock.sha256": "5eda00936d279befa19bce2dff5592dbcff3bf6d5067899025dbd431d8a54216",
+        "io.datopsis.nginx.rpm-version": "2:1.30.6-1.el9.ngx",
+        "io.k8s.description": "Very small image which doesn't install the package manager.",
+        "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+        "io.openshift.expose-services": "",
+        "maintainer": "Red Hat, Inc.",
+        "name": "ubi9/ubi-micro",
+        "org.opencontainers.image.created": "2026-11-05T06:34:46Z",
+        "org.opencontainers.image.description": "A security-oriented, rootless NGINX image built on Red Hat UBI 9 Micro",
+        "org.opencontainers.image.documentation": "https://github.com/datopsis/nginx-ubi#readme",
+        "org.opencontainers.image.licenses": "BSD-2-Clause AND Apache-2.0",
+        "org.opencontainers.image.revision": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+        "org.opencontainers.image.source": "https://github.com/datopsis/nginx-ubi",
+        "org.opencontainers.image.title": "NGINX on Red Hat UBI 9",
+        "org.opencontainers.image.vendor": "Datopsis",
+        "org.opencontainers.image.version": "1.30.6",
+        "release": "1793860449",
+        "summary": "ubi9 micro image",
+        "url": "https://catalog.redhat.com/en/search?searchType=containers",
+        "vcs-ref": "9d7bd388a99de116058bd54b77737e2863cb3d45",
+        "vcs-type": "git",
+        "vendor": "Red Hat, Inc.",
+        "version": "9.8"
+      },
+      "image_id": "sha256:ea4f1a77a826cf45a1e936d028f3fa121560cdd8fee5a9a956c746d1e3024291",
+      "profile_sha256": "ffb1f020a9fb81451bc7a0841130cd462003f16569daa7d735d2dbc484c37c63"
     }
   },
   "scans": {
@@ -1688,7 +2974,7 @@
       "image": "quay.io/keycloak/keycloak@sha256:c68e286cacd87b942ac1939a0a1481461109d6acd3a57dc496969a319a76bbf0",
       "architecture": "amd64",
       "scanner_version": "0.76.2",
-      "version_output": "Version: 0.76.2\nVulnerability DB:\n  Version: 2\n  UpdatedAt: 2026-11-13 00:58:46.183130125 +0000 UTC\n  NextUpdate: 2026-11-14 00:58:46.183129905 +0000 UTC\n  DownloadedAt: 2026-11-13 05:30:01.878598742 +0000 UTC\nJava DB:\n  Version: 1\n  UpdatedAt: 2026-11-13 01:08:15.464357406 +0000 UTC\n  NextUpdate: 2026-11-16 01:08:15.464357255 +0000 UTC\n  DownloadedAt: 2026-11-13 05:30:23.884833318 +0000 UTC"
+      "version_output": "Version: 0.76.2\nVulnerability DB:\n  Version: 2\n  UpdatedAt: 2026-11-13 00:58:46.183130125 +0000 UTC\n  NextUpdate: 2026-11-14 00:58:46.183129905 +0000 UTC\n  DownloadedAt: 2026-11-13 06:43:18.971106196 +0000 UTC\nJava DB:\n  Version: 1\n  UpdatedAt: 2026-11-13 01:08:15.464357406 +0000 UTC\n  NextUpdate: 2026-11-16 01:08:15.464357255 +0000 UTC\n  DownloadedAt: 2026-11-13 06:43:38.934542178 +0000 UTC"
     },
     "trivy/rauthy": {
       "status": "complete",
@@ -1699,7 +2985,7 @@
       "image": "ghcr.io/sebadob/rauthy@sha256:d733b7580f53c1601c286b5504853b2774e70245f5f9427d9bcda32496b753ee",
       "architecture": "amd64",
       "scanner_version": "0.76.2",
-      "version_output": "Version: 0.76.2\nVulnerability DB:\n  Version: 2\n  UpdatedAt: 2026-11-13 00:58:46.183130125 +0000 UTC\n  NextUpdate: 2026-11-14 00:58:46.183129905 +0000 UTC\n  DownloadedAt: 2026-11-13 05:30:01.878598742 +0000 UTC\nJava DB:\n  Version: 1\n  UpdatedAt: 2026-11-13 01:08:15.464357406 +0000 UTC\n  NextUpdate: 2026-11-16 01:08:15.464357255 +0000 UTC\n  DownloadedAt: 2026-11-13 05:30:23.884833318 +0000 UTC"
+      "version_output": "Version: 0.76.2\nVulnerability DB:\n  Version: 2\n  UpdatedAt: 2026-11-13 00:58:46.183130125 +0000 UTC\n  NextUpdate: 2026-11-14 00:58:46.183129905 +0000 UTC\n  DownloadedAt: 2026-11-13 06:43:18.971106196 +0000 UTC\nJava DB:\n  Version: 1\n  UpdatedAt: 2026-11-13 01:08:15.464357406 +0000 UTC\n  NextUpdate: 2026-11-16 01:08:15.464357255 +0000 UTC\n  DownloadedAt: 2026-11-13 06:43:38.934542178 +0000 UTC"
     },
     "trivy/kanidm": {
       "status": "complete",
@@ -1710,7 +2996,7 @@
       "image": "docker.io/kanidm/server@sha256:71b6ff5a9c9c32b632894d8acef5a2afc77941b35a0aa95dcee959fe688d5ce9",
       "architecture": "amd64",
       "scanner_version": "0.76.2",
-      "version_output": "Version: 0.76.2\nVulnerability DB:\n  Version: 2\n  UpdatedAt: 2026-11-13 00:58:46.183130125 +0000 UTC\n  NextUpdate: 2026-11-14 00:58:46.183129905 +0000 UTC\n  DownloadedAt: 2026-11-13 05:30:01.878598742 +0000 UTC\nJava DB:\n  Version: 1\n  UpdatedAt: 2026-11-13 01:08:15.464357406 +0000 UTC\n  NextUpdate: 2026-11-16 01:08:15.464357255 +0000 UTC\n  DownloadedAt: 2026-11-13 05:30:23.884833318 +0000 UTC"
+      "version_output": "Version: 0.76.2\nVulnerability DB:\n  Version: 2\n  UpdatedAt: 2026-11-13 00:58:46.183130125 +0000 UTC\n  NextUpdate: 2026-11-14 00:58:46.183129905 +0000 UTC\n  DownloadedAt: 2026-11-13 06:43:18.971106196 +0000 UTC\nJava DB:\n  Version: 1\n  UpdatedAt: 2026-11-13 01:08:15.464357406 +0000 UTC\n  NextUpdate: 2026-11-16 01:08:15.464357255 +0000 UTC\n  DownloadedAt: 2026-11-13 06:43:38.934542178 +0000 UTC"
     },
     "grype/keycloak": {
       "status": "complete",
@@ -1749,22 +3035,40 @@
   "keycloak_jar_count": 484,
   "artifact_files_sha256": {
     "SANITIZED": "6060835e312059a1fd89fd3ce35e24bb67ab29b9d221344ca78fdda3558eb63e",
-    "builds.json": "c7b7c2858452d5b29dadf659ebefc8d1d27cab2bd4477e0e1d3a0e0f978c036e",
-    "grype-kanidm.json": "5bc5b10bcb42691c6fdd6980a84dd92996b96da43ecf75816e47c1f68bb1a2dd",
-    "grype-keycloak.json": "7d650ab42463e4435b5f187f81dc1e35242410607b5b8c270400f875e74eb046",
-    "grype-rauthy.json": "d815e24d063aae8238bc4f4e616676df2cf6a2e994c93ee4e665891a754663b7",
-    "idp-kanidm.log.json": "98cbaa57bf37a8e9cd401a00eabe7f117df6ab6c07f71d524f9374cec3d2da4e",
-    "idp-keycloak.log.json": "205e01761e9e448e62abde26a366bdbabc21032a69fd20e339b6a6bf89445248",
-    "idp-lakekeeper-kanidm.log.json": "53d1c38d87a01df26c6ed409db13a07dce3343402a3b76e2e7796a9f03f02778",
-    "idp-lakekeeper-keycloak.log.json": "f6f1650bd823abfe3b639f58bbe32f7a6eebbd3c6ab9c263e61038c2e9511fb4",
-    "idp-lakekeeper-rauthy.log.json": "598578cb4056f20d708bc739b51d736442c012b001d54c387463942d857b8096",
-    "idp-postgres.log.json": "72edcbe65d2273d4e558e16cc44aa750c1b96c153b94bc480ff988f968c6cca2",
-    "idp-rauthy.log.json": "36c09faeb12ae41aadcfad1aac02823ceb8cc80964b13752d72538f486245dbb",
+    "builds.json": "c920d49bea1dcfde8b42af7120fde64efb628c33c8b14380a63680baa0645702",
+    "grype-kanidm.json": "d46faeb175b43b98bc2c8361f8c538993648dc47ace078e11b56894e0f7192d0",
+    "grype-keycloak.json": "2313924595eddb88444687ad6c2d4e7ce904978d6af77555e6f6eee4be37c90e",
+    "grype-rauthy.json": "801ee845b58a0193b6dedd150ed779b43aa88c0e1def03775663914f5ad6a03e",
+    "idp-catalog-kanidm.log.json": "10d4bbfd904bee32bbd2f8c63124c79341b3ec5edda8643a732f8992c6f56dfa",
+    "idp-catalog-keycloak.log.json": "c38ad8605a4f2485a396a6206bb1e77e999c02f83a579aa182a1ceb47c90a8a1",
+    "idp-catalog-rauthy.log.json": "ab266302e2a8cfbd53d4dc5159b6f4114ae86a3ea256104c6b82f20465c000fc",
+    "idp-filer.log.json": "b0e1200497a85837b05745f2eeba4c74be00b1d9f1da3eb1712c5d52848c8694",
+    "idp-kanidm.log.json": "012a7fc9b058b1d82e9e0d21eaed70f56fa1b5ce9a88c3991e7de0014ac6db30",
+    "idp-keycloak.log.json": "df4f8982a672ef8c1be99ff323d54250bb672ae041d3f973f175a0004aa88312",
+    "idp-master.log.json": "55b4e35bf076c5e111a137cd5caa2ce7e4e4b4159b54028e6347316b6887fa0b",
+    "idp-postgres.log.json": "1e997a27b3b778ed101fd23862d2cbadf3ecdae7902d08c2ca62dd786e9d145c",
+    "idp-proxy-kanidm.log.json": "8c758235608d38548de032f2710d77594347fafb3bebca141a816941543f70dc",
+    "idp-proxy-keycloak.log.json": "befc85bdc5db1e6669f003baca6237fd33d2a626041c0c8f4b869cad25cb4c90",
+    "idp-proxy-rauthy.log.json": "4e103852eb0352d4358ab6daaec2726c4b302c407300c8b3dd3b987b8f63f481",
+    "idp-rauthy.log.json": "edc3b51ba2f898ef56d2a766843e6f80c303a0be2a046d194a76901aa3ce2412",
+    "idp-s3.log.json": "b17a46075687a57dfad31a14dd5680e7c8f2cad3564810575d9fdb6834c691ff",
+    "idp-sail-kanidm-grant.log.json": "79d53d55bcde0018a581bbf89376231b5972795844bf89ef905841737eb22b1f",
+    "idp-sail-kanidm-token.log.json": "91655b77e4a882d15c7f9de0edba8416f38a4706780cd8777ade7818fd284f2d",
+    "idp-sail-keycloak-grant.log.json": "a71fe2cf8c2fd05a18d1b3a1c6e656c480448fc0d2da731a3dc731a79a102eab",
+    "idp-sail-keycloak-token.log.json": "4e38c340be4cd6b60858e680a42f20d6fded0f8494066087c72f34d95505166e",
+    "idp-sail-rauthy-grant.log.json": "49ebe428fbc87ac209b670989708bc5aa5847eaf94b4ab08cb719460488dfb74",
+    "idp-sail-rauthy-token.log.json": "94bf48dd6be9fd7807fe2a4a08b45fcb0b0a126476c63d13346fbd555ae59ad1",
+    "idp-trino-kanidm-credential.log.json": "218fd07adb95274a044862aacf3788a2de031e9a6b7b7e01b0fc1d47923f37bf",
+    "idp-trino-kanidm-exchange.log.json": "83a8cbf9b72596c7ed66d5e8f4997b4dada97492149272bc26f2f212d3463bd1",
+    "idp-trino-kanidm-external.log.json": "25194ee059067423d40786d2bfb4487fee26c00a493dd9dd05719842e47f91ff",
+    "idp-trino-keycloak-credential.log.json": "e7fdb8a9e6f8cc6bf81bf199c1e024ed74b9f1f0cedfa1a8c401fc9876d93806",
+    "idp-trino-rauthy-credential.log.json": "f2ff76662a48d24d7b2eb4a77a858afff03bce91ecf74695fe35ae4987acc8d0",
+    "idp-volume.log.json": "b694b5055ab0034bef608ddd1dda76e8447d3a6879ff8069f852854997f15bcf",
     "keycloak-jars.json": "59b57c669bc6a62b43e10728009e82e7a62b19123b6808a1b24b63d1b9e2b92b",
-    "results.json": "04bdc7100e26da4f7bbdda5c5182a7892b161829e8c257a62ad5c893203659eb",
-    "scans.json": "bf49a031fa2489bb12f0364085fdb43804c9d9d7585801e1adac576a51b739f3",
-    "trivy-kanidm.json": "894032aa8dae60abb87f0f306f63ee51e75be71e196f424086a9f807851a5345",
-    "trivy-keycloak.json": "51528ab83fe2e232b7e8f891a9299e0bf9e8c63fe264fdfa0f8a834f214b90c7",
-    "trivy-rauthy.json": "bfe5fd136c605dfd5aafa89cd203a2c396582f8b4b10e09270e8ad17e6cc8fa0"
+    "results.json": "b418052829dca13aea516878eab280f01284eed38c831995a4f83e65ad7bdf56",
+    "scans.json": "e2af8c68bc1014e860dcc7e259d4d41389c894903d4e86647a397d17580c81ed",
+    "trivy-kanidm.json": "ef83c9889b0d4de209a3d2b91ed541487a5127839bb8d3bcb90835e844d0ca4b",
+    "trivy-keycloak.json": "65bdc36852c284d1833783808719f21c517ba5b70c6d5929874792b9d4b2de55",
+    "trivy-rauthy.json": "6ba87f1ee7092e47c06f14f8e3827e339b7c7de54a518aeb2cc79e2efacc3a76"
   }
 }

@@ -45,10 +45,6 @@ those query interfaces. Native Sail client-credentials support is not invented:
 its no-token failure and a separate externally supplied-token read are recorded.
 The latter is not counted as a native-grant pass.
 
-The runtime table below is the **historical pre-approval run** until replacement
-native Actions evidence has been inspected. Its plaintext-listener blockers no
-longer describe the approved test design.
-
 ## Reproducible upstream inputs
 
 Latest stable releases were resolved using each repository's releases API;
@@ -87,71 +83,68 @@ anonymous plaintext requests. A TLS fatal decode-error alert is a rejection.
 
 ## Runtime comparison
 
-Final native [run 43372083311](https://github.com/datopsis/lakehouse-integration/actions/runs/43372083311), harness revision
-`e28aa4a57596b8ded5640730020ea3a0ad456eff`. **PASS** is scoped to the named
-assertion; **BLOCKED** is not a pass or an IdP-specific failure. The JWT-format
-row decodes and checks fields against discovery/JWKS; it does not establish
-signature validation by Lakekeeper. **N/T** means not tested.
+Native [run 43378071591](https://github.com/datopsis/lakehouse-integration/actions/runs/43378071591), harness revision
+`398f50e6fd6d1e41e08f735802eb964d69dc30c0`. **PASS** means the exact named assertion passed;
+**FAIL** records an observed failure, including client capability gaps. **N/T**
+means the provider-specific diagnostic was not tested for that provider. Externally
+obtained tokens are separate controls and never count as native-grant passes.
+All list/read passes require exactly `bakeoff.sample` and rows
+`[{"id":1,"label":"alpha"},{"id":2,"label":"beta"}]`.
 
 | Assertion | Kanidm amd64 | Kanidm arm64 | Rauthy amd64 | Rauthy arm64 | Keycloak amd64 | Keycloak arm64 |
 | --- | --- | --- | --- | --- | --- | --- |
 | Startup, provisioning and discovery | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
-| Verified TLS; CA/hostname/plaintext negatives; exact listeners | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
-| Client-credentials token endpoint (HTTP 200) | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
-| Machine signed-JWT format/iss/aud/sub/exp/JWKS kid | [FAIL][amd64] | [FAIL][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
-| PyIceberg token acquisition only | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
-| Human code + S256 PKCE at IdP only | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| IdP verified TLS; CA/hostname/plaintext negatives; listeners | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Approved Lakekeeper proxy TLS and loopback isolation | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Seed and read exact two-row table | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Client-credentials endpoint returns token | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Client-credentials token accepted by Lakekeeper | [FAIL][amd64] | [FAIL][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Trino 484 native grant + list/read | [FAIL][amd64] | [FAIL][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| PyIceberg 0.12 native grant + list/read | [FAIL][amd64] | [FAIL][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Sail 0.7.3 native grant + list/read | [FAIL][amd64] | [FAIL][arm64] | [FAIL][amd64] | [FAIL][arm64] | [FAIL][amd64] | [FAIL][arm64] |
+| Human authorization code + S256 PKCE | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Human token accepted by Lakekeeper | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Valid token accepted | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Wrong audience rejected | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Genuinely expired token rejected, fresh control accepted | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Different signing key rejected | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Unsigned/alg=none rejected | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| New signing key published in IdP JWKS | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Valid new token accepted by live Lakekeeper after rotation | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
 | Groups in human access token | [FAIL][amd64] | [FAIL][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
 | Groups in human ID token | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
-| Service-account RFC 8693 exchange, custom harness | [PASS][amd64] | [PASS][arm64] | [N/T][amd64] | [N/T][arm64] | [N/T][amd64] | [N/T][arm64] |
-| New signing key and new-token kid published | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
-| Startup/RSS/storage measurement | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
-| Lakekeeper verified-TLS prerequisite | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
-| Trino 484 grant + list/read | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
-| PyIceberg grant + list/read | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
-| Sail 0.7.3 grant + list/read | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
-| Human token accepted by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
-| Valid token accepted by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
-| Wrong audience rejected by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
-| Expired token rejected by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
-| Different signing key rejected by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
-| Unsigned/alg=none rejected by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
-| New token accepted after IdP rotation by Lakekeeper | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] | [BLOCKED][amd64] | [BLOCKED][arm64] |
+| Startup/RSS/storage measured | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
+| Custom service-account RFC 8693 exchange | [PASS][amd64] | [PASS][arm64] | [N/T][amd64] | [N/T][arm64] | [N/T][amd64] | [N/T][arm64] |
+| Exchanged signed token accepted by Lakekeeper | [PASS][amd64] | [PASS][arm64] | [N/T][amd64] | [N/T][arm64] | [N/T][amd64] | [N/T][arm64] |
+| Trino native service-token/exchange configuration | [FAIL][amd64] | [FAIL][arm64] | [N/T][amd64] | [N/T][arm64] | [N/T][amd64] | [N/T][arm64] |
+| Trino with externally exchanged token: list/read | [PASS][amd64] | [PASS][arm64] | [N/T][amd64] | [N/T][arm64] | [N/T][amd64] | [N/T][arm64] |
+| PyIceberg with externally exchanged token: list/read | [PASS][amd64] | [PASS][arm64] | [N/T][amd64] | [N/T][arm64] | [N/T][amd64] | [N/T][arm64] |
+| Sail with externally obtained token: list/read | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] | [PASS][amd64] | [PASS][arm64] |
 
-[amd64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43372083311/job/131709936602
-[arm64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43372083311/job/131709936992
+[amd64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43378071591/job/131729200474
+[arm64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43378071591/job/131729200183
 
-Durable sanitized summaries, decoded claims, public JWKS, exact errors, source
-build/provenance results, scan versions/counts and full-artifact SHA-256 manifests:
+Durable sanitized summaries include exact errors, decoded claims, public JWKS,
+source-image provenance, scan versions/counts and full-artifact SHA-256 manifests:
 [amd64](idp-evidence/amd64.json), [arm64](idp-evidence/arm64.json).
-The run's `idp-bakeoff-amd64-43372083311-1` and `idp-bakeoff-arm64-43372083311-1`
-artifacts retain the complete scanner JSON and sanitized service logs for 14 days.
-The committed summaries remain after those artifacts expire.
+Artifacts `idp-bakeoff-amd64-43378071591-1` and `idp-bakeoff-arm64-43378071591-1`
+retain full scanner JSON and sanitized service logs for 14 days. The committed
+summaries remain after expiry. The separate evaluation check stays red for actual
+unsupported cases; no required Integration assertion was changed or waived.
 
-Both architectures report the same Kanidm machine-format error:
-`Expected signed JWT (3 segments), received 5-segment token (JWE is not a Lakekeeper JWT)`.
-Its access-token groups assertion fails because the `groups` field is absent;
-the ID token does contain group UUIDs and names. The configured Lakekeeper reports
-anonymous HTTP **401** and TLS **`[SSL: WRONG_VERSION_NUMBER]`** for every provider
-on both CPUs. No token is sent during this transport preflight.
+The unchanged required [Integration check](https://github.com/datopsis/lakehouse-integration/actions/runs/43378071581)
+passed both native architectures at this harness revision.
 
-Earlier runs exposed fixture errors, not candidate failures: env-file ownership
-([43368663460](https://github.com/datopsis/lakehouse-integration/actions/runs/43368663460));
-empty scope, issuer normalization and Kanidm MFA provisioning
-([43369108418](https://github.com/datopsis/lakehouse-integration/actions/runs/43369108418));
-TLS-alert classification, Keycloak's socket process identifier and missing `basic`
-scope ([43369788776](https://github.com/datopsis/lakehouse-integration/actions/runs/43369788776)).
-The stricter subject assertion also identified Rauthy's default omission of `sub`
-([43371308288](https://github.com/datopsis/lakehouse-integration/actions/runs/43371308288));
-the final fixture enables its upstream subject mapping setting.
-The intermediate diagnostic run was superseded/cancelled. Only the final run above
-supports the table; both architectures use identical assertions.
+The table supersedes the earlier plaintext preflight and fixture-debugging runs.
+The owner-approved proxy removes the former transport blocker. Earlier warehouse
+lookup, Trino trust configuration and repeat-consent parsing failures were harness
+bugs; they are not scored as candidate failures here.
 
 ### Decoded claims
 
-These are selected fields from the final amd64 synthetic human login. Full decoded
-access/ID claims for **both** architectures are in the summaries above. ID-token
-groups are not silently substituted for API access-token groups.
+Selected fields from the amd64 synthetic human login follow. Full decoded access
+and ID claims for both CPUs are in the summaries. ID-token groups are not substituted
+for API access-token groups.
 
 Kanidm access token:
 
@@ -159,8 +152,8 @@ Kanidm access token:
 {
   "iss": "https://kanidm.idp.test:8443/oauth2/openid/lakekeeper",
   "aud": "lakekeeper",
-  "sub": "e0edfd9a-da9d-4e9e-8240-8d1b1f7edb44",
-  "exp": 1794548687,
+  "sub": "8c0df971-7e7d-4d81-94e3-d43d12cb7e37",
+  "exp": 1794552117,
   "scope": "groups openid profile"
 }
 ```
@@ -176,7 +169,7 @@ Kanidm ID-token groups:
     "idm_all_accounts@kanidm.idp.test",
     "00000000-0000-0000-0000-000000000048",
     "idm_people_self_name_write@kanidm.idp.test",
-    "629fafcd-1e6b-431f-8139-63d5ad984201",
+    "58477ed2-2cdc-4947-8e9d-2d0cb2b46d52",
     "lake-readers@kanidm.idp.test"
   ]
 }
@@ -188,8 +181,8 @@ Rauthy access token:
 {
   "iss": "https://rauthy.idp.test:8443/auth/v1/",
   "aud": "lakekeeper",
-  "sub": "IMifmK5NCMYbku47FgAk7Xjz",
-  "exp": 1794547890,
+  "sub": "2cD1oZT9FVMt4Y9aWVFGkeJJ",
+  "exp": 1794551304,
   "scope": "openid profile groups",
   "roles": [
     "user"
@@ -206,8 +199,8 @@ Keycloak access token:
 {
   "iss": "https://keycloak.idp.test:8443/realms/bakeoff",
   "aud": "lakekeeper",
-  "sub": "3ade7490-fc9e-4ce9-94c6-50af7e0b8944",
-  "exp": 1794548045,
+  "sub": "c68cc6a5-8268-4400-a8f0-783de1581c7e",
+  "exp": 1794551446,
   "scope": "openid email profile",
   "groups": [
     "lake-readers"
@@ -217,36 +210,69 @@ Keycloak access token:
 
 ## Grant and authorization-layer implications
 
-Kanidm 1.12.0 **does implement client_credentials**, but its JWE is not a JWT that
-the pinned Lakekeeper JWKS authenticator can validate. There is no JWE decryption
-or Kanidm introspection configured in that authentication path. The direct
-Lakekeeper request records the real HTTP result rather than relying on segment
-count alone. Kanidm 1.12.0 **cannot emit group claims in access tokens** through
-its supported claim mappings: extra/group claims are placed in ID tokens and
-userinfo; its RFC 9068 access-token structure has no group/custom-claim field.
-The source and decoded access/ID tokens establish this version-specific limitation.
+Kanidm 1.12.0 **implements client_credentials, but Lakekeeper cannot validate its
+encrypted JWE access token through the pinned OpenID authentication path**. Both
+native runs obtain the JWE successfully and receive Lakekeeper HTTP **401**, with
+`AuthenticationFailed: Authentication failed`. A signed human token and the signed
+service-account exchange token succeed against the same catalog. This is an
+observed compatibility failure, not a claim that Kanidm lacks the grant.
 
-Its
-[implementation](https://github.com/kanidm/kanidm/blob/v1.12.0/server/lib/src/idm/oauth2.rs)
-encrypts a `ClientAccess` structure into JWE on that grant. Its separate
-[service-account RFC 8693 exchange](https://github.com/kanidm/kanidm/blob/v1.12.0/book/src/accounts/service_accounts.md)
-uses an API token as the subject token, without the OAuth client secret. An
-exchange performed by this test harness is not evidence that a stock engine
-performs it. Runtime token format and exchange results are reported separately.
+The [grant implementation](https://github.com/kanidm/kanidm/blob/v1.12.0/server/lib/src/idm/oauth2.rs#L1937)
+encrypts `ClientAccess` into JWE. Lakekeeper's pinned
+[limes JWKS authenticator](https://github.com/vakamo-labs/limes-rs/blob/dcd1bb1b5fae6f1009111276c9695f0438a344e7/crates/limes/src/jwks.rs)
+validates signed JWTs and has no Kanidm JWE decryption/introspection path. Changing
+an audience or scope setting cannot make this JWE a supported signed JWT.
+
+Kanidm 1.12.0 **cannot issue group/custom claims in access tokens through its
+supported claim mappings**. The configured group mapper produces groups in ID
+tokens and userinfo, while the
+[RFC 9068 access-token extension structure](https://github.com/kanidm/kanidm/blob/v1.12.0/proto/src/oauth2.rs#L245)
+and [token construction](https://github.com/kanidm/kanidm/blob/v1.12.0/server/lib/src/idm/oauth2.rs#L2078)
+exclude those extra claims from access tokens. Decoded tokens on both architectures
+confirm this distinction. Group membership can control granted OAuth scopes; that
+is an alternative policy signal, not a group-membership claim.
+
+Its [service-account RFC 8693 exchange](https://github.com/kanidm/kanidm/blob/v1.12.0/book/src/accounts/service_accounts.md)
+uses an API token as subject token without the OAuth client secret. The custom
+HTTP exchange produces a signed JWT Lakekeeper accepts. Supplying that JWT
+externally is tested separately from engines obtaining it themselves. It requires
+a token-lifecycle component and is not a stock-client grant pass.
+
+Trino's Kanidm native client-credentials test returns
+`ICEBERG_CATALOG_ERROR: Cannot obtain metadata`, caused by
+`org.apache.iceberg.exceptions.NotAuthorizedException: Not authorized: Authentication failed`.
+PyIceberg returns `UnauthorizedError: AuthenticationFailed: Authentication failed`.
+The Trino service-account diagnostic sets `oauth2.token` to the Kanidm API token,
+uses the real token endpoint, and enables `oauth2.token-exchange-enabled`; it
+returns the same Trino error on both CPUs. Iceberg's
+[initial catalog session](https://github.com/apache/iceberg/blob/apache-iceberg-1.12.0/core/src/main/java/org/apache/iceberg/rest/auth/OAuth2Manager.java#L76)
+uses that supplied token directly for bootstrap, before a usable exchanged catalog
+session exists. Feeding the harness-exchanged JWT to Trino and PyIceberg produces
+successful exact list/read controls. **The service-account path does not serve
+these three stock clients without an additional exchange/token-lifecycle component
+in the tested configuration.** This does not claim Trino has no RFC 8693 support;
+it records the failed bootstrap path and the working externally exchanged control.
 
 The pinned [Sail credential implementations](https://github.com/lakehq/sail/blob/ac4690078021cf2a5402dc5c7b38a886f1916c73/crates/sail-catalog/src/credentials.rs)
-are empty, static bearer and file bearer providers. That source inspection does
-not establish native OAuth client-credentials or RFC 8693 support. Feeding an
-externally acquired token into a file would require another token-lifecycle
-component and does not satisfy the requested stock-client grant test.
-PyIceberg's existing legacy OAuth manager is exercised separately for token
-acquisition; this is explicitly not a table-read pass.
+provide empty, static bearer and file bearer credentials; the configuration has no
+client-credential/server-URI grant provider. The real no-token catalog request
+fails with `AnalysisException: external error: Failed to load config: response
+error: status code 401 Unauthorized` for **all three IdPs, including Keycloak**.
+With an externally obtained valid token in its supported bearer-token file, Sail
+lists and reads the exact table for all three. Thus the common failure is an
+engine capability gap, not evidence against a particular IdP or the TLS harness.
+PyIceberg's [built-in OAuth managers](https://github.com/apache/iceberg-python/blob/pyiceberg-0.12.0/pyiceberg/catalog/rest/auth.py)
+implement client credentials, not Kanidm's service-account RFC 8693 flow; a pre-exchanged token is a separate positive control.
 
-Kanidm's direct exchange succeeds in the custom HTTP harness, but **stock-client
-exchange compatibility is not established**. In particular, this Sail revision
-has no built-in grant/exchange provider in the inspected implementation. Trino's
-exchange configuration was not exercised. Do not describe the direct RFC 8693
-request as a solution that works across all three engines without custom code.
+The disposable client configuration is reproducible in
+[clients.py](../evaluation/idp/clients.py) and
+[catalog.py](../evaluation/idp/catalog.py):
+
+| Client | Native grant settings | Per-run CA trust |
+| --- | --- | --- |
+| Trino 484 | `iceberg.rest-catalog.security=OAUTH2`, `oauth2.credential` and `oauth2.server-uri` under `iceberg.rest-catalog`, scope `openid profile` | Public-CA JKS mounted read-only at `/opt/java/lib/security/jssecacerts`; standard JSSE discovery, no forbidden Java-option environment override |
+| PyIceberg 0.12.0 | `credential`, `oauth2-server-uri`, scope `openid profile` | `ssl={"cabundle": CA_PATH}` |
+| Sail 0.7.3 | No native credential/server-URI grant configuration; separate control uses `bearer_access_token_file` | `SSL_CERT_FILE` points to the public CA |
 
 Group claims are input for Phase C, not authorization by themselves. The pinned
 [Lakekeeper configuration](https://github.com/lakekeeper/lakekeeper/blob/9bd377162345b64a716f0a4fcffe4e7e7f3c7534/docs/docs/configuration.md)
@@ -272,12 +298,12 @@ production deployment costs.
 
 | IdP | CPU | Startup seconds | Median idle RSS MiB | Data directory MiB | Image MiB |
 | --- | --- | --- | --- | --- | --- |
-| Kanidm | [amd64][amd64] | 1.192 | 66.1 | 2.98 | 261.3 |
-| Kanidm | [arm64][arm64] | 1.150 | 74.2 | 2.98 | 268.6 |
-| Rauthy | [amd64][amd64] | 15.164 | 73.9 | 6.34 | 90.6 |
-| Rauthy | [arm64][arm64] | 8.143 | 74.4 | 6.34 | 93.2 |
-| Keycloak | [amd64][amd64] | 31.438 | 590.9 | 2.31 | 451.4 |
-| Keycloak | [arm64][arm64] | 27.433 | 574.7 | 2.25 | 452.6 |
+| Kanidm | [amd64][amd64] | 1.451 | 71.0 | 3.00 | 261.3 |
+| Kanidm | [arm64][arm64] | 1.143 | 61.7 | 2.97 | 268.6 |
+| Rauthy | [amd64][amd64] | 9.139 | 74.9 | 6.23 | 90.6 |
+| Rauthy | [arm64][arm64] | 11.128 | 75.2 | 6.23 | 93.2 |
+| Keycloak | [amd64][amd64] | 25.385 | 570.7 | 2.10 | 451.4 |
+| Keycloak | [arm64][arm64] | 26.413 | 567.1 | 2.08 | 452.6 |
 
 Keycloak contains **484 jars on each architecture**. Image sizes are Docker image
 inspection totals, not compressed registry transfer sizes.
@@ -334,7 +360,7 @@ across the image. Scanner failure is an error, never a zero. Findings do not gat
 this evaluation; scanner execution failures do. Full JSON includes database dates,
 package evidence and scanner-specific matching. No suppression or fix was applied.
 
-Final [actual scan run](https://github.com/datopsis/lakehouse-integration/actions/runs/43372083311), completed on both architectures:
+Final [actual scan run](https://github.com/datopsis/lakehouse-integration/actions/runs/43378071591), completed on both architectures:
 
 | IdP | Trivy amd64 H/C | Trivy arm64 H/C | Grype amd64 H/C | Grype arm64 H/C |
 | --- | --- | --- | --- | --- |
@@ -396,9 +422,10 @@ No vulnerability reports were sent upstream.
 
 ## Recommendation and remaining verification
 
-**Provisional recommendation: carry Rauthy into the next Rust-focused qualification
-stage; retain Keycloak as the control and fallback. Do not select a production IdP
-from this incomplete qualification.** Rauthy supplies the conventional signed
+**Recommendation: prefer Rauthy for the Phase B Rust implementation; retain
+Keycloak as the control and fallback. None passes the requested native-grant
+requirement across all three engines because Sail lacks that client capability.**
+Rauthy supplies the conventional signed
 client-credentials token and human access-token groups this design needs, supports
 native bootstrap JSON, and has a substantially smaller measured footprint than
 Keycloak. The tradeoffs are its pre-1.0/no-backport policy, concentrated maintenance
@@ -412,20 +439,23 @@ Prefer it if operational maturity outweighs the Rust preference. Kanidm is the
 least direct fit here: the client-credentials JWE and groups confined to ID tokens
 in this fixture introduce client and authorization-layer work that is absent from
 the other two configurations. Its successful PKCE and service-account exchange
-still make it viable for different requirements.
+still make it viable for different requirements. All three pass the exercised
+Lakekeeper signed-token checks; Kanidm's JWE incompatibility is separate from
+those signed-token security results.
 
-The next prerequisite is a separately reviewed, fully encrypted Lakekeeper serving
-path consistent with Phase A. Then implement and run every blocked engine/security
-assertion against the real catalog, including explicit Sail grant support. No
-provider gets credit for rejecting forged tokens merely because its own token
-endpoint works. The owner remains responsible for the IdP choice; this PR changes
-no production or main-integration authentication setting.
+The approved Phase A proxy is exercised here. The remaining common blocker is
+Sail's lack of native OAuth grant/token-lifecycle support. Choose an explicit
+supported integration or upstream change before treating all three engines as
+qualified; passing a harness-acquired token does not remove that requirement.
+The owner remains responsible for the IdP choice. This PR changes no production
+or main-integration authentication setting.
 
-Not tested: all Lakekeeper token-acceptance/rejection and table-read assertions
-listed above; Trino/Sail runtime token acquisition; production database profiles;
-backup restoration and encryption-key recovery; multi-node HA, partitions or
-failover; load, long-lived refresh and logout/revocation; a comparative MFA/passkey
-evaluation (Kanidm TOTP enrollment/login is exercised to satisfy its policy); production
-secret-management/drift reconciliation; UBI 9 IdP source builds; transitive license
-review; full Rust source/SBOM vulnerability coverage; Phase C authorization and
-STS/table isolation. Tokens and private keys are never published as evidence.
+Not tested: production database profiles; backup restoration and encryption-key
+recovery; multi-node HA, partitions or failover; load, long-lived refresh and
+logout/revocation; a comparative MFA/passkey evaluation (Kanidm TOTP enrollment
+and login are exercised); production secret-management/drift reconciliation;
+UBI 9 IdP source builds with pinned toolchains; transitive license review; full
+Rust source/SBOM vulnerability coverage; Phase C authorization and STS/table
+isolation. The evaluation qualifies the IdP and catalog token transport only,
+not every Phase A storage/query transport. Tokens and private keys are never
+published as evidence.
