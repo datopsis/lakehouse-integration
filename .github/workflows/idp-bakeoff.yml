@@ -27,7 +27,7 @@ jobs:
             machine: aarch64
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       INTEGRATION_ARCH: ${{ matrix.arch }}
       EXPECTED_MACHINE: ${{ matrix.machine }}
@@ -49,7 +49,7 @@ jobs:
           .venv/bin/ruff format --check evaluation/idp
           .venv/bin/python -m unittest discover -s evaluation/idp -p 'test_*.py' -v
           .venv/bin/zizmor --offline --persona pedantic .github/workflows/idp-bakeoff.yml
-      - name: Build unchanged pinned Lakekeeper and PostgreSQL with strict provenance
+      - name: Build pinned engines, storage and approved NGINX proxy with strict provenance
         id: build
         run: |
           set -euo pipefail

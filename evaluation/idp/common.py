@@ -92,7 +92,14 @@ def pki():
         ca / "ca.pem",
     )
     (ca / "key.pem").chmod(0o600)
-    for name in ("kanidm", "rauthy", "keycloak"):
+    for name in (
+        "kanidm",
+        "rauthy",
+        "keycloak",
+        "catalog-kanidm",
+        "catalog-rauthy",
+        "catalog-keycloak",
+    ):
         dest = WORK / name / "tls"
         dest.mkdir(parents=True)
         run(

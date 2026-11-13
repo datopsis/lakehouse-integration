@@ -6,42 +6,48 @@ relevant pull requests, on native `ubuntu-24.04` and `ubuntu-24.04-arm`. Both ru
 the same assertions. It is not a dependency of the required `Integration` check.
 The Integration workflow, login setting, image locks and source pins are unchanged.
 
-## Shared prerequisite blocker
+## Approved TLS path and evaluation scope
 
-The pinned Lakekeeper **0.13.4**, image-source revision
-`2200c516919a9667e9761a6581b848de32b693d1`, implements a
-[plain TCP listener](https://github.com/lakekeeper/lakekeeper/blob/9bd377162345b64a716f0a4fcffe4e7e7f3c7534/crates/lakekeeper/src/serve.rs).
-[TLS-PLAN.md](TLS-PLAN.md) explicitly leaves even a loopback plaintext proxy
-exception undecided. This evaluation follows the instruction that tokens never
-travel in plaintext. No bearer token is sent to that listener and no plaintext
-proxy backend is introduced.
+The owner confirmed on this PR's follow-up that Phase A's design was approved on
+**2026-11-12**: Lakekeeper binds **127.0.0.1:8182**, and the datopsis/nginx-ubi
+Lakekeeper profile serves **verified TLS on 8181** in the same network namespace.
+This supersedes the earlier interpretation of the undecided exception in
+[TLS-PLAN.md](TLS-PLAN.md). The loopback hop is an explicitly approved plaintext
+exception; tokens are never sent in plaintext across the container bridge.
 
-Each IdP gets a disposable Lakekeeper configuration with OpenID enabled,
-`OPENID_AUDIENCE=lakekeeper`, `OPENID_SUBJECT_CLAIM=sub`, and
-`OPENID_ROLES_CLAIM=groups`. The existing repository build scripts and strict
-provenance/binary checks build Lakekeeper and PostgreSQL without changing pins.
-The preflight requires Lakekeeper to become healthy, requires **401** from an
-anonymous request, then attempts verified TLS without sending any token. This
-separates a working authentication-enabled plaintext service from an unrelated
-startup failure. Keycloak receives exactly the same preflight as both candidates.
+The evaluation pins nginx-ubi to **`9ef9e822c6b5e508cebef2adff3bb647a206773c`** and
+uses its [Lakekeeper profile](https://github.com/datopsis/nginx-ubi/blob/9ef9e822c6b5e508cebef2adff3bb647a206773c/examples/profiles/lakekeeper/nginx.conf)
+unchanged. The owner's build/lock verification runs natively, and image revision,
+architecture and lock-digest labels must match. The main Integration workflow,
+image lock and authentication settings are unchanged. This is an evaluation-only
+proxy input, explicitly authorized separately from the main image pins.
 
-Consequently the following remain **BLOCKED, not passed or candidate failures**:
-Trino 484, PyIceberg 0.12.0 and Sail 0.7.3 obtaining a token **and listing/reading a
-table through Lakekeeper**; human-token acceptance; valid-token acceptance;
-wrong-audience, expired, different-key and unsigned/alg=none rejection; and
-Lakekeeper's acceptance of new tokens after signing-key rotation. No simulated
-catalog or local JWT verifier is substituted for Lakekeeper. Those assertions
-are absent from the executable harness beyond their blocked evidence entries;
-this PR is not a completed end-to-end qualification suite.
+Each IdP gets its own disposable authenticated Lakekeeper database and catalog,
+with the real pinned 0.13.4 binary, `OPENID_AUDIENCE=lakekeeper`, subject `sub`,
+and roles `groups`. The proxy gets its leaf certificate/key; Lakekeeper gets only
+the public CA. Tests inspect the shared namespace and loopback listener and require
+bridge connections to backend/metrics ports to fail. Frontend plaintext, wrong CA
+and wrong hostname must be rejected. All bearer-bearing HTTP calls use verified TLS.
 
-Trino and Sail are not built or launched by this blocked fixture. There is no
-native-client error transcript for them, and PyIceberg's successful token-only
-request is not catalog compatibility. The Kanidm JWE-format failure is an exact
-harness assertion, not a fabricated Lakekeeper or engine response.
+The harness now implements real table list/read, human-token acceptance, valid and
+invalid-token checks, and JWKS rotation against Lakekeeper. The wrong-audience
+case keeps the genuine token, key and issuer fixed and changes only Lakekeeper's
+expected audience, with passing controls before and after. Expiry uses a genuine
+IdP-signed token, waits beyond its expiry plus the verifier's 60-second clock-skew
+allowance, and requires a fresh-token control. It never edits `exp` and mistakes a
+signature failure for expiry enforcement. A restart after the separately recorded
+rotation assertion isolates the later expiry test; it cannot turn rotation failure
+into a pass.
 
-The workflow fails qualification while any such entry is blocked. An IdP-only
-pass means only the named subtest passed. The existing Integration check can be
-green while this separate evaluation is red.
+Trino's isolated query interface, Sail's isolated Spark Connect interface and the
+existing S3 test profile remain as in the main fixture; no IdP token is sent over
+those query interfaces. Native Sail client-credentials support is not invented:
+its no-token failure and a separate externally supplied-token read are recorded.
+The latter is not counted as a native-grant pass.
+
+The runtime table below is the **historical pre-approval run** until replacement
+native Actions evidence has been inspected. Its plaintext-listener blockers no
+longer describe the approved test design.
 
 ## Reproducible upstream inputs
 
@@ -211,7 +217,16 @@ Keycloak access token:
 
 ## Grant and authorization-layer implications
 
-Kanidm 1.12.0 **does implement client_credentials**. Its
+Kanidm 1.12.0 **does implement client_credentials**, but its JWE is not a JWT that
+the pinned Lakekeeper JWKS authenticator can validate. There is no JWE decryption
+or Kanidm introspection configured in that authentication path. The direct
+Lakekeeper request records the real HTTP result rather than relying on segment
+count alone. Kanidm 1.12.0 **cannot emit group claims in access tokens** through
+its supported claim mappings: extra/group claims are placed in ID tokens and
+userinfo; its RFC 9068 access-token structure has no group/custom-claim field.
+The source and decoded access/ID tokens establish this version-specific limitation.
+
+Its
 [implementation](https://github.com/kanidm/kanidm/blob/v1.12.0/server/lib/src/idm/oauth2.rs)
 encrypts a `ClientAccess` structure into JWE on that grant. Its separate
 [service-account RFC 8693 exchange](https://github.com/kanidm/kanidm/blob/v1.12.0/book/src/accounts/service_accounts.md)

@@ -1,4 +1,4 @@
-"""Native, TLS-only evaluation. Blocked cases remain explicit and fail qualification."""
+"""Native IdP and real catalog assertions through the approved loopback TLS proxy."""
 
 import json
 import os
@@ -10,7 +10,9 @@ import sys
 import time
 
 import requests
-from common import NETWORK, OUT, ROOT, WORK, decode, host, pki, run, save, secret, wait, write
+from catalog import Catalog, Storage, bad_token, build_proxy, expired
+from clients import sail, trino
+from common import NETWORK, OUT, ROOT, WORK, decode, pki, run, save, secret, wait, write
 from providers import Provider
 
 RESULTS = {}
@@ -52,12 +54,13 @@ def build():
     arch = owner.native_architecture()
     builds = {}
     # Same owner scripts, lock checks and binary/provenance assertions as Integration.
-    # No need to build query engines while the token-transport prerequisite is blocked.
-    for repo in ("postgresql-lakekeeper-ubi", "lakekeeper-ubi"):
+    for repo in owner.PINS:
         result = owner.build(repo, owner.PINS[repo], arch)
         builds[repo] = result
         save("builds.json", builds)
         assert result["status"] == "pass", result
+    builds["nginx-ubi"] = build_proxy(arch, owner)
+    save("builds.json", builds)
 
 
 def postgres():
@@ -134,73 +137,6 @@ def postgres():
     return env
 
 
-def lakekeeper(provider, env):
-    name = "idp-lakekeeper-" + provider.name
-    run(
-        "docker",
-        "run",
-        "-d",
-        "--name",
-        name,
-        "--network",
-        NETWORK,
-        "--label",
-        "datopsis.idp-bakeoff=true",
-        "--env-file",
-        env,
-        "-e",
-        "LAKEKEEPER__OPENID_PROVIDER_URI=" + provider.issuer.rstrip("/"),
-        "-e",
-        "LAKEKEEPER__OPENID_AUDIENCE=lakekeeper",
-        "-e",
-        "LAKEKEEPER__OPENID_SUBJECT_CLAIM=sub",
-        "-e",
-        "LAKEKEEPER__OPENID_ROLES_CLAIM=groups",
-        "-e",
-        "SSL_CERT_FILE=/ca/ca.pem",
-        "-v",
-        f"{WORK / 'ca/ca.pem'}:/ca/ca.pem:ro",
-        "localhost/lakekeeper-ubi:integration",
-        "serve",
-    )
-    address = host(name, "lakekeeper-" + provider.hostname)
-    try:
-        wait(
-            lambda: (
-                subprocess.run(
-                    ["docker", "exec", name, "lakekeeper", "healthcheck", "-s"], capture_output=True
-                ).returncode
-                == 0
-            )
-        )
-        # Anonymous negative only. NEVER attach an Authorization header to HTTP.
-        anonymous = requests.Session()
-        anonymous.trust_env = False
-        response = anonymous.get(
-            f"http://{address}:8181/catalog/v1/config", timeout=10, allow_redirects=False
-        )
-        assert response.status_code == 401, (response.status_code, response.text)
-        context = ssl.create_default_context(cafile=str(provider.ca))
-        try:
-            with socket.create_connection((address, 8181), timeout=10) as sock:
-                with context.wrap_socket(sock, server_hostname="lakekeeper-" + provider.hostname):
-                    pass
-        except ssl.SSLError as exc:
-            return {
-                "status": "blocked",
-                "anonymous_http_status": response.status_code,
-                "tls_error": str(exc),
-                "reason": "Pinned Lakekeeper has no TLS listener; tokens never sent over HTTP.",
-            }
-        raise AssertionError(
-            "Lakekeeper TLS unexpectedly available: implement full token/table assertions before qualification"
-        )
-    finally:
-        log = subprocess.run(["docker", "logs", name], capture_output=True, text=True)
-        save(name + ".log.json", {"log": log.stdout + log.stderr})
-        run("docker", "rm", "-fv", name)
-
-
 def machine(provider):
     r = provider.machine()
     if r.status_code != 200:
@@ -210,6 +146,7 @@ def machine(provider):
     assert token["token_type"].lower() == "bearer"
     assert token["expires_in"] > 0
     provider.machine_token = token["access_token"]
+    provider.client_credentials_token = provider.machine_token
     return {
         "http_status": r.status_code,
         "token_type": token["token_type"],
@@ -262,6 +199,7 @@ def human(provider):
     assert claims["iss"] == provider.issuer and claims["exp"] > time.time()
     assert isinstance(claims["sub"], str) and claims["sub"]
     assert claims["aud"] == "lakekeeper" or claims["aud"] == ["lakekeeper"]
+    provider.human_token = tokens["access_token"]
     provider.human_claims = claims
     provider.id_claims = decode(tokens["id_token"])[1]
     return {
@@ -308,6 +246,7 @@ def rotation(provider):
     provider.rotate()
     token = provider.exchange() if provider.name == "kanidm" else provider.machine().json()
     secret(token["access_token"])
+    provider.rotated_token = token["access_token"]
     new = decode(token["access_token"])[0]["kid"]
     after = provider.http.json("GET", provider.discovery["jwks_uri"])
     assert new != old and new in {key["kid"] for key in after["keys"]}, (old, new, after)
@@ -417,28 +356,103 @@ def main():
     ca = pki()
     run("docker", "network", "create", "--internal", NETWORK)
     env = postgres()
+    storage = Storage()
+    assert test("storage", storage.start)["status"] == "pass", "Storage fixture failed"
+    expiry_tests = []
     for name in ("keycloak", "rauthy", "kanidm"):
         provider = Provider(name, ca)
         started = test(name + "/startup_provision_discovery", lambda: provider.start(arch))
         for case in REQUIRED:
             RESULTS[name + "/" + case] = {
                 "status": "blocked",
-                "reason": "Lakekeeper verified-TLS prerequisite not met; no token sent",
+                "reason": "Provider/catalog prerequisite failed; see setup result",
             }
-        if started["status"] == "pass":
-            test(name + "/verified_tls", lambda: tls_boundary(provider))
-            test(name + "/machine_token_endpoint", lambda: machine(provider))
-            test(name + "/machine_jwt_claims", lambda: machine_claims(provider))
-            test(name + "/pyiceberg_token_only", lambda: pyiceberg_token(provider))
-            if name == "kanidm":
-                test(name + "/service_account_exchange", lambda: exchange(provider))
-            test(name + "/human_pkce_idp", lambda: human(provider))
-            test(name + "/groups_claim", lambda: groups(provider))
-            test(name + "/id_token_groups", lambda: id_groups(provider))
-            test(name + "/rotation_idp", lambda: rotation(provider))
-            test(name + "/operations", lambda: operations(provider))
-            test(name + "/lakekeeper_transport", lambda: lakekeeper(provider, env))
+        if started["status"] != "pass":
+            continue
+        test(name + "/verified_tls", lambda: tls_boundary(provider))
+        test(name + "/machine_token_endpoint", lambda: machine(provider))
+        test(name + "/machine_jwt_claims", lambda: machine_claims(provider))
+        test(name + "/pyiceberg_token_only", lambda: pyiceberg_token(provider))
+        if name == "kanidm":
+            test(name + "/service_account_exchange", lambda: exchange(provider))
+        test(name + "/human_pkce_idp", lambda: human(provider))
+        test(name + "/groups_claim", lambda: groups(provider))
+        test(name + "/id_token_groups", lambda: id_groups(provider))
+        test(name + "/operations", lambda: operations(provider))
+
+        def setup():
+            provider.catalog = Catalog(provider, env, storage)
+            return provider.catalog.start()
+
+        if test(name + "/lakekeeper_transport", setup)["status"] != "pass":
+            continue
+        catalog = provider.catalog
+        if (
+            test(name + "/seed_table", lambda: catalog.seed(provider.human_token))["status"]
+            != "pass"
+        ):
+            continue
+        test(name + "/human_pkce_lakekeeper", lambda: catalog.request(provider.human_token))
+        test(name + "/valid_token", lambda: catalog.request(provider.human_token))
+        test(
+            name + "/machine_token_lakekeeper",
+            lambda: catalog.request(provider.client_credentials_token),
+        )
+        if name == "kanidm":
+            test(
+                name + "/jwe_rejected",
+                lambda: catalog.request(provider.client_credentials_token, 401),
+            )
+            test(
+                name + "/exchange_token_lakekeeper", lambda: catalog.request(provider.machine_token)
+            )
+        test(
+            name + "/different_key",
+            lambda: catalog.request(bad_token(provider, "different_key"), 401),
+        )
+        test(name + "/alg_none", lambda: catalog.request(bad_token(provider, "alg_none"), 401))
+        test(name + "/wrong_audience", lambda: catalog.wrong_audience(provider.human_token))
+        # Warm the live Lakekeeper JWKS cache before rotating. No restart between these calls.
+        catalog.request(provider.human_token)
+        test(name + "/rotation_idp", lambda: rotation(provider))
+        test(name + "/rotation_lakekeeper", lambda: catalog.request(provider.rotated_token))
+
+        def prepare_expiry():
+            # Separate expiry from the rotation test already recorded above. A restart
+            # here cannot turn a failed rotation assertion into a pass.
+            catalog.restart_backend()
+            token = provider.human()["access_token"]
+            accepted = catalog.request(token)
+            expiry_tests.append((name, catalog, token))
+            return {
+                "accepted_before_expiry": accepted["http_status"],
+                "claims": decode(token)[1],
+                "wait_until": decode(token)[1]["exp"] + 61,
+            }
+
+        test(name + "/expiry_positive_control", prepare_expiry)
+        test(
+            name + "/pyiceberg_client_credentials_list_read",
+            lambda: catalog.read(catalog.pyiceberg()),
+        )
+        test(name + "/trino_client_credentials_list_read", lambda: trino(catalog))
+        test(name + "/sail_client_credentials_list_read", lambda: sail(catalog))
+        # An externally supplied token is a separate diagnostic, never a grant pass.
+        if name == "kanidm":
+            test(name + "/trino_service_token_exchange", lambda: trino(catalog, "exchange"))
+            test(name + "/trino_external_exchange_token", lambda: trino(catalog, "external"))
+            test(
+                name + "/pyiceberg_external_exchange_token",
+                lambda: catalog.read(catalog.pyiceberg(provider.machine_token)),
+            )
+        else:
+            # Use a fresh token; a short-lived Rauthy token may expire during engine startup.
+            provider.machine_token = secret(provider.machine().json()["access_token"])
+        test(name + "/sail_external_token_list_read", lambda: sail(catalog, external_token=True))
         save("results.json", RESULTS)
+    for name, catalog, token in expiry_tests:
+        print(name + "/expired_token: waiting for genuine IdP token expiry", flush=True)
+        test(name + "/expired_token", lambda: expired(catalog, token))
     # A successful evidence collector is not a passed qualification. Blockers keep this red.
     assert all(
         RESULTS[n + "/" + case]["status"] == "pass"

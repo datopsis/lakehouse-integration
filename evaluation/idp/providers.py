@@ -391,6 +391,9 @@ class Provider:
                 "GET", self.base + "/v1/oauth2/lakekeeper/_basic_secret", headers=self.admin
             )
         )
+        # OAuth resource-server entries need membership to request these scopes
+        # in their own client-credentials grant, independently of human membership.
+        api("POST", "/v1/group/lake-readers/_attr/member", ["lakekeeper", "wrong-audience"])
         self.service_token = secret(
             api(
                 "POST",
