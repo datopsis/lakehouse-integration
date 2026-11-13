@@ -59,6 +59,16 @@ CA keys, leaf keys, passwords, client secrets, authorization codes and bearer
 tokens are generated per run and excluded from artifacts. Decoded claims concern
 only synthetic identities. No GitHub secrets, permissions or settings are changed.
 
+Rauthy's internal Hiqlite ports 8100 and 8200 also use this CA and verified TLS.
+Keycloak's single-node fixture uses Narayana's upstream
+[MBeanProcessId](https://github.com/jbosstm/narayana/blob/7.3.4.Final/ArjunaCore/arjuna/classes/com/arjuna/ats/internal/arjuna/utils/MBeanProcessId.java)
+through `JAVA_OPTS_APPEND`, replacing the default socket-based process identifier.
+This avoids its otherwise-unnecessary plaintext loopback reservation; it does not
+disable transactions or recovery. Listener enumeration must match the configured
+TLS ports exactly, excluding Docker's internal DNS stub. Each application port
+must accept the generated CA/hostname and reject unknown CAs, wrong hostnames and
+anonymous plaintext requests. A TLS fatal decode-error alert is a rejection.
+
 ## Runtime comparison
 
 Results and run links will be populated from the final native artifacts. Early

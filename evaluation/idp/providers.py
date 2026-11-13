@@ -191,6 +191,10 @@ class Provider:
             {
                 "KC_BOOTSTRAP_ADMIN_USERNAME": "admin",
                 "KC_BOOTSTRAP_ADMIN_PASSWORD": self.admin_secret,
+                # Narayana otherwise reserves a plaintext loopback socket as a PID.
+                # Use its upstream JVM PID implementation in this single-node fixture.
+                "JAVA_OPTS_APPEND": "-Dcom.arjuna.ats.internal.arjuna.utils.processImplementation="
+                "com.arjuna.ats.internal.arjuna.utils.MBeanProcessId",
             },
             [
                 "start",
