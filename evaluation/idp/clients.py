@@ -57,16 +57,14 @@ def trino(catalog, mode="credential"):
         "-file",
         provider.ca,
         "-keystore",
-        directory / "truststore.p12",
+        directory / "truststore.jks",
         "-storetype",
-        "PKCS12",
+        "JKS",
         "-storepass",
         trust_password,
     )
-    env["JAVA_TOOL_OPTIONS"] = (
-        "-Djavax.net.ssl.trustStore=/etc/trino/truststore.p12 "
-        "-Djavax.net.ssl.trustStorePassword=" + trust_password
-    )
+    # JSSE discovers this public-certificate JKS without forbidden JVM overrides.
+    # JKS certificates load with a null password; the read-only mount protects integrity.
     for path in directory.rglob("*"):
         path.chmod(0o755 if path.is_dir() else 0o644)
     # Truststore contains only the public CA; credentials remain in a runner-only env file.
@@ -92,6 +90,8 @@ def trino(catalog, mode="credential"):
         "--security-opt=no-new-privileges:true",
         "-v",
         f"{directory}:/etc/trino:ro",
+        "-v",
+        f"{directory / 'truststore.jks'}:/opt/java/lib/security/jssecacerts:ro",
         "--tmpfs",
         "/var/lib/trino:rw,noexec,nosuid,nodev,uid=10001,gid=0,mode=0750,size=512m",
         "--tmpfs",

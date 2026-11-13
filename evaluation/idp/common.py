@@ -47,6 +47,13 @@ def write(path, data):
 def clean(text):
     for value in sorted(SECRETS, key=len, reverse=True):
         text = text.replace(value, "[REDACTED]")
+    # Query engines obtain their own tokens, which are not in this process's
+    # inventory. Cover compact JWE (including an empty encrypted-key segment).
+    text = re.sub(
+        r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+",
+        "[JWE]",
+        text,
+    )
     text = re.sub(r"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*", "[JWT]", text)
     assert "PRIVATE KEY-----" not in text, "Private key in evidence"
     return text

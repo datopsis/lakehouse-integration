@@ -86,6 +86,11 @@ class EvidenceSafety(unittest.TestCase):
         with patch.object(common, "SECRETS", ["generated-password"]):
             self.assertEqual(common.clean("generated-password"), "[REDACTED]")
 
+    def test_engine_tokens_are_redacted_without_inventory(self):
+        with patch.object(common, "SECRETS", []):
+            self.assertEqual(common.clean("Bearer eyJhbGciOiJkaXIifQ..abc.def.ghi"), "Bearer [JWE]")
+            self.assertEqual(common.clean("Bearer eyJhbGciOiJSUzI1NiJ9.abc.def"), "Bearer [JWT]")
+
     def test_only_fixable_high_critical_are_counted(self):
         base = {
             "Severity": "HIGH",

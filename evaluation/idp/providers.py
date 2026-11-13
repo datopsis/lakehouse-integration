@@ -472,9 +472,13 @@ class Provider:
             r = http.request(
                 "GET", self.base + "/oauth2/authorise?" + urlencode(params), headers=headers
             )
-            assert r.status_code == 200, (r.status_code, r.text)
+            assert r.status_code in (200, 302), (r.status_code, r.text)
             body = r.json()
-            if "ConsentRequested" in body:
+            if r.status_code == 302:
+                # Previously granted consent redirects directly on repeat login.
+                assert body == "Permitted", body
+                location = r.headers["Location"]
+            elif "ConsentRequested" in body:
                 consent = secret(body["ConsentRequested"]["consent_token"])
                 r = http.request(
                     "POST", self.base + "/oauth2/authorise/permit", json=consent, headers=headers
