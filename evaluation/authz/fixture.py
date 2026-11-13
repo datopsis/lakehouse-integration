@@ -224,6 +224,7 @@ def openfga(ca, db, arch):
         "OPENFGA_DATASTORE_URI": db,
         "OPENFGA_AUTHN_METHOD": "preshared",
         "OPENFGA_AUTHN_PRESHARED_KEYS": key,
+        "OPENFGA_GRPC_ADDR": "openfga:8081",
         "OPENFGA_GRPC_TLS_ENABLED": "true",
         "OPENFGA_GRPC_TLS_CERT": "/tls/cert.pem",
         "OPENFGA_GRPC_TLS_KEY": "/tls/key.pem",
@@ -351,7 +352,7 @@ class Storage:
             "s3.path-style-access": "true",
             "s3.access-key-id": self.access,
             "s3.secret-access-key": self.password,
-            "s3.ca-bundle": str(self.ca),
+            "py-io-impl": "pyiceberg.io.fsspec.FsspecFileIO",
         }
 
 

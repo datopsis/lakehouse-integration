@@ -125,7 +125,10 @@ def evaluate(arch):
             ),
             "commit": denial(
                 lambda: (
-                    reader.load_table("bakeoff.sample").update_properties(test="denied").commit()
+                    reader.load_table("bakeoff.sample")
+                    .transaction()
+                    .set_properties(test="denied")
+                    .commit_transaction()
                 )
             ),
         }
@@ -173,7 +176,10 @@ def evaluate(arch):
             "read_denied": denial(lambda: client.load_table("denied.sample")),
             "write_denied": denial(
                 lambda: (
-                    client.load_table("bakeoff.sample").update_properties(test="denied").commit()
+                    client.load_table("bakeoff.sample")
+                    .transaction()
+                    .set_properties(test="denied")
+                    .commit_transaction()
                 )
             ),
         }
