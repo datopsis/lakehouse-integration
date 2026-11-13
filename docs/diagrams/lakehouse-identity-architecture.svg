@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1720" height="1330" viewBox="0 0 1720 1330" font-family="'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+  <title>Datopsis lakehouse: Phase B identity architecture (target design)</title>
+  <desc>Rauthy chosen 2026-11-13, Keycloak fallback. Human PKCE and machine client-credentials flows, Sail external token file, Lakekeeper JWT validation and PostgreSQL storage over verified TLS. Authorization and credential vending are not built.</desc>
+  <defs>
+    <linearGradient id="hdr" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0f2742"/>
+      <stop offset="1" stop-color="#1d4b7a"/>
+    </linearGradient>
+    <filter id="sh" x="-5%" y="-5%" width="110%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#0f2742" flood-opacity="0.16"/>
+    </filter>
+    <marker id="aG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1b8a3a"/></marker>
+    <marker id="aB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2f6fd6"/></marker>
+    <marker id="aR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03030"/></marker>
+    <marker id="aO" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c27c0e"/></marker>
+    <style>
+      .t1 { font-size: 15px; font-weight: 700; fill: #10233b; }
+      .t2 { font-size: 12.5px; fill: #33475e; }
+      .t3 { font-size: 11.5px; fill: #5b6d82; }
+      .lbl { font-size: 11.5px; fill: #1b5e2c; font-weight: 600; }
+      .lblB { font-size: 11.5px; fill: #1f4f9c; font-weight: 600; }
+      .lblR { font-size: 11.5px; fill: #b02020; font-weight: 700; }
+      .zone { font-size: 13px; font-weight: 700; fill: #4a6789; letter-spacing: 0.3px; }
+      .card { fill: #ffffff; stroke: #c9d6e6; stroke-width: 1.2; }
+      .tls  { fill: none; stroke: #1b8a3a; stroke-width: 2.6; marker-end: url(#aG); }
+      .mtls { fill: none; stroke: #2f6fd6; stroke-width: 2.6; marker-end: url(#aB); marker-start: url(#aB); }
+      .mtls1 { fill: none; stroke: #2f6fd6; stroke-width: 2.6; marker-end: url(#aB); }
+      .plain { fill: none; stroke: #d03030; stroke-width: 2.6; stroke-dasharray: 5 4; marker-end: url(#aR); }
+      .pill { font-size: 10.5px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Canvas and header: same visual system as the Phase A diagram. -->
+  <rect width="1720" height="1330" fill="#ffffff"/>
+  <rect width="1720" height="92" fill="url(#hdr)"/>
+  <text x="40" y="44" font-size="26" font-weight="700" fill="#ffffff">Datopsis lakehouse · Identity architecture (Phase B)</text>
+  <text x="40" y="72" font-size="14" fill="#c8d8ec">Owner chose Rauthy 2026-11-13 · Keycloak is the tested fallback · source: docs/IDP-BAKEOFF.md · PostgreSQL is the target storage profile</text>
+  <rect x="1352" y="28" width="330" height="36" rx="18" fill="#f2a900"/>
+  <text x="1517" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#2b1d00">TARGET DESIGN · not yet implemented</text>
+
+  <!-- Clients and external token acquisition. -->
+  <rect x="40" y="128" width="1640" height="244" rx="12" fill="#f4f5f7" stroke="#9aa5b1" stroke-width="1.5"/>
+  <text x="58" y="154" class="zone">IDENTITY CLIENTS · all network hops use verified TLS</text>
+  <rect x="60" y="186" width="340" height="164" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="60" y="186" width="340" height="6" rx="3" fill="#2f6fd6"/>
+  <text x="76" y="216" class="t1">Human · browser / OIDC client</text>
+  <text x="76" y="242" class="t2">① Authorization code + S256 PKCE</text>
+  <text x="76" y="264" class="t2">State and nonce checked</text>
+  <text x="76" y="290" class="t3">Access token for the catalog API</text>
+  <text x="76" y="312" class="t3">Groups travel in the access token</text>
+
+  <rect x="440" y="186" width="360" height="164" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="440" y="186" width="360" height="6" rx="3" fill="#2f6fd6"/>
+  <text x="456" y="216" class="t1">Trino 484 + PyIceberg 0.12</text>
+  <text x="456" y="242" class="t2">② Native client-credentials grant</text>
+  <text x="456" y="264" class="t2">Each obtains its own machine token</text>
+  <text x="456" y="290" class="t3">Client ID + secret → Rauthy token endpoint</text>
+  <text x="456" y="312" class="t3">Access token → Lakekeeper REST API</text>
+
+  <rect x="840" y="186" width="380" height="164" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="840" y="186" width="380" height="6" rx="3" fill="#c27c0e"/>
+  <text x="856" y="216" class="t1">External token acquisition for Sail</text>
+  <text x="856" y="242" class="t2">③ Obtain token from Rauthy over HTTPS</text>
+  <text x="856" y="264" class="t2">Deliver a local bearer-token file to Sail</text>
+  <text x="856" y="290" class="t3">Token lifecycle management is required</text>
+  <text x="856" y="312" class="t3">Target integration; not a native Sail grant</text>
+
+  <rect x="1260" y="186" width="360" height="164" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="1260" y="186" width="360" height="6" rx="3" fill="#2f6fd6"/>
+  <text x="1276" y="216" class="t1">Sail 0.7.3</text>
+  <text x="1276" y="242" class="t2">③ Reads externally obtained token file</text>
+  <text x="1276" y="264" class="t2">bearer_access_token_file</text>
+  <text x="1276" y="290" class="t3">No native client-credentials grant</text>
+  <text x="1276" y="312" class="t3">④ Bearer token → Lakekeeper over HTTPS</text>
+
+  <!-- Identity and catalog services. Proxy-internal hops are detailed in Phase A. -->
+  <rect x="40" y="434" width="1640" height="656" rx="16" fill="#f5f8fc" stroke="#7d97b8" stroke-width="2" stroke-dasharray="10 6"/>
+  <text x="760" y="460" class="zone">PHASE B TARGET · service endpoints shown · Phase A owns transport qualification</text>
+  <rect x="60" y="490" width="650" height="210" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="60" y="490" width="650" height="6" rx="3" fill="#1f9d8a"/>
+  <text x="76" y="520" class="t1">Rauthy · OpenID provider over TLS</text>
+  <text x="76" y="546" class="t2">Chosen 2026-11-13 · hardened rauthy-ubi planned</text>
+  <text x="76" y="570" class="t2">Discovery · authorization · token endpoint · public JWKS</text>
+  <text x="76" y="594" class="t2">Signed JWT access tokens · audience: lakekeeper · subject: sub</text>
+  <text x="76" y="618" class="t2">Groups claim carried for Phase C</text>
+  <text x="76" y="646" class="t3">Machine-token subject: CLIENT_CREDENTIALS_MAP_SUB=true</text>
+  <text x="76" y="674" class="t3">Keycloak: tested fallback, not a second active provider</text>
+
+  <rect x="1000" y="490" width="620" height="210" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="1000" y="490" width="620" height="6" rx="3" fill="#7a4fd6"/>
+  <text x="1016" y="520" class="t1">Lakekeeper · authenticated catalog REST API</text>
+  <text x="1016" y="546" class="t2">④ HTTPS catalog:8181 via datopsis/nginx-ubi</text>
+  <text x="1016" y="570" class="t2">⑤ Validate JWT with Rauthy's JWKS signing keys</text>
+  <text x="1016" y="594" class="t2">Check issuer, audience, expiry and signature</text>
+  <text x="1016" y="618" class="t2">Identity: sub · roles claim: groups (for Phase C)</text>
+  <text x="1016" y="646" class="t3">Authentication does not grant table permissions</text>
+  <text x="1016" y="674" class="t3">Phase A's approved proxy loopback exception is detailed separately</text>
+
+  <!-- Token acquisition arrows point to the endpoint; replies return on TLS. -->
+  <path d="M230,352 L230,488" class="tls"/>
+  <text x="70" y="408" class="lbl">① HTTPS · code + PKCE</text>
+  <path d="M620,352 L620,402 L440,402 L440,488" class="tls"/>
+  <text x="450" y="426" class="lbl">② HTTPS · client credentials</text>
+  <path d="M1030,352 L1030,418 L670,418 L670,488" class="tls"/>
+  <text x="762" y="410" class="lbl">③ HTTPS · external grant</text>
+  <path d="M1440,352 L1440,488" class="tls"/>
+  <text x="1450" y="402" class="lbl">④ HTTPS REST</text>
+  <text x="1450" y="420" class="t3">All API clients use JWTs</text>
+  <path d="M998,578 L712,578" class="tls"/>
+  <text x="756" y="562" class="lbl">⑤ HTTPS discovery / JWKS</text>
+  <text x="742" y="604" class="t3">Public keys fetched; JWT checked locally</text>
+
+  <!-- PostgreSQL target: distinct identity and catalog storage roles. -->
+  <rect x="60" y="790" width="650" height="122" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="60" y="790" width="650" height="6" rx="3" fill="#1f9d8a"/>
+  <text x="76" y="820" class="t1">PostgreSQL · Rauthy storage</text>
+  <text x="76" y="844" class="t2">TLS verify-full · passwords retained · identity database</text>
+  <text x="76" y="870" class="t3">Target storage profile; the bake-off used embedded Hiqlite/SQLite</text>
+  <text x="76" y="892" class="t3">Persistent Hiqlite cache remains part of Rauthy's storage needs</text>
+  <path d="M385,702 L385,788" class="tls"/>
+  <text x="398" y="750" class="lbl">TLS · verify-full</text>
+
+  <rect x="1000" y="790" width="620" height="122" rx="10" class="card" filter="url(#sh)"/>
+  <rect x="1000" y="790" width="620" height="6" rx="3" fill="#1f9d8a"/>
+  <text x="1016" y="820" class="t1">PostgreSQL · Lakekeeper storage</text>
+  <text x="1016" y="844" class="t2">TLS verify-full + SCRAM · catalog metadata</text>
+  <text x="1016" y="870" class="t3">Separate database credentials from Rauthy</text>
+  <path d="M1310,702 L1310,788" class="tls"/>
+  <text x="1324" y="750" class="lbl">TLS · verify-full</text>
+
+  <!-- Future phases are deliberately unconnected and dashed: not built. -->
+  <rect x="60" y="942" width="650" height="126" rx="12" fill="#f3effb" stroke="#7a4fd6" stroke-width="1.6" stroke-dasharray="10 6"/>
+  <text x="76" y="972" class="t1">Phase C · Authorization · NOT BUILT</text>
+  <text x="76" y="998" class="t2">OpenFGA or Cedar · undecided</text>
+  <text x="76" y="1022" class="t2">Groups claim is input; mapping / synchronization still required</text>
+  <text x="76" y="1048" class="t3">Carrying groups in a JWT does not enforce table permissions</text>
+  <rect x="1000" y="942" width="620" height="126" rx="12" fill="#ecf7f5" stroke="#1f9d8a" stroke-width="1.6" stroke-dasharray="10 6"/>
+  <text x="1016" y="972" class="t1">Phase D · Credential vending · NOT BUILT</text>
+  <text x="1016" y="998" class="t2">Lakekeeper → SeaweedFS STS over HTTPS</text>
+  <text x="1016" y="1022" class="t2">Short-lived per-table S3 keys; replace engines' static keys</text>
+  <text x="1016" y="1048" class="t3">Bucket-wide static keys still bypass catalog permissions today</text>
+
+  <!-- Legend and numbered flow retain the Phase A footer layout. -->
+  <rect x="40" y="1110" width="760" height="196" rx="12" fill="#fafbfd" stroke="#c9d6e6"/>
+  <text x="60" y="1138" class="zone">LEGEND</text>
+  <path d="M62,1166 L142,1166" class="tls"/>
+  <text x="156" y="1171" class="t2">Verified TLS: server certificate and hostname checked against the test CA</text>
+  <rect x="62" y="1190" width="80" height="22" rx="5" fill="#f3effb" stroke="#7a4fd6" stroke-width="1.6" stroke-dasharray="10 6"/>
+  <text x="156" y="1205" class="t2">Dashed future boxes: not built; no authorization or vending claim</text>
+  <text x="60" y="1239" class="t2">Arrows show requests; token and JWKS responses return over the same TLS connection.</text>
+  <text x="60" y="1262" class="t3">③ File delivery is local, not a network hop. ④ Represents all API clients.</text>
+  <text x="60" y="1284" class="t3">Phase A diagram details the proxy's approved 127.0.0.1 plaintext exception.</text>
+
+  <rect x="820" y="1110" width="860" height="196" rx="12" fill="#fffaf2" stroke="#e3c48a"/>
+  <text x="840" y="1138" class="zone" fill="#8a5600">TOKEN FLOW · numbered alternatives converge at the catalog</text>
+  <text x="840" y="1164" class="t2">① Human signs in with authorization code + PKCE; the OIDC client receives an access token.</text>
+  <text x="840" y="1188" class="t2">② Trino and PyIceberg obtain machine access tokens with their own client credentials.</text>
+  <text x="840" y="1212" class="t2">③ An external client obtains Sail's token; Sail reads its local token file, with no native grant.</text>
+  <text x="840" y="1236" class="t2">④ Each API client sends its access token as a bearer token to Lakekeeper over HTTPS.</text>
+  <text x="840" y="1260" class="t2">⑤ Lakekeeper fetches Rauthy's JWKS over HTTPS and validates the JWT; groups await Phase C.</text>
+  <text x="840" y="1284" class="t3">Target only: main Integration still has login off; bake-off evidence does not qualify this full design.</text>
+</svg>

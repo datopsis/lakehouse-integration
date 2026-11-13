@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1720" height="1330" viewBox="0 0 1720 1330" font-family="'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1720" height="1490" viewBox="0 0 1720 1490" font-family="'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
   <title>Datopsis lakehouse: Phase A TLS architecture (target design)</title>
   <desc>Services, TLS connections, trust anchors and the role of nginx-ubi TLS proxies in the lakehouse integration test. Source: docs/TLS-PLAN.md.</desc>
   <defs>
@@ -31,14 +31,14 @@
   </defs>
 
   <!-- Canvas -->
-  <rect width="1720" height="1330" fill="#ffffff"/>
+  <rect width="1720" height="1490" fill="#ffffff"/>
 
   <!-- Header -->
   <rect width="1720" height="92" fill="url(#hdr)"/>
   <text x="40" y="44" font-size="26" font-weight="700" fill="#ffffff">Datopsis lakehouse · TLS architecture (Phase A)</text>
   <text x="40" y="72" font-size="14" fill="#c8d8ec">Trino, Sail and PyIceberg on Iceberg tables via Lakekeeper · metadata in PostgreSQL · data in SeaweedFS · source of truth: docs/TLS-PLAN.md</text>
   <rect x="1352" y="28" width="330" height="36" rx="18" fill="#f2a900"/>
-  <text x="1517" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#2b1d00">TARGET DESIGN · not yet implemented</text>
+  <text x="1517" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#2b1d00">TARGET · integration step 7 not run</text>
 
   <!-- ===== Runner panel ===== -->
   <rect x="40" y="128" width="290" height="640" rx="12" fill="#f4f5f7" stroke="#9aa5b1" stroke-width="1.5"/>
@@ -231,19 +231,31 @@
   <path d="M62,1200 L142,1200" class="mtls"/>
   <text x="156" y="1205" class="t2">Mutual TLS: both sides present certificates (SeaweedFS roles, provisioner)</text>
   <path d="M62,1234 L142,1234" class="plain"/>
-  <text x="156" y="1239" class="t2">Plaintext on 127.0.0.1 inside one network namespace (owner decision ①)</text>
+  <text x="156" y="1239" class="t2">Approved exception ①: plaintext only on 127.0.0.1 in one network namespace</text>
   <rect x="62" y="1258" width="80" height="22" rx="5" fill="#009639"/>
   <text x="102" y="1273" text-anchor="middle" class="pill" fill="#ffffff">nginx-ubi</text>
-  <text x="156" y="1274" class="t2">Datopsis' own hardened NGINX image, used only as a TLS terminator</text>
+  <text x="156" y="1274" class="t2">datopsis/nginx-ubi · merged 9ef9e82 · TLS termination only</text>
 
   <!-- ===== Notes ===== -->
   <rect x="820" y="1110" width="860" height="196" rx="12" fill="#fffaf2" stroke="#e3c48a"/>
   <text x="840" y="1138" class="zone" fill="#8a5600">WHAT THIS DESIGN DOES AND DOES NOT DO</text>
-  <text x="840" y="1164" class="t2">① Lakekeeper and Sail cannot serve TLS, so a sidecar nginx-ubi terminates it. The backend binds 127.0.0.1 only.</text>
+  <text x="840" y="1164" class="t2">① Approved by owner 2026-11-12: plaintext only over 127.0.0.1 inside one network namespace.</text>
   <text x="840" y="1184" class="t2">② Encryption only. Lakekeeper login and table permissions come in Phases B and C.</text>
   <text x="840" y="1204" class="t2">③ Engines still hold bucket-wide static S3 keys. Phase D replaces them with per-table keys</text>
   <text x="858" y="1222" class="t2">vended through SeaweedFS STS over https://s3:8333.</text>
   <text x="840" y="1242" class="t2">④ Open gap: SeaweedFS checks peer names against an allowlist, not the dialled host.</text>
   <text x="858" y="1260" class="t2">Tests for wrong-SAN and swapped role certificates must stay mandatory.</text>
   <text x="840" y="1284" class="t3">Short-lived test certificates only: no rotation, revocation or production PKI is claimed.</text>
+  <!-- Component evidence is separate from cross-service integration qualification. -->
+  <rect x="40" y="1326" width="1640" height="140" rx="12" fill="#fafbfd" stroke="#c9d6e6"/>
+  <text x="60" y="1352" class="zone">COMPONENT QUALIFICATION · owner update 2026-11-13 · these revisions are evidence, not integration pins</text>
+  <text x="60" y="1378" class="t2">PostgreSQL: qualified · postgresql-lakekeeper-ubi 0ff367f</text>
+  <text x="60" y="1400" class="t2">nginx proxy: qualified · datopsis/nginx-ubi 9ef9e82</text>
+  <text x="60" y="1422" class="t2">Lakekeeper behind proxy: qualified · lakekeeper-ubi bbb975f</text>
+  <text x="650" y="1378" class="t2">Sail behind proxy: in progress</text>
+  <text x="650" y="1400" class="t3">Known slow-consumer stream reset at ~80 s;</text>
+  <text x="650" y="1420" class="t3">client reattach policy.</text>
+  <text x="1180" y="1378" class="t2">Trino: in progress</text>
+  <text x="1180" y="1400" class="t2">SeaweedFS internal gRPC mTLS: in progress</text>
+  <text x="60" y="1448" class="t3">Overall target only: Phase A step 7, the cross-service integration test, has not run.</text>
 </svg>
