@@ -1,14 +1,10 @@
 name: Identity provider bake-off
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - '.github/workflows/idp-bakeoff.yml'
-      - 'evaluation/idp/**'
 permissions:
   contents: read
 concurrency:
-  group: idp-bakeoff-${{ github.event.pull_request.number || github.ref }}
+  group: idp-bakeoff-${{ github.ref }}
   cancel-in-progress: false
 defaults:
   run:

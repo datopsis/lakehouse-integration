@@ -1,9 +1,21 @@
 # Identity provider bake-off (Phase B)
 
+## Decision
+
+On **2026-11-13**, the owner chose **Rauthy for Phase B**, with **Keycloak as the
+tested fallback**. Rauthy meets the Rust preference, passes the exercised
+Lakekeeper authentication and Trino/PyIceberg native-grant tests on both native
+architectures, supplies access-token group claims, and has a smaller measured
+memory footprint than Keycloak. Phase B will build a hardened `rauthy-ubi` image.
+Sail 0.7.3 needs an externally supplied token-file path; its native grant remains
+unsupported. The choice does not imply production qualification or remove the
+patching, hardening and operational work documented below.
+
 Survey date: 2026-11-13. **Evaluation only; no IdP is qualified for the lakehouse.**
-The separate [workflow](../.github/workflows/idp-bakeoff.yml) runs manually and on
-relevant pull requests, on native `ubuntu-24.04` and `ubuntu-24.04-arm`. Both run
+The separate [workflow](../.github/workflows/idp-bakeoff.yml) runs only through
+`workflow_dispatch`, on native `ubuntu-24.04` and `ubuntu-24.04-arm`. Both run
 the same assertions. It is not a dependency of the required `Integration` check.
+Its documented-red evaluation does not run on pull requests.
 The Integration workflow, login setting, image locks and source pins are unchanged.
 
 ## Approved TLS path and evaluation scope
@@ -447,8 +459,8 @@ The approved Phase A proxy is exercised here. The remaining common blocker is
 Sail's lack of native OAuth grant/token-lifecycle support. Choose an explicit
 supported integration or upstream change before treating all three engines as
 qualified; passing a harness-acquired token does not remove that requirement.
-The owner remains responsible for the IdP choice. This PR changes no production
-or main-integration authentication setting.
+The owner's choice is recorded in the Decision section above. This PR changes no
+production or main-integration authentication setting.
 
 Not tested: production database profiles; backup restoration and encryption-key
 recovery; multi-node HA, partitions or failover; load, long-lived refresh and
