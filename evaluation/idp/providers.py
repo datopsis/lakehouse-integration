@@ -5,6 +5,7 @@ These evaluation-only references never feed integration/build.py or images.lock.
 
 import base64
 import hashlib
+import hmac
 import json
 import re
 import secrets
@@ -49,7 +50,7 @@ class Provider:
             self.base
             + {
                 "keycloak": "/realms/bakeoff",
-                "rauthy": "/auth/v1",
+                "rauthy": "/auth/v1/",
                 "kanidm": "/oauth2/openid/lakekeeper",
             }[name]
         )
@@ -110,7 +111,9 @@ class Provider:
         wait(lambda: self.http.request("GET", readiness).status_code == 200, 180)
         self.startup_seconds = round(time.monotonic() - self.started, 3)
         getattr(self, "provision_" + self.name)()
-        self.discovery = self.http.json("GET", self.issuer + "/.well-known/openid-configuration")
+        self.discovery = self.http.json(
+            "GET", self.issuer.rstrip("/") + "/.well-known/openid-configuration"
+        )
         assert self.discovery["issuer"] == self.issuer, self.discovery
         for key in ("authorization_endpoint", "token_endpoint", "jwks_uri"):
             assert urlsplit(self.discovery[key]).scheme == "https", self.discovery
@@ -183,7 +186,7 @@ class Provider:
                 }
             ],
         }
-        write(self.path / "realm/bakeoff.json", realm)
+        write(self.path / "realm/bakeoff-realm.json", realm)
         return (
             {
                 "KC_BOOTSTRAP_ADMIN_USERNAME": "admin",
@@ -197,6 +200,7 @@ class Provider:
                 "--https-certificate-key-file=/tls/key.pem",
                 "--hostname=" + self.base,
                 "--db=dev-file",
+                "--cache=local",
                 "--import-realm",
             ],
             [
@@ -277,7 +281,12 @@ class Provider:
                 "TLS_CERT": "/tls/cert.pem",
                 "TLS_KEY": "/tls/key.pem",
                 "HQL_NODE_ID": "1",
-                "HQL_NODES": "1 localhost:8100 localhost:8200",
+                "HQL_NODES": f"1 {self.hostname}:8100 {self.hostname}:8200",
+                "HQL_TLS_RAFT_CERT": "/tls/cert.pem",
+                "HQL_TLS_RAFT_KEY": "/tls/key.pem",
+                "HQL_TLS_API_CERT": "/tls/cert.pem",
+                "HQL_TLS_API_KEY": "/tls/key.pem",
+                "SSL_CERT_FILE": "/ca/ca.pem",
                 "HQL_SECRET_RAFT": secret(),
                 "HQL_SECRET_API": secret(),
                 "ENC_KEYS": "ci/" + key,
@@ -289,7 +298,11 @@ class Provider:
                 "RP_ORIGIN": self.base,
             },
             ["serve"],
-            [(bootstrap, "/bootstrap", "ro"), (self.path / "data", "/app/data", "rw")],
+            [
+                (bootstrap, "/bootstrap", "ro"),
+                (self.path / "data", "/app/data", "rw"),
+                (self.ca, "/ca/ca.pem", "ro"),
+            ],
         )
 
     def provision_rauthy(self):
@@ -307,11 +320,13 @@ class Provider:
     def kanidm_login(self, username, password):
         http = HTTPS(self.ca)
         headers = {}
-        for step in (
-            {"init2": {"username": username, "issue": "token", "privileged": True}},
-            {"begin": "password"},
-            {"cred": {"password": password}},
-        ):
+        steps = [{"init2": {"username": username, "issue": "token", "privileged": True}}]
+        if username == "alice":
+            steps += [{"begin": "passwordmfa"}, {"cred": {"totp": self.totp_code()}}]
+        else:
+            steps += [{"begin": "password"}]
+        steps += [{"cred": {"password": password}}]
+        for step in steps:
             r = http.request("POST", self.base + "/v1/auth", json={"step": step}, headers=headers)
             assert r.status_code == 200, (r.status_code, r.text)
             if "x-kanidm-auth-session-id" in r.headers:
@@ -383,8 +398,27 @@ class Provider:
             "GET", self.base + "/v1/person/alice/_credential/_update", headers=self.admin
         )
         session = update[0]
+        secret(session["token"])
         api("POST", "/v1/credential/_update", [{"password": self.password}, session])
+        state = api("POST", "/v1/credential/_update", ["totpgenerate", session])
+        self.totp = state["mfaregstate"]["TotpCheck"]
+        secret(json.dumps(self.totp["secret"]))
+        secret(base64.b32encode(bytes(self.totp["secret"])).decode().rstrip("="))
+        status = api(
+            "POST", "/v1/credential/_update", [{"totpverify": [self.totp_code(), "CI"]}, session]
+        )
+        assert status["can_commit"], "Kanidm credential policy not satisfied"
         api("POST", "/v1/credential/_commit", session)
+
+    def totp_code(self):
+        counter = int(time.time()) // self.totp["step"]
+        digest = hmac.new(
+            bytes(self.totp["secret"]), counter.to_bytes(8, "big"), self.totp["algo"]
+        ).digest()
+        offset = digest[-1] & 15
+        return (int.from_bytes(digest[offset : offset + 4], "big") & 0x7FFFFFFF) % (
+            10 ** self.totp["digits"]
+        )
 
     def machine(self, client="lakekeeper"):
         return self.http.request(
@@ -394,7 +428,6 @@ class Provider:
                 "grant_type": "client_credentials",
                 "client_id": client,
                 "client_secret": self.client_secret,
-                "scope": "",
             },
         )
 

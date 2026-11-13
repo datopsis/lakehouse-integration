@@ -149,7 +149,7 @@ def lakekeeper(provider, env):
         "--env-file",
         env,
         "-e",
-        "LAKEKEEPER__OPENID_PROVIDER_URI=" + provider.issuer,
+        "LAKEKEEPER__OPENID_PROVIDER_URI=" + provider.issuer.rstrip("/"),
         "-e",
         "LAKEKEEPER__OPENID_AUDIENCE=lakekeeper",
         "-e",
@@ -339,25 +339,51 @@ def operations(provider):
 
 def tls_boundary(provider):
     hostname = provider.hostname
-    trusted = ssl.create_default_context(cafile=str(provider.ca))
-    with socket.create_connection((hostname, 8443), timeout=10) as sock:
-        with trusted.wrap_socket(sock, server_hostname=hostname) as secure:
-            cert = secure.getpeercert()
-            version = secure.version()
-    errors = {}
-    for label, context, target in (
-        ("untrusted_ca", ssl.create_default_context(), hostname),
-        ("wrong_hostname", trusted, "wrong.idp.test"),
-    ):
-        try:
-            with socket.create_connection((hostname, 8443), timeout=10) as sock:
-                with context.wrap_socket(sock, server_hostname=target):
-                    pass
-        except ssl.SSLCertVerificationError as exc:
-            errors[label] = str(exc)
-        else:
-            raise AssertionError(label + " accepted")
-    return {"tls_version": version, "certificate": cert, "negative_errors": errors}
+    ports = {8443, 8100, 8200} if provider.name == "rauthy" else {8443}
+    pid = json.loads(run("docker", "inspect", provider.container))[0]["State"]["Pid"]
+    sockets = run("sudo", "nsenter", "-t", str(pid), "-n", "ss", "-H", "-lnt")
+    listeners = [line.split()[3] for line in sockets.splitlines()]
+    application = {
+        int(address.rsplit(":", 1)[1])
+        for address in listeners
+        if not address.startswith("127.0.0.11:")
+    }
+    assert application == ports, (application, ports, sockets)
+    result = {"listeners": listeners, "ports": {}}
+    for port in sorted(ports):
+        trusted = ssl.create_default_context(cafile=str(provider.ca))
+        with socket.create_connection((hostname, port), timeout=10) as sock:
+            with trusted.wrap_socket(sock, server_hostname=hostname) as secure:
+                cert = secure.getpeercert()
+                version = secure.version()
+        errors = {}
+        for label, context, target in (
+            ("untrusted_ca", ssl.create_default_context(), hostname),
+            ("wrong_hostname", trusted, "wrong.idp.test"),
+        ):
+            try:
+                with socket.create_connection((hostname, port), timeout=10) as sock:
+                    with context.wrap_socket(sock, server_hostname=target):
+                        pass
+            except ssl.SSLCertVerificationError as exc:
+                errors[label] = str(exc)
+            else:
+                raise AssertionError(label + " accepted")
+        # Anonymous cleartext negative; never sends an application credential.
+        with socket.create_connection((hostname, port), timeout=10) as sock:
+            sock.sendall(b"GET / HTTP/1.0\r\nHost: idp.test\r\n\r\n")
+            try:
+                reply = sock.recv(4096)
+            except ConnectionResetError:
+                reply = b""
+        assert not reply or reply.startswith(b"HTTP/1.1 400 "), reply
+        result["ports"][str(port)] = {
+            "tls_version": version,
+            "certificate": cert,
+            "negative_errors": errors,
+            "plaintext_response": repr(reply),
+        }
+    return result
 
 
 def main():
