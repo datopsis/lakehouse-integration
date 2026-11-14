@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Refresh diagram status: Sail behind the TLS proxy qualified (sail-ubi e96e068, with the
+  documented slow-reader reset and client reattach policy); Trino TLS merged into the Iceberg
+  draft branch (685ff5b); Phase C uses OpenFGA as an interim backend while an own
+  Cedar-based authorization service is planned.
 - Update the Phase A TLS diagram with the approved 2026-11-12 loopback exception,
   merged nginx-ubi proxy and per-component qualification status; cross-service
   integration step 7 remains unrun and the existing SeaweedFS gap note is unchanged.

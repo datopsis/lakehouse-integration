@@ -131,7 +131,7 @@
   <!-- Future phases are deliberately unconnected and dashed: not built. -->
   <rect x="60" y="942" width="650" height="126" rx="12" fill="#f3effb" stroke="#7a4fd6" stroke-width="1.6" stroke-dasharray="10 6"/>
   <text x="76" y="972" class="t1">Phase C · Authorization · NOT BUILT</text>
-  <text x="76" y="998" class="t2">OpenFGA or Cedar · undecided</text>
+  <text x="76" y="998" class="t2">OpenFGA interim (owner 2026-11-13) · own Cedar-based service planned</text>
   <text x="76" y="1022" class="t2">Groups claim is input; mapping / synchronization still required</text>
   <text x="76" y="1048" class="t3">Carrying groups in a JWT does not enforce table permissions</text>
   <rect x="1000" y="942" width="620" height="126" rx="12" fill="#ecf7f5" stroke="#1f9d8a" stroke-width="1.6" stroke-dasharray="10 6"/>
