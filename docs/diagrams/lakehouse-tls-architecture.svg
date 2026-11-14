@@ -252,10 +252,10 @@
   <text x="60" y="1378" class="t2">PostgreSQL: qualified · postgresql-lakekeeper-ubi 0ff367f</text>
   <text x="60" y="1400" class="t2">nginx proxy: qualified · datopsis/nginx-ubi 9ef9e82</text>
   <text x="60" y="1422" class="t2">Lakekeeper behind proxy: qualified · lakekeeper-ubi bbb975f</text>
-  <text x="650" y="1378" class="t2">Sail behind proxy: in progress</text>
-  <text x="650" y="1400" class="t3">Known slow-consumer stream reset at ~80 s;</text>
-  <text x="650" y="1420" class="t3">client reattach policy.</text>
-  <text x="1180" y="1378" class="t2">Trino: in progress</text>
+  <text x="650" y="1378" class="t2">Sail behind proxy: qualified · sail-ubi e96e068</text>
+  <text x="650" y="1400" class="t3">Slow large reads reset at ~80 s; a tested client</text>
+  <text x="650" y="1420" class="t3">retry/reattach policy recovers (documented).</text>
+  <text x="1180" y="1378" class="t2">Trino: TLS in Iceberg draft trino-ubi 685ff5b</text>
   <text x="1180" y="1400" class="t2">SeaweedFS internal gRPC mTLS: in progress</text>
   <text x="60" y="1448" class="t3">Overall target only: Phase A step 7, the cross-service integration test, has not run.</text>
 </svg>
