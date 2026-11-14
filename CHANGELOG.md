@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add docs/DECISIONS.md: dated owner decisions, pending decisions and upstream waits.
+  Add docs/AUTHZ-PLATFORM-PLAN.md (Phase C plan and future capabilities) and link both
+  from the roadmap.
 - Refresh diagram status: Sail behind the TLS proxy qualified (sail-ubi e96e068, with the
   documented slow-reader reset and client reattach policy); Trino TLS merged into the Iceberg
   draft branch (685ff5b); Phase C uses OpenFGA as an interim backend while an own

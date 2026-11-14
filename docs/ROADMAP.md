@@ -5,6 +5,13 @@ as an independent client: [T10, restart and credential evidence](SAIL-EVIDENCE.m
 All five current image pins passed strict provenance; future pin changes still
 require review and exact labels, with no allowances.
 
+Every owner decision, and every decision still pending, is recorded in
+[DECISIONS.md](DECISIONS.md). Check it before starting new work.
+
+- [ ] Phase C: OpenFGA as the interim backend (decided 2026-11-13); then the own
+  authorization platform in [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md): spikes S1–S4,
+  an MVP, Phase D integration, then the catalogued future capabilities. Update the
+  diagrams with each feature.
 - [x] T11 table maintenance: compaction, snapshot expiry with physical S3 deletion,
   orphan removal with manifest protection, exact three-client reads, default
   retention refusals, and persistence after T5/T8 on both native architectures.
