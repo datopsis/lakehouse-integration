@@ -27,6 +27,9 @@ def build():
     initialize(arch)
     results = {}
     for repo, pin in owner.PINS.items():
+        # The evaluation proxy helper builds nginx once, with strict provenance.
+        if repo == "nginx-ubi":
+            continue
         results[repo] = owner.build(repo, pin, arch)
         save("builds.json", results)
         assert results[repo]["status"] == "pass", results[repo]

@@ -1,0 +1,1968 @@
+{
+  "run_id": 43753536289,
+  "run_url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43753536289",
+  "head_sha": "807493f95fff7ca50799f8cc846af7a924123b99",
+  "pins": {
+    "postgresql-lakekeeper-ubi": "0ff367fae85d9685eed9d4851dce9203cccae2b2",
+    "lakekeeper-ubi": "baa196bea55765e8e3da625ad50cda7d5ec99082",
+    "seaweedfs-ubi": "80bba407ba534f9d2e6ec6401c071d827dcf4a03",
+    "trino-ubi": "685ff5bca0037d38e3c2e2ed47a60f2540dad7c2",
+    "sail-ubi": "e96e068f926b8fecb3939e953389685ee4780032",
+    "nginx-ubi": "9ef9e822c6b5e508cebef2adff3bb647a206773c"
+  },
+  "required_check": "Integration",
+  "conclusion": "success",
+  "architectures": {
+    "amd64": {
+      "job_id": 132932547110,
+      "started_at": "2026-11-15T19:38:22Z",
+      "completed_at": "2026-11-15T20:00:57Z",
+      "job_seconds": 1355,
+      "runner_machine": "x86_64",
+      "results_sha256": "15207280fd217541548f8636e702457e8a28fe79df461470b88d3e85dc45e35d",
+      "assertions": {
+        "T10_sail": {
+          "status": "pass",
+          "seconds": 8.61
+        },
+        "T11_maintenance": {
+          "status": "pass",
+          "seconds": 15.26
+        },
+        "T12_evolution": {
+          "status": "pass",
+          "seconds": 32.49
+        },
+        "T1_create_insert_select": {
+          "status": "pass",
+          "seconds": 3.42
+        },
+        "T1_update_delete_history": {
+          "status": "pass",
+          "seconds": 2.68
+        },
+        "T2_pyiceberg_after_mutations": {
+          "status": "pass",
+          "seconds": 0.07
+        },
+        "T2_pyiceberg_before_mutations": {
+          "status": "pass",
+          "seconds": 0.38
+        },
+        "T3_trino_reads_pyiceberg": {
+          "status": "pass",
+          "seconds": 0.56
+        },
+        "T4_location": {
+          "status": "pass",
+          "seconds": 0.34
+        },
+        "T5_persistence": {
+          "status": "pass",
+          "seconds": 65.11
+        },
+        "T6_negative": {
+          "status": "pass",
+          "seconds": 0.64
+        },
+        "T7_hardening": {
+          "status": "pass",
+          "seconds": 0.99
+        },
+        "T7_secret_isolation": {
+          "status": "pass",
+          "seconds": 2.52
+        },
+        "T8_crash_durability": {
+          "status": "pass",
+          "seconds": 112.69
+        },
+        "T9_remote_signing_before": {
+          "status": "pass",
+          "seconds": 0.41
+        },
+        "T9_remote_signing_restart": {
+          "status": "pass",
+          "seconds": 5.2
+        },
+        "TLS_certificate_negatives": {
+          "status": "pass",
+          "seconds": 782.12
+        },
+        "TLS_exposure": {
+          "status": "pass",
+          "seconds": 3.01
+        },
+        "TLS_exposure_after_crash": {
+          "status": "pass",
+          "seconds": 3.24
+        },
+        "TLS_exposure_after_recreation": {
+          "status": "pass",
+          "seconds": 3.26
+        },
+        "TLS_seaweedfs_canaries": {
+          "status": "pass",
+          "seconds": 2.43
+        },
+        "encoding_canary": {
+          "status": "pass",
+          "seconds": 2.88
+        }
+      },
+      "builds": {
+        "postgresql-lakekeeper-ubi": {
+          "status": "pass",
+          "revision": "0ff367fae85d9685eed9d4851dce9203cccae2b2",
+          "architecture": "amd64",
+          "lock_path": "artifacts/locks/amd64.json",
+          "lock_sha256": "0bec74859304412b3d9f2648af1faa6be41ba42baeb75bc206c231042eb892de"
+        },
+        "lakekeeper-ubi": {
+          "status": "pass",
+          "revision": "baa196bea55765e8e3da625ad50cda7d5ec99082",
+          "architecture": "amd64",
+          "lock_path": "artifacts/lakekeeper.lock.json",
+          "lock_sha256": "0565ef04a4c220eef7b8d0757f3d44071d256c68e02607e90cc7a16a105b172d"
+        },
+        "seaweedfs-ubi": {
+          "status": "pass",
+          "revision": "80bba407ba534f9d2e6ec6401c071d827dcf4a03",
+          "architecture": "amd64",
+          "lock_path": "artifacts/seaweedfs.lock.json",
+          "lock_sha256": "d0fc6c6303f58715068c419bfe9b083abc257416f4ca51e51763c501738b69c2"
+        },
+        "trino-ubi": {
+          "status": "pass",
+          "revision": "685ff5bca0037d38e3c2e2ed47a60f2540dad7c2",
+          "architecture": "amd64",
+          "lock_path": "artifacts/trino.lock.json",
+          "lock_sha256": "09e8f80afeb59c48011feeac1e84eb2dd50a3d7196354a7fd990cf67464b3117"
+        },
+        "sail-ubi": {
+          "status": "pass",
+          "revision": "e96e068f926b8fecb3939e953389685ee4780032",
+          "architecture": "amd64",
+          "lock_path": "artifacts/sail.lock.json",
+          "lock_sha256": "7b66571efcca5f6e856b5922090ddc9c728489d300f20a12ca93b577ab4b4c38"
+        },
+        "nginx-ubi": {
+          "status": "pass",
+          "revision": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+          "architecture": "amd64",
+          "lock_path": "artifacts/locks/amd64.json",
+          "lock_sha256": "5eda00936d279befa19bce2dff5592dbcff3bf6d5067899025dbd431d8a54216"
+        }
+      },
+      "negative_rows": [
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: unable to get local issuer"
+          }
+        },
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              42
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: Hostname mismatch"
+          }
+        },
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: certificate has expired"
+          }
+        },
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "2 relayed requests"
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: unable to get local issuer"
+          }
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "2 relayed requests"
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              42
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: Hostname mismatch"
+          }
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "2 relayed requests"
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: certificate has expired"
+          }
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "2 relayed requests"
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "4 relayed requests"
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              46
+            ],
+            "client": "PKIX",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "3 relayed requests"
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              46
+            ],
+            "client": "No subject alternative",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "3 relayed requests"
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "expired",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "3 relayed requests"
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "4 relayed requests"
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "4 relayed requests"
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              42
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "4 relayed requests"
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "4 relayed requests"
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "22 relayed requests"
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "curlCode: 60",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "verify result: unable to get local issuer certificate (20)"
+          }
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "22 relayed requests"
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "curlCode: 60",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "no alternative certificate subject name matches target hostname"
+          }
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "22 relayed requests"
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "curlCode: 60",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "verify result: certificate has expired (10)"
+          }
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "22 relayed requests"
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: unable to get local issuer"
+          }
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "doesn't match",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "hostname 's3' doesn't match 'wrong.invalid'"
+          }
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: certificate has expired"
+          }
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "10 relayed requests"
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              46
+            ],
+            "client": "PKIX",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "10 relayed requests"
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "doesn't match",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "Certificate for <s3> doesn't match any of the subject alternative names: [wrong.invalid]"
+          }
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "10 relayed requests"
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "expired",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "10 relayed requests"
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "24 relayed requests"
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "24 relayed requests"
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              42
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "24 relayed requests"
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "24 relayed requests"
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "6 relayed requests"
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "6 relayed requests"
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              42
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "6 relayed requests"
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "6 relayed requests"
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: unable to get local issuer"
+          }
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              42
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: Hostname mismatch"
+          }
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: certificate has expired"
+          }
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "11 relayed requests"
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "CERTIFICATE_VERIFY_FAILED: unable to get local issuer certificate: OK"
+          }
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "11 relayed requests"
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "Hostname Verification Check failed.",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "Custom verification check failed with error: UNAUTHENTICATED: Hostname Verification Check failed."
+          }
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "11 relayed requests"
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "CERTIFICATE_VERIFY_FAILED: certificate has expired: OK"
+          }
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "11 relayed requests"
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "valid",
+          "outcome": "accepted (TLS), then authentication refused",
+          "detail": ""
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "application_requests": 0,
+            "client": "invalid peer certificate: UnknownIssuer",
+            "server_tls_refusals": [
+              "unexpected eof while reading"
+            ],
+            "probe_connections": 1
+          }
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "valid",
+          "outcome": "accepted (TLS), then authentication refused",
+          "detail": ""
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "application_requests": 0,
+            "client": "invalid peer certificate: certificate not valid for name \"postgres\"; certificate is only valid for DnsName(\"wrong.invalid\")",
+            "server_tls_refusals": [
+              "unexpected eof while reading"
+            ],
+            "probe_connections": 1
+          }
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "valid",
+          "outcome": "accepted (TLS), then authentication refused",
+          "detail": ""
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "application_requests": 0,
+            "client": "invalid peer certificate: certificate expired: verification time 1794772637 (UNIX), but certificate is not valid after 1794768153 (4484 seconds ago)",
+            "server_tls_refusals": [
+              "unexpected eof while reading"
+            ],
+            "probe_connections": 1
+          }
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "valid",
+          "outcome": "accepted (TLS), then authentication refused",
+          "detail": ""
+        }
+      ],
+      "refused_cases": 38,
+      "matrix_rows": 88,
+      "seaweedfs_canaries": "Expected outcomes reproduced for a known SeaweedFS limitation, reported upstream.",
+      "exposure": {
+        "TLS_exposure": {
+          "listener_namespaces": 8,
+          "plaintext_probes": 13,
+          "mtls_cases": 25
+        },
+        "TLS_exposure_after_recreation": {
+          "listener_namespaces": 8,
+          "plaintext_probes": 13,
+          "mtls_cases": 25
+        },
+        "TLS_exposure_after_crash": {
+          "listener_namespaces": 8,
+          "plaintext_probes": 13,
+          "mtls_cases": 25
+        }
+      },
+      "seaweedfs_go_matrix_rows": 4,
+      "baseline_job_seconds": 489,
+      "job_seconds_change": 866
+    },
+    "arm64": {
+      "job_id": 132932547211,
+      "started_at": "2026-11-15T19:38:24Z",
+      "completed_at": "2026-11-15T20:02:10Z",
+      "job_seconds": 1426,
+      "runner_machine": "aarch64",
+      "results_sha256": "dc7330da73db64414cfc40e254a98c38cc1c3a9fd76179f7af0d5c72be7efa61",
+      "assertions": {
+        "T10_sail": {
+          "status": "pass",
+          "seconds": 9.21
+        },
+        "T11_maintenance": {
+          "status": "pass",
+          "seconds": 16.61
+        },
+        "T12_evolution": {
+          "status": "pass",
+          "seconds": 36.67
+        },
+        "T1_create_insert_select": {
+          "status": "pass",
+          "seconds": 4.2
+        },
+        "T1_update_delete_history": {
+          "status": "pass",
+          "seconds": 2.83
+        },
+        "T2_pyiceberg_after_mutations": {
+          "status": "pass",
+          "seconds": 0.1
+        },
+        "T2_pyiceberg_before_mutations": {
+          "status": "pass",
+          "seconds": 0.45
+        },
+        "T3_trino_reads_pyiceberg": {
+          "status": "pass",
+          "seconds": 0.61
+        },
+        "T4_location": {
+          "status": "pass",
+          "seconds": 0.46
+        },
+        "T5_persistence": {
+          "status": "pass",
+          "seconds": 66.24
+        },
+        "T6_negative": {
+          "status": "pass",
+          "seconds": 0.76
+        },
+        "T7_hardening": {
+          "status": "pass",
+          "seconds": 1.21
+        },
+        "T7_secret_isolation": {
+          "status": "pass",
+          "seconds": 3.17
+        },
+        "T8_crash_durability": {
+          "status": "pass",
+          "seconds": 119.23
+        },
+        "T9_remote_signing_before": {
+          "status": "pass",
+          "seconds": 0.48
+        },
+        "T9_remote_signing_restart": {
+          "status": "pass",
+          "seconds": 2.01
+        },
+        "TLS_certificate_negatives": {
+          "status": "pass",
+          "seconds": 872.84
+        },
+        "TLS_exposure": {
+          "status": "pass",
+          "seconds": 4.15
+        },
+        "TLS_exposure_after_crash": {
+          "status": "pass",
+          "seconds": 4.24
+        },
+        "TLS_exposure_after_recreation": {
+          "status": "pass",
+          "seconds": 4.13
+        },
+        "TLS_seaweedfs_canaries": {
+          "status": "pass",
+          "seconds": 2.52
+        },
+        "encoding_canary": {
+          "status": "pass",
+          "seconds": 2.97
+        }
+      },
+      "builds": {
+        "postgresql-lakekeeper-ubi": {
+          "status": "pass",
+          "revision": "0ff367fae85d9685eed9d4851dce9203cccae2b2",
+          "architecture": "arm64",
+          "lock_path": "artifacts/locks/arm64.json",
+          "lock_sha256": "58549132210b6e91fd4358ee747973a9a58fd20fe49a503ecf239e0b46eb4e51"
+        },
+        "lakekeeper-ubi": {
+          "status": "pass",
+          "revision": "baa196bea55765e8e3da625ad50cda7d5ec99082",
+          "architecture": "arm64",
+          "lock_path": "artifacts/lakekeeper.lock.json",
+          "lock_sha256": "0565ef04a4c220eef7b8d0757f3d44071d256c68e02607e90cc7a16a105b172d"
+        },
+        "seaweedfs-ubi": {
+          "status": "pass",
+          "revision": "80bba407ba534f9d2e6ec6401c071d827dcf4a03",
+          "architecture": "arm64",
+          "lock_path": "artifacts/seaweedfs.lock.json",
+          "lock_sha256": "d0fc6c6303f58715068c419bfe9b083abc257416f4ca51e51763c501738b69c2"
+        },
+        "trino-ubi": {
+          "status": "pass",
+          "revision": "685ff5bca0037d38e3c2e2ed47a60f2540dad7c2",
+          "architecture": "arm64",
+          "lock_path": "artifacts/trino.lock.json",
+          "lock_sha256": "09e8f80afeb59c48011feeac1e84eb2dd50a3d7196354a7fd990cf67464b3117"
+        },
+        "sail-ubi": {
+          "status": "pass",
+          "revision": "e96e068f926b8fecb3939e953389685ee4780032",
+          "architecture": "arm64",
+          "lock_path": "artifacts/sail.lock.json",
+          "lock_sha256": "7b66571efcca5f6e856b5922090ddc9c728489d300f20a12ca93b577ab4b4c38"
+        },
+        "nginx-ubi": {
+          "status": "pass",
+          "revision": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+          "architecture": "arm64",
+          "lock_path": "artifacts/locks/arm64.json",
+          "lock_sha256": "733d912e914cd94eeefa48da08671f768ee49ea26bcd2762370bc8b5a107552a"
+        }
+      },
+      "negative_rows": [
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: unable to get local issuer"
+          }
+        },
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              42
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: Hostname mismatch"
+          }
+        },
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: certificate has expired"
+          }
+        },
+        {
+          "edge": "python-ssl->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "2 relayed requests"
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: unable to get local issuer"
+          }
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "2 relayed requests"
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              42
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: Hostname mismatch"
+          }
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "2 relayed requests"
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: certificate has expired"
+          }
+        },
+        {
+          "edge": "pyiceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "2 relayed requests"
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "4 relayed requests"
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              46
+            ],
+            "client": "PKIX",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "3 relayed requests"
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              46
+            ],
+            "client": "No subject alternative",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "3 relayed requests"
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "expired",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "trino-iceberg-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "3 relayed requests"
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "4 relayed requests"
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "4 relayed requests"
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              42
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "4 relayed requests"
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "sail-rest->catalog",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "4 relayed requests"
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "22 relayed requests"
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "curlCode: 60",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "verify result: unable to get local issuer certificate (20)"
+          }
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "22 relayed requests"
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "curlCode: 60",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "no alternative certificate subject name matches target hostname"
+          }
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "22 relayed requests"
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "curlCode: 60",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "verify result: certificate has expired (10)"
+          }
+        },
+        {
+          "edge": "pyarrow->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "22 relayed requests"
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: unable to get local issuer"
+          }
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "doesn't match",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "hostname 's3' doesn't match 'wrong.invalid'"
+          }
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: certificate has expired"
+          }
+        },
+        {
+          "edge": "botocore->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "10 relayed requests"
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              46
+            ],
+            "client": "PKIX",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "10 relayed requests"
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "doesn't match",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "Certificate for <s3> doesn't match any of the subject alternative names: [wrong.invalid]"
+          }
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "10 relayed requests"
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "expired",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "trino-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "10 relayed requests"
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "24 relayed requests"
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "24 relayed requests"
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              42
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "24 relayed requests"
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "sail-object-store->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "24 relayed requests"
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "6 relayed requests"
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "6 relayed requests"
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              42
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "6 relayed requests"
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "relay alert only",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": null
+          }
+        },
+        {
+          "edge": "lakekeeper-s3->s3",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "6 relayed requests"
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              48
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: unable to get local issuer"
+          }
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              42
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: Hostname mismatch"
+          }
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [
+              45
+            ],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "certificate verify failed: certificate has expired"
+          }
+        },
+        {
+          "edge": "python-ssl->trino",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "1 relayed requests"
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "11 relayed requests"
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "CERTIFICATE_VERIFY_FAILED: unable to get local issuer certificate: OK"
+          }
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "11 relayed requests"
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "Hostname Verification Check failed.",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "Custom verification check failed with error: UNAUTHENTICATED: Hostname Verification Check failed."
+          }
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "11 relayed requests"
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "alerts": [],
+            "client": "CERTIFICATE_VERIFY_FAILED",
+            "requests": 0,
+            "client_hangup": true,
+            "transport_hangup": true,
+            "exact_diagnosis": "CERTIFICATE_VERIFY_FAILED: certificate has expired: OK"
+          }
+        },
+        {
+          "edge": "pyspark-grpc->sail",
+          "variant": "valid",
+          "outcome": "accepted",
+          "detail": "11 relayed requests"
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "valid",
+          "outcome": "accepted (TLS), then authentication refused",
+          "detail": ""
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "wrong-ca",
+          "outcome": "refused",
+          "detail": {
+            "application_requests": 0,
+            "client": "invalid peer certificate: UnknownIssuer",
+            "server_tls_refusals": [
+              "unexpected eof while reading"
+            ],
+            "probe_connections": 1
+          }
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "valid",
+          "outcome": "accepted (TLS), then authentication refused",
+          "detail": ""
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "wrong-san",
+          "outcome": "refused",
+          "detail": {
+            "application_requests": 0,
+            "client": "invalid peer certificate: certificate not valid for name \"postgres\"; certificate is only valid for DnsName(\"wrong.invalid\")",
+            "server_tls_refusals": [
+              "unexpected eof while reading"
+            ],
+            "probe_connections": 1
+          }
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "valid",
+          "outcome": "accepted (TLS), then authentication refused",
+          "detail": ""
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "expired",
+          "outcome": "refused",
+          "detail": {
+            "application_requests": 0,
+            "client": "invalid peer certificate: certificate expired: verification time 1794772703 (UNIX), but certificate is not valid after 1794768118 (4585 seconds ago)",
+            "server_tls_refusals": [
+              "unexpected eof while reading"
+            ],
+            "probe_connections": 1
+          }
+        },
+        {
+          "edge": "lakekeeper-sqlx->postgres",
+          "variant": "valid",
+          "outcome": "accepted (TLS), then authentication refused",
+          "detail": ""
+        }
+      ],
+      "refused_cases": 38,
+      "matrix_rows": 88,
+      "seaweedfs_canaries": "Expected outcomes reproduced for a known SeaweedFS limitation, reported upstream.",
+      "exposure": {
+        "TLS_exposure": {
+          "listener_namespaces": 8,
+          "plaintext_probes": 13,
+          "mtls_cases": 25
+        },
+        "TLS_exposure_after_recreation": {
+          "listener_namespaces": 8,
+          "plaintext_probes": 13,
+          "mtls_cases": 25
+        },
+        "TLS_exposure_after_crash": {
+          "listener_namespaces": 8,
+          "plaintext_probes": 13,
+          "mtls_cases": 25
+        }
+      },
+      "seaweedfs_go_matrix_rows": 4,
+      "baseline_job_seconds": 497,
+      "job_seconds_change": 929
+    }
+  },
+  "baseline_run_id": 43650176028,
+  "job_timeout_minutes": {
+    "before": 30,
+    "after": 45
+  }
+}

@@ -18,6 +18,9 @@ ROWS = [{"id": 1, "label": "alpha"}, {"id": 2, "label": "beta"}]
 
 
 def build_proxy(arch, owner):
+    assert owner.PINS.get("nginx-ubi", PROXY_REVISION) == PROXY_REVISION, (
+        "Evaluation proxy revision must match images.lock.json"
+    )
     source = ROOT / ".sources/nginx-ubi"
     source.mkdir()
     run("git", "init", "-q", source)

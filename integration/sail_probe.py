@@ -3,8 +3,11 @@
 import json
 import os
 import re
+import socket
 import subprocess
 import sys
+import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 TRINO = [[1, "alpha"], [2, "updated"]]
@@ -14,7 +17,17 @@ UPDATED = [[100, "sail-alpha"], [200, "sail-updated"], [300, "sail-gamma"]]
 FINAL = [[100, "sail-alpha"], [200, "sail-updated"]]
 
 
+def proxy_handshake(h):
+    """Verified TLS + HTTP/2 ALPN to the Sail proxy, as the Spark client negotiates."""
+    context = h.tls_context()
+    context.set_alpn_protocols(["h2"])
+    with socket.create_connection(("sail", 50051), timeout=5) as raw:
+        with context.wrap_socket(raw, server_hostname="sail") as secure:
+            return secure.selected_alpn_protocol() == "h2"
+
+
 def ready(h):
+    h.wait("Sail TLS proxy", lambda: proxy_handshake(h))
     h.wait(
         "Sail",
         lambda: (
@@ -78,24 +91,40 @@ def check_rows(h, rows):
 
 
 def interoperability(h):
-    # Capture only T10 traffic; cleanup redacts credentials before artifact upload.
-    # Never patch the engine or proxy/rewrite its delegation request.
+    """Observe Sail's real catalog calls and S3 signing identity without decrypting TLS.
+
+    The catalog proxy forwards to Lakekeeper over loopback inside the catalog's own
+    network namespace (the owner-approved plaintext exception). Capturing that
+    loopback hop shows each request exactly as Lakekeeper receives it, including the
+    proxy's X-Forwarded-For with the real client address. SeaweedFS's own log records
+    which configured identity signed each S3 request; only Sail holds the "sail" key.
+    Cleanup redacts credentials before artifact upload. The engine and proxy are not
+    patched, and no request is rewritten.
+    """
     item = json.loads(subprocess.check_output(["docker", "inspect", h.cid("sail")]))[0]
     address = item["NetworkSettings"]["Networks"]["lakehouse-integration_private"]["IPAddress"]
+    catalog_pid = str(
+        json.loads(subprocess.check_output(["docker", "inspect", h.cid("catalog")]))[0]["State"][
+            "Pid"
+        ]
+    )
     traffic = h.REPORTS / "sail-traffic.log"
     capture_log = h.REPORTS / "sail-capture.log"
+    since = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
     with traffic.open("w") as out, capture_log.open("w") as err:
         capture = subprocess.Popen(
             [
                 "sudo",
+                "nsenter",
+                f"--net=/proc/{catalog_pid}/ns/net",
                 "tcpdump",
                 "-i",
-                "any",
+                "lo",
                 "-l",
                 "-A",
                 "-s",
                 "0",
-                f"host {address} and (tcp port 8181 or tcp port 8333)",
+                "tcp port 8182",
             ],
             stdout=out,
             stderr=err,
@@ -103,34 +132,60 @@ def interoperability(h):
         try:
             h.wait("Sail traffic capture", lambda: "listening on" in capture_log.read_text(), 15)
             result = exercise(h)
-            # Wait for the final HTTP response to be flushed by line-buffered tcpdump.
+            # Wait for the final HTTP exchange to be flushed by line-buffered tcpdump.
             h.wait(
-                "captured Sail REST and S3 requests",
-                lambda: (
-                    "x-iceberg-access-delegation: vended-credentials" in traffic.read_text().lower()
-                    and "Credential=" + h.CREDS["access"] + "/" in traffic.read_text()
-                ),
+                "captured Sail REST requests",
+                lambda: sail_requests(traffic.read_text(), address),
                 15,
             )
         finally:
             subprocess.run(["sudo", "kill", "-INT", str(capture.pid)], check=True)
             assert capture.wait(timeout=15) == 0, capture_log.read_text()
     assert "0 packets dropped by kernel" in capture_log.read_text(), capture_log.read_text()
-    result["wire"] = wire_evidence(traffic.read_text(), h.CREDS["access"])
+    time.sleep(1)  # Let the gateway flush its final request log lines.
+    logs = subprocess.run(
+        ["docker", "logs", "--since", since, h.cid("s3")],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    s3_log = logs.stdout + logs.stderr
+    (h.REPORTS / "sail-s3-identities.log").write_text(
+        "\n".join(line for line in s3_log.splitlines() if "for identity" in line) + "\n"
+    )
+    result["wire"] = wire_evidence(traffic.read_text(), address, s3_log)
     return result
 
 
-def wire_evidence(trace, access):
-    assert "x-iceberg-access-delegation: vended-credentials" in trace.lower()
-    assert "Credential=" + access + "/" in trace
-    posts = re.findall(r"\bPOST ([^ \r\n]+) HTTP/1\.[01]", trace)
+def sail_requests(trace, address):
+    """HTTP requests on the loopback hop that the proxy attributes to Sail."""
+    request_line = r"\b(?:GET|POST|HEAD|DELETE|PUT) /[^ \r\n]* HTTP/1\.[01]"
+    starts = [m.start() for m in re.finditer(request_line, trace)]
+    bounds = [*starts, len(trace)]
+    blocks = [trace[a:b] for a, b in zip(bounds, bounds[1:])]
+    # tcpdump -A prints each header line's CR as "." before the newline.
+    marker = re.compile(r"(?im)^x-forwarded-for: " + re.escape(address) + r"(?:\r|\.)?$")
+    return [block for block in blocks if marker.search(block)]
+
+
+def wire_evidence(trace, address, s3_log):
+    requests = sail_requests(trace, address)
+    assert requests, "No Sail catalog request captured"
+    assert any("x-iceberg-access-delegation: vended-credentials" in r.lower() for r in requests)
+    posts = [re.match(r"POST ([^ \r\n]+)", r).group(1) for r in requests if r.startswith("POST")]
     assert posts, "No Sail catalog commit captured"
     assert not any("/sign" in path for path in posts), posts
+    # Sail's credential path: its own static key, as recorded by the S3 gateway.
+    assert re.search(r"Found access key \S+ for identity sail\b", s3_log), (
+        "No Sail-signed S3 request"
+    )
+    assert "session token" not in s3_log.lower(), "Unexpected STS session credentials"
     return {
-        "delegation": "vended-credentials (observed on wire)",
-        "s3_authorization": "AWS SigV4 with fixture's static access key (observed on wire)",
+        "delegation": "vended-credentials (observed on the catalog's loopback hop, from Sail's address)",
+        "s3_authorization": "SigV4 with Sail's own static key (identity 'sail' in the S3 gateway log)",
         "signer_posts": 0,
-        "trace": "sail-traffic.log (redacted, filtered to Sail container IP)",
+        "sail_catalog_requests": len(requests),
+        "trace": "sail-traffic.log (redacted, catalog namespace loopback only)",
     }
 
 
@@ -138,7 +193,7 @@ def exercise(h):
     warehouse = h.RESULTS["warehouse"]["response"]["warehouse-id"]
     status, response = h.http(
         "GET",
-        f"http://catalog:8181/catalog/v1/{warehouse}/namespaces/integration/tables/from_trino",
+        f"https://catalog:8181/catalog/v1/{warehouse}/namespaces/integration/tables/from_trino",
         headers={"X-Iceberg-Access-Delegation": "vended-credentials"},
     )
     assert status == 200, (status, response)
@@ -236,17 +291,23 @@ def verify_restart(h):
 def secret_isolation(h):
     item = json.loads(subprocess.check_output(["docker", "inspect", h.cid("sail")]))[0]
     assert item["Config"]["User"] == "10001:10001"
-    binds = [m for m in item["Mounts"] if m["Type"] == "bind"]
-    assert len(binds) == 1, binds
-    assert binds[0]["Destination"] == "/etc/sail/config.json" and not binds[0]["RW"]
-    assert Path(binds[0]["Source"]).resolve() == (h.ROOT / "integration/sail/config.json").resolve()
+    binds = {m["Destination"]: m for m in item["Mounts"] if m["Type"] == "bind"}
+    assert set(binds) == {"/etc/sail/config.json", "/run/tls"}, binds
+    assert not any(m["RW"] for m in binds.values())
+    assert (
+        Path(binds["/etc/sail/config.json"]["Source"]).resolve()
+        == (h.ROOT / "integration/sail/config.json").resolve()
+    )
+    # Public trust only; never a key or another service's directory.
+    assert Path(binds["/run/tls"]["Source"]).resolve() == (h.RUNTIME / "tls/trust").resolve()
     env = dict(value.split("=", 1) for value in item["Config"]["Env"])
-    assert env["AWS_ACCESS_KEY_ID"] == h.CREDS["access"]
-    assert env["AWS_SECRET_ACCESS_KEY"] == h.CREDS["secret"]
+    assert env["AWS_ACCESS_KEY_ID"] == h.CREDS["sail_access"]
+    assert env["AWS_SECRET_ACCESS_KEY"] == h.CREDS["sail_secret"]
+    assert env["SSL_CERT_FILE"] == "/run/tls/ca.crt" and env["AWS_ALLOW_HTTP"] == "false"
     assert not any(
         value in json.dumps(item["Config"])
         for key, value in h.CREDS.items()
-        if key not in ("access", "secret")
+        if key not in ("sail_access", "sail_secret")
     )
     assert not any(key.startswith(("LAKEKEEPER__", "POSTGRES_", "S3_")) for key in env)
     check = subprocess.run(
@@ -266,7 +327,7 @@ def secret_isolation(h):
     )
     assert check.returncode == 0, check.stderr
     assert (h.RUNTIME / "sail.env").stat().st_mode & 0o777 == 0o600
-    return "Sail-only env_file; exact AWS keys; no other service's secrets or mounts"
+    return "Sail-only env_file; its own AWS keys; public CA only; no other secrets or mounts"
 
 
 if __name__ == "__main__":

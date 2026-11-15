@@ -1,6 +1,7 @@
 # Plan: a Datopsis authorization platform (Phase C, and the D–C glue)
 
-Status: **draft for owner review**, 2026-11-13. Interim decision: OpenFGA "for now".
+Status: **draft for owner review**, 2026-11-13. Interim decision: OpenFGA "for now". Owner update 2026-11-15: OpenFGA stays
+evaluation-only; C1–C8 is adopted for every authorization backend.
 Working name: `datopsis-authz` (placeholder).
 
 ## 1. Why build something
@@ -81,7 +82,9 @@ Components, each its own small repo and hardened image:
 
 - **C0 Interim (now).** OpenFGA as decided "for now":
   - Finish the evaluation PR's runtime tests (grant, deny, revoke, groups) to have a working baseline and a reference test suite.
-  - **Recommendation:** don't build a production `openfga-ubi` image unless C1 fails. The C0 tests become the acceptance suite every backend must pass.
+  - **Owner decision 2026-11-15:** OpenFGA stays evaluation-only; no production
+    `openfga-ubi`. Its upstream image has fixable Critical/High findings. The
+    C1–C8 tests are the acceptance suite every backend must pass.
 - **C1 Spikes,** evaluation only, each a pass/fail report:
   - **S1** Custom Lakekeeper binary with a Cedar authorizer: the authorizer trait's surface, coverage of the management API, and the C0 tests passing.
   - **S2** Trino's OPA plugin against a stub decision API: table, schema and column decisions, plus row-filter and mask support.
@@ -137,7 +140,8 @@ passing C1–C8 does not itself remove Phase D's static-storage-key gap.
 1. Confirm or extend requirements R1–R11.
 2. Build on the Cedar library (recommended) or another engine.
 3. Project name and repo layout: one repo per component (recommended, like the image repos), or a monorepo.
-4. Interim OpenFGA depth: evaluation only (recommended) or a hardened `openfga-ubi`.
+4. Interim OpenFGA depth: **decided 2026-11-15 — evaluation only**, no production
+   `openfga-ubi`; see [DECISIONS.md](DECISIONS.md).
 5. Order: run spikes S1–S4 first (recommended) or go straight to the MVP.
 6. License for the new code (Apache-2.0 suggested, matching the other repos).
 

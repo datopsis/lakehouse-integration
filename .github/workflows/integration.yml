@@ -26,7 +26,7 @@ jobs:
             machine: aarch64
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       INTEGRATION_ARCH: ${{ matrix.arch }}
       EXPECTED_MACHINE: ${{ matrix.machine }}
@@ -68,7 +68,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 integration/verify.py 2>&1 | tee reports/provenance.log
-      - name: T1–T12 and encoding canaries
+      - name: T1–T12, canaries and cross-service TLS checks
         # Collect runtime evidence even if provenance fails; the job stays failed.
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |

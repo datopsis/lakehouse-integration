@@ -277,9 +277,9 @@ def pyiceberg_reader(specs):
 
 
 def sail_reader(specs):
-    from pyspark.sql import SparkSession
+    from sail_client import session
 
-    spark = SparkSession.builder.remote("sc://sail:50051").getOrCreate()
+    spark = session()
     try:
         assert sorted(row[0] for row in spark.sql("SHOW CATALOGS").collect()) == [
             "qualification",

@@ -55,6 +55,9 @@ def build():
     builds = {}
     # Same owner scripts, lock checks and binary/provenance assertions as Integration.
     for repo in owner.PINS:
+        # The evaluation proxy helper builds nginx once, with strict provenance.
+        if repo == "nginx-ubi":
+            continue
         result = owner.build(repo, owner.PINS[repo], arch)
         builds[repo] = result
         save("builds.json", builds)

@@ -1,10 +1,14 @@
 """Evidence regressions: authorization denial must not hide other failures."""
 
+import json
+import sys
 import unittest
 from pathlib import Path
+from unittest.mock import Mock, patch
 
 import run  # noqa: F401
 import yaml
+from catalog import PROXY_REVISION, build_proxy
 from engines import trino_denial
 from exercise import denial
 from pyiceberg.exceptions import ForbiddenError, NoSuchTableError, UnauthorizedError
@@ -58,6 +62,30 @@ class EvaluationSafety(unittest.TestCase):
             trino_denial(
                 "SELECT * FROM iceberg.denied.sample", {**hidden, "message": "other missing schema"}
             )
+
+    def test_merge_builds_each_pinned_image_once_and_rejects_proxy_pin_drift(self):
+        root = Path(__file__).resolve().parents[2]
+        pins = json.loads((root / "images.lock.json").read_text())
+        self.assertEqual(pins["nginx-ubi"], PROXY_REVISION)
+        for arch in ("amd64", "arm64"):
+            with self.subTest(arch=arch):
+                owner = Mock(PINS=pins)
+                owner.native_architecture.return_value = arch
+                owner.build.return_value = {"status": "pass"}
+                with (
+                    patch.dict(sys.modules, {"build": owner}),
+                    patch("catalog.build_proxy", return_value={"status": "pass"}) as proxy,
+                    patch("rauthy.build", return_value={"status": "pass"}) as rauthy,
+                    patch("exercise.initialize"),
+                    patch("run.save"),
+                ):
+                    run.build()
+                expected = [(repo, pin, arch) for repo, pin in pins.items() if repo != "nginx-ubi"]
+                self.assertEqual([c.args for c in owner.build.call_args_list], expected)
+                proxy.assert_called_once_with(arch, owner)
+                rauthy.assert_called_once_with(arch, owner)
+        with self.assertRaisesRegex(AssertionError, "must match"):
+            build_proxy("amd64", Mock(PINS={"nginx-ubi": "different-revision"}))
 
     def test_new_workflow_is_manual_only_and_not_a_required_dependency(self):
         root = Path(__file__).resolve().parents[2]

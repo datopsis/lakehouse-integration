@@ -10,6 +10,7 @@ Items still under coordinated vulnerability disclosure are tracked privately and
 
 | Date | Area | Decision | Why | Where |
 |---|---|---|---|---|
+| 2026-11-15 | Authorization (C) | Phase C OpenFGA acceptance suite C1-C8 adopted as the acceptance suite for any authorization backend; OpenFGA stays evaluation-only (upstream image has fixable Critical/High findings). | Reuse the native acceptance contract without production adoption; no production `openfga-ubi`. | [AUTHZ-EVALUATION.md](AUTHZ-EVALUATION.md), [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md) |
 | 2026-11-14 | Docs | Every feature that changes the architecture updates `docs/diagrams/*.svg` in the same PR or an immediate docs follow-up. | Diagrams are the shared map; stale diagrams mislead. | All repos and child briefs |
 | 2026-11-13 | Authorization (C) | **OpenFGA as the interim backend.** Plan an own authorization platform built on the open-source Cedar Rust library. R1–R11 are complete for now; future capabilities are catalogued. | Open-source Lakekeeper supports only OpenFGA, which ignores token groups. Built-in Cedar is in the paid Lakekeeper Plus. No option covers catalog, engines, Sail and storage together. | [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md) |
 | 2026-11-13 | Identity (B) | **Rauthy** is the OpenID provider; **Keycloak** is the tested fallback. Kanidm is rejected. | Rauthy and Keycloak pass every Lakekeeper token test on both architectures; Rauthy uses about 75 MiB vs 570 MiB, and is Rust and Apache-2.0. Kanidm's machine tokens are encrypted (Lakekeeper returns 401), and it puts no groups in access tokens. | [IDP-BAKEOFF.md](IDP-BAKEOFF.md), `rauthy-ubi` |
@@ -39,7 +40,6 @@ Ordered roughly by when they block work. The owner answers them one at a time.
 |---|---|---|---|
 | 1 | Authorization platform: policy engine | Cedar library (recommended) or another | Phase C build |
 | 2 | Authorization platform: name and repo layout | One repo per component (recommended) or a monorepo | Phase C build |
-| 3 | Interim OpenFGA depth | Evaluation only (recommended) or a hardened `openfga-ubi` | Phase C interim |
 | 4 | Authorization order | Spikes S1–S4 first (recommended) or straight to the MVP | Phase C build |
 | 5 | License for new code | Apache-2.0 suggested | New repos |
 | 6 | Future authorization capabilities | Which of the 27 catalogued options come after the MVP; suggested first bundle: governance basics | Post-MVP roadmap |

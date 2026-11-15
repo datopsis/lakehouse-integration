@@ -1,7 +1,8 @@
 {
-  "postgresql-lakekeeper-ubi": "93666c251ca2c4e6618ddd35a669c4c3ea380313",
-  "lakekeeper-ubi": "2200c516919a9667e9761a6581b848de32b693d1",
-  "seaweedfs-ubi": "fd9b0001ee86a432faf773d40ab6f528dbfdad67",
-  "trino-ubi": "964802b7afd3ae526039ef7dc7fcf605ce3d5b26",
-  "sail-ubi": "6e6f65a69108f4c6870eab26f356dccb41efbf35"
+  "postgresql-lakekeeper-ubi": "0ff367fae85d9685eed9d4851dce9203cccae2b2",
+  "lakekeeper-ubi": "baa196bea55765e8e3da625ad50cda7d5ec99082",
+  "seaweedfs-ubi": "80bba407ba534f9d2e6ec6401c071d827dcf4a03",
+  "trino-ubi": "685ff5bca0037d38e3c2e2ed47a60f2540dad7c2",
+  "sail-ubi": "e96e068f926b8fecb3939e953389685ee4780032",
+  "nginx-ubi": "9ef9e822c6b5e508cebef2adff3bb647a206773c"
 }

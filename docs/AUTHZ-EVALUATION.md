@@ -5,7 +5,9 @@ acceptance evaluation of that decision, not a new backend selection. Open-source
 Lakekeeper supports OpenFGA and AllowAll; its Cedar integration is paid Lakekeeper
 Plus. The planned own Cedar-based service is described in
 [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md). Every future backend must pass
-**the same stable C1–C8 contract**, natively on amd64 and arm64.
+**the same stable C1–C8 contract**, natively on amd64 and arm64. On 2026-11-15
+the owner adopted that contract and kept OpenFGA evaluation-only because of the
+upstream image's fixable Critical/High findings; no production `openfga-ubi`.
 
 ## Acceptance contract
 
@@ -32,7 +34,7 @@ Every C test is mandatory; C5 retains per-client results when one client fails.
 The manual [workflow](../.github/workflows/authz-evaluation.yml) has only
 `contents: read`, native `ubuntu-24.04` and `ubuntu-24.04-arm` runners, fail-fast
 disabled and identical assertions. It is separate from the required `Integration`
-check; `images.lock.json`, `integration/*` and their pins are unchanged.
+check; the evaluation does not add OpenFGA to `images.lock.json` or `integration/*`.
 Until GitHub registers the new workflow on main, the already registered
 `idp-bakeoff.yml` offers an explicit `authorization` dispatch choice; its default
 still runs the identity bake-off.
@@ -46,7 +48,7 @@ gh workflow run idp-bakeoff.yml --ref room/lakehouse-integration-authorization-b
 | OpenFGA | Official 1.22.1 multi-platform digest `docker.io/openfga/openfga@sha256:b852071314f1fda1194d341a6ebac0a4f619b3cd87a6626d2ccc7048af4ec671`; native architecture asserted |
 | Rauthy | `datopsis/rauthy-ubi` `1e114b84b01988bf15306b110b040378878488d3`; unchanged `scripts/build.sh`, architecture-specific artifact lock and strict revision/lock-hash labels |
 | nginx | `datopsis/nginx-ubi` `9ef9e822c6b5e508cebef2adff3bb647a206773c`; owner build, strict provenance; unchanged Lakekeeper and Sail profiles |
-| Catalog, storage, engines, PostgreSQL | Owner builds from unchanged `images.lock.json`, strict provenance for every image including Sail's paired locks |
+| Catalog, storage, engines, PostgreSQL | Owner builds from `images.lock.json` at the executed suite revision, strict provenance for every image including Sail's paired locks |
 
 ![Phase C evaluation topology](diagrams/lakehouse-authorization-evaluation.svg)
 
@@ -84,7 +86,10 @@ dumps never become artifacts. Raw credential values are not recorded in C6.
 completed successfully from suite commit
 `313fd8628a6131eb7a0e44bdc0ed8ff418d40e27`. Both jobs' actual logs and sanitized
 artifacts were read. All seven Datopsis images passed strict provenance on each
-CPU; the normalized OpenFGA model hash is identical. This is functional acceptance
+CPU; the normalized OpenFGA model hash is identical. These results retain the
+pins at that suite commit. Main's later Phase A TLS integration/pin update in
+`96f90db` is preserved by the merge; this merge does not claim a new C-suite run
+at those pins. This is functional acceptance
 of the evaluation profile, not production/security qualification.
 
 | Test | [amd64][native-amd64] | [arm64][native-arm64] |
@@ -214,7 +219,7 @@ it is not called by this acceptance suite and has no runtime qualification claim
 
 ## What the pin actually supports
 
-The main lock pins `lakekeeper-ubi` to
+At the executed suite commit `313fd86`, the lock pinned `lakekeeper-ubi` to
 `2200c516919a9667e9761a6581b848de32b693d1`. Its
 [artifact lock](https://github.com/datopsis/lakekeeper-ubi/blob/2200c516919a9667e9761a6581b848de32b693d1/artifacts/lakekeeper.lock.json)
 identifies official Lakekeeper **0.13.4**, source commit

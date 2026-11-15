@@ -2,8 +2,9 @@
 
 Sail 0.7.3 is qualified as the second query engine alongside Trino, with PyIceberg
 as an independent client: [T10, restart and credential evidence](SAIL-EVIDENCE.md).
-All five current image pins passed strict provenance; future pin changes still
-require review and exact labels, with no allowances.
+The six current image pins require strict provenance on both native architectures;
+[TLS evidence](TLS-PLAN.md#step-7-evidence) records qualification. Future pin changes
+still require review and exact labels, with no allowances.
 
 Every owner decision, and every decision still pending, is recorded in
 [DECISIONS.md](DECISIONS.md). Check it before starting new work.
@@ -12,7 +13,8 @@ Every owner decision, and every decision still pending, is recorded in
   on both native architectures: hardened Rauthy, isolated OpenFGA/PostgreSQL, verified
   TLS and exact grant/deny/revoke/operations assertions. All eight cases passed on
   amd64 and arm64; observed revocation was 37.76/29.57 ms. This evaluation leaves
-  main integration authentication/pins and the Phase D static-key gap unchanged.
+  main integration authentication and the Phase D static-key gap unchanged.
+  OpenFGA stays evaluation-only; no production `openfga-ubi` is planned.
 - [ ] Phase C: OpenFGA as the interim backend (decided 2026-11-13); then the own
   authorization platform in [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md): spikes S1–S4,
   an MVP, Phase D integration, then the catalogued future capabilities. Update the
@@ -24,8 +26,14 @@ Every owner decision, and every decision still pending, is recorded in
 - [x] T12 schema evolution and historical snapshots: exact schemas, field identity,
   old/new rows and time travel across add/rename/drop/widen/nested-add; mandatory
   three-client assertions and exact-outcome Sail canaries where needed.
-- TLS between all services: REST, S3, PostgreSQL, Seaweed control HTTP/gRPC, and Trino;
-  include certificate verification, lifecycle and negative tests.
+- [x] Phase A TLS between all services (integration step 7): REST, S3, PostgreSQL,
+  SeaweedFS HTTPS/gRPC mTLS, Trino, and Sail and Lakekeeper behind nginx-ubi, with
+  per-run CA, cross-service negative tests and listener inventories on both native
+  architectures. See [ARCHITECTURE.md](ARCHITECTURE.md#phase-a-tls-as-built).
+- [ ] Remove the interim SeaweedFS S3 outbound trust (a known SeaweedFS limitation,
+  reported upstream) once a reviewed upstream fix lands; the exact-outcome canaries
+  announce the change.
+- [ ] TLS lifecycle beyond the test: rotation, revocation and production PKI.
 - [ ] Phase B: integrate the merged hardened `rauthy-ubi` image (`1e114b8`) and
   qualify OpenID login on both native architectures in the main path. Owner chose Rauthy on 2026-11-13, with Keycloak as the
   tested fallback; see the [IdP bake-off decision and evidence](IDP-BAKEOFF.md).
