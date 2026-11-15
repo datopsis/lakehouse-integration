@@ -216,6 +216,23 @@ def sail(catalog):
     from common import wait
 
     wait(lambda: transport("sail", 50051, provider.ca), 120)
+    wait(
+        lambda: (
+            subprocess.run(
+                [
+                    "docker",
+                    "exec",
+                    "sail-backend",
+                    "/usr/bin/python3.12",
+                    "-c",
+                    "import socket; socket.create_connection(('127.0.0.1', 50052), timeout=2).close()",
+                ],
+                capture_output=True,
+            ).returncode
+            == 0
+        ),
+        120,
+    )
     result = subprocess.run(
         [
             str(ROOT / ".sources/sail-venv/bin/python"),

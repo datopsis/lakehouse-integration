@@ -388,11 +388,13 @@ class Storage:
             config=Config(connect_timeout=3, read_timeout=5, retries={"max_attempts": 1}),
         )
         wait(lambda: self.s3.list_buckets())
-        self.s3.create_bucket(Bucket="warehouse")
-        return {
-            name: transport(name, port, self.ca)
+        evidence = {
+            name: wait(lambda: transport(name, port, self.ca), 120)
             for name, port in (("master", 9333), ("volume", 8080), ("filer", 8888), ("s3", 8333))
         }
+        wait(lambda: self.s3.create_bucket(Bucket="warehouse"))
+        wait(lambda: self.s3.put_object(Bucket="warehouse", Key="_fixture/ready", Body=b"ready"))
+        return evidence
 
     def properties(self):
         return {
