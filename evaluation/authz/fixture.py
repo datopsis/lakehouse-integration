@@ -188,7 +188,15 @@ def database(ca):
         ],
         network=BACKEND_NETWORK,
     )
-    wait(lambda: "listening on IPv4" in run("docker", "logs", "fga-postgres"))
+    wait(
+        lambda: (
+            subprocess.run(
+                ["docker", "exec", "fga-postgres", "pg_isready", "-h", "fga-postgres"],
+                capture_output=True,
+            ).returncode
+            == 0
+        )
+    )
     run(
         "docker",
         "exec",
@@ -408,6 +416,11 @@ class AuthCatalog(Catalog):
         self.http = HTTPS(provider.ca)
         self.env = WORK / "catalog.env"
         write(self.env, "".join(f"{k}={v}\n" for k, v in env.items()))
+
+    def start_backend(self, audience="lakekeeper,operator,expiry"):
+        obj = json.loads(run("docker", "inspect", self.proxy))[0]
+        if BACKEND_NETWORK not in obj["NetworkSettings"]["Networks"]:
+            run("docker", "network", "connect", BACKEND_NETWORK, self.proxy)
         run(
             "docker",
             "run",
@@ -415,19 +428,14 @@ class AuthCatalog(Catalog):
             "--label",
             LABEL,
             "--network",
-            NETWORK,
+            "container:" + self.proxy,
             "--env-file",
             self.env,
             "-v",
-            f"{provider.ca}:/ca/ca.pem:ro",
+            f"{self.provider.ca}:/ca/ca.pem:ro",
             "localhost/lakekeeper-ubi:integration",
             "migrate",
         )
-
-    def start_backend(self, audience="lakekeeper,operator,expiry"):
-        obj = json.loads(run("docker", "inspect", self.proxy))[0]
-        if BACKEND_NETWORK not in obj["NetworkSettings"]["Networks"]:
-            run("docker", "network", "connect", BACKEND_NETWORK, self.proxy)
         return super().start_backend(audience)
 
     def seed(self, token):
@@ -472,6 +480,11 @@ class AuthCatalog(Catalog):
             table = catalog.create_table(
                 namespace + ".sample",
                 schema=pa.schema([pa.field("id", pa.int64()), pa.field("label", pa.string())]),
+                properties={
+                    "format-version": "2",
+                    "write.update.mode": "copy-on-write",
+                    "write.delete.mode": "copy-on-write",
+                },
             )
             table.append(pa.Table.from_pylist(ROWS))
         return self.read(catalog)

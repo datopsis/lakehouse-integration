@@ -60,6 +60,13 @@ def evaluate(catalog, operator, human, namespace, tuples):
     expiry = provider.token("expiry")
     # A genuine signed expiry token is first accepted at whoami, independent of grants.
     whoami = catalog.base + "/management/v1/whoami"
+    http.json(
+        "POST",
+        catalog.base + "/management/v1/user",
+        headers={"Authorization": "Bearer " + expiry},
+        statuses=(200, 201),
+        json={"update-if-exists": True},
+    )
     accepted = http.request("GET", whoami, headers={"Authorization": "Bearer " + expiry})
     assert accepted.status_code == 200, (accepted.status_code, accepted.text)
     deadline = decode(expiry)[1]["exp"] + 61

@@ -18,6 +18,10 @@ try:
     for query in (
         "SELECT * FROM bakeoff.denied.sample",
         "INSERT INTO bakeoff.bakeoff.sample VALUES (3, 'forbidden')",
+        "UPDATE bakeoff.bakeoff.sample SET label='forbidden' WHERE id=1",
+        "DELETE FROM bakeoff.bakeoff.sample WHERE id=1",
+        "CREATE TABLE bakeoff.bakeoff.forbidden (id BIGINT) USING iceberg",
+        "DROP TABLE bakeoff.bakeoff.sample",
     ):
         try:
             spark.sql(query).collect()

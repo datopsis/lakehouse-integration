@@ -114,6 +114,10 @@ def trino(catalog):
     for statement in (
         "SELECT * FROM iceberg.denied.sample",
         "INSERT INTO iceberg.bakeoff.sample VALUES (3, 'forbidden')",
+        "UPDATE iceberg.bakeoff.sample SET label='forbidden' WHERE id=1",
+        "DELETE FROM iceberg.bakeoff.sample WHERE id=1",
+        "CREATE TABLE iceberg.bakeoff.forbidden (id BIGINT)",
+        "DROP TABLE iceberg.bakeoff.sample",
     ):
         result = sql(statement)
         assert "error" in result, result

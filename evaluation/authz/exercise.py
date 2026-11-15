@@ -58,6 +58,13 @@ def write_denials(reader):
                 "bakeoff.no", schema=pa.schema([pa.field("id", pa.int64())])
             )
         ),
+        "append": denial(
+            lambda: table.append(pa.Table.from_pylist([{"id": 3, "label": "forbidden"}]))
+        ),
+        "overwrite": denial(
+            lambda: table.overwrite(pa.Table.from_pylist([{"id": 3, "label": "forbidden"}]))
+        ),
+        "delete": denial(lambda: table.delete("id = 1")),
         "commit": denial(
             lambda: table.transaction().set_properties(test="denied").commit_transaction()
         ),
@@ -106,7 +113,10 @@ def evaluate(arch):
         nonlocal reader
         tuples(human_id, "select", namespace)
         reader = catalog.pyiceberg(human)
+        namespaces = reader.list_namespaces()
+        assert namespaces == [("bakeoff",)], namespaces
         return {
+            "namespaces": namespaces,
             "allowed": catalog.read(reader),
             "other_list": denial(lambda: reader.list_tables("denied")),
             "other_read": denial(lambda: reader.load_table("denied.sample")),
@@ -266,6 +276,12 @@ def evaluate(arch):
         ), denied.text
         allowed = http.json("GET", base + "bakeoff/tables/sample", headers=auth)
         config = allowed.get("config", {})
+        credential_blocks = allowed.get("storage-credentials", [])
+        for block in credential_blocks:
+            assert not any(
+                k in block.get("config", {})
+                for k in ("s3.access-key-id", "s3.secret-access-key", "s3.session-token")
+            ), block
         # Phase C retains sts-enabled=false. Record exactly the config names, never key material.
         assert not any(
             k in config for k in ("s3.access-key-id", "s3.secret-access-key", "s3.session-token")
@@ -274,6 +290,9 @@ def evaluate(arch):
             "denied_status": denied.status_code,
             "denied_credentials": False,
             "read_only_config_keys": sorted(config),
+            "storage_credential_config_keys": [
+                sorted(block.get("config", {})) for block in credential_blocks
+            ],
             "sts_enabled": False,
             "scope": "Read grant, no STS keys with this profile; source scopes documented separately",
         }
