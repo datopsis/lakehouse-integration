@@ -1,26 +1,34 @@
 # Lakehouse integration
 
-One native amd64 and arm64 integration gate for the five Datopsis image repositories: Trino queries
+One native amd64 and arm64 integration gate for the six Datopsis image repositories: Trino queries
 Iceberg v2 / Parquet through Lakekeeper's REST catalog, PostgreSQL stores catalog
 metadata, and separated SeaweedFS master/volume/filer/S3 roles store table objects.
-Sail is the second query engine; PyIceberg is an independent client. Nothing is
-published to a host port.
+Sail is the second query engine; PyIceberg is an independent client. nginx-ubi
+terminates TLS for Lakekeeper and Sail. Nothing is published to a host port.
+
+**Every network hop uses verified TLS (Phase A).** A fresh test CA is created for
+each run, and every client checks the server certificate and hostname. The only
+plaintext is on 127.0.0.1 inside one network namespace (each proxy to its
+Lakekeeper or Sail backend) and the PostgreSQL container-local Unix socket used for
+administrator provisioning, as the owner decided on 2026-11-12. Phase A is
+encryption and server identity only: Lakekeeper login stays off until Phase B.
+See [Phase A TLS](#phase-a-tls) below.
 
 The implementation follows the evidence on
 [`spike/feasibility`](https://github.com/datopsis/lakehouse-integration/blob/spike/feasibility/SPIKE-FINDINGS.md).
-That branch is retained unchanged. All five source commits live in
+That branch is retained unchanged. All six source commits live in
 [images.lock.json](images.lock.json); changing a pin is a reviewed one-line change.
 Each input is fetched by full SHA, checked against detached HEAD, built with its
 own build script, and inspected after loading. Trino falls back to fetching
 `refs/pull/2/head` if the SHA fetch fails, then still requires exact HEAD.
 
 **Strict provenance is mandatory for every image.** There is no allowance for
-inherited or missing labels. All five current pins passed this gate in the
-[qualified Sail run](docs/SAIL-EVIDENCE.md). The mandatory gate checks
+inherited or missing labels. All six current pins pass this gate on both
+architectures in this repository's PR checks. The mandatory gate checks
 `org.opencontainers.image.revision` against the pin and
 `io.datopsis.artifact-lock.sha256` against the exact repository artifact lock. The image
 architecture must match its native runner: `amd64` / `x86_64` or `arm64` / `aarch64`.
-PostgreSQL uses `artifacts/locks/<architecture>.json`; Lakekeeper, SeaweedFS, and
+PostgreSQL and nginx-ubi use `artifacts/locks/<architecture>.json`; Lakekeeper, SeaweedFS, and
 Trino each use their shared repository lock, with architecture-specific artifacts.
 Sail hashes its shared Sail/RPM lock pair and selects native artifacts too.
 Runtime probes still collect evidence when all images built, but cannot turn a
@@ -39,14 +47,15 @@ security gate, and does not authorize release or modify the jars.
 | T2 | PyIceberg reads exact Trino rows before and after mutations |
 | T3 | Trino reads exact PyIceberg-written rows |
 | T4 | Every table's current metadata, data, and delete files exist in the S3 bucket; exact catalog table rows exist in PostgreSQL |
-| T5 | `compose down` keeps volumes; `up` replaces all eight IDs; fresh clients reread every table; a new write is read back |
-| T6 | Anonymous S3 and wrong S3 secret return specific 403 errors; missing encryption key prevents Lakekeeper startup; wrong PostgreSQL password prevents migration |
-| T7 | Non-root, read-only roots, dropped capabilities, no-new-privileges, internal network, no published ports; S3 cannot read PostgreSQL secrets; Sail receives only its own AWS env file |
-| T8 | SIGKILL all eight services after three acknowledged 16-row INSERTs; exact rows and four snapshots (CREATE plus three INSERTs) after restart on the same volumes. SIGKILL PostgreSQL, Lakekeeper, volume, and filer during continuous INSERTs; retain every acknowledged batch, require ambiguous batches fully visible or absent, verify snapshot counts/chains and fresh PyIceberg/Trino reads, and require a new successful write after each restart. Report recovery seconds per component. |
+| T5 | `compose down` keeps volumes; `up` replaces all ten IDs (eight services and both proxies); fresh clients reread every table; a new write is read back |
+| T6 | Anonymous S3 and wrong S3 secret return specific 403 errors; missing encryption key prevents Lakekeeper startup; wrong PostgreSQL password prevents migration (over verify-full TLS) |
+| T7 | Non-root, read-only roots, dropped capabilities, no-new-privileges, internal network, no published ports; each proxy shares only its application's network namespace; S3 cannot read PostgreSQL secrets; Sail receives only its own AWS env file; exact read-only mounts give each service only its own private key |
+| T8 | SIGKILL all ten containers (eight services and both proxies) after three acknowledged 16-row INSERTs; exact rows and four snapshots (CREATE plus three INSERTs) after restart on the same volumes. SIGKILL PostgreSQL, Lakekeeper (with its proxy, one namespace), volume, and filer during continuous INSERTs; retain every acknowledged batch, require ambiguous batches fully visible or absent, verify snapshot counts/chains and fresh PyIceberg/Trino reads, and require a new successful write after each restart. Report recovery seconds per component. |
 | T9 | No-key remote-signing client retained across recreation; serial exact-row controls and deterministic concurrent-initialization canary with unsigned HEAD 403 / GET AccessDenied evidence |
-| T10 | Sail CREATE/INSERT, exact Trino/fresh-PyIceberg reads after INSERT/UPDATE/DELETE; Sail reads Trino/PyIceberg tables, with passive REST/S3 credential evidence |
+| T10 | Sail CREATE/INSERT, exact Trino/fresh-PyIceberg reads after INSERT/UPDATE/DELETE; Sail reads Trino/PyIceberg tables, with passive REST/S3 credential evidence (catalog loopback hop and the S3 gateway's signing identity) |
 | T11 | Six small INSERTs; optimize reduces data-file count with exact rows in Trino/PyIceberg/Sail; expire all noncurrent snapshots, reject expired time travel, verify old files deleted in S3; remove a planted orphan while preserving every manifest reference; default seven-day retention refusals; repeat exact reads and S3 references after T5 and every T8 crash |
 | T12 | Trino add/rename/drop/widen/nested-add; exact schemas and old/new rows after every DDL and INSERT in Trino, fresh-process PyIceberg and fresh-session Sail; six historical snapshots by ID and timestamp, with historical schemas after evolution; exact Sail failure canaries only where measured |
+| TLS | Exact listener inventory per namespace; plaintext refused on every exposed listener; loopback backends refuse other containers; SeaweedFS mTLS required; real clients refuse wrong-CA, wrong-hostname and expired certificates; SeaweedFS exact-outcome canaries. Repeated after T5 and T8 |
 | Canary | Default Trino encoding, INSERT/UPDATE/DELETE, then PyIceberg read; only the exact known Arrow decoder error is an expected failure |
 
 The main Iceberg catalog sets
@@ -70,7 +79,7 @@ T5 covers graceful recreation; T8 tests crash durability under container SIGKILL
 on one host at the reviewed pins. **A container SIGKILL is not host power loss:**
 the host page cache can survive. There is no fsync or disk-cache qualification,
 and no host-loss evidence. These tests do not prove production readiness,
-TLS/login/authorization, replication, backup recovery, load, upgrades,
+login/authorization, replication, backup recovery, load, upgrades,
 or general concurrent remote-signing recovery.
 
 T9 isolates remote signing from the main path. The restart investigation found a
@@ -91,10 +100,35 @@ settings**, never production recommendations. The normal `iceberg` catalog keeps
 both seven-day defaults; T11 requires the exact default rejection for each
 procedure before invoking it through the maintenance catalog.
 
+## Phase A TLS
+
+Every hop uses TLS 1.2/1.3 with a per-run CA, and every client verifies the
+certificate chain and hostname: Trino HTTPS (ingress, internal, REST and S3
+clients), PyIceberg, PyArrow, botocore and fsspec, PySpark to Sail through its
+proxy, Lakekeeper through its proxy, Lakekeeper (serve **and** migrate) to
+PostgreSQL with `verify-full`, Lakekeeper and Sail to S3, and SeaweedFS HTTPS and
+gRPC mutual TLS between roles. Each repository's documented TLS profile is used at
+its pinned commit; the two proxies mount the pinned nginx-ubi Lakekeeper and Sail
+profiles unmodified. Sail uses its documented `SSL_CERT_FILE` and the pinned
+sail-ubi retry/reattach client policy.
+
+The S3 gateway's outbound gRPC trust lists both the filer and master identities:
+an owner-accepted interim residual risk for a known SeaweedFS limitation, reported
+upstream (see seaweedfs-ubi PR #81). Exact-outcome canaries fail the gate if the
+behavior changes.
+
+The cross-service TLS checks prove an exact listener inventory, plaintext refusal
+on every exposed listener, loopback backends unreachable from other containers,
+SeaweedFS mTLS enforcement, per-service key isolation, and that real clients refuse
+wrong-CA, wrong-hostname and expired certificates. Details and limits are in
+[ARCHITECTURE.md](docs/ARCHITECTURE.md#phase-a-tls-as-built) and
+[TLS-PLAN.md](docs/TLS-PLAN.md). Rotation, revocation and production PKI are not
+claimed.
+
 ## Run locally
 
 Use a disposable **Linux x86_64 or aarch64** machine with Python 3.11 or 3.12, Git, Bash,
-Docker CLI + Compose v2, Podman, RPM/GnuPG tooling, tcpdump, and sudo. Repository-owned builds
+Docker CLI + Compose v2, Podman, RPM/GnuPG tooling, OpenSSL, tcpdump, util-linux `nsenter`, and sudo. Repository-owned builds
 use both Docker and Podman; the runner must reach its private bridge IPs.
 macOS/Windows users should run inside a Linux VM matching their native CPU,
 without publishing listeners. QEMU and cross-architecture emulation are not supported.
@@ -166,9 +200,10 @@ Never run Python with `-O` or `PYTHONOPTIMIZE`: assertions are the test contract
 
 One workflow runs on pull requests, weekly Mondays at 06:23 UTC, and manual
 dispatch. `Integration (amd64)` on `ubuntu-24.04` and `Integration (arm64)` on
-`ubuntu-24.04-arm` run in parallel, each with a 30-minute cap and fail-fast disabled.
+`ubuntu-24.04-arm` run in parallel, each with a 45-minute cap and fail-fast disabled.
 Both assert `uname -m` and run the same builds, strict provenance, T1–T12, T8 crash
-scenarios, encoding canary, and remote-signing canary without exemptions. The
+scenarios, encoding canary, remote-signing canary and the cross-service TLS checks
+without exemptions. The
 required check named exactly `Integration` waits for both matrix jobs and fails
 unless both succeed (including skipped/cancelled outcomes). All actions use full SHAs.
 Artifacts are named `lakehouse-<architecture>-<run_id>-<attempt>` and include
@@ -203,8 +238,9 @@ UPDATE/DELETE. It does not claim merge-on-read UPDATE support (unsupported by
 no published port. Lakekeeper's `sts-enabled=false` profile is unchanged.
 
 Sail 0.7.3 hard-codes `X-Iceberg-Access-Delegation: vended-credentials`.
-T10 records the real Lakekeeper response, the actual request header and S3 signing
-traffic in sanitized artifacts; startup alone is insufficient evidence.
+T10 records the real Lakekeeper response and the actual request header from the
+catalog's internal loopback hop, and the S3 gateway's record of Sail's own signing
+identity, in sanitized artifacts; startup alone is insufficient evidence.
 The [qualified run](docs/SAIL-EVIDENCE.md) proves Sail uses its static AWS keys
 successfully: Lakekeeper returns signing properties but no keys, and the trace
 shows direct S3 signing with zero signer calls. T10 is a mandatory success test.

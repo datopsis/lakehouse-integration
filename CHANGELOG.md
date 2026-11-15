@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+- Phase A step 7: run the whole integration test over verified TLS on amd64 and
+  arm64. Pins: postgresql-lakekeeper-ubi 0ff367f, lakekeeper-ubi baa196b,
+  seaweedfs-ubi 80bba40 (PR #81), trino-ubi 685ff5b, sail-ubi e96e068, and the new
+  nginx-ubi 9ef9e82 (one pin for both proxies). A per-run CA verifies every hop;
+  plaintext remains only on loopback inside the catalog and Sail namespaces and on
+  the PostgreSQL local socket. T1–T12, T8, T9, T10 and the encoding canary are
+  unchanged in meaning. Sail now has its own S3 identity, so T10 records Sail's
+  signing identity without a plaintext capture.
+- Add cross-service TLS checks: exact listener inventories, plaintext refusal on
+  every exposed listener, loopback isolation, SeaweedFS mTLS-required checks, key
+  isolation, a wrong-CA/wrong-hostname/expired matrix for real clients through a
+  verified mutation relay and a PostgreSQL impostor, and exact-outcome canaries for
+  a known SeaweedFS limitation, reported upstream. Rerun after T5 and T8.
+- Raise the per-architecture job cap from 30 to 45 minutes for the TLS checks.
+
 - Add docs/DECISIONS.md: dated owner decisions, pending decisions and upstream waits.
   Add docs/AUTHZ-PLATFORM-PLAN.md (Phase C plan and future capabilities) and link both
   from the roadmap.

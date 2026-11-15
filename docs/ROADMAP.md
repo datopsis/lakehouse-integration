@@ -19,8 +19,14 @@ Every owner decision, and every decision still pending, is recorded in
 - [x] T12 schema evolution and historical snapshots: exact schemas, field identity,
   old/new rows and time travel across add/rename/drop/widen/nested-add; mandatory
   three-client assertions and exact-outcome Sail canaries where needed.
-- TLS between all services: REST, S3, PostgreSQL, Seaweed control HTTP/gRPC, and Trino;
-  include certificate verification, lifecycle and negative tests.
+- [x] Phase A TLS between all services (integration step 7): REST, S3, PostgreSQL,
+  SeaweedFS HTTPS/gRPC mTLS, Trino, and Sail and Lakekeeper behind nginx-ubi, with
+  per-run CA, cross-service negative tests and listener inventories on both native
+  architectures. See [ARCHITECTURE.md](ARCHITECTURE.md#phase-a-tls-as-built).
+- [ ] Remove the interim SeaweedFS S3 outbound trust (a known SeaweedFS limitation,
+  reported upstream) once a reviewed upstream fix lands; the exact-outcome canaries
+  announce the change.
+- [ ] TLS lifecycle beyond the test: rotation, revocation and production PKI.
 - [ ] Phase B: build a hardened `rauthy-ubi` image and qualify OpenID login on both
   native architectures. Owner chose Rauthy on 2026-11-13, with Keycloak as the
   tested fallback; see the [IdP bake-off decision and evidence](IDP-BAKEOFF.md).

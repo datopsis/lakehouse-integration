@@ -1,14 +1,14 @@
 # Architecture
 
-> **Target TLS design (Phase A, cross-service integration step 7 not yet run):** see the polished diagram below and
-> [TLS-PLAN.md](TLS-PLAN.md), with approved owner updates recorded below.
+> **Phase A TLS is built and verified (integration step 7):** every network hop
+> uses verified TLS on both native architectures; see the diagram below,
+> [Phase A TLS as built](#phase-a-tls-as-built) and [TLS-PLAN.md](TLS-PLAN.md).
 
 ![Datopsis lakehouse TLS architecture: services, verified TLS and mutual TLS connections, nginx-ubi TLS proxies for Lakekeeper and Sail, and the per-run test CA](diagrams/lakehouse-tls-architecture.svg)
 
-The Phase A diagram records the owner's 2026-11-12 loopback exception and the
-component qualification status supplied on 2026-11-13; those source revisions
-are evidence, not changes to the integration pins. It updates the older
-[TLS survey](TLS-PLAN.md), whose pending-decision wording predates that approval.
+The Phase A diagram shows the as-built topology at the pins in
+[images.lock.json](../images.lock.json), with the owner's 2026-11-12 loopback
+exception. It supersedes the target design in the [TLS survey](TLS-PLAN.md).
 
 The [Phase B identity target](diagrams/lakehouse-identity-architecture.svg) shows
 Rauthy, chosen on 2026-11-13 with Keycloak as fallback, and its planned PostgreSQL
@@ -25,23 +25,28 @@ The Mermaid chart below shows the current test topology.
 
 ```mermaid
 flowchart LR
-  P[PyIceberg runner] -->|REST| L[Lakekeeper]
-  T[Trino] -->|REST| L
-  A[Sail] -->|REST| L
-  A -->|S3 static credentials| S
-  L -->|password auth| DB[PostgreSQL]
-  P -->|S3 static credentials| S[S3 gateway]
-  T -->|S3 static credentials| S
-  L -->|storage validation| S
-  S --> F[Filer]
-  F --> M[Master]
-  F --> V[Volume]
-  V --> M
+  P[PyIceberg runner] -->|HTTPS REST| CP[catalog proxy]
+  T[Trino HTTPS] -->|HTTPS REST| CP
+  A[Sail] -->|HTTPS REST| CP
+  CP -.->|loopback| L[Lakekeeper]
+  R[Spark client] -->|TLS gRPC| AP[Sail proxy]
+  AP -.->|loopback| A
+  A -->|HTTPS S3, own static key| S
+  L -->|verify-full TLS + SCRAM| DB[PostgreSQL]
+  P -->|HTTPS S3 static credentials| S[S3 gateway]
+  T -->|HTTPS S3 static credentials| S
+  L -->|HTTPS storage validation| S
+  S <-->|gRPC/HTTPS mTLS| F[Filer]
+  S -->|HTTPS mTLS| V
+  F <-->|mTLS| M[Master]
+  F <-->|mTLS| V[Volume]
+  V <-->|mTLS| M
 ```
 
-All eight long-running containers share one internal network, with zero published
-ports. The trusted Linux runner reaches bridge addresses and resolves catalog,
-s3, trino, and sail through a temporary marked /etc/hosts block. A short-lived migration
+All eight long-running services share one internal network, with zero published
+ports; the two nginx-ubi proxies share only the network namespace of their
+application. The trusted Linux runner reaches bridge addresses and resolves the
+service names through a temporary marked /etc/hosts block. A short-lived migration
 container uses the same hardening and network. Negative-test containers also use
 that profile and are explicitly removed. All images are built from images.lock.json
 using their owning repository scripts; Podman-built images are exported into the
@@ -49,21 +54,27 @@ runtime store and inspected there.
 
 | Role | UID:GID | Internal listeners | Persistent/writable paths | Secret delivery |
 | --- | --- | --- | --- | --- |
-| PostgreSQL | 26:0 | 5432 | pg-data at /var/lib/pgsql; /tmp tmpfs | PostgreSQL-only directory: admin and Lakekeeper passwords |
-| Lakekeeper / migrate | 999:0 | 8181 API, 9000 metrics (serve) | none | Lakekeeper-only env file: database URL/password and encryption key |
-| Seaweed master | 1000:0 | 9333, 19333 gRPC | master-data at /data | none |
-| Seaweed volume | 1000:0 | 8080, 18080 gRPC | volume-data at /data | none |
-| Seaweed filer | 1000:0 | 8888, 18888 gRPC | filer-data at /data (embedded store) | none |
-| Seaweed S3 | 1000:0 | 8333, 18333 gRPC | none | S3-only directory with s3.json |
-| Trino | 10001:0 | 8080 | /var/lib/trino tmpfs; executable /tmp/trino tmpfs for native libraries | Trino-only env file with static S3 keys |
-| Sail | 10001:10001 | 50051 Spark Connect | /tmp and /var/lib/sail tmpfs (noexec) | Sail-only env file with static AWS keys; read-only listener JSON |
+| PostgreSQL | 26:0 | 5432 TLS 1.2/1.3 (hostssl SCRAM only) | pg-data at /var/lib/pgsql; /tmp tmpfs | PostgreSQL-only directory: admin and Lakekeeper passwords; own server key |
+| Lakekeeper / migrate | 999:0 | 127.0.0.1:8182 API, 127.0.0.1:9000 metrics (serve) | none | Lakekeeper-only env file: verify-full database URL/password and encryption key; public CA |
+| Catalog proxy (nginx-ubi) | 10001:0 | 8181 TLS, catalog namespace | /tmp tmpfs | own server key only; pinned upstream profile |
+| Seaweed master | 1000:0 | 9333 HTTPS, 19333 gRPC (both mTLS) | master-data at /data | own security.toml, server/client keys, CA |
+| Seaweed volume | 1000:0 | 8080 HTTPS, 18080 gRPC (both mTLS) | volume-data at /data | own security.toml, server/client keys, CA |
+| Seaweed filer | 1000:0 | 8888 HTTPS, 18888 gRPC (both mTLS) | filer-data at /data (embedded store) | own security.toml, server/client keys, CA |
+| Seaweed S3 | 1000:0 | 8333 HTTPS, 18333 gRPC mTLS | none | S3-only directory with s3.json; own security.toml, keys, CA |
+| Trino | 10001:0 | 8443 HTTPS only | /var/lib/trino tmpfs; executable /tmp/trino tmpfs for native libraries | Trino-only env file with static S3 keys; own keystore, PKCS12 truststore, internal shared secret |
+| Sail | 10001:10001 | 127.0.0.1:50052 Spark Connect | /tmp and /var/lib/sail tmpfs (noexec) | Sail-only env file with its own static AWS keys; read-only listener JSON; public CA |
+| Sail proxy (nginx-ubi) | 10001:0 | 50051 TLS HTTP/2, Sail namespace | /tmp tmpfs | own server key only; pinned upstream profile |
 
 Sail is defined in `integration/compose.sail.yaml`, always composed with the base
 file for startup, recreation, diagnostics and teardown. Its separate probe/client
 modules keep Spark dependencies out of the PyIceberg environment. T10 uses fresh
-Spark sessions and fresh PyIceberg processes at every mutation boundary. Passive
-HTTP capture provides evidence of the hard-coded vending header, Lakekeeper's
-response and the credential used to sign S3; only redacted text is uploaded.
+Spark sessions and fresh PyIceberg processes at every mutation boundary. With
+every network hop encrypted, T10 captures only the catalog's internal loopback
+hop (proxy to Lakekeeper, inside the catalog's own network namespace) and keeps
+requests whose `X-Forwarded-For` is Sail's address: this shows the hard-coded
+vending header, Lakekeeper's response and zero signer calls. Sail has its own S3
+identity, so the S3 gateway's log shows which key signed Sail's requests. Only
+redacted text is uploaded. No traffic is decrypted and no TLS is disabled.
 
 Ports are internal configuration, not published host listeners. All roots are
 read-only; every service drops ALL capabilities and sets no-new-privileges.
@@ -82,8 +93,7 @@ Sail proposes `s3://warehouse/from_sail`, which Lakekeeper registers in that sam
 Trust boundaries: service file mounts limit accidental cross-service secret
 exposure; they do not isolate an already-compromised network member from the
 unauthenticated Lakekeeper or Seaweed control APIs. Host/runner access is fully
-trusted. Lakekeeper login off and plaintext internal traffic are known test-only
-gaps. Trino uses TRINO_UBI_ALLOW_INSECURE=true, vending is disabled, and PyIceberg
+trusted. Lakekeeper login off is a known test-only gap until Phase B. Trino uses TRINO_UBI_ALLOW_INSECURE=true, vending is disabled, and PyIceberg
 explicitly selects client-managed credentials. Sail 0.7.3 requests vending, receives
 remote-signing properties without keys, and uses its own static AWS environment
 credentials successfully. The [T10 capture](SAIL-EVIDENCE.md) observes no signer
@@ -199,6 +209,51 @@ This is **single-host container-kill** testing. A container SIGKILL is not a hos
 power loss: the host page cache can survive. There is no fsync or disk-cache
 qualification, no host-loss or replication evidence, and no claim of exhaustive
 crash timing coverage. Real power-loss and host-loss tests remain on the roadmap.
+
+## Phase A TLS as built
+
+Every network connection uses TLS with full verification against a per-run test
+CA (`integration/pki.py`): RSA-3072/SHA-256, a 24-hour root, six-hour leaves with
+explicit DNS SANs and no wildcards. The signing keys are deleted once all
+positive and negative leaves are issued; nothing is committed or uploaded, and
+cleanup removes the material even on failure. Each service mounts read-only only
+its own private files plus the public CA (`integration/tls_setup.py`).
+
+| Hop | How it is verified |
+| --- | --- |
+| Runner urllib, PyIceberg REST, botocore, PyArrow, fsspec (T9) | Run CA via explicit context/`ssl.cabundle`/`verify=`, and `SSL_CERT_FILE`, `REQUESTS_CA_BUNDLE`, `AWS_CA_BUNDLE` set before import |
+| Runner PySpark → Sail proxy | `sc://sail:50051/;use_ssl=true`, `GRPC_DEFAULT_SSL_ROOTS_FILE_PATH`, sail-ubi's pinned retry/reattach policy |
+| Trino ingress, discovery, self-worker | HTTPS 8443 only, explicit internal keystore and truststore, per-run shared secret (trino-ubi isolated-test profile; login waived only) |
+| Trino → catalog and S3 | JVM PKCS12 truststore emitted by the pinned image's guarded `truststore.properties` |
+| Sail → catalog and S3 | `SSL_CERT_FILE`, HTTPS endpoints, `AWS_ALLOW_HTTP=false` (sail-ubi docs/TLS.md) |
+| Lakekeeper (serve and migrate) → PostgreSQL | `sslmode=verify-full&sslrootcert=` in the URL |
+| Lakekeeper → S3 | `SSL_CERT_FILE`, `https://s3:8333` storage profile |
+| SeaweedFS roles | HTTPS and gRPC mutual TLS from the pinned seaweedfs-ubi PR #81 role profile; S3 port 8333 is native HTTPS with no plaintext listener |
+
+The S3 gateway's outbound gRPC trust lists both the filer and master identities.
+This is an owner-accepted interim residual risk for a known SeaweedFS limitation,
+reported upstream; see seaweedfs-ubi PR #81. Exact-outcome canaries fail the gate
+if that behavior changes, so the setting is reviewed rather than silently kept.
+External S3 clients do not present client certificates (not uniformly supported
+by the engines); S3 authorization remains SigV4 with static keys until Phase D.
+
+Cross-service checks (`integration/tls_checks.py`) run after T7 and again after
+T5 recreation and T8 crash recovery:
+
+- an exact TCP/UDP listener inventory of every network namespace (only Docker's
+  embedded resolver is excluded); loopback backends must bind only 127.0.0.1;
+- plaintext refused on every exposed listener (HTTP, S3 root POST, HTTP/2 preface,
+  PostgreSQL startup without TLS); old/backend ports refuse the runner and a
+  separate container;
+- verified handshakes on every listener, and mTLS required on all seven SeaweedFS
+  HTTPS/gRPC listeners (no, untrusted, expired and disallowed-role client leaves);
+- real clients against a verified TLS-to-TLS mutation relay (nginx-ubi) serving
+  wrong-CA, correct-CN/wrong-SAN and expired leaves, with valid controls before
+  and after each mutation: urllib, PyIceberg, PyArrow, botocore, PySpark, a second
+  Trino, a second Sail, a second Lakekeeper (S3 client), SeaweedFS's own Go client,
+  and Lakekeeper's SQLx client against a PostgreSQL impostor. A refusal needs zero
+  relayed requests plus a certificate alert, or a recorded hang-up with the exact
+  verifier diagnosis.
 
 ## Native architecture gate
 

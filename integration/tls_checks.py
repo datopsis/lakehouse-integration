@@ -698,6 +698,7 @@ EXACT_VERIFY_FAILURE = {
     "wrong-san": (
         r"certificate verify failed: Hostname mismatch"
         r"|no alternative certificate subject name matches target host ?name"
+        r"|hostname '\S+' doesn't match 'wrong\.invalid'"
         r"|Peer name \S+ is not in peer certificate"
     ),
     "expired": (
