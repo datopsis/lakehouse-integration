@@ -1,7 +1,7 @@
 # Architecture
 
-> **Phase A TLS is built and verified (integration step 7):** every network hop
-> uses verified TLS on both native architectures; see the diagram below,
+> **Phase A TLS is implemented; full CI qualification is pending:** see the
+> diagram below,
 > [Phase A TLS as built](#phase-a-tls-as-built) and [TLS-PLAN.md](TLS-PLAN.md).
 
 ![Datopsis lakehouse TLS architecture: services, verified TLS and mutual TLS connections, nginx-ubi TLS proxies for Lakekeeper and Sail, and the per-run test CA](diagrams/lakehouse-tls-architecture.svg)
@@ -215,8 +215,9 @@ crash timing coverage. Real power-loss and host-loss tests remain on the roadmap
 
 ## Phase A TLS as built
 
-Every network connection uses TLS with full verification against a per-run test
-CA (`integration/pki.py`): RSA-3072/SHA-256, a 24-hour root, six-hour leaves with
+Network connections use TLS with server verification against a per-run test
+CA, subject to the SeaweedFS residual risk below (`integration/pki.py`):
+RSA-3072/SHA-256, a 24-hour root, six-hour leaves with
 explicit DNS SANs and no wildcards. The signing keys are deleted once all
 positive and negative leaves are issued; nothing is committed or uploaded, and
 cleanup removes the material even on failure. Each service mounts read-only only
@@ -233,14 +234,14 @@ its own private files plus the public CA (`integration/tls_setup.py`).
 | Lakekeeper → S3 | `SSL_CERT_FILE`, `https://s3:8333` storage profile |
 | SeaweedFS roles | HTTPS and gRPC mutual TLS from the pinned seaweedfs-ubi PR #81 role profile; S3 port 8333 is native HTTPS with no plaintext listener |
 
-The S3 gateway's outbound gRPC trust lists both the filer and master identities.
-This is an owner-accepted interim residual risk for a known SeaweedFS limitation,
-reported upstream; see seaweedfs-ubi PR #81. Exact-outcome canaries fail the gate
+An interim SeaweedFS trust setting is an owner-accepted residual risk for
+a known SeaweedFS limitation, reported upstream; see seaweedfs-ubi PR #81.
+Exact-outcome canaries fail the gate
 if that behavior changes, so the setting is reviewed rather than silently kept.
 External S3 clients do not present client certificates (not uniformly supported
 by the engines); S3 authorization remains SigV4 with static keys until Phase D.
 
-Cross-service checks (`integration/tls_checks.py`) run after T7 and again after
+The exposure checks (`integration/tls_checks.py`) run after T7 and again after
 T5 recreation and T8 crash recovery:
 
 - an exact TCP/UDP listener inventory of every network namespace (only Docker's
@@ -249,14 +250,19 @@ T5 recreation and T8 crash recovery:
   PostgreSQL startup without TLS); old/backend ports refuse the runner and a
   separate container;
 - verified handshakes on every listener, and mTLS required on all seven SeaweedFS
-  HTTPS/gRPC listeners (no, untrusted, expired and disallowed-role client leaves);
-- real clients against a verified TLS-to-TLS mutation relay (nginx-ubi) serving
-  wrong-CA, correct-CN/wrong-SAN and expired leaves, with valid controls before
-  and after each mutation: urllib, PyIceberg, PyArrow, botocore, PySpark, a second
-  Trino, a second Sail, a second Lakekeeper (S3 client), SeaweedFS's own Go client,
-  and Lakekeeper's SQLx client against a PostgreSQL impostor. A refusal needs zero
-  relayed requests plus a certificate alert, or a recorded hang-up with the exact
-  verifier diagnosis.
+  HTTPS/gRPC listeners (absent, untrusted and expired client leaves; disallowed
+  roles on gRPC).
+
+The certificate-negative matrix runs once before T5. Real clients connect to a
+verified TLS-to-TLS mutation relay (nginx-ubi) serving wrong-CA,
+correct-CN/wrong-SAN and expired leaves, with valid controls before and after each
+mutation: urllib, PyIceberg, PyArrow, botocore, PySpark, a second Trino, a second
+Sail, a second Lakekeeper (S3 client), SeaweedFS's own Go client, and Lakekeeper's
+SQLx client against a PostgreSQL impostor. A refusal needs zero relayed requests
+plus a certificate alert, or a recorded hang-up with the exact verifier diagnosis.
+The Lakekeeper S3 probe uses a separate disposable catalog database with the same
+bucket-scoped credentials to avoid warehouse overlap; its management requests
+stay on loopback inside its own network namespace.
 
 ## Native architecture gate
 

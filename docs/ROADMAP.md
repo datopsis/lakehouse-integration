@@ -2,8 +2,9 @@
 
 Sail 0.7.3 is qualified as the second query engine alongside Trino, with PyIceberg
 as an independent client: [T10, restart and credential evidence](SAIL-EVIDENCE.md).
-All five current image pins passed strict provenance; future pin changes still
-require review and exact labels, with no allowances.
+The six current image pins require strict provenance on both native architectures;
+[TLS evidence](TLS-PLAN.md#step-7-evidence) records qualification. Future pin changes
+still require review and exact labels, with no allowances.
 
 Every owner decision, and every decision still pending, is recorded in
 [DECISIONS.md](DECISIONS.md). Check it before starting new work.

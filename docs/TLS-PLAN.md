@@ -12,8 +12,12 @@
 The diagram shows the as-built design; where this survey differs, the decision
 record and ARCHITECTURE.md describe what was built.
 
-Survey date: 2026-11-11. **Design only: no TLS has been implemented or runtime
-qualified by this PR.** The coordinator can dispatch the small image-repository
+## Historical design survey (2026-11-11)
+
+The following survey and test matrix describe the original design proposal.
+Its statements about unimplemented work and pending owner decisions are historical;
+current implementation and qualification evidence are recorded above and below.
+At survey time, no TLS had been implemented or runtime qualified by the docs PR. The coordinator can dispatch the small image-repository
 PRs below; admission still requires the unchanged native amd64/arm64
 `Integration` gate. Settings, credentials policy, pins, and other repositories
 are unchanged. The baseline is [images.lock.json](../images.lock.json),
@@ -74,7 +78,7 @@ server-certificate verification required on every network client.
 | Lakekeeper → PostgreSQL (serve **and migrate**) | **Yes; verify-full supported in code** | URL ends `?sslmode=verify-full&sslrootcert=/run/tls/ca.crt`; mount CA to catalog and migrate. Apply to read URL if set. Alternatively separate PG fields plus `LAKEKEEPER__PG_SSL_MODE=verify-full` and `LAKEKEEPER__PG_SSL_ROOT_CERT`. | URL branch bypasses `PG_SSL_MODE`; do not set only that env var alongside the current URL. Upstream docs' mode list omits verify-full, but enum accepts it. SQLx **0.9.0** also parses `sslcert`/`sslkey`; client-cert presentation is source-supported, unqualified, and unnecessary with this server profile. [PG builder][LK-pg], [enum][LK-pg-config], [SQLx parser][SQLX], [dependency lock][LK-cargo]. |
 | Lakekeeper → S3 and STS | **Yes; source-supported custom CA** | `SSL_CERT_FILE=/run/tls/ca.crt`; storage-profile `endpoint=https://s3:8333`, explicit `sts-endpoint=https://s3:8333` when STS enabled. | Shared Smithy HTTPS client loads native/custom roots plus bundled webpki roots; both S3 and AssumeRole configurations derive from that SDK config. No exposed S3/STS client-key configuration found: do not require external S3 mTLS. Prove custom CA separately for S3 and the actual AssumeRole call; do not assume `AWS_CA_BUNDLE` configures this Rust stack. [TLS docs][LK-config], [SDK construction][LK-io], [vending][LK-s3]. |
 | Seaweed S3/STS inbound | **Yes; S3 HTTPS image-qualified** | `-cert.file=/run/tls/server.crt -key.file=/run/tls/server.key`; retain port 8333; **omit `-port.https`**. | `-port.https` leaves a plaintext listener beside TLS; image guard rejects it unless explicitly overridden. S3 optionally supports `-cacert.file` and `-tlsVerifyClientCert`; not selected because Lakekeeper/engine client identities are not uniformly exposed. STS routes share S3's HTTP handler, so use the same HTTPS origin. STS credential semantics are the parallel qualification's responsibility. [Image TLS evidence][SW-image], [listener][SW-s3], [routing][SW-routes]. |
-| Seaweed master/volume/filer/S3 gRPC | **Yes, mutual TLS; identity caveat** | Per-role `/etc/seaweedfs/security.toml`: `[grpc] ca`, `[grpc.<role>] cert,key,client_cert,client_key`, and `[grpc.client] cert,key` for generic callers. Paths resolve only to that container's own server/client files. | Requires client certificates and verifies chains. **Default `advancedtls.CertVerification` does not do ordinary target-hostname validation.** Explicit server identity allowlists and client identity restrictions are needed; see below. S3 uses `grpc.client` outbound and `grpc.s3` inbound. [Image][SW-image], [TLS implementation][SW-grpc], [scaffold][SW-scaffold], [S3 code][SW-s3]. |
+| Seaweed master/volume/filer/S3 gRPC | **Yes, mutual TLS; identity caveat** | Per-role `/etc/seaweedfs/security.toml`: `[grpc] ca`, `[grpc.<role>] cert,key,client_cert,client_key`, and `[grpc.client] cert,key` for generic callers. Paths resolve only to that container's own server/client files. | Requires client certificates and verifies chains. Use explicit server and client identity restrictions. A known SeaweedFS limitation, reported upstream, is covered by the owner decision and exact-outcome canaries below. S3 uses `grpc.client` outbound and `grpc.s3` inbound. [Image][SW-image], [TLS implementation][SW-grpc], [scaffold][SW-scaffold], [S3 code][SW-s3]. |
 | Seaweed master/filer/volume HTTP and inter-role data transfer | **Yes in 4.53 code; image-unqualified** | `[https.master]`, `[https.filer]`, `[https.volume]`: `cert,key,ca`. Every participating caller: `[https.client] enabled=true`, `ca`, its own `cert,key`, `insecure_skip_verify=false`. | Server `ca` requests/verifies client certificates. Filer must keep `disable_tls_verify_client_cert=false`. HTTPS client verifies peer CA/hostname and switches data URLs to HTTPS. Must qualify redirects, advertised names, direct volume I/O, and restart on the actual binary. gRPC TLS alone leaves these paths plaintext. [Scaffold][SW-scaffold], [HTTP client][SW-http], [master][SW-master], [filer][SW-filer], [volume][SW-volume], [image gap][SW-image]. |
 | Trino inbound and internal self-communication | **Yes** | Disable HTTP; enable HTTPS 8443; `http-server.https.keystore.path=/run/tls/server.pem` (PEM key + chain) or PKCS12. Explicit internal keystore/truststore, shared secret, HTTPS discovery. | Preserve the current login exception only if owner accepts it; TLS does not require disabling peer verification. Image's normal profile couples TLS to PASSWORD authentication, while its explicit isolated-test opt-out allows custom config. Avoid automatically generated internal certificates if requiring the harness CA for every connection. See exact properties below. [Image entrypoint][TR-entry], [484 TLS docs][TR-tls], [internal config][TR-internal-config], [automatic-TLS branch][TR-internal-module]. |
 | Trino → catalog and S3 | **Yes; custom truststore must be qualified for both clients** | `iceberg.rest-catalog.uri=https://catalog:8181/catalog`, `s3.endpoint=https://s3:8333`; read-only PKCS12 truststore and JVM `javax.net.ssl.trustStore`, `trustStoreType`, `trustStorePassword`. | REST uses Iceberg HTTP client; native S3 uses AWS Apache5 client. Do not mistake Airlift HTTP-client trust settings for coverage of these two clients. Keep hostname verification. Java client keys are possible at library level, but no qualified connector-level client-cert profile is established here; use server-only TLS externally. [REST factory][TR-rest], [S3 loader][TR-s3], [Iceberg HTTP client][ICE-http]. |
@@ -98,21 +102,10 @@ identities. For outgoing server identities use the smallest applicable
 `allowed_server_commonNames`, with filer's `master_allowed_server_commonNames`,
 `volume_allowed_server_commonNames`, and `s3_allowed_server_commonNames`.
 Do not use wildcard domains or a global list of every service as a substitute
-for checking the intended peer. Upstream matches CN, DNS SAN, or URI SAN in
-this allowlist, rather than binding verification to the dial target; an allowed
-CN with an incorrect DNS SAN can still pass. Therefore test both a completely
-wrong identity and **correct CN / wrong DNS SAN**, plus swapping two valid role
-certificates. [Implementation][SW-grpc], [tests][SW-grpc-tests].
-
-**Source-level gap:** the correct-CN/wrong-SAN case is predicted to be accepted
-by the inspected matcher. The configuration is not a general replacement for
-DNS hostname verification; a binary test must establish the actual result.
-**Blocking qualification question:** can every exercised outgoing gRPC edge be
-restricted to its target at this pin? If the required DNS mismatch/swap negatives
-pass unexpectedly, the owning repo must report a blocker and propose a reviewed
-upstream hostname-verification fix/release. Adding broad allowlists or declaring
-chain verification equivalent to hostname verification is not acceptable.
-No such upstream change is authorized by this design PR.
+for checking the intended peer. A known SeaweedFS limitation, reported upstream,
+requires the owner-accepted interim trust setting described in the decision
+record. Keep strict identity tests and exact-outcome canaries; any changed
+outcome blocks for review. [Implementation][SW-grpc], [tests][SW-grpc-tests].
 
 Cover both gRPC metadata/control calls and HTTPS data calls: S3 ↔ filer; S3 →
 volume (direct chunk reads); filer → volume; filer/volume → master; master →
@@ -508,8 +501,9 @@ client trust checks and document it explicitly. [Image guard][TR-entry].
 Acceptance: both native architectures pass all existing functional/provenance
 gates plus the complete per-edge TLS manifest; no missing/"not supported" TLS
 negative becomes a green exemption. Preserve raw local diagnostics for debugging
-under the current boundary, upload only redacted evidence. This docs PR's green
-`Integration` would validate the **existing plaintext fixture**, not Phase A TLS.
+under the current boundary, upload only redacted evidence. The original docs PR's green
+`Integration` validated the then-plaintext fixture; only step 7's runtime evidence
+qualifies the implemented TLS fixture.
 
 ## Step 7 evidence
 
@@ -526,10 +520,9 @@ before merge. Until then, the status note above is a draft.
    immutable pin. NGINX is the smaller functional choice; neither is silently
    added by this PR. If OpenResty is chosen, substitute one OpenResty profile PR
    for item 3, do not add both images.
-3. **Seaweed hostname identity:** source shows a potential requirements blocker,
-   not just missing documentation. Require the wrong-SAN/correct-CN and role-swap
-   negatives. If they fail, decide on an upstream fix/release; do not weaken the
-   acceptance condition or patch the pinned artifact without a separate review.
+3. **Seaweed identity:** the owner accepted an interim residual risk for
+   a known SeaweedFS limitation, reported upstream. Strict tests and exact-outcome
+   canaries remain mandatory; a changed outcome blocks for review.
 4. **Authentication scope:** retain Lakekeeper login off and Trino's current
    isolated-test authentication exception while requiring verified TLS, or expand
    scope to authenticated ingress. Recommendation: keep Phase A transport-only;

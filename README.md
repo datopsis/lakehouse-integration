@@ -6,9 +6,10 @@ metadata, and separated SeaweedFS master/volume/filer/S3 roles store table objec
 Sail is the second query engine; PyIceberg is an independent client. nginx-ubi
 terminates TLS for Lakekeeper and Sail. Nothing is published to a host port.
 
-**Every network hop uses verified TLS (Phase A).** A fresh test CA is created for
-each run, and every client checks the server certificate and hostname. The only
-plaintext is on 127.0.0.1 inside one network namespace (each proxy to its
+**Phase A configures TLS for every network hop.** A fresh test CA is created for
+each run; server verification is subject to the SeaweedFS residual risk below.
+Qualification status is recorded in
+[Step 7 evidence](docs/TLS-PLAN.md#step-7-evidence). The only plaintext is on 127.0.0.1 inside one network namespace (each proxy to its
 Lakekeeper or Sail backend) and the PostgreSQL container-local Unix socket used for
 administrator provisioning, as the owner decided on 2026-11-12. Phase A is
 encryption and server identity only: Lakekeeper login stays off until Phase B.
@@ -55,7 +56,7 @@ security gate, and does not authorize release or modify the jars.
 | T10 | Sail CREATE/INSERT, exact Trino/fresh-PyIceberg reads after INSERT/UPDATE/DELETE; Sail reads Trino/PyIceberg tables, with passive REST/S3 credential evidence (catalog loopback hop and the S3 gateway's signing identity) |
 | T11 | Six small INSERTs; optimize reduces data-file count with exact rows in Trino/PyIceberg/Sail; expire all noncurrent snapshots, reject expired time travel, verify old files deleted in S3; remove a planted orphan while preserving every manifest reference; default seven-day retention refusals; repeat exact reads and S3 references after T5 and every T8 crash |
 | T12 | Trino add/rename/drop/widen/nested-add; exact schemas and old/new rows after every DDL and INSERT in Trino, fresh-process PyIceberg and fresh-session Sail; six historical snapshots by ID and timestamp, with historical schemas after evolution; exact Sail failure canaries only where measured |
-| TLS | Exact listener inventory per namespace; plaintext refused on every exposed listener; loopback backends refuse other containers; SeaweedFS mTLS required; real clients refuse wrong-CA, wrong-hostname and expired certificates; SeaweedFS exact-outcome canaries. Repeated after T5 and T8 |
+| TLS | Exact listener inventory per namespace; plaintext refused on every exposed listener; loopback backends refuse other containers; SeaweedFS mTLS required; real clients refuse wrong-CA, wrong-hostname and expired certificates; SeaweedFS exact-outcome canaries. Exposure checks repeat after T5 and T8 |
 | Canary | Default Trino encoding, INSERT/UPDATE/DELETE, then PyIceberg read; only the exact known Arrow decoder error is an expected failure |
 
 The main Iceberg catalog sets
@@ -66,6 +67,7 @@ that upstream fixed the decoder and the setting can be revisited. Any other
 error, wrong rows, or missing test fails. The canary is also reread after restart;
 its specific expected decoder failure is the only exception to reading every
 table successfully with PyIceberg. Trino must read all four tables successfully.
+Both nginx-ubi proxies are recreated with their applications too.
 Sail is recreated too and reads all four tables, then writes another row read
 exactly by Trino and fresh PyIceberg.
 
@@ -102,9 +104,9 @@ procedure before invoking it through the maintenance catalog.
 
 ## Phase A TLS
 
-Every hop uses TLS 1.2/1.3 with a per-run CA, and every client verifies the
-certificate chain and hostname: Trino HTTPS (ingress, internal, REST and S3
-clients), PyIceberg, PyArrow, botocore and fsspec, PySpark to Sail through its
+Every hop uses TLS 1.2/1.3 with a per-run CA and server verification,
+subject to the SeaweedFS residual risk below: Trino HTTPS (ingress, internal,
+REST and S3 clients), PyIceberg, PyArrow, botocore and fsspec, PySpark to Sail through its
 proxy, Lakekeeper through its proxy, Lakekeeper (serve **and** migrate) to
 PostgreSQL with `verify-full`, Lakekeeper and Sail to S3, and SeaweedFS HTTPS and
 gRPC mutual TLS between roles. Each repository's documented TLS profile is used at
@@ -112,10 +114,9 @@ its pinned commit; the two proxies mount the pinned nginx-ubi Lakekeeper and Sai
 profiles unmodified. Sail uses its documented `SSL_CERT_FILE` and the pinned
 sail-ubi retry/reattach client policy.
 
-The S3 gateway's outbound gRPC trust lists both the filer and master identities:
-an owner-accepted interim residual risk for a known SeaweedFS limitation, reported
-upstream (see seaweedfs-ubi PR #81). Exact-outcome canaries fail the gate if the
-behavior changes.
+An interim SeaweedFS trust setting is an owner-accepted residual risk for
+a known SeaweedFS limitation, reported upstream (see seaweedfs-ubi PR #81).
+Exact-outcome canaries fail the gate if the behavior changes.
 
 The cross-service TLS checks prove an exact listener inventory, plaintext refusal
 on every exposed listener, loopback backends unreachable from other containers,

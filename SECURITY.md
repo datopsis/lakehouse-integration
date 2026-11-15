@@ -10,7 +10,19 @@ Lakekeeper login is disabled: anyone reaching its REST/management listener can
 act on the catalog. This known gap is acceptable only on the internal private
 test network. Trino explicitly opts into its documented insecure test mode.
 Sail also explicitly opts into unauthenticated Spark Connect on the private
-network. No service publishes a port. HTTP and PostgreSQL traffic are not encrypted.
+network. No service publishes a port. Network traffic uses TLS; server trust is
+configured per client. The only plaintext paths are 127.0.0.1 proxy-to-backend
+traffic inside the Lakekeeper/Sail network namespaces and PostgreSQL's local
+Unix socket for provisioning. Phase A covers encryption and server identity;
+qualification status and exact tested edges are in
+[the evidence](docs/TLS-PLAN.md#step-7-evidence).
+
+A known SeaweedFS limitation, reported upstream, requires an owner-accepted
+interim trust setting guarded by exact-outcome canaries. TLS does not add user
+login, table authorization or per-table S3 credentials. These remain Phases B–D.
+Short-lived fixture certificates do not qualify rotation, revocation or
+production PKI.
+
 The runner/host and all containers on that network are trusted; an internal
 network does not protect against its host or another admitted member.
 
@@ -38,7 +50,8 @@ security reporting channel when available; do not put credentials or exploit
 material in the weekly public failure issue. This repo does not grant permission
 to change another repository's security policy or suppress its findings.
 
-T10 passively captures only the Sail container's REST/S3 traffic to identify its
+T10 passively captures the catalog's loopback REST hop, retaining Sail-attributed
+requests, and reads the S3 gateway's signing-identity log to identify Sail's
 credential path. Raw HTTP evidence contains fixture credentials and remains
 local until the same fail-closed inventory redaction as all other reports. No
 packet files or source/environment directories are uploaded.
