@@ -42,6 +42,8 @@ def catalog():
             "s3.path-style-access": "true",
             "s3.access-key-id": os.environ["PROBE_ACCESS"],
             "s3.secret-access-key": os.environ["PROBE_SECRET"],
+            # The main path: static client credentials, PyArrowFileIO, no signer.
+            "header.X-Iceberg-Access-Delegation": "client-managed",
             "s3.connect-timeout": "10",
             "s3.request-timeout": "20",
         },
@@ -54,7 +56,11 @@ def run(mode, argument):
     if mode == "pyiceberg":
         return str(catalog().load_table("integration.from_trino").metadata_location)
     if mode == "pyarrow":
-        rows = catalog().load_table("integration.from_trino").scan().to_arrow()
+        from pyiceberg.io.pyarrow import PyArrowFileIO
+
+        table = catalog().load_table("integration.from_trino")
+        assert type(table.io) is PyArrowFileIO and not table.io.properties.get("s3.signer")
+        rows = table.scan().to_arrow()
         return rows.sort_by("id").to_pylist()
     if mode == "botocore":
         import botocore.session

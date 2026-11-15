@@ -80,6 +80,12 @@ EXPECTED_LISTENERS = {
 }
 NGINX_400 = b"The plain HTTP request was sent to HTTPS port"
 GO_400 = b"Client sent an HTTP request to an HTTPS server.\n"
+# nginx's generic page for a cleartext HTTP/2 preface on a TLS port (server_tokens off).
+NGINX_GENERIC_400 = (
+    b"<html>\r\n<head><title>400 Bad Request</title></head>\r\n<body>\r\n"
+    b"<center><h1>400 Bad Request</h1></center>\r\n<hr><center>nginx</center>\r\n"
+    b"</body>\r\n</html>\r\n"
+)
 H2_PREFACE = b"PRI * HTTP/2.0\r\n\r\nSM\r\n\r\n" + b"\x00\x00\x00\x04\x00\x00\x00\x00\x00"
 CERT_ALERTS = {42, 43, 44, 45, 46, 48}  # bad/unsupported/revoked/expired/unknown cert, unknown CA
 
@@ -164,7 +170,7 @@ def classify(data):
     if data[:1] == b"\x15" and data[1:2] == b"\x03":
         return "tls-alert", data[:7]
     if status.startswith(b"HTTP/1.") and b" 400 " in status + b" ":
-        if NGINX_400 in body or body == GO_400:
+        if NGINX_400 in body or body in (GO_400, NGINX_GENERIC_400):
             return "protocol-error-400", status
     return "UNEXPECTED", data[:200]
 
@@ -620,6 +626,11 @@ class Relay:
 
     def evidence(self, since, port, client):
         text = logs(RELAY, since)
+        closed = re.search(
+            r"peer closed connection in SSL handshake[^\n]*while SSL handshaking, "
+            rf"client: {re.escape(client)}, server: [^,]*:{port}\b",
+            text,
+        )
         requests = [
             line for line in text.splitlines() if re.match(rf"^{port} {re.escape(client)} ", line)
         ]
@@ -630,7 +641,7 @@ class Relay:
                 text,
             )
         ]
-        return requests, alerts
+        return requests, alerts, bool(closed)
 
 
 def runner_client(
@@ -676,6 +687,11 @@ CLIENT_PATTERNS = {
 }
 
 
+EXACT_VERIFY_FAILURE = {
+    "wrong-ca": r"CERTIFICATE_VERIFY_FAILED\] certificate verify failed: unable to get local issuer",
+    "wrong-san": r"CERTIFICATE_VERIFY_FAILED\] certificate verify failed: Hostname mismatch",
+    "expired": r"CERTIFICATE_VERIFY_FAILED\] certificate verify failed: certificate has expired",
+}
 # gRPC core verifies the peer name after the TLS handshake completes, so it closes
 # the connection (no alert, no request) with this exact client-side diagnosis.
 POST_HANDSHAKE_NAME_CHECK = r"Peer name \S+ is not in peer certificate"
@@ -698,7 +714,7 @@ class Matrix:
         ok, text = call()
         time.sleep(0.5)
         port = RELAY_PORTS[target]
-        requests, alerts = self.relay.evidence(since, port, client_ip)
+        requests, alerts, closed = self.relay.evidence(since, port, client_ip)
         if variant == "valid":
             assert ok, (edge, "valid control failed", text[-2000:])
             self.row(edge, variant, "accepted", f"{len(requests)} relayed requests")
@@ -711,7 +727,10 @@ class Matrix:
             requests,
         )
         post_handshake = variant == "wrong-san" and re.search(POST_HANDSHAKE_NAME_CHECK, text)
-        if not post_handshake:
+        # asyncio-based TLS (aiohttp) aborts without flushing its alert: then the
+        # relay must record the handshake abort and the client the exact reason.
+        silent = closed and re.search(EXACT_VERIFY_FAILURE[variant], text)
+        if not (post_handshake or silent):
             assert alerts and set(alerts) <= CERT_ALERTS, (
                 edge,
                 variant,
@@ -1098,6 +1117,8 @@ def negatives(h):
         seaweed = seaweed_client_edges(h, matrix, relay)
         postgres_edges(h, matrix)
     finally:
+        # Sanitized at cleanup; the relay never logs headers or bodies.
+        (h.REPORTS / "tls-relay.log").write_text(logs(RELAY, "0"))
         remove(*probes, RELAY)
         subprocess.run(["sudo", "rm", "-rf", str(h.RUNTIME / "relay")], check=True)
         h.hosts()

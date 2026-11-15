@@ -11,6 +11,7 @@ from tls_checks import (
     CERT_ALERTS,
     CLIENT_PATTERNS,
     GO_400,
+    NGINX_GENERIC_400,
     POST_HANDSHAKE_NAME_CHECK,
     classify,
     decode,
@@ -92,6 +93,8 @@ class TlsGates(unittest.TestCase):
     def test_plaintext_classifier_accepts_only_refusals(self):
         nginx = b"HTTP/1.1 400 Bad Request\r\nServer: nginx\r\n\r\n<html>The plain HTTP request was sent to HTTPS port</html>"
         go = b"HTTP/1.0 400 Bad Request\r\n\r\n" + GO_400
+        generic = b"HTTP/1.1 400 Bad Request\r\nServer: nginx\r\n\r\n" + NGINX_GENERIC_400
+        self.assertEqual(classify(generic)[0], "protocol-error-400")
         self.assertEqual(classify(b"")[0], "closed")
         self.assertEqual(classify(b"\x15\x03\x03\x00\x02\x02\x46")[0], "tls-alert")
         self.assertEqual(classify(nginx)[0], "protocol-error-400")
