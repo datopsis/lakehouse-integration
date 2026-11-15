@@ -8,6 +8,7 @@ the signing keys are deleted once issuance is complete. Only public metadata
 
 import datetime as dt
 import secrets
+import shutil
 import subprocess
 import tempfile
 from concurrent.futures import ThreadPoolExecutor
@@ -36,21 +37,26 @@ def stamp(moment):
 
 
 def root(directory, name):
+    """Self-signed root from an explicit config: exactly these extensions, no
+    defaults from the system openssl.cnf (a duplicate extension voids the CA)."""
+    config = directory / f"{name}.cnf"
+    config.write_text(
+        "[req]\ndistinguished_name=dn\nx509_extensions=root\nprompt=no\n"
+        f"[dn]\nCN=lakehouse-integration {name}\n"
+        "[root]\nbasicConstraints=critical,CA:TRUE\nkeyUsage=critical,keyCertSign,cRLSign\n"
+        "subjectKeyIdentifier=hash\n"
+    )
     openssl(
         "req",
         "-x509",
+        "-config",
+        config,
         "-newkey",
         "rsa:3072",
         "-nodes",
         "-sha256",
         "-days",
         "1",
-        "-subj",
-        "/CN=lakehouse-integration " + name,
-        "-addext",
-        "basicConstraints=critical,CA:TRUE",
-        "-addext",
-        "keyUsage=critical,keyCertSign,cRLSign",
         "-keyout",
         directory / f"{name}.key",
         "-out",
@@ -92,10 +98,11 @@ def leaf(authority, output, name, cn, san, purpose, issuer="ca", expired=False):
         ]
         if san:
             extensions.append("subjectAltName=DNS:" + san)
+        authority_path, work_path = Path(authority).as_posix(), work.as_posix()
         (work / "issue.cnf").write_text(
-            f"[ca]\ndefault_ca=issuer\n[issuer]\ndatabase={work}/index\nserial={work}/serial\n"
-            f"new_certs_dir={work}\ncertificate={authority}/{issuer}.crt\n"
-            f"private_key={authority}/{issuer}.key\ndefault_md=sha256\npolicy=policy\n"
+            f"[ca]\ndefault_ca=issuer\n[issuer]\ndatabase={work_path}/index\nserial={work_path}/serial\n"
+            f"new_certs_dir={work_path}\ncertificate={authority_path}/{issuer}.crt\n"
+            f"private_key={authority_path}/{issuer}.key\ndefault_md=sha256\npolicy=policy\n"
             "x509_extensions=leaf\n[policy]\ncommonName=supplied\n[leaf]\n"
             + "\n".join(extensions)
             + "\n"
@@ -157,9 +164,10 @@ def prepare(base):
     for issuer in ("ca", "unrelated"):
         (leaves / f"{issuer}.crt").write_bytes((authority / f"{issuer}.crt").read_bytes())
         (authority / f"{issuer}.key").unlink()  # No further issuance is possible.
-    authority.rmdir()
-    for name, *_ in plan():
-        if not name.endswith("expired") and name != "untrusted-client":
+    shutil.rmtree(authority)  # Also OpenSSL's per-issuance database leftovers.
+    # Every non-expired leaf must outlive the job (no validity extension on failure).
+    for name, *_, expired in plan():
+        if not expired:
             openssl("x509", "-in", leaves / f"{name}.crt", "-checkend", "7200", "-noout")
     return leaves
 
