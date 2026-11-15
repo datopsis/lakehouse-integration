@@ -49,8 +49,14 @@ class Rauthy(Provider):
             {**clients[0], "id": "operator", "name": "operator"},
             {**clients[0], "id": "expiry", "name": "expiry"},
         ]
+        self.client_secrets = {}
         for client in clients:
+            client_id = client["id"]
+            value = self.client_secret if client_id == "lakekeeper" else secret()
+            self.client_secrets[client_id] = value
+            client["secret"] = {"Plain": value}
             client["access_token_lifetime"] = 30 if client["id"] == "expiry" else 1800
+        assert len(set(self.client_secrets.values())) == len(clients)
         write(clients_path, clients)
         groups_path = self.path / "bootstrap/groups.json"
         groups = json.loads(groups_path.read_text())
@@ -58,8 +64,15 @@ class Rauthy(Provider):
         write(groups_path, groups)
         users_path = self.path / "bootstrap/users.json"
         users = json.loads(users_path.read_text())
+        self.bob_password = secret()
         users.append(
-            {**users[0], "email": "bob@idp.test", "given_name": "Bob", "groups": ["no-access"]}
+            {
+                **users[0],
+                "email": "bob@idp.test",
+                "given_name": "Bob",
+                "groups": ["no-access"],
+                "password": {"Plain": self.bob_password},
+            }
         )
         write(users_path, users)
         api_keys = self.path / "bootstrap/api_keys.json"
@@ -150,7 +163,7 @@ class Rauthy(Provider):
             data={
                 "grant_type": "client_credentials",
                 "client_id": client,
-                "client_secret": self.client_secret,
+                "client_secret": self.client_secrets[client],
                 "scope": "openid profile groups",
             },
         )

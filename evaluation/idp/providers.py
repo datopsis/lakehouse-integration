@@ -453,7 +453,7 @@ class Provider:
             },
         )
 
-    def human(self, email="alice@idp.test"):
+    def human(self, email="alice@idp.test", password=None):
         verifier, code_challenge = challenge()
         state, nonce = secret(), secret()
         params = {
@@ -535,7 +535,7 @@ class Provider:
                         **{k: v for k, v in params.items() if k not in ("scope", "response_type")},
                         "scopes": SCOPE.split(),
                         "email": email,
-                        "password": self.password,
+                        "password": self.password if password is None else password,
                         "pow": solved,
                     },
                 )

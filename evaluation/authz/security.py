@@ -15,7 +15,7 @@ def evaluate(catalog, operator, human, namespace, tuples):
     endpoint = catalog.base + f"/catalog/v1/{catalog.warehouse_id}/namespaces/denied/tables/sample"
     positive = http.request("GET", endpoint, headers={"Authorization": "Bearer " + operator})
     assert positive.status_code == 200, positive.text
-    bob = provider.human(email="bob@idp.test")["access_token"]
+    bob = provider.human(email="bob@idp.test", password=provider.bob_password)["access_token"]
     subjects = {"alice": decode(human)[1]["sub"], "bob": decode(bob)[1]["sub"]}
     assert subjects["alice"] != subjects["bob"], subjects
     http.json(
@@ -57,7 +57,23 @@ def evaluate(catalog, operator, human, namespace, tuples):
     forged_subject = secret(
         parts[0] + "." + b64({**claims, "sub": decode(human)[1]["sub"]}) + "." + parts[2]
     )
-    invalid = {}
+    # A read-only machine must not mint an operator token by changing client_id.
+    credential_probe = provider.http.request(
+        "POST",
+        provider.discovery["token_endpoint"],
+        data={
+            "grant_type": "client_credentials",
+            "client_id": "operator",
+            "client_secret": provider.client_secret,
+            "scope": "openid profile groups",
+        },
+    )
+    assert credential_probe.status_code == 401, (
+        "cross_client_credentials",
+        credential_probe.status_code,
+    )
+    assert "access_token" not in credential_probe.text, "Rejected grant returned a token"
+    invalid = {"reader_secret_cannot_mint_operator_token": 401}
     for name, token in (
         ("altered_subject", forged_subject),
         ("wrong_signature", bad_token(provider, "different_key")),
