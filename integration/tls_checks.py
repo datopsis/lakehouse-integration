@@ -549,6 +549,26 @@ def relay_conf():
     return RELAY_CONF.replace("%SERVERS%", "\n".join(servers))
 
 
+def transport_hangup(text, client, server, port):
+    """A new client connection followed by its FIN/RST at the relay.
+
+    Ignore old connections and other peers/ports. This is only transport evidence;
+    Matrix.case still requires the exact certificate diagnosis and zero requests.
+    """
+    opened = set()
+    pattern = (
+        rf"^\d+\.\d+ IP {re.escape(client)}\.(\d+) > "
+        rf"{re.escape(server)}\.{port}: Flags \[([^]]+)\]"
+    )
+    for match in re.finditer(pattern, text, re.M):
+        source_port, flags = match.groups()
+        if flags == "S":
+            opened.add(source_port)
+        elif source_port in opened and ("F" in flags or "R" in flags):
+            return True
+    return False
+
+
 class Relay:
     """A verified TLS-to-TLS mutation relay on the private network (nginx-ubi)."""
 
@@ -623,6 +643,58 @@ class Relay:
         subprocess.run(["docker", "kill", "--signal=HUP", RELAY], check=True, capture_output=True)
         self.wait()
         time.sleep(1)  # Let old workers finish closing their idle connections.
+
+    def start_capture(self, port, client):
+        """Observe TCP headers inside the relay namespace; never capture payloads.
+
+        nginx's HTTP/2 close path is not emitted at info level. Capture SYN and
+        FIN/RST flags for the exact client/destination instead of inferring a close
+        from the absence of requests. No decryption or binary packet file is used.
+        """
+        out_path = self.h.RUNTIME / "tls-transport.out"
+        err_path = self.h.RUNTIME / "tls-transport.err"
+        out, err = out_path.open("w"), err_path.open("w")
+        pid = inspect(RELAY)["State"]["Pid"]
+        expression = (
+            f"tcp and src host {client} and dst host {self.address} and dst port {port} "
+            "and (tcp[tcpflags] & (tcp-syn|tcp-fin|tcp-rst) != 0)"
+        )
+        process = subprocess.Popen(
+            ["sudo", "nsenter", f"--net=/proc/{pid}/ns/net", "tcpdump", "-i", "eth0",
+             "-nn", "-l", "-tt", "-s", "96", expression],
+            stdout=out, stderr=err,
+        )  # fmt: skip
+        capture = process, out, err, out_path, err_path
+        try:
+            deadline = time.monotonic() + 15
+            while "listening on" not in err_path.read_text():
+                assert process.poll() is None, err_path.read_text()
+                assert time.monotonic() < deadline, "TCP-header capture did not become ready"
+                time.sleep(0.05)
+        except BaseException:
+            self.stop_capture(capture)
+            raise
+        return capture
+
+    def stop_capture(self, capture):
+        process, out, err, out_path, err_path = capture
+        try:
+            if process.poll() is None:
+                subprocess.run(["sudo", "kill", "-INT", str(process.pid)], check=True)
+            code = process.wait(timeout=15)
+        finally:
+            out.close()
+            err.close()
+        text, diagnostic = out_path.read_text(), err_path.read_text()
+        with (self.h.REPORTS / "tls-transport.log").open("a") as report:
+            report.write(text + diagnostic + "\n")
+        out_path.unlink()
+        err_path.unlink()
+        assert code == 0 and "0 packets dropped by kernel" in diagnostic, diagnostic
+        return text
+
+    def recorded_hangup(self, packets, port, client):
+        return transport_hangup(packets, client, self.address, port)
 
     def evidence(self, since, port, client):
         text = logs(RELAY, since)
@@ -726,10 +798,16 @@ class Matrix:
         """call() -> (ok, error_text). Mutations must fail with TLS evidence."""
         self.relay.set(target, variant)
         since = now()
-        ok, text = call()
-        time.sleep(0.5)
         port = RELAY_PORTS[target]
+        capture = self.relay.start_capture(port, client_ip) if variant != "valid" else None
+        try:
+            ok, text = call()
+            time.sleep(0.5)
+        finally:
+            packets = self.relay.stop_capture(capture) if capture else ""
         requests, alerts, closed = self.relay.evidence(since, port, client_ip)
+        transport_closed = self.relay.recorded_hangup(packets, port, client_ip)
+        closed = closed or transport_closed
         if variant == "valid":
             assert ok, (edge, "valid control failed", text[-2000:])
             self.row(edge, variant, "accepted", f"{len(requests)} relayed requests")
@@ -770,6 +848,7 @@ class Matrix:
                 "client": matched.group(0) if matched else "relay alert only",
                 "requests": len(requests),
                 "client_hangup": closed,
+                "transport_hangup": transport_closed,
                 "exact_diagnosis": diagnosis.group(0) if diagnosis else None,
             },
         )

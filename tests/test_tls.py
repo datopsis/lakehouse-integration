@@ -19,6 +19,7 @@ from tls_checks import (
     decode,
     relay_conf,
     scope,
+    transport_hangup,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -155,9 +156,31 @@ class TlsGates(unittest.TestCase):
                 elif purpose == "serverAuth":
                     self.assertEqual(san, cn)
 
+    def test_transport_close_requires_a_new_matching_connection(self):
+        def packet(client="192.0.2.1", source=40000, server="192.0.2.2", port=50051, flags="S"):
+            return f"123.123456 IP {client}.{source} > {server}.{port}: Flags [{flags}], length 0\n"
+
+        syn = packet()
+        for close in ("F.", "R", "R."):
+            self.assertTrue(
+                transport_hangup(syn + packet(flags=close), "192.0.2.1", "192.0.2.2", 50051)
+            )
+        for text in (
+            packet(flags="F."),
+            syn,
+            syn + packet(source=40001, flags="F."),
+            syn + packet(client="192.0.2.3", flags="F."),
+            syn + packet(server="192.0.2.3", flags="F."),
+            syn + packet(port=8333, flags="F."),
+            packet(flags="F.") + syn,
+        ):
+            with self.subTest(text=text):
+                self.assertFalse(transport_hangup(text, "192.0.2.1", "192.0.2.2", 50051))
+
     @patch("tls_checks.time.sleep")
     def test_negative_requires_zero_requests_and_certificate_evidence(self, _sleep):
         relay = Mock()
+        relay.recorded_hangup.return_value = False
         matrix = object.__new__(Matrix)
         matrix.relay, matrix.rows = relay, []
         exact = (
@@ -187,6 +210,31 @@ class TlsGates(unittest.TestCase):
                 else:
                     with self.assertRaises(AssertionError):
                         matrix.case("trino-s3->s3", "s3", "wrong-san", call, "192.0.2.1")
+
+    @patch("tls_checks.time.sleep")
+    def test_transport_hangup_still_requires_exact_error_and_zero_requests(self, _sleep):
+        relay = Mock()
+        relay.evidence.return_value = [], [], False
+        relay.recorded_hangup.return_value = True
+        matrix = object.__new__(Matrix)
+        matrix.relay, matrix.rows = relay, []
+        exact = "Custom verification check failed with error: UNAUTHENTICATED: Hostname Verification Check failed."
+        matrix.case("pyspark-grpc->sail", "sail", "wrong-san", lambda: (False, exact), "192.0.2.1")
+        for generic in (
+            "timed out",
+            "Connection refused",
+            "hostname mismatch",
+            "HTTP 403 Forbidden",
+        ):
+            with self.subTest(error=generic), self.assertRaises(AssertionError):
+                matrix.case(
+                    "pyspark-grpc->sail", "sail", "wrong-san", lambda: (False, generic), "192.0.2.1"
+                )
+        relay.evidence.return_value = ["application request"], [], False
+        with self.assertRaises(AssertionError):
+            matrix.case(
+                "pyspark-grpc->sail", "sail", "wrong-san", lambda: (False, exact), "192.0.2.1"
+            )
 
     def test_negative_oracles_are_certificate_specific(self):
         self.assertEqual(CERT_ALERTS, {42, 43, 44, 45, 46, 48})
