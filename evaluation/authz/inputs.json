@@ -1,0 +1,15 @@
+{
+  "openfga": {
+    "version": "1.22.1",
+    "image": "docker.io/openfga/openfga@sha256:b852071314f1fda1194d341a6ebac0a4f619b3cd87a6626d2ccc7048af4ec671"
+  },
+  "cedar": {
+    "version": "4.14.1",
+    "release": "cedar-policy-cli-v4.14.1",
+    "archives": {
+      "amd64": {"target": "x86_64-unknown-linux-gnu", "sha256": "5833e9f4734eac0d95b3dab7ae119a9212caf0a82e02720b989e2fce6f3bfdad"},
+      "arm64": {"target": "aarch64-unknown-linux-gnu", "sha256": "499cfb6a6a7eab28ceca7b24215525a2d107fbf3faca759318a253d485b7d346"}
+    }
+  },
+  "lakekeeper_source": "9bd377162345b64a716f0a4fcffe4e7e7f3c7534"
+}

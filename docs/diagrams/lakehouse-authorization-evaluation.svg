@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1040" viewBox="0 0 1500 1040" role="img" aria-labelledby="title desc">
+  <title id="title">Phase C · authorization backend acceptance evaluation</title>
+  <desc id="desc">Manual C1–C8 suite on native amd64 and arm64. Hardened Rauthy with PostgreSQL issues tokens. Trino, PyIceberg and Sail use verified TLS to Lakekeeper behind nginx. Lakekeeper alone joins a private OpenFGA network with a dedicated PostgreSQL instance. Storage remains static-key and is not isolated by catalog grants.</desc>
+  <defs>
+    <style>text{font-family:Arial,Helvetica,sans-serif;fill:#172b44}.title{font-size:32px;font-weight:700}.sub{font-size:18px;fill:#52677f}.label{font-size:21px;font-weight:700}.body{font-size:17px}.small{font-size:15px;fill:#52677f}.line{fill:none;stroke:#197780;stroke-width:3;marker-end:url(#arrow)}.db{fill:none;stroke:#7460ad;stroke-width:3;marker-end:url(#purple)}</style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#197780"/></marker>
+    <marker id="purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#7460ad"/></marker>
+  </defs>
+  <rect width="1500" height="1040" fill="#f3f6fa"/>
+  <text x="50" y="62" class="title">Phase C · authorization acceptance</text>
+  <text x="50" y="96" class="sub">C1–C8 permanent contract · native amd64 + arm64 · workflow_dispatch only · evaluation, not production</text>
+  <rect x="40" y="125" width="1420" height="510" rx="18" fill="#eaf4f5" stroke="#b4d6da" stroke-width="2"/>
+  <text x="62" y="158" class="label">Client network · private / no published ports</text>
+  <rect x="65" y="185" width="375" height="160" rx="12" fill="white" stroke="#b4c7db"/>
+  <text x="87" y="218" class="label">Rauthy · hardened UBI</text>
+  <text x="87" y="248" class="body">1e114b8 · owner source build</text>
+  <text x="87" y="275" class="body">Human PKCE + machine credentials</text>
+  <text x="87" y="302" class="small">JWTs / JWKS over verified HTTPS</text>
+  <rect x="65" y="420" width="375" height="160" rx="12" fill="white" stroke="#b4c7db"/>
+  <text x="87" y="453" class="label">Trino 484 · PyIceberg</text>
+  <text x="87" y="483" class="body">Client-credentials tokens</text>
+  <text x="87" y="513" class="label">Sail 0.7.3 + nginx TLS</text>
+  <text x="87" y="543" class="body">External bearer-token file</text>
+  <path d="M250 345 V410" class="line"/>
+  <text x="266" y="381" class="small">tokens</text>
+  <rect x="545" y="240" width="400" height="235" rx="12" fill="white" stroke="#197780" stroke-width="2"/>
+  <text x="570" y="278" class="label">nginx-ubi · 9ef9e82</text>
+  <text x="570" y="309" class="body">Verified HTTPS frontend</text>
+  <text x="570" y="343" class="small">Shared network namespace</text>
+  <text x="570" y="373" class="body">↓ HTTP only on 127.0.0.1:8182</text>
+  <text x="570" y="413" class="label">Lakekeeper · OpenFGA enabled</text>
+  <text x="570" y="443" class="small">JWT validation → catalog authorization</text>
+  <path d="M440 490 H495 V393 H535" class="line"/>
+  <text x="455" y="523" class="small">HTTPS REST</text>
+  <path d="M545 255 H450" class="line"/>
+  <text x="460" y="235" class="small">JWKS</text>
+  <rect x="1050" y="205" width="375" height="145" rx="12" fill="white" stroke="#b4c7db"/>
+  <text x="1073" y="241" class="label">Catalog PostgreSQL</text>
+  <text x="1073" y="271" class="body">Separate catalog / Rauthy DBs</text>
+  <text x="1073" y="301" class="small">Separate non-superuser logins</text>
+  <path d="M945 285 H1040" class="db"/>
+  <path d="M440 202 V177 H1235 V195" class="db"/>
+  <rect x="1050" y="425" width="375" height="155" rx="12" fill="white" stroke="#b4c7db"/>
+  <text x="1073" y="461" class="label">SeaweedFS · S3 + control</text>
+  <text x="1073" y="491" class="body">HTTPS + internal mTLS gRPC</text>
+  <text x="1073" y="521" class="body">Static engine keys · STS disabled</text>
+  <text x="1073" y="551" class="small">Phase D isolation remains unqualified</text>
+  <path d="M945 435 H1040" class="line"/>
+  <path d="M440 566 H1037" class="line"/>
+  <rect x="490" y="675" width="970" height="205" rx="18" fill="#f0edf8" stroke="#bdb0d8" stroke-width="2"/>
+  <text x="515" y="709" class="label">Backend network · Lakekeeper joins; clients do not</text>
+  <rect x="520" y="735" width="380" height="113" rx="12" fill="white" stroke="#bdb0d8"/>
+  <text x="543" y="771" class="label">OpenFGA 1.22.1</text>
+  <text x="543" y="801" class="body">Pinned digest · API key · shared netns</text>
+  <text x="543" y="828" class="small">Verified HTTPS / gRPC TLS</text>
+  <rect x="1035" y="735" width="390" height="113" rx="12" fill="white" stroke="#bdb0d8"/>
+  <text x="1058" y="771" class="label">Dedicated PostgreSQL</text>
+  <text x="1058" y="801" class="body">OpenFGA database + login</text>
+  <text x="1058" y="828" class="small">Keeps private endpoint alive on FGA stop</text>
+  <path d="M750 475 V650 H475 V790 H510" class="line"/>
+  <text x="510" y="662" class="small">Authorization / TLS</text>
+  <path d="M900 790 H1025" class="db"/>
+  <text x="930" y="770" class="small">verify-full</text>
+  <rect x="65" y="685" width="375" height="180" rx="12" fill="white" stroke="#b4c7db"/>
+  <text x="87" y="721" class="label">Trusted fixture runner</text>
+  <text x="87" y="753" class="body">Per-run CA + secrets</text>
+  <text x="87" y="782" class="body">Group → role membership sync</text>
+  <text x="87" y="811" class="body">C1–C8 / sanitized artifacts</text>
+  <text x="87" y="840" class="small">Client netns isolation probes → FGA</text>
+  <text x="55" y="935" class="label">Security boundary</text>
+  <text x="55" y="968" class="body">C7 blocks client → OpenFGA on both ports; outage must fail closed. C8 requires durable grants + repeat migrations.</text>
+  <text x="55" y="999" class="small">All network paths verify TLS. Only approved proxy loopback hops and local PostgreSQL administrative sockets are plaintext.</text>
+</svg>

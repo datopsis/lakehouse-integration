@@ -9,6 +9,12 @@ still require review and exact labels, with no allowances.
 Every owner decision, and every decision still pending, is recorded in
 [DECISIONS.md](DECISIONS.md). Check it before starting new work.
 
+- [x] Establish the permanent [C1–C8 backend acceptance suite](AUTHZ-EVALUATION.md)
+  on both native architectures: hardened Rauthy, isolated OpenFGA/PostgreSQL, verified
+  TLS and exact grant/deny/revoke/operations assertions. All eight cases passed on
+  amd64 and arm64; observed revocation was 37.76/29.57 ms. This evaluation leaves
+  main integration authentication and the Phase D static-key gap unchanged.
+  OpenFGA stays evaluation-only; no production `openfga-ubi` is planned.
 - [ ] Phase C: OpenFGA as the interim backend (decided 2026-11-13); then the own
   authorization platform in [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md): spikes S1–S4,
   an MVP, Phase D integration, then the catalogued future capabilities. Update the
@@ -28,16 +34,15 @@ Every owner decision, and every decision still pending, is recorded in
   reported upstream) once a reviewed upstream fix lands; the exact-outcome canaries
   announce the change.
 - [ ] TLS lifecycle beyond the test: rotation, revocation and production PKI.
-- [ ] Phase B: build a hardened `rauthy-ubi` image and qualify OpenID login on both
-  native architectures. Owner chose Rauthy on 2026-11-13, with Keycloak as the
+- [ ] Phase B: integrate the merged hardened `rauthy-ubi` image (`1e114b8`) and
+  qualify OpenID login on both native architectures in the main path. Owner chose Rauthy on 2026-11-13, with Keycloak as the
   tested fallback; see the [IdP bake-off decision and evidence](IDP-BAKEOFF.md).
   Sail 0.7.3 needs an externally supplied token-file path with token lifecycle
   management; it has no native client-credentials grant provider.
   The [Phase B identity diagram](diagrams/lakehouse-identity-architecture.svg) shows
   human PKCE login, machine tokens, Sail's external token file, and Lakekeeper JWT
   validation over verified TLS, with PostgreSQL as Rauthy's target storage.
-  Groups are carried for future authorization; Phase C (OpenFGA or Cedar,
-  undecided) and Phase D (SeaweedFS STS credential vending) are marked not built.
+  Groups are carried for future authorization; Phase C (interim OpenFGA, then the planned Cedar service) and Phase D (SeaweedFS STS credential vending) are marked not built.
 - OpenID login for Lakekeeper **with authorization**, plus authenticated Trino access.
   Prerequisite decision: while engines hold bucket-wide static S3 keys, catalog
   permissions do not protect data (see "How each engine gets S3 access" in

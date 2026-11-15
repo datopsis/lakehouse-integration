@@ -1,0 +1,102 @@
+"""Evidence regressions: authorization denial must not hide other failures."""
+
+import json
+import sys
+import unittest
+from pathlib import Path
+from unittest.mock import Mock, patch
+
+import run  # noqa: F401
+import yaml
+from catalog import PROXY_REVISION, build_proxy
+from engines import trino_denial
+from exercise import denial
+from pyiceberg.exceptions import ForbiddenError, NoSuchTableError, UnauthorizedError
+
+
+class EvaluationSafety(unittest.TestCase):
+    def test_only_authorization_or_hidden_object_denials_are_accepted(self):
+        def raises(error):
+            def operation():
+                raise error
+
+            return operation
+
+        for error in (ForbiddenError("denied"), NoSuchTableError("hidden")):
+            self.assertEqual(denial(raises(error))["type"], type(error).__name__)
+        for error in (
+            UnauthorizedError("bad token"),
+            TimeoutError("network"),
+            ValueError("bad schema"),
+        ):
+            with self.assertRaises(type(error)):
+                denial(raises(error))
+        with self.assertRaisesRegex(AssertionError, "succeeded"):
+            denial(lambda: None)
+
+    def test_trino_denial_excludes_authentication_and_unrelated_errors(self):
+        statement = "INSERT INTO iceberg.bakeoff.sample VALUES (3, 'forbidden')"
+        forbidden = {
+            "errorName": "ICEBERG_COMMIT_ERROR",
+            "failureInfo": {"cause": {"type": "org.apache.iceberg.exceptions.ForbiddenException"}},
+        }
+        self.assertEqual(trino_denial(statement, forbidden), forbidden)
+        hidden = {
+            "errorName": "SCHEMA_NOT_FOUND",
+            "errorCode": 45,
+            "errorType": "USER_ERROR",
+            "message": "line 1:15: Schema 'denied' does not exist",
+        }
+        self.assertEqual(trino_denial("SELECT * FROM iceberg.denied.sample", hidden), hidden)
+        for bad in (
+            hidden,
+            {
+                "errorName": "ICEBERG_CATALOG_ERROR",
+                "failureInfo": {"type": "org.apache.iceberg.exceptions.NotAuthorizedException"},
+            },
+            {"errorName": "ICEBERG_COMMIT_ERROR", "message": "Connection timed out"},
+        ):
+            with self.assertRaises(AssertionError):
+                trino_denial(statement, bad)
+        with self.assertRaises(AssertionError):
+            trino_denial(
+                "SELECT * FROM iceberg.denied.sample", {**hidden, "message": "other missing schema"}
+            )
+
+    def test_merge_builds_each_pinned_image_once_and_rejects_proxy_pin_drift(self):
+        root = Path(__file__).resolve().parents[2]
+        pins = json.loads((root / "images.lock.json").read_text())
+        self.assertEqual(pins["nginx-ubi"], PROXY_REVISION)
+        for arch in ("amd64", "arm64"):
+            with self.subTest(arch=arch):
+                owner = Mock(PINS=pins)
+                owner.native_architecture.return_value = arch
+                owner.build.return_value = {"status": "pass"}
+                with (
+                    patch.dict(sys.modules, {"build": owner}),
+                    patch("catalog.build_proxy", return_value={"status": "pass"}) as proxy,
+                    patch("rauthy.build", return_value={"status": "pass"}) as rauthy,
+                    patch("exercise.initialize"),
+                    patch("run.save"),
+                ):
+                    run.build()
+                expected = [(repo, pin, arch) for repo, pin in pins.items() if repo != "nginx-ubi"]
+                self.assertEqual([c.args for c in owner.build.call_args_list], expected)
+                proxy.assert_called_once_with(arch, owner)
+                rauthy.assert_called_once_with(arch, owner)
+        with self.assertRaisesRegex(AssertionError, "must match"):
+            build_proxy("amd64", Mock(PINS={"nginx-ubi": "different-revision"}))
+
+    def test_new_workflow_is_manual_only_and_not_a_required_dependency(self):
+        root = Path(__file__).resolve().parents[2]
+        workflow = yaml.safe_load((root / ".github/workflows/authz-evaluation.yml").read_text())
+        self.assertEqual(workflow[True], {"workflow_dispatch": None})
+        self.assertEqual(workflow["permissions"], {"contents": "read"})
+        matrix = workflow["jobs"]["evaluate"]["strategy"]["matrix"]["include"]
+        self.assertEqual({r["runner"] for r in matrix}, {"ubuntu-24.04", "ubuntu-24.04-arm"})
+        main = (root / ".github/workflows/integration.yml").read_text()
+        self.assertNotIn("authz", main)
+
+
+if __name__ == "__main__":
+    unittest.main()

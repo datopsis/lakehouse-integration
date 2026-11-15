@@ -16,10 +16,17 @@ storage over verified TLS. Humans use authorization code with PKCE, Trino and
 PyIceberg obtain machine tokens, and Sail 0.7.3 reads an externally obtained token
 file; Lakekeeper validates those JWTs against Rauthy's JWKS. The groups claim is
 reserved for Phase C authorization, while Phase D will vend per-table credentials
-through SeaweedFS STS; both remain unbuilt, as distinguished from the
-[IdP bake-off evidence](IDP-BAKEOFF.md).
+through SeaweedFS STS; neither is enabled in the main integration path. See the
+[IdP bake-off evidence](IDP-BAKEOFF.md) and the separate
+[Phase C acceptance evaluation](AUTHZ-EVALUATION.md).
 
 ![Phase B identity target: Rauthy, TLS token flows, Lakekeeper JWT validation, and future authorization and credential vending](diagrams/lakehouse-identity-architecture.svg)
+
+The [Phase C evaluation view](diagrams/lakehouse-authorization-evaluation.svg)
+records the separate, manual C1–C8 acceptance fixture. Its upstream OpenFGA image
+and dedicated PostgreSQL stay evaluation-only; fixable Critical/High findings
+preclude production adoption. The suite is the acceptance contract for every
+future authorization backend ([2026-11-15 decision](DECISIONS.md)).
 
 The Mermaid chart below shows the current test topology.
 

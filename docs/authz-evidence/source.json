@@ -1,0 +1,1051 @@
+{
+  "survey_date": "2026-11-13",
+  "sources": {
+    "lakekeeper": {
+      "revision": "9bd377162345b64a716f0a4fcffe4e7e7f3c7534",
+      "files": {
+        "crates/lakekeeper-bin/src/authorizer.rs": "59ccc930808e0874e465888b3939cd27dd7d495c518da1ef150bbd498880cf46",
+        "docs/docs/authorization.md": "45015a69ff1af13506071c8c0530eff1a7a611e539c79cb8f498d963e2dc2e27",
+        "docs/docs/configuration.md": "bff04b639fc2efa3a49fee04d7df28356f4fd32f9c40f5bdc4d13fee50b9caa3",
+        "crates/authz-openfga/src/client.rs": "50e859f70d71ab34443a5115004fc3ee6b3be869745fb6eefb57bcb3d2276c3c",
+        "crates/authz-openfga/src/authorizer.rs": "b62d09935a798434ef4bf8adc350515ab7a3cdb12ddf538ccbdab48e45c2c0d8",
+        "crates/lakekeeper/src/server/tables.rs": "91329b38cc81bf574f51dfa857f1a7a63f40299a66b379d04b2f69d5cd498284",
+        "crates/lakekeeper/src/server/tables/load_table.rs": "8d0618e1f71d566440b60cb30c8d64a8d826a16084f7002f0a0bc0c382df3c98",
+        "crates/lakekeeper/src/service/storage/s3.rs": "bedd65be0ad66acbff9a4c542a31fe32470d787ed51d7695bd35786fd627e288"
+      }
+    },
+    "openfga": {
+      "revision": "44054f542f64e9b9589dd26a595081b3d2cfd942",
+      "files": {
+        "LICENSE": "1c46d7b2bed94d457d745f28cabeb31f8d6c81dd9035bc5d24039989ee1e1bff",
+        "go.mod": "f0f9d5129a8bfedba0cf7fec6a46b02eb23e859e44178df2f150201415f5b5b9",
+        "go.sum": "27307c091b67b5b0cb26cdb3a7710c9b6bd784bdbc1073e5bd30b534553c0ce2",
+        "cmd/run/run.go": "4c95563a0ad272d2ce89fe907161459447e416eeee713745574a5d5030f6e29d"
+      },
+      "go_mod_required_entries": 152,
+      "recent_releases": [
+        {
+          "tag_name": "v1.22.1",
+          "published_at": "2026-10-28T13:14:33Z",
+          "html_url": "https://github.com/openfga/openfga/releases/tag/v1.22.1"
+        },
+        {
+          "tag_name": "v1.22.0",
+          "published_at": "2026-10-06T19:29:35Z",
+          "html_url": "https://github.com/openfga/openfga/releases/tag/v1.22.0"
+        },
+        {
+          "tag_name": "v1.21.0",
+          "published_at": "2026-09-20T16:27:53Z",
+          "html_url": "https://github.com/openfga/openfga/releases/tag/v1.21.0"
+        },
+        {
+          "tag_name": "v1.20.0",
+          "published_at": "2026-09-08T20:41:34Z",
+          "html_url": "https://github.com/openfga/openfga/releases/tag/v1.20.0"
+        },
+        {
+          "tag_name": "v1.19.0",
+          "published_at": "2026-08-25T15:08:37Z",
+          "html_url": "https://github.com/openfga/openfga/releases/tag/v1.19.0"
+        },
+        {
+          "tag_name": "v1.18.3",
+          "published_at": "2026-08-05T18:44:21Z",
+          "html_url": "https://github.com/openfga/openfga/releases/tag/v1.18.3"
+        }
+      ],
+      "public_advisories": [
+        {
+          "ghsa_id": "GHSA-h7w8-xr72-cv4r",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-h7w8-xr72-cv4r",
+          "summary": "OpenFGA Improper API Policy Enforcement",
+          "severity": "medium",
+          "published_at": "2026-09-28T19:31:48Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "< v1.20.0",
+              "patched_versions": "v1.20.0",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "< v1.20.0",
+              "patched_versions": "v1.20.0",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm-charts",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "< 0.3.14",
+              "patched_versions": "0.3.14",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-5278-rrxc-mgf7",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-5278-rrxc-mgf7",
+          "summary": "OpenFGA Improper Policy Enforcement",
+          "severity": "medium",
+          "published_at": "2026-09-08T18:38:57Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": ">= v1.15.0, < v1.19.0",
+              "patched_versions": "v1.19.0",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">= v1.15.0, < v1.19.0",
+              "patched_versions": "v1.19.0",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm-charts",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">= 0.3.3, < 0.3.13",
+              "patched_versions": "0.3.13",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-g3pg-frfm-pr2m",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-g3pg-frfm-pr2m",
+          "summary": "OpenFGA Improper Policy Enforcement",
+          "severity": "medium",
+          "published_at": "2026-07-16T14:52:31Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "<= 1.18.0",
+              "patched_versions": "1.18.1",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "<= 1.18.0",
+              "patched_versions": "1.18.1",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm-charts",
+                "name": "openfga/helm-charts"
+              },
+              "vulnerable_version_range": "<= 0.3.9",
+              "patched_versions": "0.3.10",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-cf98-j28v-49v6",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-cf98-j28v-49v6",
+          "summary": "OpenFGA Improper Policy Enforcement",
+          "severity": "low",
+          "published_at": "2026-06-17T16:21:41Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "< v1.18.0",
+              "patched_versions": "v1.18.0",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "< v1.18.0",
+              "patched_versions": "v1.18.0",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm-charts",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "< 0.3.9",
+              "patched_versions": "0.3.9",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-hcxc-wf8j-23hv",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-hcxc-wf8j-23hv",
+          "summary": "OpenFGA Improper Authentication",
+          "severity": "medium",
+          "published_at": "2026-06-18T19:04:57Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "<= v1.17.1",
+              "patched_versions": "v1.18.0",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "<= v1.17.1",
+              "patched_versions": "v.1.18.0",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm-charts",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "<= 0.3.8",
+              "patched_versions": "0.3.9",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-8396-jffm-qx4w",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-8396-jffm-qx4w",
+          "summary": "OpenFGA Improper Policy Enforcement",
+          "severity": "medium",
+          "published_at": "2026-06-05T15:41:51Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "<= v1.15.1",
+              "patched_versions": "v1.16.0",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "<= v1.15.1",
+              "patched_versions": "v1.16.0",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm-charts",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "<= 0.3.4",
+              "patched_versions": "0.3.5",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-68m9-983m-f3v5",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-68m9-983m-f3v5",
+          "summary": "OpenFGA Playground Preshared Key Exposure",
+          "severity": "medium",
+          "published_at": "2026-04-08T20:00:29Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": ">=v0.1.4, <=v1.13.1",
+              "patched_versions": "v1.14.0",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-jwvj-g8pc-cx45",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-jwvj-g8pc-cx45",
+          "summary": "OpenFGA Improper Policy Enforcement",
+          "severity": "medium",
+          "published_at": "2026-04-06T20:00:17Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": ">=v1.8.0 <=v1.13.1",
+              "patched_versions": "v1.14.0",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=v1.8.0 <=v1.13.1",
+              "patched_versions": "v1.14.0",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=0.2.16 <=0.2.61",
+              "patched_versions": "0.2.62",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-57j5-qwp2-vqp6",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-57j5-qwp2-vqp6",
+          "summary": "OpenFGA Improper Policy Enforcement",
+          "severity": "medium",
+          "published_at": "2026-04-20T19:44:53Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "< v1.14.1",
+              "patched_versions": "v1.14.1",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "< v1.14.1",
+              "patched_versions": "v1.14.1",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm-charts",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "< 0.3.1",
+              "patched_versions": "0.3.1",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-h6c8-cww8-35hf",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-h6c8-cww8-35hf",
+          "summary": "OpenFGA Improper Policy Enforcement",
+          "severity": "medium",
+          "published_at": "2026-03-25T20:06:52Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "< v1.13.1",
+              "patched_versions": "v1.13.1",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "< v1.13.1",
+              "patched_versions": "v1.13.1",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm charts",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "<= openfga-0.2.58",
+              "patched_versions": "openfga-0.2.59",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-jq9f-gm9w-rwm9",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-jq9f-gm9w-rwm9",
+          "summary": "OpenFGA Improper Policy Enforcement",
+          "severity": "medium",
+          "published_at": "2026-02-05T21:26:00Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": ">=1.8.5 <=1.11.2",
+              "patched_versions": "v1.11.3",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=0.2.22 <=0.2.51",
+              "patched_versions": "0.2.52",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=1.8.5 <=1.11.2",
+              "patched_versions": "v1.11.3",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-2c64-vmv2-hgfc",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-2c64-vmv2-hgfc",
+          "summary": "OpenFGA Improper Policy Enforcement",
+          "severity": "medium",
+          "published_at": "2025-11-20T21:52:43Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": ">=1.4.0 <=1.11.0",
+              "patched_versions": "1.11.1",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=0.1.34 <=0.2.48",
+              "patched_versions": "0.2.49",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=1.4.0 <=1.11.0",
+              "patched_versions": "1.11.1",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-mgh9-4mwp-fg55",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-mgh9-4mwp-fg55",
+          "summary": "OpenFGA Improper Policy Enforcement",
+          "severity": "medium",
+          "published_at": "2025-08-18T18:06:17Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": ">=1.9.3 <1.9.5",
+              "patched_versions": "1.9.5",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=1.9.3 <1.9.5",
+              "patched_versions": "1.9.5",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=0.2.40 <0.2.42",
+              "patched_versions": "0.2.42",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-c72g-53hw-82q7",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-c72g-53hw-82q7",
+          "summary": "OpenFGA Authorization Bypass",
+          "severity": "medium",
+          "published_at": "2025-05-22T21:22:45Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": ">=v1.8.0, <v1.8.13",
+              "patched_versions": "v1.8.13",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=v1.8.0, <v1.8.13",
+              "patched_versions": "v1.8.13",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm charts",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=openfga-0.2.16, <openfga-0.2.32",
+              "patched_versions": "openfga-0.2.32",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-w222-m46c-mgh6",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-w222-m46c-mgh6",
+          "summary": "OpenFGA Authorization Bypass",
+          "severity": "medium",
+          "published_at": "2025-04-30T13:20:13Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": ">=1.3.6, <1.8.11",
+              "patched_versions": "1.8.11",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=1.3.6, <1.8.11",
+              "patched_versions": "1.8.11",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm charts",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=openfga-0.1.36, <openfga-0.2.29",
+              "patched_versions": "openfga-0.2.29",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-g4v5-6f5p-m38j",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-g4v5-6f5p-m38j",
+          "summary": "OpenFGA Authorization Bypass",
+          "severity": "medium",
+          "published_at": "2025-02-19T19:03:05Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "<1.8.5",
+              "patched_versions": "1.8.5",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "<1.8.5",
+              "patched_versions": "1.8.5",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm charts",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "<0.2.22",
+              "patched_versions": "0.2.22",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-32q6-rr98-cjqv",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-32q6-rr98-cjqv",
+          "summary": "OpenFGA Authorization Bypass",
+          "severity": "medium",
+          "published_at": "2025-01-13T19:09:00Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": ">=1.3.8, <1.8.3",
+              "patched_versions": "1.8.3",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=1.3.8, <1.8.3",
+              "patched_versions": "1.8.3",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm charts",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">=0.1.38,<0.2.19",
+              "patched_versions": "0.2.19",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-3f6g-m4hr-59h8",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-3f6g-m4hr-59h8",
+          "summary": "OpenFGA Authorization Bypass",
+          "severity": "high",
+          "published_at": "2024-08-09T21:07:15Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "1.5.7,1.5.8",
+              "patched_versions": "1.5.9",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "helm",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "0.2.9,0.2.10",
+              "patched_versions": "0.2.12",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "docker",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "1.5.7,1.5.8",
+              "patched_versions": "1.5.9",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-8cph-m685-6v6r",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-8cph-m685-6v6r",
+          "summary": "OpenFGA Authorization Bypass",
+          "severity": "high",
+          "published_at": "2024-04-16T21:30:03Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": ">1.5.0, <1.5.3",
+              "patched_versions": "1.5.3",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-rxpw-85vw-fx87",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-rxpw-85vw-fx87",
+          "summary": "OpenFGA DoS",
+          "severity": "medium",
+          "published_at": "2024-01-26T16:26:26Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "< 1.4.3",
+              "patched_versions": "1.4.3",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-hr4f-6jh8-f2vq",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-hr4f-6jh8-f2vq",
+          "summary": "OpenFGA DoS",
+          "severity": "medium",
+          "published_at": "2023-10-17T22:21:30Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "<=1.3.3",
+              "patched_versions": ">=1.3.4",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-2hm9-h873-pgqh",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-2hm9-h873-pgqh",
+          "summary": "DoS from circular relationship definitions",
+          "severity": "medium",
+          "published_at": "2023-09-26T18:54:57Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "<1.3.1",
+              "patched_versions": "v1.3.2",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-jcf2-mxr2-gmqp",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-jcf2-mxr2-gmqp",
+          "summary": "OpenFGA Authorization Bypass",
+          "severity": "high",
+          "published_at": "2023-08-25T17:20:34Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "openfga/openfga"
+              },
+              "vulnerable_version_range": "<1.3.0",
+              "patched_versions": "1.3.1",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-hr9r-8phq-5x8j",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-hr9r-8phq-5x8j",
+          "summary": "OpenFGA DoS",
+          "severity": "medium",
+          "published_at": "2023-06-26T18:12:30Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "<1.1.0",
+              "patched_versions": "1.1.1",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-m3q4-7qmj-657m",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-m3q4-7qmj-657m",
+          "summary": "OpenFGA Authorization Bypass",
+          "severity": "high",
+          "published_at": "2022-12-20T17:07:02Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "0.3.0",
+              "patched_versions": "0.3.1",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-3gfj-fxx4-f22w",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-3gfj-fxx4-f22w",
+          "summary": "OpenFGA Authorization Bypass",
+          "severity": "high",
+          "published_at": "2022-11-07T21:43:22Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "<= 0.2.4",
+              "patched_versions": "0.2.5",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-f4mm-2r69-mg5f",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-f4mm-2r69-mg5f",
+          "summary": "OpenFGA Authorization Bypass",
+          "severity": "high",
+          "published_at": "2022-10-24T19:40:12Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "<= 0.2.3",
+              "patched_versions": "0.2.4",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-vj4m-83m8-xpw5",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-vj4m-83m8-xpw5",
+          "summary": "OpenFGA Authorization Bypass",
+          "severity": "high",
+          "published_at": "2022-10-24T19:39:03Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "<= 0.2.3",
+              "patched_versions": "0.2.4",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-95x7-mh78-7w2r",
+          "html_url": "https://github.com/openfga/openfga/security/advisories/GHSA-95x7-mh78-7w2r",
+          "summary": "OpenFGA Information Disclosure",
+          "severity": "medium",
+          "published_at": "2022-10-24T19:38:27Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "go",
+                "name": "github.com/openfga/openfga"
+              },
+              "vulnerable_version_range": "<= 0.2.3",
+              "patched_versions": "0.2.4",
+              "vulnerable_functions": []
+            }
+          ]
+        }
+      ]
+    },
+    "cedar": {
+      "revision": "47d82a8293354f235d3f8d092c71071706401741",
+      "files": {
+        "LICENSE": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b",
+        "Cargo.lock": "f929002032c165518c2c82d67992c659a271e8b71adee573f97873219a2a5bf2",
+        "SECURITY.md": "66d5a8f26a5ad24c6c9bddd0cd033024736aea6523ec52bed1bfa7860ab22b6e"
+      },
+      "cargo_lock_declared_packages": 389,
+      "recent_releases": [
+        {
+          "tag_name": "v4.14.1",
+          "published_at": "2026-11-02T19:57:45Z",
+          "html_url": "https://github.com/cedar-policy/cedar/releases/tag/v4.14.1"
+        },
+        {
+          "tag_name": "v4.14.0",
+          "published_at": "2026-10-17T16:14:21Z",
+          "html_url": "https://github.com/cedar-policy/cedar/releases/tag/v4.14.0"
+        },
+        {
+          "tag_name": "v4.13.0",
+          "published_at": "2026-09-15T17:13:33Z",
+          "html_url": "https://github.com/cedar-policy/cedar/releases/tag/v4.13.0"
+        },
+        {
+          "tag_name": "v4.12.0",
+          "published_at": "2026-07-28T20:16:16Z",
+          "html_url": "https://github.com/cedar-policy/cedar/releases/tag/v4.12.0"
+        }
+      ],
+      "public_advisories": [
+        {
+          "ghsa_id": "GHSA-m84h-6f26-p3p7",
+          "html_url": "https://github.com/cedar-policy/cedar/security/advisories/GHSA-m84h-6f26-p3p7",
+          "summary": "Cedar can be made to exhaust memory when parsing a `has` expression with a nested attribute path",
+          "severity": "high",
+          "published_at": "2026-10-22T13:44:49Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "rust",
+                "name": "cedar-policy"
+              },
+              "vulnerable_version_range": ">= 4.3, < 4.13",
+              "patched_versions": ">= 4.13",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "npm",
+                "name": "@cedar-policy/cedar-wasm"
+              },
+              "vulnerable_version_range": ">= 4.3, < 4.13",
+              "patched_versions": ">= 4.13",
+              "vulnerable_functions": []
+            }
+          ]
+        },
+        {
+          "ghsa_id": "GHSA-c33x-vcv4-vg3g",
+          "html_url": "https://github.com/cedar-policy/cedar/security/advisories/GHSA-c33x-vcv4-vg3g",
+          "summary": "JSON template is in scope missing slot-id validation allows link panic and decision divergence",
+          "severity": "low",
+          "published_at": "2026-06-25T13:54:06Z",
+          "vulnerabilities": [
+            {
+              "package": {
+                "ecosystem": "rust",
+                "name": "cedar-policy"
+              },
+              "vulnerable_version_range": ">= 4.0.0, < 4.11.1",
+              "patched_versions": "4.11.1",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "rust",
+                "name": "cedar-policy"
+              },
+              "vulnerable_version_range": ">= 3.0.0, < 3.4.3",
+              "patched_versions": "3.4.3",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "npm",
+                "name": "@cedar-policy/cedar-wasm"
+              },
+              "vulnerable_version_range": ">= 4.0.1, < 4.11.1",
+              "patched_versions": "4.11.1",
+              "vulnerable_functions": []
+            },
+            {
+              "package": {
+                "ecosystem": "npm",
+                "name": "@cedar-policy/cedar-wasm"
+              },
+              "vulnerable_version_range": ">= 3.2.0, < 3.4.3",
+              "patched_versions": "3.4.3",
+              "vulnerable_functions": []
+            }
+          ]
+        }
+      ],
+      "cli_elf": {
+        "amd64": {
+          "binary_sha256": "c2a6ba89e13f17d3381b647a879366acb26ef62392f96d847442679f675b1d11",
+          "binary_bytes": 18585272,
+          "needed_libraries": [
+            "libgcc_s.so.1",
+            "libc.so.6"
+          ],
+          "max_glibc_symbol": "2.34",
+          "method": "Static ELF inspection; no execution or emulation"
+        },
+        "arm64": {
+          "binary_sha256": "3074627b387a3418d75d3145549c5315b5852512f7260990611b1a9e3afe0541",
+          "binary_bytes": 17875544,
+          "needed_libraries": [
+            "libgcc_s.so.1",
+            "libc.so.6"
+          ],
+          "max_glibc_symbol": "2.34",
+          "method": "Static ELF inspection; no execution or emulation"
+        }
+      },
+      "contributor_snapshot": [
+        {
+          "login": "john-h-kastner-aws",
+          "contributions": 397
+        },
+        {
+          "login": "cdisselkoen",
+          "contributions": 290
+        },
+        {
+          "login": "shaobo-he-aws",
+          "contributions": 162
+        },
+        {
+          "login": "dependabot[bot]",
+          "contributions": 155
+        },
+        {
+          "login": "victornicolet",
+          "contributions": 96
+        },
+        {
+          "login": "katherine-hough",
+          "contributions": 63
+        },
+        {
+          "login": "andrewmwells-amazon",
+          "contributions": 59
+        },
+        {
+          "login": "adpaco",
+          "contributions": 32
+        }
+      ]
+    }
+  }
+}
