@@ -138,11 +138,10 @@ def trino(leaves, directory, password):
 
 def protect(directory, public=False):
     """root:0; private files 0440, certificates 0444 only where public."""
+    files = [str(path) for path in directory.iterdir()]  # Before it becomes root-only.
+    subprocess.run(["sudo", "chmod", "0444" if public else "0440", *files], check=True)
     subprocess.run(["sudo", "chown", "-R", "0:0", str(directory)], check=True)
     subprocess.run(["sudo", "chmod", "0755" if public else "0750", str(directory)], check=True)
-    for path in directory.iterdir():
-        mode = "0444" if public else "0440"
-        subprocess.run(["sudo", "chmod", mode, str(path)], check=True)
 
 
 def prepare(password):
@@ -165,10 +164,9 @@ def prepare(password):
     policies["s3-strict-canary"] = seaweed_role(leaves, "s3", TLS / "s3-strict-canary", True)
     policies["provisioner"] = provisioner(leaves, TLS / "provisioner")
     trino(leaves, TLS / "trino", password)
+    for directory in [path for path in TLS.iterdir() if path != trust]:
+        protect(directory)
     protect(trust, public=True)
-    for directory in TLS.iterdir():
-        if directory != trust:
-            protect(directory)
     # Public certificates may be world-readable; private keys never.
     for name in ("postgres", "catalog-proxy", "sail-proxy"):
         subprocess.run(["sudo", "chmod", "0444", str(TLS / name / "server.crt")], check=True)
