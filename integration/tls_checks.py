@@ -645,7 +645,7 @@ class Relay:
         time.sleep(1)  # Let old workers finish closing their idle connections.
 
     def start_capture(self, port, client):
-        """Observe TCP headers inside the relay namespace; never capture payloads.
+        """Record only TCP-header text inside the relay namespace.
 
         nginx's HTTP/2 close path is not emitted at info level. Capture SYN and
         FIN/RST flags for the exact client/destination instead of inferring a close
@@ -999,17 +999,17 @@ class CatalogProbe:
                     "/usr/share/lakekeeper/init.sql"],
             check=True, capture_output=True,
         )  # fmt: skip
-        database = {
-            "LAKEKEEPER__PG_DATABASE_URL_WRITE": h.LAKEKEEPER_PG.format(
-                h.CREDS["postgres"]
-            ).replace("/lakekeeper?", "/tls_probe?")
-        }
+        environment = h.RUNTIME / "catalog-probe.env"
+        source = (h.RUNTIME / "lakekeeper.env").read_text()
+        assert "/lakekeeper?" in source
+        environment.write_text(source.replace("/lakekeeper?", "/tls_probe?", 1))
+        environment.chmod(0o600)
         migration = "lakehouse-integration-migrate-probe"
         try:
             result = oneoff(
                 h, migration, "localhost/lakekeeper-ubi:integration", "999:0",
                 [(h.RUNTIME / "tls/trust", "/run/tls")], ["migrate"],
-                env_file=h.RUNTIME / "lakekeeper.env", env=database,
+                env_file=environment,
             )  # fmt: skip
             assert result.returncode == 0, result.stderr[-2000:]
         finally:
@@ -1017,8 +1017,7 @@ class CatalogProbe:
         oneoff(
             h, self.name, "localhost/lakekeeper-ubi:integration", "999:0",
             [(h.RUNTIME / "tls/trust", "/run/tls")], ["serve"],
-            add_hosts={"s3": relay_ip}, env_file=h.RUNTIME / "lakekeeper.env",
-            env=database, detach=True,
+            add_hosts={"s3": relay_ip}, env_file=environment, detach=True,
         )  # fmt: skip
         self.pid = inspect(self.name)["State"]["Pid"]
         self.ip = address(self.name)
@@ -1117,6 +1116,68 @@ def seaweed_client_edges(h, matrix, relay):
     return rows
 
 
+def sqlx_refusal(variant, text, server, client_ip, hostname="postgres"):
+    """SQLx's exact certificate diagnosis plus that client's server-side TLS refusal.
+
+    PostgreSQL's EOF must belong to the probe, never the runner's readiness
+    connection. A failed TLS handshake cannot process a startup/authentication
+    message or query; require that outcome for every probe connection.
+    """
+    diagnoses = {
+        "wrong-ca": r"invalid peer certificate: UnknownIssuer",
+        "wrong-san": (
+            r'invalid peer certificate: certificate not valid for name "'
+            + re.escape(hostname)
+            + r'"; certificate is only valid for DnsName\("wrong\.invalid"\)'
+        ),
+        "expired": (
+            r"invalid peer certificate: certificate expired: verification time (\d+) "
+            r"\(UNIX\), but certificate is not valid after (\d+) \((\d+) seconds ago\)"
+        ),
+    }
+    diagnosis = re.search(diagnoses[variant] + r"(?=\r?\n|$)", text)
+    assert diagnosis, (variant, "no exact SQLx certificate diagnosis", text[-2000:])
+    if variant == "expired":
+        verified, expires, ago = map(int, diagnosis.groups())
+        assert verified > expires and verified - expires == ago, diagnosis.group(0)
+    connections = set(
+        re.findall(
+            rf"\[(\d+)\]\s+LOG:\s+connection received: host={re.escape(client_ip)} port=\d+\b",
+            server,
+        )
+    )
+    assert connections, (variant, "no connection from the probe client", server[-2000:])
+    failures = {}
+    for line in server.splitlines():
+        pid = re.search(r"\[(\d+)\]", line)
+        if not pid or pid.group(1) not in connections:
+            continue
+        assert not re.search(
+            r"password authentication failed|connection authorized|statement:", line
+        ), (variant, "reached application/authentication", line)
+        failure = re.search(r"could not accept SSL connection: (.*)", line)
+        if failure:
+            reason = failure.group(1)
+            certificate_alert = re.fullmatch(
+                r"(?:sslv3|tlsv1) alert (?:bad certificate|unsupported certificate|"
+                r"certificate revoked|certificate expired|certificate unknown|unknown ca)",
+                reason,
+            )
+            assert reason == "unexpected eof while reading" or certificate_alert, (
+                variant,
+                "not a certificate alert or recorded TLS hang-up",
+                reason,
+            )
+            failures[pid.group(1)] = reason
+    assert set(failures) == connections, (variant, connections, failures, server[-2000:])
+    return {
+        "application_requests": 0,
+        "client": diagnosis.group(0),
+        "server_tls_refusals": sorted(failures.values()),
+        "probe_connections": len(connections),
+    }
+
+
 def postgres_edges(h, matrix):
     """Lakekeeper's SQLx client (migrate) against a PostgreSQL impostor (real image)."""
     impostor = "lakehouse-integration-postgres-impostor"
@@ -1132,6 +1193,12 @@ def postgres_edges(h, matrix):
 
     install(password, work / "secrets/postgres-password", "0440")
     password.unlink()
+
+    network = json.loads(subprocess.check_output(["docker", "network", "inspect", NETWORK]))[0]
+    subnet = ipaddress.ip_network(network["IPAM"]["Config"][0]["Subnet"])
+    client_ip = str(subnet[-3])
+    occupied = {item["IPv4Address"].split("/")[0] for item in network["Containers"].values()}
+    assert client_ip not in occupied and client_ip != network["IPAM"]["Config"][0]["Gateway"]
 
     def accepting():
         with socket.create_connection((address(impostor), 5432), timeout=3) as raw:
@@ -1159,10 +1226,13 @@ def postgres_edges(h, matrix):
                 h, client, "localhost/lakekeeper-ubi:integration", "999:0",
                 [(h.RUNTIME / "tls/trust", "/run/tls")], ["migrate"],
                 add_hosts={"postgres": address(impostor)}, env_file=h.RUNTIME / "lakekeeper.env",
-                timeout=120,
+                timeout=120, extra=["--ip", client_ip],
             )  # fmt: skip
             text = result.stdout + result.stderr
+            time.sleep(0.5)  # Allow PostgreSQL to flush the final TLS close record.
             server = logs(impostor, since)
+            (h.REPORTS / f"tls-postgres-{variant}-client.log").write_text(text)
+            (h.REPORTS / f"tls-postgres-{variant}-server.log").write_text(server)
             remove(client)
             if variant == "valid":
                 # TLS verified; the impostor has no lakekeeper role, so SCRAM then fails.
@@ -1178,16 +1248,8 @@ def postgres_edges(h, matrix):
                 )
                 continue
             assert result.returncode != 0, (variant, "migration succeeded against mutated server")
-            assert re.search(
-                r"could not accept SSL connection.*(alert|certificate)", server, re.I | re.S
-            ), (variant, server[-1500:])
-            assert "password authentication failed" not in server + text, (
-                variant,
-                "reached authentication",
-            )
-            matched = re.search(CLIENT_PATTERNS[variant] + r"|invalid peer certificate", text)
-            assert matched, (variant, text[-1500:])
-            matrix.row("lakekeeper-sqlx->postgres", variant, "refused", matched.group(0))
+            evidence = sqlx_refusal(variant, text, server, client_ip)
+            matrix.row("lakekeeper-sqlx->postgres", variant, "refused", evidence)
     finally:
         remove(impostor, client)
         subprocess.run(["sudo", "rm", "-rf", str(work)], check=True)

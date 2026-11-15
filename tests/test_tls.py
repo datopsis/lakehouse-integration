@@ -19,6 +19,7 @@ from tls_checks import (
     decode,
     relay_conf,
     scope,
+    sqlx_refusal,
     transport_hangup,
 )
 
@@ -235,6 +236,43 @@ class TlsGates(unittest.TestCase):
             matrix.case(
                 "pyspark-grpc->sail", "sail", "wrong-san", lambda: (False, exact), "192.0.2.1"
             )
+
+    def test_sqlx_hangup_is_attributed_and_certificate_specific(self):
+        server = (
+            "2026-11-15 [64] LOG:  connection received: host=192.0.2.1 port=40000\n"
+            "2026-11-15 [64] LOG:  could not accept SSL connection: unexpected eof while reading\n"
+        )
+        diagnoses = {
+            "wrong-ca": "invalid peer certificate: UnknownIssuer",
+            "wrong-san": 'invalid peer certificate: certificate not valid for name "postgres"; certificate is only valid for DnsName("wrong.invalid")',
+            "expired": "invalid peer certificate: certificate expired: verification time 1794769661 (UNIX), but certificate is not valid after 1794766061 (3600 seconds ago)",
+        }
+        for variant, diagnosis in diagnoses.items():
+            with self.subTest(variant=variant):
+                evidence = sqlx_refusal(variant, diagnosis, server, "192.0.2.1")
+                self.assertEqual(evidence["application_requests"], 0)
+                self.assertEqual(evidence["probe_connections"], 1)
+                for other, message in diagnoses.items():
+                    if other != variant:
+                        with self.assertRaises(AssertionError):
+                            sqlx_refusal(variant, message, server, "192.0.2.1")
+        for text in (
+            "timed out",
+            "invalid peer certificate",
+            "password authentication failed",
+            "connection closed",
+        ):
+            with self.subTest(error=text), self.assertRaises(AssertionError):
+                sqlx_refusal("wrong-ca", text, server, "192.0.2.1")
+        for bad_server in (
+            server.replace("192.0.2.1", "192.0.2.2"),
+            server.replace("[64] LOG:  could", "[65] LOG:  could"),
+            server + "2026-11-15 [64] LOG:  password authentication failed\n",
+            server.replace("unexpected eof while reading", "internal error"),
+            server.replace("unexpected eof while reading", "tlsv1 alert internal error"),
+        ):
+            with self.subTest(server=bad_server), self.assertRaises(AssertionError):
+                sqlx_refusal("wrong-ca", diagnoses["wrong-ca"], bad_server, "192.0.2.1")
 
     def test_negative_oracles_are_certificate_specific(self):
         self.assertEqual(CERT_ALERTS, {42, 43, 44, 45, 46, 48})
