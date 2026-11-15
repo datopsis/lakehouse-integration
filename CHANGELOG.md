@@ -6,10 +6,11 @@
   native architectures, separate from required Integration. Use the hardened
   rauthy-ubi 1e114b8 owner build with strict provenance, dedicated OpenFGA
   PostgreSQL and backend network, nginx-ubi 9ef9e82, verified TLS, group sync,
-  revocation timing, client denials, fail-closed recovery and repeat migrations.
+  revocation timing, independent client/human credentials, client denials,
+  fail-closed recovery and repeat migrations.
 - Add the Phase C evaluation topology and link the acceptance contract from the
   authorization platform plan. Retain actual native C1–C8 passes and sanitized
-  evidence on both CPUs; observed revocation is 17.94/27.67 ms. Record the no-group
+  evidence on both CPUs; observed revocation is 37.76/29.57 ms. Record the no-group
   token compatibility gap, STS-disabled boundary and upstream OpenFGA scan findings
   without claiming production/security qualification.
 

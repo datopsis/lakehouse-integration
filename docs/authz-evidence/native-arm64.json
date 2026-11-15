@@ -1,8 +1,8 @@
 {
-  "run_id": "43760505088",
-  "run_url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088",
-  "job_url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088/job/132954018035",
-  "suite_source_revision": "db03ff839d2f6489f4ce1bcd934aabec310981cf",
+  "run_id": "43765085173",
+  "run_url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43765085173",
+  "job_url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43765085173/job/132968266215",
+  "suite_source_revision": "313fd8628a6131eb7a0e44bdc0ed8ff418d40e27",
   "architecture": "arm64",
   "uname": "aarch64",
   "cases": {
@@ -34,7 +34,7 @@
         },
         "other_list": {
           "type": "NoSuchNamespaceError",
-          "message": "NoSuchNamespaceException: Namespace with name 'denied' does not exist in warehouse '9485f3d8-e13a-11f1-92cd-47dd55213bad'"
+          "message": "NoSuchNamespaceException: Namespace with name 'denied' does not exist in warehouse '5f1441e4-e141-11f1-bf81-8b1e83e92b2f'"
         },
         "other_read": {
           "type": "NoSuchTableError",
@@ -43,39 +43,39 @@
         "writes": {
           "create_namespace": {
             "type": "ForbiddenError",
-            "message": "WarehouseActionForbidden: Warehouse action `can_create_namespace` forbidden on warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+            "message": "WarehouseActionForbidden: Warehouse action `can_create_namespace` forbidden on warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
           },
           "create_table": {
             "type": "ForbiddenError",
-            "message": "NamespaceActionForbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+            "message": "NamespaceActionForbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
           },
           "append": {
             "type": "ForbiddenError",
-            "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+            "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
           },
           "overwrite": {
             "type": "ForbiddenError",
-            "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+            "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
           },
           "delete": {
             "type": "ForbiddenError",
-            "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+            "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
           },
           "commit": {
             "type": "ForbiddenError",
-            "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+            "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
           },
           "drop": {
             "type": "ForbiddenError",
-            "message": "TableActionForbidden: Table action `can_drop` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+            "message": "TableActionForbidden: Table action `can_drop` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
           },
           "rename": {
             "type": "ForbiddenError",
-            "message": "NamespaceActionForbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+            "message": "NamespaceActionForbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
           }
         }
       },
-      "seconds": 0.5703
+      "seconds": 0.5725
     },
     "C2": {
       "status": "pass",
@@ -97,14 +97,14 @@
           "message": "NoSuchTableException: Error getting tabular from catalog"
         }
       },
-      "seconds": 0.408
+      "seconds": 0.4494
     },
     "C3": {
       "status": "pass",
       "value": {
         "claims_alone_denied": {
           "type": "NoSuchNamespaceError",
-          "message": "NoSuchNamespaceException: Namespace with name 'bakeoff' does not exist in warehouse '9485f3d8-e13a-11f1-92cd-47dd55213bad'"
+          "message": "NoSuchNamespaceException: Namespace with name 'bakeoff' does not exist in warehouse '5f1441e4-e141-11f1-bf81-8b1e83e92b2f'"
         },
         "sync_added": {
           "source": "Rauthy admin API over verified TLS",
@@ -134,25 +134,25 @@
         },
         "old_token_denied": {
           "type": "NoSuchNamespaceError",
-          "message": "NoSuchNamespaceException: Namespace with name 'bakeoff' does not exist in warehouse '9485f3d8-e13a-11f1-92cd-47dd55213bad'"
+          "message": "NoSuchNamespaceException: Namespace with name 'bakeoff' does not exist in warehouse '5f1441e4-e141-11f1-bf81-8b1e83e92b2f'"
         },
         "boundary": "One-group explicit sync; no production reconciler or polling SLA"
       },
-      "seconds": 0.2764
+      "seconds": 0.3112
     },
     "C4": {
       "status": "pass",
       "value": {
-        "first_denial_seconds": 0.02767169000026115,
+        "first_denial_seconds": 0.029569115999947826,
         "samples": [
           {
-            "seconds_since_ack": 0.02767169000026115,
+            "seconds_since_ack": 0.029569115999947826,
             "status": 404
           }
         ],
         "scope": "Delete acknowledgment to first fresh REST denial; issued storage credentials excluded"
       },
-      "seconds": 0.089
+      "seconds": 0.1089
     },
     "C5": {
       "status": "pass",
@@ -185,39 +185,39 @@
             "writes": {
               "create_namespace": {
                 "type": "ForbiddenError",
-                "message": "WarehouseActionForbidden: Warehouse action `can_create_namespace` forbidden on warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+                "message": "WarehouseActionForbidden: Warehouse action `can_create_namespace` forbidden on warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
               },
               "create_table": {
                 "type": "ForbiddenError",
-                "message": "NamespaceActionForbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+                "message": "NamespaceActionForbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
               },
               "append": {
                 "type": "ForbiddenError",
-                "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+                "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
               },
               "overwrite": {
                 "type": "ForbiddenError",
-                "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+                "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
               },
               "delete": {
                 "type": "ForbiddenError",
-                "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+                "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
               },
               "commit": {
                 "type": "ForbiddenError",
-                "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+                "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
               },
               "drop": {
                 "type": "ForbiddenError",
-                "message": "TableActionForbidden: Table action `can_drop` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+                "message": "TableActionForbidden: Table action `can_drop` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
               },
               "rename": {
                 "type": "ForbiddenError",
-                "message": "NamespaceActionForbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+                "message": "NamespaceActionForbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`"
               }
             }
           },
-          "seconds": 0.363
+          "seconds": 0.4425
         },
         "trino": {
           "status": "pass",
@@ -263,16 +263,16 @@
                 }
               },
               "INSERT INTO iceberg.bakeoff.sample VALUES (3, 'forbidden')": {
-                "message": "Failed to commit the transaction during insert: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                "message": "Failed to commit the transaction during insert: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`",
                 "errorCode": 84148236,
                 "errorName": "ICEBERG_COMMIT_ERROR",
                 "errorType": "EXTERNAL",
                 "failureInfo": {
                   "type": "io.trino.spi.TrinoException",
-                  "message": "Failed to commit the transaction during insert: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                  "message": "Failed to commit the transaction during insert: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`",
                   "cause": {
                     "type": "org.apache.iceberg.exceptions.ForbiddenException",
-                    "message": "Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                    "message": "Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`",
                     "errorInfo": {
                       "code": 65536,
                       "name": "GENERIC_INTERNAL_ERROR",
@@ -287,16 +287,16 @@
                 }
               },
               "UPDATE iceberg.bakeoff.sample SET label='forbidden' WHERE id=1": {
-                "message": "Failed to commit the transaction during write: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                "message": "Failed to commit the transaction during write: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`",
                 "errorCode": 84148236,
                 "errorName": "ICEBERG_COMMIT_ERROR",
                 "errorType": "EXTERNAL",
                 "failureInfo": {
                   "type": "io.trino.spi.TrinoException",
-                  "message": "Failed to commit the transaction during write: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                  "message": "Failed to commit the transaction during write: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`",
                   "cause": {
                     "type": "org.apache.iceberg.exceptions.ForbiddenException",
-                    "message": "Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                    "message": "Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`",
                     "errorInfo": {
                       "code": 65536,
                       "name": "GENERIC_INTERNAL_ERROR",
@@ -311,16 +311,16 @@
                 }
               },
               "DELETE FROM iceberg.bakeoff.sample WHERE id=1": {
-                "message": "Failed to commit the transaction during write: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                "message": "Failed to commit the transaction during write: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`",
                 "errorCode": 84148236,
                 "errorName": "ICEBERG_COMMIT_ERROR",
                 "errorType": "EXTERNAL",
                 "failureInfo": {
                   "type": "io.trino.spi.TrinoException",
-                  "message": "Failed to commit the transaction during write: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                  "message": "Failed to commit the transaction during write: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`",
                   "cause": {
                     "type": "org.apache.iceberg.exceptions.ForbiddenException",
-                    "message": "Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                    "message": "Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`",
                     "errorInfo": {
                       "code": 65536,
                       "name": "GENERIC_INTERNAL_ERROR",
@@ -344,7 +344,7 @@
                   "message": "Failed to create transaction",
                   "cause": {
                     "type": "org.apache.iceberg.exceptions.ForbiddenException",
-                    "message": "Forbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                    "message": "Forbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`",
                     "errorInfo": {
                       "code": 65536,
                       "name": "GENERIC_INTERNAL_ERROR",
@@ -368,7 +368,7 @@
                   "message": "Failed to drop table 'sample'",
                   "cause": {
                     "type": "org.apache.iceberg.exceptions.ForbiddenException",
-                    "message": "Forbidden: Table action `can_drop` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                    "message": "Forbidden: Table action `can_drop` forbidden on table 'bakeoff.sample' in warehouse `5f1441e4-e141-11f1-bf81-8b1e83e92b2f`",
                     "errorInfo": {
                       "code": 65536,
                       "name": "GENERIC_INTERNAL_ERROR",
@@ -384,7 +384,7 @@
               }
             }
           },
-          "seconds": 18.7665
+          "seconds": 18.172
         },
         "sail": {
           "status": "pass",
@@ -422,10 +422,10 @@
               "DROP TABLE bakeoff.bakeoff.sample": "external error: Failed to drop table: response error: status code 403 Forbidden"
             }
           },
-          "seconds": 2.0748
+          "seconds": 1.6896
         }
       },
-      "seconds": 21.2134
+      "seconds": 20.3091
     },
     "C6": {
       "status": "pass",
@@ -457,7 +457,7 @@
         "sts_enabled": false,
         "scope": "Read grant, no STS keys with this profile; source scopes documented separately"
       },
-      "seconds": 0.0415
+      "seconds": 0.0478
     },
     "C7": {
       "status": "pass",
@@ -469,6 +469,7 @@
           "X-Forwarded-User": 404
         },
         "tokens": {
+          "reader_secret_cannot_mint_operator_token": 401,
           "altered_subject": 401,
           "wrong_signature": 401,
           "wrong_audience": 401,
@@ -503,7 +504,7 @@
         "recovered_allow": 200,
         "recovered_deny": 404
       },
-      "seconds": 94.2631
+      "seconds": 94.1666
     },
     "C8": {
       "status": "pass",
@@ -513,7 +514,7 @@
         "migration_repetitions": 2,
         "post_restart_and_migration_allow_deny": true
       },
-      "seconds": 2.2883
+      "seconds": 2.3079
     }
   },
   "builds": {
@@ -596,7 +597,7 @@
     "startup_tls": {
       "status": "pass",
       "value": {
-        "startup_seconds": 1.1055343500001982,
+        "startup_seconds": 1.1111637870001232,
         "image_bytes": 77244837,
         "image_id": "sha256:954e0a338e8b8cb50157ec6c4d9248d1c17695cc33f9d69b3c63b9e5fb76cd70",
         "http_tls": {

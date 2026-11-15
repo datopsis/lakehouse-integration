@@ -17,7 +17,7 @@ Plus. The planned own Cedar-based service is described in
 | C4 | Revoke an acknowledged grant, then poll fresh REST table loads for at most 30 seconds. Record every status and monotonic time from delete acknowledgement through first authorization denial. |
 | C5 | Trino 484 and PyIceberg 0.12.0 obtain client-credentials tokens; Sail 0.7.3 reads an externally obtained token file. Each reads exact allowed rows and is denied other-namespace reads and writes. All three subtests must pass. |
 | C6 | A denied load requesting vending returns 403/404 with no S3 keys/session token. Record the read-only response's configuration names. This profile has STS disabled; it must return no S3 keys. Document the source-level scope below. |
-| C7 | Bob’s token cannot obtain Alice’s access using identity headers or a changed JWT subject. Genuine expired and wrong-audience tokens and a token signed with a different key return 401. OpenFGA HTTP/gRPC cannot be reached from client network namespaces. Stop OpenFGA: an otherwise allowed load returns an explicit structured error without metadata/credentials, then recovers to allow/deny correctly when OpenFGA returns. |
+| C7 | Bob’s token cannot obtain Alice’s access using identity headers or a changed JWT subject. Read-only client credentials cannot mint an operator token by changing the client ID. Genuine expired and wrong-audience tokens and a token signed with a different key return 401. OpenFGA HTTP/gRPC cannot be reached from client network namespaces. Stop OpenFGA: an otherwise allowed load returns an explicit structured error without metadata/credentials, then recovers to allow/deny correctly when OpenFGA returns. |
 | C8 | OpenFGA restart preserves the complete tuple set and allow/deny decisions. Run both OpenFGA and Lakekeeper migrations twice; tuple sets and decisions remain intact. |
 
 Authorization denials accept only catalog 403/hidden-object 404 or their typed
@@ -68,7 +68,9 @@ The PyIceberg runner is trusted host-side fixture code; its network isolation
 probe uses a disposable container on the same client network.
 
 Human PKCE login, token acquisition and CA trust reuse the IdP helpers. The
-bootstrap operator has a separate machine subject; Lakekeeper trusts
+bootstrap operator has a separate machine subject and secret. Every OAuth client
+and each human has independent credentials; C7 requires the reader secret to
+fail with 401 when used to request an operator token. Lakekeeper trusts
 `lakekeeper,operator,expiry`. A separate short-lived `expiry` token is genuinely issued
 and accepted by `whoami`, then tested after expiry plus the verifier's 60-second
 clock allowance, with a fresh-token control. No expired token is fabricated.
@@ -78,9 +80,9 @@ dumps never become artifacts. Raw credential values are not recorded in C6.
 ## Native runtime evidence
 
 **PASS on both native architectures.**
-[Run 43760505088](https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088)
+[Run 43765085173](https://github.com/datopsis/lakehouse-integration/actions/runs/43765085173)
 completed successfully from suite commit
-`db03ff839d2f6489f4ce1bcd934aabec310981cf`. Both jobs' actual logs and sanitized
+`313fd8628a6131eb7a0e44bdc0ed8ff418d40e27`. Both jobs' actual logs and sanitized
 artifacts were read. All seven Datopsis images passed strict provenance on each
 CPU; the normalized OpenFGA model hash is identical. This is functional acceptance
 of the evaluation profile, not production/security qualification.
@@ -90,20 +92,21 @@ of the evaluation profile, not production/security qualification.
 | C1 | PASS | PASS |
 | C2 | PASS | PASS |
 | C3 | PASS | PASS |
-| C4 | PASS — 17.944 ms | PASS — 27.672 ms |
+| C4 | PASS — 37.759 ms | PASS — 29.569 ms |
 | C5 | PASS — all three clients | PASS — all three clients |
 | C6 | PASS | PASS |
 | C7 | PASS | PASS |
 | C8 | PASS | PASS |
 
-[native-amd64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088/job/132954018254
-[native-arm64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088/job/132954018035
+[native-amd64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43765085173/job/132968266388
+[native-arm64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43765085173/job/132968266215
 
 **Measured revocation:** first fresh REST denial after delete acknowledgement was
-**0.017943532 s on amd64** and **0.027671690 s on arm64**. Both returned 404 on the
+**0.037758712 s on amd64** and **0.029569116 s on arm64**. Both returned 404 on the
 first probe, within 30 seconds. These are single-run observations, not a
 multi-replica/cache SLA or revocation of previously issued storage credentials.
-Earlier runs measured 27.369/42.922 ms and 30.489/27.246 ms respectively.
+Earlier runs measured 17.944/27.672 ms, 27.369/42.922 ms and
+30.489/27.246 ms respectively.
 
 Permanent, sanitized evidence is retained in
 [native-amd64.json](authz-evidence/native-amd64.json) and
@@ -119,8 +122,9 @@ required write/other-namespace denials. Trino hid namespace B with the exact
 ForbiddenException causes. Authentication errors and unrelated missing objects
 cannot satisfy those write assertions.
 
-C7 returned **401** for the altered subject, different signing key, wrong
-audience and genuinely expired token, with positive controls before expiry and
+C7 returned **401** when the reader secret requested an operator token, and for
+the altered subject, different signing key, wrong audience and genuinely expired
+token, with positive controls before expiry and
 for a fresh token. Four identity headers could not give Bob Alice's access (404).
 Both OpenFGA API ports returned **ENETUNREACH** from each client network namespace.
 With OpenFGA stopped, both CPUs received structured **503 AuthorizationBackendError**
@@ -137,6 +141,12 @@ uses a real, unmapped `no-access` group for Bob, no grant/membership, and a
 successful `whoami` before impersonation probes. The empty-group edge is not
 fixed or claimed qualified. C3 proves removal denies the old, unexpired token;
 fresh no-group human tokens are outside the verified successful-token profile.
+
+The preceding complete pass
+[43760505088](https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088)
+predated the final separation of OAuth client secrets and human passwords. The
+final run above repeats every assertion with independent credentials and the
+additional cross-client credential rejection.
 
 Earlier failed harness attempts remain auditable:
 [43756784648](https://github.com/datopsis/lakehouse-integration/actions/runs/43756784648)

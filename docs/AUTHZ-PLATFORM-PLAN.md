@@ -110,11 +110,11 @@ prerequisite failures are BLOCKED and any missing or failed case blocks acceptan
 | C4 | Revocation denies fresh access within the suite's 30-second bound; report measured delay. |
 | C5 | Least-privilege Trino/PyIceberg client credentials and Sail external-token-file reads/denials. |
 | C6 | Denied users receive no storage credentials; record read-only vending and source scope. |
-| C7 | Identity spoofing and invalid tokens rejected, backend API isolated from clients, outage fails closed and recovery preserves decisions. |
+| C7 | Identity spoofing, cross-client credential reuse and invalid tokens rejected, backend API isolated from clients, outage fails closed and recovery preserves decisions. |
 | C8 | Restart retains grants; repeated Lakekeeper/backend migrations are safe. |
 
 The interim OpenFGA evaluation passed all eight cases natively on amd64 and arm64
-([actual run](https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088)).
+([actual run](https://github.com/datopsis/lakehouse-integration/actions/runs/43765085173)).
 This establishes a functional reference, not production/security qualification;
 the report retains the empty-group token and storage-scope limitations.
 

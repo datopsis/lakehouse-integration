@@ -11,7 +11,7 @@ Every owner decision, and every decision still pending, is recorded in
 - [x] Establish the permanent [C1–C8 backend acceptance suite](AUTHZ-EVALUATION.md)
   on both native architectures: hardened Rauthy, isolated OpenFGA/PostgreSQL, verified
   TLS and exact grant/deny/revoke/operations assertions. All eight cases passed on
-  amd64 and arm64; observed revocation was 17.94/27.67 ms. This evaluation leaves
+  amd64 and arm64; observed revocation was 37.76/29.57 ms. This evaluation leaves
   main integration authentication/pins and the Phase D static-key gap unchanged.
 - [ ] Phase C: OpenFGA as the interim backend (decided 2026-11-13); then the own
   authorization platform in [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md): spikes S1–S4,
