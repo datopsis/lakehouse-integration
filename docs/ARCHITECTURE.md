@@ -1,7 +1,7 @@
 # Architecture
 
-> **Phase A TLS is implemented; full CI qualification is pending:** see the
-> diagram below,
+> **Phase A's runtime fixture is qualified on both native architectures:** see
+> [run 43753536289 and its exact coverage](TLS-PLAN.md#step-7-evidence), the diagram below,
 > [Phase A TLS as built](#phase-a-tls-as-built) and [TLS-PLAN.md](TLS-PLAN.md).
 
 ![Datopsis lakehouse TLS architecture: services, verified TLS and mutual TLS connections, nginx-ubi TLS proxies for Lakekeeper and Sail, and the per-run test CA](diagrams/lakehouse-tls-architecture.svg)

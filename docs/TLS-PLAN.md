@@ -2,8 +2,8 @@
 
 ![Phase A TLS architecture as built](diagrams/lakehouse-tls-architecture.svg)
 
-> **Status (2026-11-15): step 7 awaits full green CI evidence.** The harness
-> exercises TLS on native amd64 and arm64 at the pins in
+> **Status (2026-11-15): the step 7 runtime fixture is qualified.** The complete
+> integration gate passes over TLS on native amd64 and arm64 at the pins in
 > [images.lock.json](../images.lock.json); see "Step 7 evidence" below and
 > [ARCHITECTURE.md](ARCHITECTURE.md#phase-a-tls-as-built). The design text below is
 > the original 2026-11-11 survey, kept for its sources; the owner decisions of
@@ -398,7 +398,7 @@ qualification/docs PR. All must retain their own security/provenance gates.
    architectures prove it. No engine/delegation bump or verification bypass.
    Return an upstream-support blocker if CA injection is unavailable.
    [Entrypoint][SA-entry], [dependency graph][SA-cargo-lock].
-7. **Implemented; qualification pending (2026-11-15).** **datopsis/lakehouse-integration** — after reviewed source commits are
+7. **Runtime fixture qualified (2026-11-15); exact coverage below.** **datopsis/lakehouse-integration** — after reviewed source commits are
    available, add the TLS harness and reviewed pin updates. New proxy dependency
    needs owner approval; use one image pin for both proxy instances. Implement
    the work below and retain the exact required `Integration` check. This is
@@ -507,11 +507,93 @@ qualifies the implemented TLS fixture.
 
 ## Step 7 evidence
 
-**Pending green evidence.** Fill in the run ID, both native job results, each
-TLS assertion row and the CI duration from the first fully green PR #17 run
-before merge. Until then, the status note above is a draft.
+[Run 43753536289](https://github.com/datopsis/lakehouse-integration/actions/runs/43753536289)
+passed at `807493f95fff7ca50799f8cc846af7a924123b99`. The required check remains
+exactly `Integration`, aggregating `Integration (amd64)` and `Integration (arm64)`.
+Both jobs ran natively (`x86_64` / `aarch64`), with identical assertions and all six
+pins in images.lock.json. The completed job logs and both sanitized artifacts were
+read; [retained evidence](tls-evidence/43753536289.json) records the source, pins,
+lock hashes, assertion results, negative rows and job timestamps. Its results-file
+SHA-256 values identify the corresponding sanitized artifacts. Private PKI and
+credentials are excluded. Actions artifacts expire after 14 days.
 
-## Risks, blockers, and decisions for the owner
+| Assertion | amd64 | arm64 |
+| --- | --- | --- |
+| Six builds and mandatory strict provenance | PASS | PASS |
+| T1–T12, T8 crash durability, T9 and encoding canaries over TLS | PASS | PASS |
+| Per-service secret/key isolation (`T7_secret_isolation`) | PASS | PASS |
+| Initial exposure (`TLS_exposure`) | PASS | PASS |
+| Exposure after T5 (`TLS_exposure_after_recreation`) | PASS | PASS |
+| Exposure after T8 (`TLS_exposure_after_crash`) | PASS | PASS |
+| Certificate matrix (`TLS_certificate_negatives`) | PASS: 88 rows, 38 refusals | PASS: 88 rows, 38 refusals |
+| SeaweedFS exact-outcome canaries (`TLS_seaweedfs_canaries` and Go client) | PASS | PASS |
+| Cleanup, redaction and sanitized upload | PASS | PASS |
+
+Each exposure pass checks eight network namespaces, 13 plaintext protocol probes,
+25 mTLS refusal cases, verified handshakes and old/backend port refusal from both
+the runner and a separate container. The inventory confirms the only TCP plaintext
+backends are 127.0.0.1:8182 and :9000 for Lakekeeper and 127.0.0.1:50052 for Sail.
+Both nginx-ubi proxies share only their application's network namespace.
+
+In the table below, **3/3** means wrong CA, correct-CN/wrong-SAN and expiry were
+refused, with valid controls immediately before/after each mutation. Every refusal
+has zero application requests and a certificate alert or a recorded client hang-up
+with the exact certificate-specific client diagnosis. SQLx uses its attributed
+PostgreSQL pre-authentication TLS log; the relay also records matching TCP SYN and
+FIN/RST headers when nginx's HTTP/2 close path emits no info-level message.
+
+| Real client → target | amd64 | arm64 |
+| --- | --- | --- |
+| Python ssl/urllib → catalog proxy | 3/3; controls PASS | 3/3; controls PASS |
+| PyIceberg REST → catalog proxy | 3/3; controls PASS | 3/3; controls PASS |
+| Trino Iceberg REST → catalog proxy | 3/3; controls PASS | 3/3; controls PASS |
+| Sail REST → catalog proxy | 3/3; controls PASS | 3/3; controls PASS |
+| PyArrow → S3 | 3/3; controls PASS | 3/3; controls PASS |
+| botocore → S3 | 3/3; controls PASS | 3/3; controls PASS |
+| Trino native S3 → S3 | 3/3; controls PASS | 3/3; controls PASS |
+| Sail object_store → S3 | 3/3; controls PASS | 3/3; controls PASS |
+| Lakekeeper S3 validation → S3 | 3/3; controls PASS | 3/3; controls PASS |
+| Python ssl/urllib → Trino HTTPS | 3/3; controls PASS | 3/3; controls PASS |
+| PySpark gRPC → Sail proxy | 3/3; controls PASS | 3/3; controls PASS |
+| Lakekeeper SQLx migration → PostgreSQL impostor | 3/3; TLS controls PASS, then expected authentication refusal | 3/3; TLS controls PASS, then expected authentication refusal |
+| SeaweedFS Go client → master impostor | Exact expected canary outcomes; real-cluster controls PASS | Exact expected canary outcomes; real-cluster controls PASS |
+
+The owner-accepted interim residual risk is a known SeaweedFS limitation, reported
+upstream. Its exact-outcome canaries passed; a changed outcome still blocks review.
+It is not a general claim that every SeaweedFS target identity is independently
+qualified by this run.
+
+Trino's wrong-SAN diagnosis was exactly
+`Certificate for <s3> doesn't match any of the subject alternative names: [wrong.invalid]`.
+PySpark's three cases used recorded transport hang-ups plus their exact gRPC
+verifier diagnoses. All SQLx mutations produced their exact certificate diagnosis
+and a connection-attributed PostgreSQL TLS EOF, with zero startup/authentication
+or query requests. Generic errors, timeouts, missing connection evidence and
+application requests still fail. Local checks passed all 41 unit tests, Ruff,
+formatting, Zizmor, YAML/XML parsing and LF checks.
+
+| Native job | Before TLS: run 43650176028 | This run | Change |
+| --- | --- | --- | --- |
+| amd64 | 8m09s | 22m35s | +14m26s |
+| arm64 | 8m17s | 23m46s | +15m29s |
+
+The per-job cap increased from **30 to 45 minutes**. These are Actions job
+start/end wall times, not queued time; the two jobs overlap. This comparison also
+includes changed pins/configuration and is not an isolated TLS performance
+benchmark. [Baseline run](https://github.com/datopsis/lakehouse-integration/actions/runs/43650176028).
+
+**Verification limits.** This records the implemented fixture and the exact
+edges above. The broader survey's reverse wrong-client-trust-bundle cases,
+additional alias/other-service server leaves, missing/malformed PKI input matrix,
+and additional per-role outbound impostor edges were not independently exercised
+here. SQLx serving pools and fsspec/aiobotocore have positive workload evidence,
+but no separate serving-pool or fsspec certificate-mutation edge. These cases
+are not claimed as passing evidence. Actual TLS STS AssumeRole is not exercised
+(`sts-enabled=false`); vending remains Phase D. The Sail long-stream reset canary
+is image-repository evidence and was not rerun here. Login/authorization,
+rotation/revocation/production PKI, host power loss and host loss are not qualified.
+
+## Historical survey risks and questions (superseded where decided)
 
 1. **Meaning of ALL:** accept a narrowly documented loopback/Unix-socket exception
    for proxy-backed processes, or require native TLS in Lakekeeper/Sail before
