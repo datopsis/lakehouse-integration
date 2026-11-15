@@ -16,18 +16,29 @@ def evaluate(catalog, operator, human, namespace, tuples):
     positive = http.request("GET", endpoint, headers={"Authorization": "Bearer " + operator})
     assert positive.status_code == 200, positive.text
     bob = provider.human(email="bob@idp.test")["access_token"]
-    assert decode(bob)[1]["sub"] != decode(human)[1]["sub"]
+    subjects = {"alice": decode(human)[1]["sub"], "bob": decode(bob)[1]["sub"]}
+    assert subjects["alice"] != subjects["bob"], subjects
+    http.json(
+        "POST",
+        catalog.base + "/management/v1/user",
+        headers={"Authorization": "Bearer " + bob},
+        statuses=(200, 201),
+        json={"update-if-exists": True},
+    )
+    bob_identity = http.json(
+        "GET", catalog.base + "/management/v1/whoami", headers={"Authorization": "Bearer " + bob}
+    )
+    assert bob_identity["id"] == "oidc~" + subjects["bob"], bob_identity
     tuples("user:oidc~" + decode(human)[1]["sub"], "select", namespace)
     user_endpoint = (
         catalog.base + f"/catalog/v1/{catalog.warehouse_id}/namespaces/bakeoff/tables/sample"
     )
-    assert (
-        http.request("GET", user_endpoint, headers={"Authorization": "Bearer " + human}).status_code
-        == 200
+    alice_response = http.request(
+        "GET", user_endpoint, headers={"Authorization": "Bearer " + human}
     )
-    assert http.request(
-        "GET", user_endpoint, headers={"Authorization": "Bearer " + bob}
-    ).status_code in (403, 404)
+    assert alice_response.status_code == 200, ("alice_positive", alice_response.status_code)
+    bob_response = http.request("GET", user_endpoint, headers={"Authorization": "Bearer " + bob})
+    assert bob_response.status_code in (403, 404), ("bob_denied", bob_response.status_code)
     identity = {}
     for header in ("X-Trino-User", "X-Iceberg-User", "X-User-Id", "X-Forwarded-User"):
         response = http.request(
@@ -117,7 +128,8 @@ def evaluate(catalog, operator, human, namespace, tuples):
         isolation[name] = statuses
     allowed = catalog.base + f"/catalog/v1/{catalog.warehouse_id}/namespaces/bakeoff/tables/sample"
     auth = {"Authorization": "Bearer " + provider.token()}
-    assert http.request("GET", allowed, headers=auth).status_code == 200
+    live = http.request("GET", allowed, headers=auth)
+    assert live.status_code == 200, ("before_backend_stop", live.status_code)
     run("docker", "stop", "-t", "10", "openfga")
     try:
         response = http.request("GET", allowed, headers=auth)

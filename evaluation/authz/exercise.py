@@ -3,6 +3,7 @@
 import os
 import platform
 import time
+import traceback
 
 from common import WORK, decode, run, save, wait
 from fixture import BACKEND_NETWORK, INPUTS, setup
@@ -27,7 +28,12 @@ def record(name, fn, required=False):
     try:
         result = {"status": "pass", "value": fn()}
     except Exception as exc:
-        result = {"status": "fail", "error_type": type(exc).__name__, "error": str(exc)}
+        result = {
+            "status": "fail",
+            "error_type": type(exc).__name__,
+            "error": str(exc),
+            "traceback": traceback.format_exc(),
+        }
     result["seconds"] = round(time.monotonic() - start, 4)
     RESULTS[name] = result
     save("results.json", RESULTS)
@@ -146,7 +152,7 @@ def evaluate(arch):
             table.append(pa.Table.from_pylist([{"id": 8}]))
         table_id = str(admin.load_table("single.one").metadata.table_uuid)
         # The same genuine human subject has only a single-table grant in this namespace.
-        tuples(human_id, "select", "table:" + table_id)
+        tuples(human_id, "select", "lakekeeper_table:" + table_id)
         assert reader.load_table("single.one").scan().to_arrow().to_pylist() == [{"id": 8}]
         try:
             listed = reader.list_tables("single")
@@ -179,7 +185,7 @@ def evaluate(arch):
         assert role_id, role
         role_obj = "role:" + role_id
         tuples(role_obj + "#assignee", "select", namespace)
-        negative = denial(lambda: catalog.read(catalog.pyiceberg(human)))
+        negative = denial(lambda: catalog.read(reader))
         user_url = provider.base + "/auth/v1/users/" + claims["sub"]
 
         def sync():
@@ -195,7 +201,7 @@ def evaluate(arch):
         removed = sync()
         assert not removed["member"]
         # Even the old, still-valid groups-bearing JWT must lose access after sync.
-        denied = denial(lambda: catalog.read(catalog.pyiceberg(human)))
+        denied = denial(lambda: catalog.read(reader))
         tuples(role_obj + "#assignee", "select", namespace, True)
         tuples(human_id, "select", namespace)
         return {

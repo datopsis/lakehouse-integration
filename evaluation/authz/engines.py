@@ -18,6 +18,8 @@ def trino(catalog):
     write(pem, (tls / "cert.pem").read_text() + run("sudo", "cat", tls / "key.pem"))
     run("sudo", "chown", "10001:0", pem)
     run("sudo", "chmod", "0400", pem)
+    with (directory / "node.properties").open("a") as output:
+        output.write("\nnode.internal-address=trino\n")
     config = (directory / "catalog/iceberg.properties").read_text()
     config = config.replace("http://catalog:8181/catalog", catalog.base + "/catalog")
     config = config.replace("warehouse=qualification", "warehouse=bakeoff").replace(
@@ -35,6 +37,9 @@ def trino(catalog):
         "coordinator=true\nnode-scheduler.include-coordinator=true\n"
         "http-server.http.enabled=false\nhttp-server.https.enabled=true\nhttp-server.https.port=8443\n"
         "http-server.https.keystore.path=/etc/trino/server.pem\ndiscovery.uri=https://trino:8443\n"
+        "internal-communication.https.required=true\n"
+        "internal-communication.https.keystore.path=/etc/trino/server.pem\n"
+        "internal-communication.https.truststore.path=/ca/ca.pem\n"
         f"internal-communication.shared-secret={secret()}\n"
         "query.max-memory=256MB\nquery.max-memory-per-node=256MB\nmemory.heap-headroom-per-node=256MB\n"
         "http-server.log.enabled=false\n",
@@ -72,6 +77,7 @@ def trino(catalog):
         mounts=[
             (directory, "/etc/trino"),
             (directory / "truststore.jks", "/opt/java/lib/security/jssecacerts"),
+            (provider.ca, "/ca/ca.pem"),
         ],
         extra=[
             "--memory=3g",

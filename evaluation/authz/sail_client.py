@@ -2,7 +2,7 @@
 
 import json
 
-from pyspark.errors import AnalysisException
+from pyspark.errors import PySparkException
 from pyspark.sql import SparkSession
 
 spark = SparkSession.builder.remote("sc://sail:50051/;use_ssl=true").getOrCreate()
@@ -25,7 +25,7 @@ try:
     ):
         try:
             spark.sql(query).collect()
-        except AnalysisException as exc:
+        except PySparkException as exc:
             message = str(exc)
             assert any(
                 s in message
