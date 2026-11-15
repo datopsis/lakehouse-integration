@@ -152,7 +152,7 @@ def evaluate(arch):
             table.append(pa.Table.from_pylist([{"id": 8}]))
         table_id = str(admin.load_table("single.one").metadata.table_uuid)
         # The same genuine human subject has only a single-table grant in this namespace.
-        tuples(human_id, "select", "lakekeeper_table:" + table_id)
+        tuples(human_id, "select", f"lakekeeper_table:{catalog.warehouse_id}/{table_id}")
         assert reader.load_table("single.one").scan().to_arrow().to_pylist() == [{"id": 8}]
         try:
             listed = reader.list_tables("single")
@@ -275,11 +275,11 @@ def evaluate(arch):
             "X-Iceberg-Access-Delegation": "vended-credentials",
         }
         denied = http.request("GET", base + "denied/tables/sample", headers=auth)
-        assert denied.status_code in (403, 404), (denied.status_code, denied.text)
+        assert denied.status_code in (403, 404), {"denied_http_status": denied.status_code}
         assert not any(
             k in denied.text
             for k in ("s3.access-key-id", "s3.secret-access-key", "s3.session-token")
-        ), denied.text
+        ), "Denied response contains S3 credential fields"
         allowed = http.json("GET", base + "bakeoff/tables/sample", headers=auth)
         config = allowed.get("config", {})
         credential_blocks = allowed.get("storage-credentials", [])
@@ -287,7 +287,7 @@ def evaluate(arch):
             assert not any(
                 k in block.get("config", {})
                 for k in ("s3.access-key-id", "s3.secret-access-key", "s3.session-token")
-            ), block
+            ), sorted(block.get("config", {}))
         # Phase C retains sts-enabled=false. Record exactly the config names, never key material.
         assert not any(
             k in config for k in ("s3.access-key-id", "s3.secret-access-key", "s3.session-token")

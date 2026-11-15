@@ -85,7 +85,7 @@ def trino(catalog):
             "--tmpfs",
             "/var/lib/trino:uid=10001,gid=0,size=512m",
             "--tmpfs",
-            "/tmp/trino:uid=10001,gid=0,size=256m",
+            "/tmp/trino:rw,exec,nosuid,nodev,uid=10001,gid=0,size=256m",
         ],
     )
     http = HTTPS(provider.ca)
@@ -112,10 +112,10 @@ def trino(catalog):
                 return {"rows": rows}
             page = http.json("GET", page["nextUri"])
 
-    assert sql("SHOW TABLES FROM iceberg.bakeoff") == {"rows": [["sample"]]}
-    assert sql("SELECT * FROM iceberg.bakeoff.sample ORDER BY id") == {
-        "rows": [[r["id"], r["label"]] for r in ROWS]
-    }
+    listed = sql("SHOW TABLES FROM iceberg.bakeoff")
+    assert listed == {"rows": [["sample"]]}, listed
+    selected = sql("SELECT * FROM iceberg.bakeoff.sample ORDER BY id")
+    assert selected == {"rows": [[r["id"], r["label"]] for r in ROWS]}, selected
     negatives = {}
     for statement in (
         "SELECT * FROM iceberg.denied.sample",
