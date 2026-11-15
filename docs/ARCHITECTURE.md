@@ -168,11 +168,13 @@ without imposing Trino's snapshot sequence on Sail. Sail also reads Trino's
 mutated files with the adopted delta-length encoding setting. The separate
 default-encoding canary stays mandatory. T5 checks Sail's new container ID,
 rereads all four tables and verifies a new Sail write with both other clients.
-Sail's own unauthenticated remote-listener opt-out is another private-test gap.
+Spark Connect itself stays unauthenticated (Phase B) but now binds only loopback;
+the TLS proxy is its only network listener.
 
 T8 follows T5 on the same private fixture. It creates a dedicated Iceberg v2 /
 Parquet table and journals three successful 16-row INSERTs on the runner. One
-`docker kill --signal=KILL` invocation targets all eight service IDs; every target
+`docker kill --signal=KILL` invocation targets all ten container IDs (eight services
+and both proxies); every target
 must stop with exit code 137. `compose start` reuses the same containers and named
 volumes. Both Trino and a fresh PyIceberg process must read all 48 exact rows and
 exactly four append snapshots (one empty CREATE plus three INSERTs) with matching IDs and parents.
@@ -182,6 +184,7 @@ Next, separate tables exercise PostgreSQL, Lakekeeper (`catalog`), SeaweedFS
 unique batch ID and 16 deterministic rows. After at least two acknowledgements,
 the injector polls Trino query state independently of the writer until it
 observes RUNNING, then kills and starts that component while the loop continues.
+Lakekeeper is killed together with its proxy: they share one network namespace.
 Polling query state avoids missing short queries between statement response
 pages. This targets an active workload, not a guaranteed storage-instruction
 boundary. Even if the server finishes before the signal arrives, every client

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1720" height="1490" viewBox="0 0 1720 1490" font-family="'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
-  <title>Datopsis lakehouse: Phase A TLS architecture (target design)</title>
-  <desc>Services, TLS connections, trust anchors and the role of nginx-ubi TLS proxies in the lakehouse integration test. Source: docs/TLS-PLAN.md.</desc>
+  <title>Datopsis lakehouse: Phase A TLS architecture (as built, verified)</title>
+  <desc>Services, TLS connections, trust anchors and the role of nginx-ubi TLS proxies in the lakehouse integration test, as built and verified on amd64 and arm64. Source: docs/ARCHITECTURE.md.</desc>
   <defs>
     <linearGradient id="hdr" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="#0f2742"/>
@@ -36,9 +36,9 @@
   <!-- Header -->
   <rect width="1720" height="92" fill="url(#hdr)"/>
   <text x="40" y="44" font-size="26" font-weight="700" fill="#ffffff">Datopsis lakehouse · TLS architecture (Phase A)</text>
-  <text x="40" y="72" font-size="14" fill="#c8d8ec">Trino, Sail and PyIceberg on Iceberg tables via Lakekeeper · metadata in PostgreSQL · data in SeaweedFS · source of truth: docs/TLS-PLAN.md</text>
-  <rect x="1352" y="28" width="330" height="36" rx="18" fill="#f2a900"/>
-  <text x="1517" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#2b1d00">TARGET · integration step 7 not run</text>
+  <text x="40" y="72" font-size="14" fill="#c8d8ec">Trino, Sail and PyIceberg on Iceberg tables via Lakekeeper · metadata in PostgreSQL · data in SeaweedFS · as built: docs/ARCHITECTURE.md</text>
+  <rect x="1352" y="28" width="330" height="36" rx="18" fill="#1b8a3a"/>
+  <text x="1517" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">AS BUILT · verified amd64 + arm64</text>
 
   <!-- ===== Runner panel ===== -->
   <rect x="40" y="128" width="290" height="640" rx="12" fill="#f4f5f7" stroke="#9aa5b1" stroke-width="1.5"/>
@@ -238,24 +238,24 @@
 
   <!-- ===== Notes ===== -->
   <rect x="820" y="1110" width="860" height="196" rx="12" fill="#fffaf2" stroke="#e3c48a"/>
-  <text x="840" y="1138" class="zone" fill="#8a5600">WHAT THIS DESIGN DOES AND DOES NOT DO</text>
+  <text x="840" y="1138" class="zone" fill="#8a5600">WHAT THIS BUILD DOES AND DOES NOT DO</text>
   <text x="840" y="1164" class="t2">① Approved by owner 2026-11-12: plaintext only over 127.0.0.1 inside one network namespace.</text>
   <text x="840" y="1184" class="t2">② Encryption only. Lakekeeper login and table permissions come in Phases B and C.</text>
   <text x="840" y="1204" class="t2">③ Engines still hold bucket-wide static S3 keys. Phase D replaces them with per-table keys</text>
   <text x="858" y="1222" class="t2">vended through SeaweedFS STS over https://s3:8333.</text>
-  <text x="840" y="1242" class="t2">④ Open gap: SeaweedFS checks peer names against an allowlist, not the dialled host.</text>
-  <text x="858" y="1260" class="t2">Tests for wrong-SAN and swapped role certificates must stay mandatory.</text>
+  <text x="840" y="1242" class="t2">④ A known SeaweedFS limitation, reported upstream: an interim S3 trust setting is an</text>
+  <text x="858" y="1260" class="t2">owner-accepted residual risk, guarded by exact-outcome canaries (seaweedfs-ubi PR #81).</text>
   <text x="840" y="1284" class="t3">Short-lived test certificates only: no rotation, revocation or production PKI is claimed.</text>
   <!-- Component evidence is separate from cross-service integration qualification. -->
   <rect x="40" y="1326" width="1640" height="140" rx="12" fill="#fafbfd" stroke="#c9d6e6"/>
-  <text x="60" y="1352" class="zone">COMPONENT QUALIFICATION · owner update 2026-11-13 · these revisions are evidence, not integration pins</text>
-  <text x="60" y="1378" class="t2">PostgreSQL: qualified · postgresql-lakekeeper-ubi 0ff367f</text>
-  <text x="60" y="1400" class="t2">nginx proxy: qualified · datopsis/nginx-ubi 9ef9e82</text>
-  <text x="60" y="1422" class="t2">Lakekeeper behind proxy: qualified · lakekeeper-ubi bbb975f</text>
-  <text x="650" y="1378" class="t2">Sail behind proxy: qualified · sail-ubi e96e068</text>
+  <text x="60" y="1352" class="zone">INTEGRATION STATUS · Phase A step 7 verified 2026-11-15 · integration pins (images.lock.json)</text>
+  <text x="60" y="1378" class="t2">PostgreSQL verify-full: verified · postgresql-lakekeeper-ubi 0ff367f</text>
+  <text x="60" y="1400" class="t2">nginx proxies (one pin): verified · nginx-ubi 9ef9e82</text>
+  <text x="60" y="1422" class="t2">Lakekeeper behind proxy: verified · lakekeeper-ubi baa196b</text>
+  <text x="650" y="1378" class="t2">Sail behind proxy: verified · sail-ubi e96e068</text>
   <text x="650" y="1400" class="t3">Slow large reads reset at ~80 s; a tested client</text>
   <text x="650" y="1420" class="t3">retry/reattach policy recovers (documented).</text>
-  <text x="1180" y="1378" class="t2">Trino: TLS in Iceberg draft trino-ubi 685ff5b</text>
-  <text x="1180" y="1400" class="t2">SeaweedFS internal gRPC mTLS: in progress</text>
-  <text x="60" y="1448" class="t3">Overall target only: Phase A step 7, the cross-service integration test, has not run.</text>
+  <text x="1180" y="1378" class="t2">Trino HTTPS: verified · trino-ubi 685ff5b (draft)</text>
+  <text x="1180" y="1400" class="t2">SeaweedFS HTTPS + gRPC mTLS: verified · 80bba40</text>
+  <text x="60" y="1448" class="t3">Every existing test plus cross-service TLS negatives pass on both native architectures. Login (Phase B), authorization (C) and vending (D) are not built.</text>
 </svg>

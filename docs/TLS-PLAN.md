@@ -1,8 +1,16 @@
 # Phase A: TLS design and service survey
 
-![Target TLS architecture](diagrams/lakehouse-tls-architecture.svg)
+![Phase A TLS architecture as built](diagrams/lakehouse-tls-architecture.svg)
 
-The diagram summarises this plan; where they differ, this document is authoritative.
+> **Status (2026-11-15): step 7 is done.** The whole integration test runs over
+> verified TLS on native amd64 and arm64 at the pins in
+> [images.lock.json](../images.lock.json); see "Step 7 evidence" below and
+> [ARCHITECTURE.md](ARCHITECTURE.md#phase-a-tls-as-built). The design text below is
+> the original 2026-11-11 survey, kept for its sources; the owner decisions of
+> 2026-11-12/13 in [DECISIONS.md](DECISIONS.md) settle its open questions.
+
+The diagram shows the as-built design; where this survey differs, the decision
+record and ARCHITECTURE.md describe what was built.
 
 Survey date: 2026-11-11. **Design only: no TLS has been implemented or runtime
 qualified by this PR.** The coordinator can dispatch the small image-repository
@@ -397,7 +405,7 @@ qualification/docs PR. All must retain their own security/provenance gates.
    architectures prove it. No engine/delegation bump or verification bypass.
    Return an upstream-support blocker if CA injection is unavailable.
    [Entrypoint][SA-entry], [dependency graph][SA-cargo-lock].
-7. **datopsis/lakehouse-integration** — after reviewed source commits are
+7. **Done (2026-11-15).** **datopsis/lakehouse-integration** — after reviewed source commits are
    available, add the TLS harness and reviewed pin updates. New proxy dependency
    needs owner approval; use one image pin for both proxy instances. Implement
    the work below and retain the exact required `Integration` check. This is
@@ -502,6 +510,12 @@ gates plus the complete per-edge TLS manifest; no missing/"not supported" TLS
 negative becomes a green exemption. Preserve raw local diagnostics for debugging
 under the current boundary, upload only redacted evidence. This docs PR's green
 `Integration` would validate the **existing plaintext fixture**, not Phase A TLS.
+
+## Step 7 evidence
+
+**Pending green evidence.** Fill in the run ID, both native job results, each
+TLS assertion row and the CI duration from the first fully green PR #17 run
+before merge. Until then, the status note above is a draft.
 
 ## Risks, blockers, and decisions for the owner
 
