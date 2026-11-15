@@ -8,6 +8,9 @@ require review and exact labels, with no allowances.
 Every owner decision, and every decision still pending, is recorded in
 [DECISIONS.md](DECISIONS.md). Check it before starting new work.
 
+- [ ] Establish the permanent [C1–C8 backend acceptance suite](AUTHZ-EVALUATION.md)
+  on both native architectures: hardened Rauthy, isolated OpenFGA/PostgreSQL, verified
+  TLS and exact grant/deny/revoke/operations assertions. Runtime evidence is pending.
 - [ ] Phase C: OpenFGA as the interim backend (decided 2026-11-13); then the own
   authorization platform in [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md): spikes S1–S4,
   an MVP, Phase D integration, then the catalogued future capabilities. Update the
@@ -29,8 +32,7 @@ Every owner decision, and every decision still pending, is recorded in
   The [Phase B identity diagram](diagrams/lakehouse-identity-architecture.svg) shows
   human PKCE login, machine tokens, Sail's external token file, and Lakekeeper JWT
   validation over verified TLS, with PostgreSQL as Rauthy's target storage.
-  Groups are carried for future authorization; Phase C (OpenFGA or Cedar,
-  undecided) and Phase D (SeaweedFS STS credential vending) are marked not built.
+  Groups are carried for future authorization; Phase C (interim OpenFGA, then the planned Cedar service) and Phase D (SeaweedFS STS credential vending) are marked not built.
 - OpenID login for Lakekeeper **with authorization**, plus authenticated Trino access.
   Prerequisite decision: while engines hold bucket-wide static S3 keys, catalog
   permissions do not protect data (see "How each engine gets S3 access" in

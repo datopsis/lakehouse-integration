@@ -32,8 +32,7 @@ jobs:
 
           class DiagramTests(unittest.TestCase):
               def test_architecture_svgs(self):
-                  for phase in ("tls", "identity"):
-                      path = Path(f"docs/diagrams/lakehouse-{phase}-architecture.svg")
+                  for path in Path("docs/diagrams").glob("*.svg"):
                       with self.subTest(path=path):
                           data = path.read_bytes()
                           self.assertNotIn(b"\r", data)
@@ -52,15 +51,17 @@ jobs:
           # librsvg versions omit. Use the browser supplied by the hosted runner.
           google-chrome --version
           mkdir -p diagram-previews
-          for phase in tls identity; do
+          for phase in tls identity authorization; do
             height=1330
             if [ "$phase" = tls ]; then height=1490; fi
+            source="docs/diagrams/lakehouse-${phase}-architecture.svg"
+            if [ "$phase" = authorization ]; then source=docs/diagrams/lakehouse-authorization-evaluation.svg; fi
             profile=$(mktemp -d)
             google-chrome --headless --disable-gpu --no-sandbox \
               --disable-dev-shm-usage --hide-scrollbars --force-device-scale-factor=1 \
               --user-data-dir="$profile" --window-size="1720,$height" \
               --screenshot="$PWD/diagram-previews/lakehouse-${phase}-architecture.png" \
-              "file://$PWD/docs/diagrams/lakehouse-${phase}-architecture.svg"
+              "file://$PWD/$source"
             rm -rf "$profile"
           done
       - name: Upload PNG review artifacts

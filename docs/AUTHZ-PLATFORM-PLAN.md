@@ -95,6 +95,30 @@ Components, each its own small repo and hardened image:
 - **C3 Phase D:** vending gated by decisions; table-scoped STS session policies; static engine keys removed; storage tests proving cross-table access is impossible.
 - **C4 Extensions:** row filters and column masks in Trino, ClickHouse, a management API or UI, and multi-tenancy.
 
+## 5a. Mandatory backend acceptance suite
+
+The evaluation's **C1–C8** IDs are permanent acceptance tests for OpenFGA and every
+future backend, including our Cedar service. They are distinct from the phase
+names C0/C1/C2 above. Run identical assertions natively on amd64 and arm64;
+prerequisite failures are BLOCKED and any missing or failed case blocks acceptance.
+
+| ID | Required acceptance behavior |
+| --- | --- |
+| C1 | Namespace read grants allow exact table list/read, deny namespace B and writes. |
+| C2 | Namespace inheritance covers tables; single-table grants do not expose siblings. |
+| C3 | Unmapped Rauthy groups alone grant nothing; explicit mapping grants access and removal revokes it. OpenFGA uses the demonstrated membership sync; a future verified-claim adapter must preserve equivalent controls. |
+| C4 | Revocation denies fresh access within the suite's 30-second bound; report measured delay. |
+| C5 | Least-privilege Trino/PyIceberg client credentials and Sail external-token-file reads/denials. |
+| C6 | Denied users receive no storage credentials; record read-only vending and source scope. |
+| C7 | Identity spoofing and invalid tokens rejected, backend API isolated from clients, outage fails closed and recovery preserves decisions. |
+| C8 | Restart retains grants; repeated Lakekeeper/backend migrations are safe. |
+
+The [acceptance report](AUTHZ-EVALUATION.md) defines exact assertions, pinned inputs,
+per-architecture run links and limitations. Its
+[Phase C evaluation view](diagrams/lakehouse-authorization-evaluation.svg) records
+added components. The evaluation is manual-only and separate from `Integration`;
+passing C1–C8 does not itself remove Phase D's static-storage-key gap.
+
 ## 6. Risks and how we contain them
 
 - **Owning a security-critical component.** Keep it small, embed a formally specified engine, require adversarial tests, and have the PoCs and tests for this work done by a local Claude Code child, since Codex refuses adversarial work.

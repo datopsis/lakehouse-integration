@@ -1,17 +1,23 @@
-name: Authorization backend evaluation
+name: Identity provider bake-off
 on:
   workflow_dispatch:
+    inputs:
+      suite:
+        description: Manual evaluation suite
+        type: choice
+        options: [identity, authorization]
+        default: identity
 permissions:
   contents: read
 concurrency:
-  group: authz-evaluation-${{ github.ref }}
+  group: evaluation-${{ inputs.suite }}-${{ github.ref }}
   cancel-in-progress: false
 defaults:
   run:
     shell: bash
 jobs:
   evaluate:
-    name: Authorization evaluation (${{ matrix.arch }})
+    name: ${{ inputs.suite }} evaluation (${{ matrix.arch }})
     strategy:
       fail-fast: false
       matrix:
@@ -25,6 +31,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 120
     env:
+      EVALUATION_DIR: ${{ inputs.suite == 'authorization' && 'evaluation/authz' || 'evaluation/idp' }}
       INTEGRATION_ARCH: ${{ matrix.arch }}
       EXPECTED_MACHINE: ${{ matrix.machine }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -41,36 +48,40 @@ jobs:
           sudo apt-get install -y rpm podman gnupg argon2
           python3 -m venv .venv
           .venv/bin/pip install --require-hashes -r requirements.txt
-          .venv/bin/ruff check evaluation/authz
-          .venv/bin/ruff format --check evaluation/authz
-          .venv/bin/python -m unittest discover -s evaluation/authz -p 'test_*.py' -v
-          .venv/bin/zizmor --offline --persona pedantic .github/workflows/authz-evaluation.yml
+          .venv/bin/ruff check "$EVALUATION_DIR"
+          .venv/bin/ruff format --check "$EVALUATION_DIR"
+          .venv/bin/python -m unittest discover -s "$EVALUATION_DIR" -p 'test_*.py' -v
+          .venv/bin/zizmor --offline --persona pedantic .github/workflows/idp-bakeoff.yml
       - name: Build pinned engines, storage and approved NGINX proxy with strict provenance
         id: build
         run: |
           set -euo pipefail
-          .venv/bin/python evaluation/authz/run.py build
-      - name: Identical TLS and authorization assertions
+          .venv/bin/python "$EVALUATION_DIR"/run.py build
+      - name: Identical TLS and identity assertions
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |
           set -euo pipefail
-          .venv/bin/python evaluation/authz/run.py
+          .venv/bin/python "$EVALUATION_DIR"/run.py
       - name: Trivy and Grype upstream-image evidence
         if: ${{ !cancelled() }}
         run: |
           set -euo pipefail
-          .venv/bin/python evaluation/authz/scans.py
+          .venv/bin/python "$EVALUATION_DIR"/scans.py
       - name: Remove disposable containers and redact evidence
         id: cleanup
         if: always()
         run: |
           set -euo pipefail
-          .venv/bin/python evaluation/authz/run.py cleanup
+          if [ "$EVALUATION_DIR" = evaluation/authz ]; then
+            .venv/bin/python evaluation/authz/run.py cleanup
+          else
+            .venv/bin/python evaluation/idp/common.py
+          fi
       - name: Retain only sanitized evidence
         if: ${{ !cancelled() && steps.cleanup.outcome == 'success' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: authz-evaluation-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: reports/authz/
+          name: ${{ inputs.suite }}-evaluation-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ inputs.suite == 'authorization' && 'reports/authz/' || 'reports/idp/' }}
           retention-days: 14
           if-no-files-found: error

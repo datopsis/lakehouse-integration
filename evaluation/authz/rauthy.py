@@ -52,6 +52,10 @@ class Rauthy(Provider):
         for client in clients:
             client["access_token_lifetime"] = 30 if client["id"] == "expiry" else 1800
         write(clients_path, clients)
+        users_path = self.path / "bootstrap/users.json"
+        users = json.loads(users_path.read_text())
+        users.append({**users[0], "email": "bob@idp.test", "given_name": "Bob", "groups": []})
+        write(users_path, users)
         api_keys = self.path / "bootstrap/api_keys.json"
         keys = json.loads(api_keys.read_text())
         keys[0]["access"] += [{"group": "Users", "access_rights": ["read", "update"]}]

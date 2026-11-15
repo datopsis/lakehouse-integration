@@ -1,10 +1,123 @@
-# Authorization backend evaluation (Phase C)
+# Authorization acceptance suite (Phase C)
 
-**Provisional recommendation: OpenFGA for this pinned open-source Lakekeeper.**
-Cedar is open source, but is not a drop-in backend for this binary. Neither choice
-is qualified by this preparation alone. Runtime results are being collected.
-Rauthy remains the selected OpenID provider; Keycloak is the Phase B fallback.
-Amazon Verified Permissions, a hosted service, is out of scope.
+The owner selected **OpenFGA as the interim backend on 2026-11-13**. This is an
+acceptance evaluation of that decision, not a new backend selection. Open-source
+Lakekeeper supports OpenFGA and AllowAll; its Cedar integration is paid Lakekeeper
+Plus. The planned own Cedar-based service is described in
+[AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md). Every future backend must pass
+**the same stable C1–C8 contract**, natively on amd64 and arm64.
+
+## Acceptance contract
+
+| ID | Exact required behavior |
+| --- | --- |
+| C1 | A namespace-A read grant lists and reads its exact table rows. Namespace B list/read and namespace/table creation, commit, drop and rename are denied. |
+| C2 | Namespace grants cover existing and newly created tables. A single-table grant reads only that table; listing does not expose its sibling and loading the sibling is denied. |
+| C3 | A genuine Rauthy access token containing `lake-readers` grants nothing by itself. A small sync reads authoritative Rauthy membership over verified TLS and maps it to a registered Lakekeeper role's OpenFGA assignee tuple. Addition allows exact reads; removal from Rauthy plus sync denies even the old, unexpired groups-bearing token. |
+| C4 | Revoke an acknowledged grant, then poll fresh REST table loads for at most 30 seconds. Record every status and monotonic time from delete acknowledgement through first authorization denial. |
+| C5 | Trino 484 and PyIceberg 0.12.0 obtain client-credentials tokens; Sail 0.7.3 reads an externally obtained token file. Each reads exact allowed rows and is denied other-namespace reads and writes. All three subtests must pass. |
+| C6 | A denied load requesting vending returns 403/404 with no S3 keys/session token. Record the read-only response's configuration names. This profile has STS disabled; it must return no S3 keys. Document the source-level scope below. |
+| C7 | Bob’s token cannot obtain Alice’s access using identity headers or a changed JWT subject. Genuine expired and wrong-audience tokens and a token signed with a different key return 401. OpenFGA HTTP/gRPC cannot be reached from client network namespaces. Stop OpenFGA: an otherwise allowed load returns an explicit structured error without metadata/credentials, then recovers to allow/deny correctly when OpenFGA returns. |
+| C8 | OpenFGA restart preserves the complete tuple set and allow/deny decisions. Run both OpenFGA and Lakekeeper migrations twice; tuple sets and decisions remain intact. |
+
+Authorization denials accept only catalog 403/hidden-object 404 or their typed
+client equivalents. Authentication errors, TLS errors, arbitrary exceptions and
+timeouts cannot satisfy an authorization denial. The intentionally stopped-backend
+case separately requires a structured Lakekeeper error (403/500/503); a proxy
+error or timeout does not pass. Prerequisite failures are **BLOCKED**, never PASS.
+Every C test is mandatory; C5 retains per-client results when one client fails.
+
+## Evaluation-only setup
+
+The manual [workflow](../.github/workflows/authz-evaluation.yml) has only
+`contents: read`, native `ubuntu-24.04` and `ubuntu-24.04-arm` runners, fail-fast
+disabled and identical assertions. It is separate from the required `Integration`
+check; `images.lock.json`, `integration/*` and their pins are unchanged.
+Until GitHub registers the new workflow on main, the already registered
+`idp-bakeoff.yml` offers an explicit `authorization` dispatch choice; its default
+still runs the identity bake-off.
+
+```bash
+gh workflow run idp-bakeoff.yml --ref room/lakehouse-integration-authorization-back-jgzm -f suite=authorization
+```
+
+| Input | Evaluation pin / provenance |
+| --- | --- |
+| OpenFGA | Official 1.22.1 multi-platform digest `docker.io/openfga/openfga@sha256:b852071314f1fda1194d341a6ebac0a4f619b3cd87a6626d2ccc7048af4ec671`; native architecture asserted |
+| Rauthy | `datopsis/rauthy-ubi` `1e114b84b01988bf15306b110b040378878488d3`; unchanged `scripts/build.sh`, architecture-specific artifact lock and strict revision/lock-hash labels |
+| nginx | `datopsis/nginx-ubi` `9ef9e822c6b5e508cebef2adff3bb647a206773c`; owner build, strict provenance; unchanged Lakekeeper and Sail profiles |
+| Catalog, storage, engines, PostgreSQL | Owner builds from unchanged `images.lock.json`, strict provenance for every image including Sail's paired locks |
+
+![Phase C evaluation topology](diagrams/lakehouse-authorization-evaluation.svg)
+
+A fresh per-run CA verifies Rauthy, catalog and engine HTTPS, S3 and SeaweedFS
+control HTTP/mTLS gRPC, OpenFGA HTTP/gRPC and PostgreSQL (`verify-full`). Rauthy's
+unmodified hardened launcher uses PostgreSQL, mounted secrets and verified TLS;
+its Hiqlite cluster cache also uses TLS. Plaintext is confined to the approved
+loopback proxy hops inside shared Lakekeeper/Sail network namespaces and local
+PostgreSQL administration sockets. No ports are published.
+
+OpenFGA has **its own PostgreSQL container**, database and login. Its private
+backend network admits only OpenFGA, that database and Lakekeeper's shared proxy
+namespace. Client containers have no backend-network attachment. C7 probes both
+OpenFGA ports by IP from each client network namespace, avoiding a DNS-only test.
+The PyIceberg runner is trusted host-side fixture code; its network isolation
+probe uses a disposable container on the same client network.
+
+Human PKCE login, token acquisition and CA trust reuse the IdP helpers. The
+bootstrap operator has a separate machine subject; Lakekeeper trusts
+`lakekeeper,operator,expiry`. A separate short-lived `expiry` token is genuinely issued
+and accepted by `whoami`, then tested after expiry plus the verifier's 60-second
+clock allowance, with a fresh-token control. No expired token is fabricated.
+Only sanitized allowlisted reports are uploaded; secrets, private keys and SQL
+dumps never become artifacts. Raw credential values are not recorded in C6.
+
+## Native runtime evidence
+
+Execution underway; no runtime pass is asserted yet. Results will link the actual
+native jobs, with PASS / FAIL / BLOCKED kept distinct.
+
+| Test | amd64 | arm64 |
+| --- | --- | --- |
+| C1 | Pending | Pending |
+| C2 | Pending | Pending |
+| C3 | Pending | Pending |
+| C4 | Pending | Pending |
+| C5 | Pending | Pending |
+| C6 | Pending | Pending |
+| C7 | Pending | Pending |
+| C8 | Pending | Pending |
+
+Revocation delay: not measured yet. First dispatched run:
+[43744339236](https://github.com/datopsis/lakehouse-integration/actions/runs/43744339236).
+Artifacts retain sanitized `builds.json`, `results.json`, the exact OpenFGA model,
+service logs and information-only OpenFGA Trivy/Grype reports for 14 days.
+Scanner execution failures remain failures, not zero findings.
+
+## Phase D: source boundary and optional probe
+
+The pinned [`load_table`](https://github.com/lakekeeper/lakekeeper/blob/9bd377162345b64a716f0a4fcffe4e7e7f3c7534/crates/lakekeeper/src/server/tables/load_table.rs)
+authorizes the request before fetching storage secrets and calling
+`generate_table_config`. The
+[authorization result](https://github.com/lakekeeper/lakekeeper/blob/9bd377162345b64a716f0a4fcffe4e7e7f3c7534/crates/lakekeeper/src/server/tables.rs)
+maps write permission to `ReadWriteDelete`, read permission to `Read`, and
+metadata-only access to no storage permission. Thus **the authorization decision
+gates credential vending and its requested scope**, not merely table visibility.
+
+The [S3 implementation](https://github.com/lakekeeper/lakekeeper/blob/9bd377162345b64a716f0a4fcffe4e7e7f3c7534/crates/lakekeeper/src/service/storage/s3.rs)
+constructs an inline STS policy using the table location and those storage
+permissions, calls `AssumeRole`, and returns temporary keys/session token with
+expiry. It caches temporary credentials. Revoking a catalog grant blocks later
+catalog authorization; it does **not** invalidate credentials already issued or
+data already fetched. Storage must enforce the inline policy and TTL.
+
+
+C6 records the read-only response under the current `sts-enabled=false` profile:
+no temporary S3 keys are expected. It does not qualify SeaweedFS STS or prove
+storage isolation. Static engine keys remain an explicit Phase D gap; catalog
+authorization cannot prevent a client using those keys to read S3 directly.
+The retained `phase_d.py` is an optional diagnostic from the preparation draft;
+it is not called by this acceptance suite and has no runtime qualification claim.
 
 ## What the pin actually supports
 
@@ -63,168 +176,18 @@ A Trino-only plugin cannot protect clients that reach Lakekeeper directly. A
 reverse proxy alone cannot infer all Iceberg actions, filter list responses or
 safely scope credentials; it needs application-aware integration.
 
-## Inputs and transport
 
-The evaluation-only [input manifest](../evaluation/authz/inputs.json) never feeds
-`images.lock.json` or `integration/build.py`.
+## Limits and future backends
 
-| Component | Exact input |
-| --- | --- |
-| OpenFGA | Official `docker.io/openfga/openfga@sha256:b852071314f1fda1194d341a6ebac0a4f619b3cd87a6626d2ccc7048af4ec671` (1.22.1, both native platforms) |
-| Cedar CLI amd64 | Official 4.14.1 `x86_64-unknown-linux-gnu` archive; SHA-256 `5833e9f4734eac0d95b3dab7ae119a9212caf0a82e02720b989e2fce6f3bfdad` |
-| Cedar CLI arm64 | Official 4.14.1 `aarch64-unknown-linux-gnu` archive; SHA-256 `499cfb6a6a7eab28ceca7b24215525a2d107fbf3faca759318a253d485b7d346` |
-| Rauthy | Existing bake-off 0.37.2 upstream digest `sha256:d733b7580f53c1601c286b5504853b2774e70245f5f9427d9bcda32496b753ee` |
-| nginx-ubi | `9ef9e822c6b5e508cebef2adff3bb647a206773c`, native owner build and strict provenance |
-| Lakekeeper / PostgreSQL / SeaweedFS / Trino | Existing unchanged repository pins and owner builds; no authorization hardening images created |
+This suite establishes a reusable catalog acceptance contract. It does not qualify
+production HA, multi-replica cache bounds, load, backups/restored-service decisions,
+policy upgrades, Trino end-user propagation, Spark Connect user authentication,
+Cedar enforcement, STS isolation or already-issued storage credential revocation.
+C3 is a one-group sync demonstration, not a production reconciler or polling SLA.
+C4 measures one run per CPU and does not infer a distributed revocation guarantee.
+Sail still requires an external token lifecycle component.
 
-The [workflow](../.github/workflows/authz-evaluation.yml) is `workflow_dispatch`
-only, with native `ubuntu-24.04` and `ubuntu-24.04-arm` runners and identical
-assertions. It has read-only permissions and no dependency relationship with the
-required `Integration` check. There is no QEMU or architecture-specific waiver.
-
-The fixture generates a fresh CA and secrets on each runner. Rauthy (including
-Hiqlite), OpenFGA HTTP/gRPC, PostgreSQL connections (`verify-full`), SeaweedFS HTTP
-and mTLS gRPC, Trino HTTPS, and client calls use verified TLS. Lakekeeper uses the
-unchanged nginx-ubi Lakekeeper profile and the already approved
-`127.0.0.1:8182` plaintext hop inside the shared network namespace. This is the
-only intentional plaintext TCP exception; local PostgreSQL administrative Unix
-sockets do not cross the network. No listener is published to the host.
-
-Rauthy provisioning and authorization-code/S256 PKCE login reuse the bake-off
-implementation. The bootstrap operator has a separate machine subject and token
-audience; Lakekeeper explicitly trusts `lakekeeper,operator`. The reader machine
-uses `lakekeeper`; the human has `lake-readers` in the access token. The fixture
-creates `bakeoff.sample` and `denied.sample`, each with exact rows
-`[{"id":1,"label":"alpha"},{"id":2,"label":"beta"}]`.
-
-First, a role receives `select` on `bakeoff` with **no stored user membership**.
-That tests the actual token-claim requirement. An explicit OpenFGA assignee tuple
-is a separately labeled workaround, never a group-claim pass. Subsequent direct
-user and machine grants test positive reads, namespace denials, write denials and
-revocation. A denial must be an authorization/hidden-resource result; expired
-credentials, timeouts and arbitrary exceptions cannot count as successful denials.
-
-Cedar's diagnostic uses the genuine human JWT, accepted by Lakekeeper's OIDC
-verifier through `whoami`, before mapping its claims into Cedar entities. It tests
-list/read allow, other-namespace/write deny, and policy removal. It does not
-substitute decoded claims for signature verification, and it does not claim that
-the standalone decision enforces catalog access.
-
-Only sanitized JSON/logs are uploaded. Keys, client secrets, bearer tokens, STS
-credentials, environment files and database dumps are excluded. Scanner JSON is
-information-only; a scanner failure is unknown, never zero vulnerabilities.
-
-## Native runtime evidence
-
-Pending native execution. No authorization pass/fail result is asserted yet.
-The final table will distinguish PASS, FAIL, BLOCKED and N/T (not tested), with
-links to the exact native jobs. Cedar catalog/engine enforcement is N/A because
-there is no integration in the pin.
-
-## Phase D: source boundary and optional probe
-
-The pinned [`load_table`](https://github.com/lakekeeper/lakekeeper/blob/9bd377162345b64a716f0a4fcffe4e7e7f3c7534/crates/lakekeeper/src/server/tables/load_table.rs)
-authorizes the request before fetching storage secrets and calling
-`generate_table_config`. The
-[authorization result](https://github.com/lakekeeper/lakekeeper/blob/9bd377162345b64a716f0a4fcffe4e7e7f3c7534/crates/lakekeeper/src/server/tables.rs)
-maps write permission to `ReadWriteDelete`, read permission to `Read`, and
-metadata-only access to no storage permission. Thus **the authorization decision
-gates credential vending and its requested scope**, not merely table visibility.
-
-The [S3 implementation](https://github.com/lakekeeper/lakekeeper/blob/9bd377162345b64a716f0a4fcffe4e7e7f3c7534/crates/lakekeeper/src/service/storage/s3.rs)
-constructs an inline STS policy using the table location and those storage
-permissions, calls `AssumeRole`, and returns temporary keys/session token with
-expiry. It caches temporary credentials. Revoking a catalog grant blocks later
-catalog authorization; it does **not** invalidate credentials already issued or
-data already fetched. Storage must enforce the inline policy and TTL.
-
-The optional diagnostic uses only the pinned SeaweedFS image, an evaluation-only
-IAM role and a new `phase-d` warehouse. It first probes STS, then requests actual
-Lakekeeper vending, requires an own-table metadata read, denies another table's
-object and a write using the read-scoped credentials, and requires denied catalog
-loads to return no credentials. Failures remain visible; no image or main fixture
-is changed to make it work. Main evaluation clients retain static S3 keys, so the
-main read tests prove catalog enforcement, **not storage isolation**.
-
-## Operations and supply chain
-
-| Area | OpenFGA | Cedar library / application-owned agent |
-| --- | --- | --- |
-| Storage | PostgreSQL supported; fixture uses a dedicated DB/user. Production should isolate capacity from catalog DB. | No intrinsic DB; persist policy/schema/entity sources and versions in the integrating application. |
-| HA | Multiple service replicas with shared durable DB; database HA and cache consistency still need qualification. | Embedded engine follows host availability; an agent needs replicas and consistent policy/entity versions. |
-| Backup/restore | Restore both catalog and authorization state consistently. Fixture probes SQL dump/restore and tuple count only. | Back up policy/schema, entity source and application configuration; restoring just a policy file may lose memberships. |
-| Configuration as code | Pin Lakekeeper-managed model version, review tuple/grant provisioning and reconciliation. | Versioned Cedar policy/schema/entity fixtures; validate before atomic deployment and preserve rollback versions. |
-| Revocation | Measure delete acknowledgement to first denied fresh REST load; cache/load/replica effects are separate. | Local policy removal visible on next CLI process; no distributed-cache or engine integration claim. |
-| Memory/startup | Collected from native containers; no capacity recommendation inferred from a tiny fixture. | CLI invocation time/binary size only; not steady-state agent or embedded-library RSS. |
-| Dependency inventory | 152 `go.mod` required module entries at `44054f542f64e9b9589dd26a595081b3d2cfd942`. | 389 packages in workspace `Cargo.lock` at `47d82a8293354f235d3f8d092c71071706401741`. |
-| Upstream scanners | Pinned Trivy 0.76.2 and Grype 0.121.3 scan the exact upstream image on each CPU. | No official image used: image scan counts N/A. The CLI/library dependency graph still needs build-specific SBOM/scanning. |
-
-Dependency counts describe source declarations, including transitive/build/test
-packages; they are not a shipped-binary SBOM or an apples-to-apples size measure.
-OpenFGA's [production guidance](https://openfga.dev/docs/best-practices/running-in-production)
-recommends authenticated TLS, tuned pools and cache-aware deployment. Lakekeeper's
-[pinned reconcile guide](https://github.com/lakekeeper/lakekeeper/blob/9bd377162345b64a716f0a4fcffe4e7e7f3c7534/docs/docs/authorization-openfga.md#reconciling-openfga-against-the-catalog)
-says hierarchy can be reconstructed but grants, ownership and role assignments
-cannot. A catalog-only backup is insufficient.
-
-OpenFGA's [maintainer roster](https://github.com/openfga/community/blob/main/MAINTAINERS.md)
-is predominantly Okta, with Grafana Labs, Netlight and independent representation.
-Its recent releases are 1.19.0 (Aug 25), 1.20.0 (Sep 8), 1.21.0 (Sep 20), 1.22.0
-(Oct 6) and 1.22.1 (Oct 28), 2026: active development, not a promised SLA.
-Cedar is maintained in the [cedar-policy organization](https://github.com/cedar-policy/cedar)
-with public contribution/security processes. Active contributors include John Kastner
-(`john-h-kastner-aws`), Craig Disselkoen (`cdisselkoen`), and Shaobo He
-(`shaobo-he-aws`); contributor activity is not a formal support roster. Releases
-4.14.0 (Oct 17) and 4.14.1
-(Nov 2) show continuing library and CLI maintenance. Neither is a commercial
-support commitment. See the retained release/API inventory for exact dates.
-
-Both have security history. OpenFGA's
-[GHSA-h7w8-xr72-cv4r](https://github.com/openfga/openfga/security/advisories/GHSA-h7w8-xr72-cv4r)
-(API policy enforcement, fixed in 1.20.0) and
-[GHSA-5278-rrxc-mgf7](https://github.com/openfga/openfga/security/advisories/GHSA-5278-rrxc-mgf7)
-(policy enforcement, fixed in 1.19.0) are examples covered by this version.
-Cedar's [GHSA-m84h-6f26-p3p7](https://github.com/cedar-policy/cedar/security/advisories/GHSA-m84h-6f26-p3p7)
-(parser memory exhaustion, fixed >=4.13) and
-[GHSA-c33x-vcv4-vg3g](https://github.com/cedar-policy/cedar/security/advisories/GHSA-c33x-vcv4-vg3g)
-(template validation/panic/decision divergence, fixed 4.11.1 on the 4.x branch)
-are covered by 4.14.1. This is not a claim that either artifact is vulnerability-free.
-
-A future OpenFGA UBI 9 image should acquire verified native upstream binaries or
-build pinned Go source/toolchain/dependencies offline, carry the exact source and
-artifact-lock labels, use a digest-pinned UBI 9 runtime with only necessary CA/time
-and shared-library inputs, and run non-root with a read-only filesystem and
-service-specific secrets. Keep migrations a separate job and authenticate both
-HTTP and gRPC. Produce SBOMs, verify binary identity/architecture, scan OS and Go
-packages, and exercise TLS, model migrations and backup recovery on both CPUs.
-
-For Cedar, prefer embedding a locked `cedar-policy` dependency in the actual
-integration. If an agent is chosen, build that wrapper and Cedar together with a
-pinned Rust toolchain and vendored checksummed crates; package only the native
-binary and verified runtime dependencies on UBI 9. Include the wrapper, policy
-schema and entity-source contract in the SBOM/provenance boundary. Static ELF inspection of both pinned CLI artifacts finds `libc.so.6`,
-`libgcc_s.so.1`, and a maximum GLIBC symbol version of 2.34; this is useful
-UBI 9 compatibility evidence, not a runtime qualification. The CLI is an
-evaluation tool, not a production access-control service. No hardened candidate
-image is built in this PR.
-
-## Recommendation and remaining work
-
-Choose **OpenFGA as the implementation direction**, because it is the native
-open-source backend of the pin, understands Lakekeeper's hierarchy and grants,
-and feeds the same decision into credential scope. Keep Rauthy and its Keycloak
-fallback. **Do not declare the requested token-group requirement satisfied**:
-it requires explicit membership provisioning/synchronization or a reviewed
-Lakekeeper authorizer change that supplies contextual group relationships. Neither backend meets every requested requirement as-is. Such
-a change is outside this evaluation and must address removal/revocation too.
-
-Keep Cedar as a future alternative when policy-as-code requirements justify an
-application integration or a separately evaluated Lakekeeper Plus deployment.
-A custom Trino plugin alone leaves direct catalog clients and vending uncovered.
-
-Not qualified here: production HA/failover, load, cache staleness across replicas,
-restored-service decisions, consistent cross-database recovery, policy upgrades,
-Trino end-user identity propagation, Cedar catalog/plugin enforcement, issued STS
-credential revocation/expiry, full source/binary supply-chain attestation or a
-hardened image. Runtime/scanner results below must be read independently of this
-source-based recommendation.
+Future Cedar integration must preserve the C-suite IDs and assertions. Its group
+adapter may consume verified claims directly; the equivalent controls must prove
+unmapped groups cannot grant access and removed membership loses access. Backend
+changes cannot replace runtime client tests with standalone policy-engine decisions.

@@ -15,23 +15,36 @@ def evaluate(catalog, operator, human, namespace, tuples):
     endpoint = catalog.base + f"/catalog/v1/{catalog.warehouse_id}/namespaces/denied/tables/sample"
     positive = http.request("GET", endpoint, headers={"Authorization": "Bearer " + operator})
     assert positive.status_code == 200, positive.text
+    bob = provider.human(email="bob@idp.test")["access_token"]
+    assert decode(bob)[1]["sub"] != decode(human)[1]["sub"]
+    tuples("user:oidc~" + decode(human)[1]["sub"], "select", namespace)
+    user_endpoint = (
+        catalog.base + f"/catalog/v1/{catalog.warehouse_id}/namespaces/bakeoff/tables/sample"
+    )
+    assert (
+        http.request("GET", user_endpoint, headers={"Authorization": "Bearer " + human}).status_code
+        == 200
+    )
+    assert http.request(
+        "GET", user_endpoint, headers={"Authorization": "Bearer " + bob}
+    ).status_code in (403, 404)
     identity = {}
     for header in ("X-Trino-User", "X-Iceberg-User", "X-User-Id", "X-Forwarded-User"):
         response = http.request(
             "GET",
-            endpoint,
+            user_endpoint,
             headers={
-                "Authorization": "Bearer " + human,
-                header: "oidc~" + decode(operator)[1]["sub"],
+                "Authorization": "Bearer " + bob,
+                header: "oidc~" + decode(human)[1]["sub"],
             },
         )
         assert response.status_code in (403, 404), (response.status_code, response.text)
         identity[header] = response.status_code
     # Changing sub while keeping the genuine signature must be rejected, too.
-    parts = human.split(".")
-    claims = decode(human)[1]
+    parts = bob.split(".")
+    claims = decode(bob)[1]
     forged_subject = secret(
-        parts[0] + "." + b64({**claims, "sub": decode(operator)[1]["sub"]}) + "." + parts[2]
+        parts[0] + "." + b64({**claims, "sub": decode(human)[1]["sub"]}) + "." + parts[2]
     )
     invalid = {}
     for name, token in (

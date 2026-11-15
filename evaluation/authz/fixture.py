@@ -169,6 +169,10 @@ def database(ca):
         input=(ROOT / "integration/postgres-init.sql").read_text(),
     )
     fga_password = secret()
+    fga_admin = directory / "fga-postgres-password"
+    write(fga_admin, secret())
+    run("sudo", "chown", "root:root", fga_admin)
+    run("sudo", "chmod", "0440", fga_admin)
     container(
         "fga-postgres",
         "localhost/postgresql-lakekeeper-ubi:integration",
@@ -179,7 +183,7 @@ def database(ca):
             "POSTGRESQL_TLS_KEY_FILE": "/tls/key.pem",
         },
         mounts=[
-            (directory / "postgres-password", "/run/secrets/postgres-password"),
+            (fga_admin, "/run/secrets/postgres-password"),
             (leaf("fga-postgres"), "/tls"),
         ],
         network=BACKEND_NETWORK,
@@ -420,7 +424,7 @@ class AuthCatalog(Catalog):
             "migrate",
         )
 
-    def start_backend(self, audience="lakekeeper,operator"):
+    def start_backend(self, audience="lakekeeper,operator,expiry"):
         obj = json.loads(run("docker", "inspect", self.proxy))[0]
         if BACKEND_NETWORK not in obj["NetworkSettings"]["Networks"]:
             run("docker", "network", "connect", BACKEND_NETWORK, self.proxy)
