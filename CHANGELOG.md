@@ -8,8 +8,10 @@
   PostgreSQL and backend network, nginx-ubi 9ef9e82, verified TLS, group sync,
   revocation timing, client denials, fail-closed recovery and repeat migrations.
 - Add the Phase C evaluation topology and link the acceptance contract from the
-  authorization platform plan. Runtime evidence remains pending until run logs
-  confirm each per-architecture result; no source finding counts as a pass.
+  authorization platform plan. Retain actual native C1–C8 passes and sanitized
+  evidence on both CPUs; observed revocation is 17.94/27.67 ms. Record the no-group
+  token compatibility gap, STS-disabled boundary and upstream OpenFGA scan findings
+  without claiming production/security qualification.
 
 - Add docs/DECISIONS.md: dated owner decisions, pending decisions and upstream waits.
   Add docs/AUTHZ-PLATFORM-PLAN.md (Phase C plan and future capabilities) and link both

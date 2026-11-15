@@ -77,75 +77,80 @@ dumps never become artifacts. Raw credential values are not recorded in C6.
 
 ## Native runtime evidence
 
-Latest **completed** C-suite execution: commit `099146a`,
-[run 43756784648](https://github.com/datopsis/lakehouse-integration/actions/runs/43756784648).
-These are actual artifact results. The corrected fixture at `db03ff8` is running
-in [43760505088](https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088);
-its outcome is not yet known.
+**PASS on both native architectures.**
+[Run 43760505088](https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088)
+completed successfully from suite commit
+`db03ff839d2f6489f4ce1bcd934aabec310981cf`. Both jobs' actual logs and sanitized
+artifacts were read. All seven Datopsis images passed strict provenance on each
+CPU; the normalized OpenFGA model hash is identical. This is functional acceptance
+of the evaluation profile, not production/security qualification.
 
 | Test | [amd64][native-amd64] | [arm64][native-arm64] |
 | --- | --- | --- |
 | C1 | PASS | PASS |
 | C2 | PASS | PASS |
 | C3 | PASS | PASS |
-| C4 | PASS — 30.489 ms | PASS — 27.246 ms |
-| C5 | FAIL — Trino hidden-namespace oracle | FAIL — Trino hidden-namespace oracle |
+| C4 | PASS — 17.944 ms | PASS — 27.672 ms |
+| C5 | PASS — all three clients | PASS — all three clients |
 | C6 | PASS | PASS |
-| C7 | FAIL — outage returned 408 | PASS |
-| C8 | FAIL — post-outage readiness | PASS |
+| C7 | PASS | PASS |
+| C8 | PASS | PASS |
 
-[native-amd64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43756784648/job/132942509532
-[native-arm64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43756784648/job/132942509236
+[native-amd64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088/job/132954018254
+[native-arm64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088/job/132954018035
 
-**Measured revocation:** the first fresh REST denial after delete acknowledgement
-was **0.030489143 s on amd64** and **0.027245632 s on arm64**; both returned 404 on
-the first probe, within 30 seconds. These are single-run observations, not a
-cache SLA or revocation of issued storage keys. The preceding native run measured
-27.369 ms / 42.922 ms respectively.
+**Measured revocation:** first fresh REST denial after delete acknowledgement was
+**0.017943532 s on amd64** and **0.027671690 s on arm64**. Both returned 404 on the
+first probe, within 30 seconds. These are single-run observations, not a
+multi-replica/cache SLA or revocation of previously issued storage credentials.
+Earlier runs measured 27.369/42.922 ms and 30.489/27.246 ms respectively.
 
-C2/C3 now pass using the pinned model's contextual table IDs
-`lakekeeper_table:<warehouse-id>/<table-id>` and explicit group membership sync.
-PyIceberg and Sail passed their entire C5 subtests. Trino successfully listed/read
-exact allowed rows and hid namespace B with **SCHEMA_NOT_FOUND, code 45** and
-`line 1:15: Schema 'denied' does not exist`. The old oracle did not recognize this
-secure hidden-namespace result, so its write probes were not reached. The next
-run accepts only that exact error for the namespace-B SELECT; every write still
-requires an actual Iceberg ForbiddenException, with authentication/timeouts and
-unrelated missing schemas rejected by regression tests. No denied write is waived.
+Permanent, sanitized evidence is retained in
+[native-amd64.json](authz-evidence/native-amd64.json) and
+[native-arm64.json](authz-evidence/native-arm64.json), including exact rows,
+denials, timing samples, image revisions/lock hashes/labels, normalized model
+hash and scanner summaries. Full logs/scanner JSON remain in the run artifacts.
 
-Arm64 C7 rejected forged/wrong-audience/expired tokens with 401, rejected all four
-identity headers with 404, and could not route to either OpenFGA API port from
-any client network namespace. With OpenFGA stopped it received structured **503
-AuthorizationBackendError**, then recovered to exact reads and a namespace-B 404.
-Amd64's outage request instead hit HTTP **408 with an empty body**, which does not
-satisfy the explicit backend-denial assertion; it is not counted as a pass. Its
-next C8 request arrived before the restarted endpoint was ready, so durability
-was not measured in that attempt. The next fixture keeps the backend network
-endpoint stable while stopping OpenFGA and waits for recovery in `finally`,
-without allowing timeouts as successful denials. Arm64 C8 preserved the tuple set
-and decisions through restart and two runs of both migrations.
+C3's token-only group control denied access, explicit authoritative membership
+sync allowed exact reads, and removal denied the old, unexpired groups-bearing
+token. Each C5 client read exactly `[[1, "alpha"], [2, "beta"]]` and received the
+required write/other-namespace denials. Trino hid namespace B with the exact
+`SCHEMA_NOT_FOUND` code 45 result; its writes carried genuine Iceberg
+ForbiddenException causes. Authentication errors and unrelated missing objects
+cannot satisfy those write assertions.
+
+C7 returned **401** for the altered subject, different signing key, wrong
+audience and genuinely expired token, with positive controls before expiry and
+for a fresh token. Four identity headers could not give Bob Alice's access (404).
+Both OpenFGA API ports returned **ENETUNREACH** from each client network namespace.
+With OpenFGA stopped, both CPUs received structured **503 AuthorizationBackendError**
+without metadata/config; recovery allowed exact reads and still denied namespace B
+with 404. C8 preserved all **37 tuples**, correct allow/deny decisions, and safe
+execution of both migrations twice after restart.
 
 **Observed empty-group compatibility gap:** in
 [43753907439](https://github.com/datopsis/lakehouse-integration/actions/runs/43753907439),
 Bob's genuine Rauthy human token for a user with no groups received Lakekeeper
 **400 RoleSourceIdError** (`role source ID cannot be empty`) before authorization.
-C7 does not accept this metadata/authentication error as a valid denial. Bob now
-has a real, unmapped `no-access` group, no grant/membership, and a successful
-`whoami` control before impersonation probes. The empty-group edge is retained
-as an observed compatibility issue and is not claimed fixed. C3 proves removal
-denies the old, unexpired groups-bearing token; fresh no-group human tokens are
-outside the verified successful-token profile.
+This was never accepted as a valid authorization denial. The passing C7 control
+uses a real, unmapped `no-access` group for Bob, no grant/membership, and a
+successful `whoami` before impersonation probes. The empty-group edge is not
+fixed or claimed qualified. C3 proves removal denies the old, unexpired token;
+fresh no-group human tokens are outside the verified successful-token profile.
 
-Earlier native runs are retained in the history:
-[43751025278](https://github.com/datopsis/lakehouse-integration/actions/runs/43751025278)
-exposed model-type and native-client fixture errors;
+Earlier failed harness attempts remain auditable:
+[43756784648](https://github.com/datopsis/lakehouse-integration/actions/runs/43756784648)
+exposed the Trino hidden-namespace oracle and an amd64 outage 408, which was not
+accepted as a successful denial. Stable endpoint lifetime and recovery readiness
+corrected that fixture; strict backend-error assertions remain in force.
+[43753907439](https://github.com/datopsis/lakehouse-integration/actions/runs/43753907439)
+and [43751025278](https://github.com/datopsis/lakehouse-integration/actions/runs/43751025278)
+exposed model-ID and client-fixture errors;
 [43745228788](https://github.com/datopsis/lakehouse-integration/actions/runs/43745228788)
-blocked all C cases on storage startup readiness;
-[43747865415](https://github.com/datopsis/lakehouse-integration/actions/runs/43747865415)
-blocked them on PostgreSQL's temporary initialization server. These readiness
-probes now wait for verified listeners, a real S3 write and PostgreSQL's final
-TCP listener. Two earlier preparation dispatches were cancelled and provide no
-C-suite runtime evidence.
+and [43747865415](https://github.com/datopsis/lakehouse-integration/actions/runs/43747865415)
+were blocked by storage/PostgreSQL startup readiness. Two earlier preparation
+dispatches were cancelled and provide no runtime evidence. Only the final linked
+native jobs above establish the complete C-suite pass.
 
 C6 returned **404 with no credentials** for the denied table. The read-only load
 returned remote-signing configuration names and a storage-credentials descriptor
@@ -153,22 +158,13 @@ containing only region, endpoint and path-style settings; **no S3 keys/session
 token** were returned. This is the expected STS-disabled boundary, not STS
 isolation evidence.
 
-Earlier completed runs also remain linked for reproducibility:
-[43745228788](https://github.com/datopsis/lakehouse-integration/actions/runs/43745228788)
-blocked all C cases on a storage-listener startup race;
-[43747865415](https://github.com/datopsis/lakehouse-integration/actions/runs/43747865415)
-blocked them on the PostgreSQL temporary-initialization-server race. Both are fixed
-by verified listener/data-path readiness and waiting for PostgreSQL's final TCP
-listener. Two earlier dispatches were cancelled during preparation and provide no
-C-suite runtime evidence.
-
 Artifacts retain sanitized `builds.json`, `results.json`, the exact OpenFGA model,
 service logs and information-only OpenFGA Trivy/Grype reports for 14 days.
 Scanner execution failures remain failures, not zero findings.
 
 ### Upstream OpenFGA image scans
 
-The first completed run's information-only scanner results are identical on both
+The final run's information-only scanner results are identical on both
 native architectures. Counts are fixable High/Critical package findings, not
 exploitability determinations or unique-advisory totals. The full scanner JSON is
 in each run artifact. No suppression or owning-repository gate change was made.
@@ -198,7 +194,6 @@ permissions, calls `AssumeRole`, and returns temporary keys/session token with
 expiry. It caches temporary credentials. Revoking a catalog grant blocks later
 catalog authorization; it does **not** invalidate credentials already issued or
 data already fetched. Storage must enforce the inline policy and TTL.
-
 
 C6 records the read-only response under the current `sts-enabled=false` profile:
 no temporary S3 keys are expected. It does not qualify SeaweedFS STS or prove

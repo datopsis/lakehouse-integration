@@ -113,6 +113,11 @@ prerequisite failures are BLOCKED and any missing or failed case blocks acceptan
 | C7 | Identity spoofing and invalid tokens rejected, backend API isolated from clients, outage fails closed and recovery preserves decisions. |
 | C8 | Restart retains grants; repeated Lakekeeper/backend migrations are safe. |
 
+The interim OpenFGA evaluation passed all eight cases natively on amd64 and arm64
+([actual run](https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088)).
+This establishes a functional reference, not production/security qualification;
+the report retains the empty-group token and storage-scope limitations.
+
 The [acceptance report](AUTHZ-EVALUATION.md) defines exact assertions, pinned inputs,
 per-architecture run links and limitations. Its
 [Phase C evaluation view](diagrams/lakehouse-authorization-evaluation.svg) records

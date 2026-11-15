@@ -8,9 +8,11 @@ require review and exact labels, with no allowances.
 Every owner decision, and every decision still pending, is recorded in
 [DECISIONS.md](DECISIONS.md). Check it before starting new work.
 
-- [ ] Establish the permanent [C1–C8 backend acceptance suite](AUTHZ-EVALUATION.md)
+- [x] Establish the permanent [C1–C8 backend acceptance suite](AUTHZ-EVALUATION.md)
   on both native architectures: hardened Rauthy, isolated OpenFGA/PostgreSQL, verified
-  TLS and exact grant/deny/revoke/operations assertions. Runtime evidence is pending.
+  TLS and exact grant/deny/revoke/operations assertions. All eight cases passed on
+  amd64 and arm64; observed revocation was 17.94/27.67 ms. This evaluation leaves
+  main integration authentication/pins and the Phase D static-key gap unchanged.
 - [ ] Phase C: OpenFGA as the interim backend (decided 2026-11-13); then the own
   authorization platform in [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md): spikes S1–S4,
   an MVP, Phase D integration, then the catalogued future capabilities. Update the

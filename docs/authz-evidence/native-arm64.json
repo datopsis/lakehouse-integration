@@ -1,0 +1,647 @@
+{
+  "run_id": "43760505088",
+  "run_url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088",
+  "job_url": "https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088/job/132954018035",
+  "suite_source_revision": "db03ff839d2f6489f4ce1bcd934aabec310981cf",
+  "architecture": "arm64",
+  "uname": "aarch64",
+  "cases": {
+    "C1": {
+      "status": "pass",
+      "value": {
+        "namespaces": [
+          [
+            "bakeoff"
+          ]
+        ],
+        "allowed": {
+          "tables": [
+            [
+              "bakeoff",
+              "sample"
+            ]
+          ],
+          "rows": [
+            {
+              "id": 1,
+              "label": "alpha"
+            },
+            {
+              "id": 2,
+              "label": "beta"
+            }
+          ]
+        },
+        "other_list": {
+          "type": "NoSuchNamespaceError",
+          "message": "NoSuchNamespaceException: Namespace with name 'denied' does not exist in warehouse '9485f3d8-e13a-11f1-92cd-47dd55213bad'"
+        },
+        "other_read": {
+          "type": "NoSuchTableError",
+          "message": "NoSuchTableException: Error getting tabular from catalog"
+        },
+        "writes": {
+          "create_namespace": {
+            "type": "ForbiddenError",
+            "message": "WarehouseActionForbidden: Warehouse action `can_create_namespace` forbidden on warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+          },
+          "create_table": {
+            "type": "ForbiddenError",
+            "message": "NamespaceActionForbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+          },
+          "append": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+          },
+          "overwrite": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+          },
+          "delete": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+          },
+          "commit": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+          },
+          "drop": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `can_drop` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+          },
+          "rename": {
+            "type": "ForbiddenError",
+            "message": "NamespaceActionForbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+          }
+        }
+      },
+      "seconds": 0.5703
+    },
+    "C2": {
+      "status": "pass",
+      "value": {
+        "namespace_covers_new_table": true,
+        "single_table_rows": [
+          {
+            "id": 8
+          }
+        ],
+        "single_table_list": [
+          [
+            "single",
+            "one"
+          ]
+        ],
+        "sibling": {
+          "type": "NoSuchTableError",
+          "message": "NoSuchTableException: Error getting tabular from catalog"
+        }
+      },
+      "seconds": 0.408
+    },
+    "C3": {
+      "status": "pass",
+      "value": {
+        "claims_alone_denied": {
+          "type": "NoSuchNamespaceError",
+          "message": "NoSuchNamespaceException: Namespace with name 'bakeoff' does not exist in warehouse '9485f3d8-e13a-11f1-92cd-47dd55213bad'"
+        },
+        "sync_added": {
+          "source": "Rauthy admin API over verified TLS",
+          "member": true
+        },
+        "allowed": {
+          "tables": [
+            [
+              "bakeoff",
+              "sample"
+            ]
+          ],
+          "rows": [
+            {
+              "id": 1,
+              "label": "alpha"
+            },
+            {
+              "id": 2,
+              "label": "beta"
+            }
+          ]
+        },
+        "sync_removed": {
+          "source": "Rauthy admin API over verified TLS",
+          "member": false
+        },
+        "old_token_denied": {
+          "type": "NoSuchNamespaceError",
+          "message": "NoSuchNamespaceException: Namespace with name 'bakeoff' does not exist in warehouse '9485f3d8-e13a-11f1-92cd-47dd55213bad'"
+        },
+        "boundary": "One-group explicit sync; no production reconciler or polling SLA"
+      },
+      "seconds": 0.2764
+    },
+    "C4": {
+      "status": "pass",
+      "value": {
+        "first_denial_seconds": 0.02767169000026115,
+        "samples": [
+          {
+            "seconds_since_ack": 0.02767169000026115,
+            "status": 404
+          }
+        ],
+        "scope": "Delete acknowledgment to first fresh REST denial; issued storage credentials excluded"
+      },
+      "seconds": 0.089
+    },
+    "C5": {
+      "status": "pass",
+      "value": {
+        "pyiceberg": {
+          "status": "pass",
+          "value": {
+            "allowed": {
+              "tables": [
+                [
+                  "bakeoff",
+                  "sample"
+                ]
+              ],
+              "rows": [
+                {
+                  "id": 1,
+                  "label": "alpha"
+                },
+                {
+                  "id": 2,
+                  "label": "beta"
+                }
+              ]
+            },
+            "other_read": {
+              "type": "NoSuchTableError",
+              "message": "NoSuchTableException: Error getting tabular from catalog"
+            },
+            "writes": {
+              "create_namespace": {
+                "type": "ForbiddenError",
+                "message": "WarehouseActionForbidden: Warehouse action `can_create_namespace` forbidden on warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+              },
+              "create_table": {
+                "type": "ForbiddenError",
+                "message": "NamespaceActionForbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+              },
+              "append": {
+                "type": "ForbiddenError",
+                "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+              },
+              "overwrite": {
+                "type": "ForbiddenError",
+                "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+              },
+              "delete": {
+                "type": "ForbiddenError",
+                "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+              },
+              "commit": {
+                "type": "ForbiddenError",
+                "message": "TableActionForbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+              },
+              "drop": {
+                "type": "ForbiddenError",
+                "message": "TableActionForbidden: Table action `can_drop` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+              },
+              "rename": {
+                "type": "ForbiddenError",
+                "message": "NamespaceActionForbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`"
+              }
+            }
+          },
+          "seconds": 0.363
+        },
+        "trino": {
+          "status": "pass",
+          "value": {
+            "tls": {
+              "version": "TLSv1.3",
+              "unknown_ca_rejected": true,
+              "wrong_name_rejected": true,
+              "plaintext_rejected": true
+            },
+            "rows": [
+              {
+                "id": 1,
+                "label": "alpha"
+              },
+              {
+                "id": 2,
+                "label": "beta"
+              }
+            ],
+            "denials": {
+              "SELECT * FROM iceberg.denied.sample": {
+                "message": "line 1:15: Schema 'denied' does not exist",
+                "errorCode": 45,
+                "errorName": "SCHEMA_NOT_FOUND",
+                "errorType": "USER_ERROR",
+                "errorLocation": {
+                  "lineNumber": 1,
+                  "columnNumber": 15
+                },
+                "failureInfo": {
+                  "type": "io.trino.spi.TrinoException",
+                  "message": "line 1:15: Schema 'denied' does not exist",
+                  "errorInfo": {
+                    "code": 45,
+                    "name": "SCHEMA_NOT_FOUND",
+                    "type": "USER_ERROR"
+                  },
+                  "errorLocation": {
+                    "lineNumber": 1,
+                    "columnNumber": 15
+                  }
+                }
+              },
+              "INSERT INTO iceberg.bakeoff.sample VALUES (3, 'forbidden')": {
+                "message": "Failed to commit the transaction during insert: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                "errorCode": 84148236,
+                "errorName": "ICEBERG_COMMIT_ERROR",
+                "errorType": "EXTERNAL",
+                "failureInfo": {
+                  "type": "io.trino.spi.TrinoException",
+                  "message": "Failed to commit the transaction during insert: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                  "cause": {
+                    "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                    "message": "Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                    "errorInfo": {
+                      "code": 65536,
+                      "name": "GENERIC_INTERNAL_ERROR",
+                      "type": "INTERNAL_ERROR"
+                    }
+                  },
+                  "errorInfo": {
+                    "code": 84148236,
+                    "name": "ICEBERG_COMMIT_ERROR",
+                    "type": "EXTERNAL"
+                  }
+                }
+              },
+              "UPDATE iceberg.bakeoff.sample SET label='forbidden' WHERE id=1": {
+                "message": "Failed to commit the transaction during write: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                "errorCode": 84148236,
+                "errorName": "ICEBERG_COMMIT_ERROR",
+                "errorType": "EXTERNAL",
+                "failureInfo": {
+                  "type": "io.trino.spi.TrinoException",
+                  "message": "Failed to commit the transaction during write: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                  "cause": {
+                    "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                    "message": "Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                    "errorInfo": {
+                      "code": 65536,
+                      "name": "GENERIC_INTERNAL_ERROR",
+                      "type": "INTERNAL_ERROR"
+                    }
+                  },
+                  "errorInfo": {
+                    "code": 84148236,
+                    "name": "ICEBERG_COMMIT_ERROR",
+                    "type": "EXTERNAL"
+                  }
+                }
+              },
+              "DELETE FROM iceberg.bakeoff.sample WHERE id=1": {
+                "message": "Failed to commit the transaction during write: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                "errorCode": 84148236,
+                "errorName": "ICEBERG_COMMIT_ERROR",
+                "errorType": "EXTERNAL",
+                "failureInfo": {
+                  "type": "io.trino.spi.TrinoException",
+                  "message": "Failed to commit the transaction during write: Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                  "cause": {
+                    "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                    "message": "Forbidden: Table action `can_commit` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                    "errorInfo": {
+                      "code": 65536,
+                      "name": "GENERIC_INTERNAL_ERROR",
+                      "type": "INTERNAL_ERROR"
+                    }
+                  },
+                  "errorInfo": {
+                    "code": 84148236,
+                    "name": "ICEBERG_COMMIT_ERROR",
+                    "type": "EXTERNAL"
+                  }
+                }
+              },
+              "CREATE TABLE iceberg.bakeoff.forbidden (id BIGINT)": {
+                "message": "Failed to create transaction",
+                "errorCode": 84148237,
+                "errorName": "ICEBERG_CATALOG_ERROR",
+                "errorType": "EXTERNAL",
+                "failureInfo": {
+                  "type": "io.trino.spi.TrinoException",
+                  "message": "Failed to create transaction",
+                  "cause": {
+                    "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                    "message": "Forbidden: Namespace action `can_create_table` forbidden on namespace with name 'bakeoff' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                    "errorInfo": {
+                      "code": 65536,
+                      "name": "GENERIC_INTERNAL_ERROR",
+                      "type": "INTERNAL_ERROR"
+                    }
+                  },
+                  "errorInfo": {
+                    "code": 84148237,
+                    "name": "ICEBERG_CATALOG_ERROR",
+                    "type": "EXTERNAL"
+                  }
+                }
+              },
+              "DROP TABLE iceberg.bakeoff.sample": {
+                "message": "Failed to drop table 'sample'",
+                "errorCode": 84148237,
+                "errorName": "ICEBERG_CATALOG_ERROR",
+                "errorType": "EXTERNAL",
+                "failureInfo": {
+                  "type": "io.trino.spi.TrinoException",
+                  "message": "Failed to drop table 'sample'",
+                  "cause": {
+                    "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                    "message": "Forbidden: Table action `can_drop` forbidden on table 'bakeoff.sample' in warehouse `9485f3d8-e13a-11f1-92cd-47dd55213bad`",
+                    "errorInfo": {
+                      "code": 65536,
+                      "name": "GENERIC_INTERNAL_ERROR",
+                      "type": "INTERNAL_ERROR"
+                    }
+                  },
+                  "errorInfo": {
+                    "code": 84148237,
+                    "name": "ICEBERG_CATALOG_ERROR",
+                    "type": "EXTERNAL"
+                  }
+                }
+              }
+            }
+          },
+          "seconds": 18.7665
+        },
+        "sail": {
+          "status": "pass",
+          "value": {
+            "tls": {
+              "version": "TLSv1.3",
+              "unknown_ca_rejected": true,
+              "wrong_name_rejected": true,
+              "plaintext_rejected": true
+            },
+            "token": "external file",
+            "tables": [
+              [
+                "bakeoff",
+                "sample",
+                false
+              ]
+            ],
+            "rows": [
+              [
+                1,
+                "alpha"
+              ],
+              [
+                2,
+                "beta"
+              ]
+            ],
+            "denials": {
+              "SELECT * FROM bakeoff.denied.sample": "Table not found: [TABLE_OR_VIEW_NOT_FOUND] Table or view not found: denied.sample",
+              "INSERT INTO bakeoff.bakeoff.sample VALUES (3, 'forbidden')": "forbidden: Iceberg REST catalog commit forbidden for bakeoff.sample: response error: status code 403 Forbidden",
+              "UPDATE bakeoff.bakeoff.sample SET label='forbidden' WHERE id=1": "forbidden: Iceberg REST catalog commit forbidden for bakeoff.sample: response error: status code 403 Forbidden",
+              "DELETE FROM bakeoff.bakeoff.sample WHERE id=1": "forbidden: Iceberg REST catalog commit forbidden for bakeoff.sample: response error: status code 403 Forbidden",
+              "CREATE TABLE bakeoff.bakeoff.forbidden (id BIGINT) USING iceberg": "external error: Failed to create table: response error: status code 403 Forbidden",
+              "DROP TABLE bakeoff.bakeoff.sample": "external error: Failed to drop table: response error: status code 403 Forbidden"
+            }
+          },
+          "seconds": 2.0748
+        }
+      },
+      "seconds": 21.2134
+    },
+    "C6": {
+      "status": "pass",
+      "value": {
+        "denied_status": 404,
+        "denied_credentials": false,
+        "read_only_config_keys": [
+          "client.region",
+          "py-io-impl",
+          "region",
+          "s3.endpoint",
+          "s3.path-style-access",
+          "s3.region",
+          "s3.remote-signing-enabled",
+          "s3.signer",
+          "s3.signer.endpoint",
+          "s3.signer.uri",
+          "signer.endpoint",
+          "signer.uri"
+        ],
+        "storage_credential_config_keys": [
+          [
+            "client.region",
+            "s3.endpoint",
+            "s3.path-style-access",
+            "s3.region"
+          ]
+        ],
+        "sts_enabled": false,
+        "scope": "Read grant, no STS keys with this profile; source scopes documented separately"
+      },
+      "seconds": 0.0415
+    },
+    "C7": {
+      "status": "pass",
+      "value": {
+        "identity_header_denials": {
+          "X-Trino-User": 404,
+          "X-Iceberg-User": 404,
+          "X-User-Id": 404,
+          "X-Forwarded-User": 404
+        },
+        "tokens": {
+          "altered_subject": 401,
+          "wrong_signature": 401,
+          "wrong_audience": 401,
+          "genuine_expired_token": {
+            "before": 200,
+            "after": 401,
+            "fresh": 200
+          }
+        },
+        "network_isolation": {
+          "trino": {
+            "8080": 101,
+            "8081": 101
+          },
+          "sail": {
+            "8080": 101,
+            "8081": 101
+          },
+          "pyiceberg-client-net": {
+            "8080": 101,
+            "8081": 101
+          }
+        },
+        "backend_stopped": {
+          "status": 503,
+          "error": {
+            "message": "Authorization service is unavailable",
+            "type": "AuthorizationBackendError",
+            "code": 503
+          }
+        },
+        "recovered_allow": 200,
+        "recovered_deny": 404
+      },
+      "seconds": 94.2631
+    },
+    "C8": {
+      "status": "pass",
+      "value": {
+        "grants_preserved": true,
+        "tuple_count": 37,
+        "migration_repetitions": 2,
+        "post_restart_and_migration_allow_deny": true
+      },
+      "seconds": 2.2883
+    }
+  },
+  "builds": {
+    "postgresql-lakekeeper-ubi": {
+      "status": "pass",
+      "revision": "93666c251ca2c4e6618ddd35a669c4c3ea380313",
+      "architecture": "arm64",
+      "lock_sha256": "9877745bdbbfc540c19b222debf360c2232dd43d1b2d542da4717a65a9eff329",
+      "provenance_labels": {
+        "org.opencontainers.image.revision": "93666c251ca2c4e6618ddd35a669c4c3ea380313",
+        "io.datopsis.artifact-lock.sha256": "9877745bdbbfc540c19b222debf360c2232dd43d1b2d542da4717a65a9eff329"
+      }
+    },
+    "lakekeeper-ubi": {
+      "status": "pass",
+      "revision": "2200c516919a9667e9761a6581b848de32b693d1",
+      "architecture": "arm64",
+      "lock_sha256": "66554b3208310055b329697960043327ce37d082b7d93af336cdba3a20c0636e",
+      "provenance_labels": {
+        "org.opencontainers.image.revision": "2200c516919a9667e9761a6581b848de32b693d1",
+        "io.datopsis.artifact-lock.sha256": "66554b3208310055b329697960043327ce37d082b7d93af336cdba3a20c0636e"
+      }
+    },
+    "seaweedfs-ubi": {
+      "status": "pass",
+      "revision": "fd9b0001ee86a432faf773d40ab6f528dbfdad67",
+      "architecture": "arm64",
+      "lock_sha256": "d0fc6c6303f58715068c419bfe9b083abc257416f4ca51e51763c501738b69c2",
+      "provenance_labels": {
+        "org.opencontainers.image.revision": "fd9b0001ee86a432faf773d40ab6f528dbfdad67",
+        "io.datopsis.artifact-lock.sha256": "d0fc6c6303f58715068c419bfe9b083abc257416f4ca51e51763c501738b69c2"
+      }
+    },
+    "trino-ubi": {
+      "status": "pass",
+      "revision": "964802b7afd3ae526039ef7dc7fcf605ce3d5b26",
+      "architecture": "arm64",
+      "lock_sha256": "be14e1f31673fbeffea5f36c3963b7d89a6e104fd19091017e8bf9db34121782",
+      "provenance_labels": {
+        "org.opencontainers.image.revision": "964802b7afd3ae526039ef7dc7fcf605ce3d5b26",
+        "io.datopsis.artifact-lock.sha256": "be14e1f31673fbeffea5f36c3963b7d89a6e104fd19091017e8bf9db34121782"
+      }
+    },
+    "sail-ubi": {
+      "status": "pass",
+      "revision": "6e6f65a69108f4c6870eab26f356dccb41efbf35",
+      "architecture": "arm64",
+      "lock_sha256": "bbb66d68cbb0a9533895612576bbbbd7b6b79c8df8c733eb0aa2c749c2ebd8ca",
+      "provenance_labels": {
+        "org.opencontainers.image.revision": "6e6f65a69108f4c6870eab26f356dccb41efbf35",
+        "io.datopsis.artifact-lock.sha256": "bbb66d68cbb0a9533895612576bbbbd7b6b79c8df8c733eb0aa2c749c2ebd8ca"
+      }
+    },
+    "nginx-ubi": {
+      "status": "pass",
+      "revision": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+      "architecture": "arm64",
+      "lock_sha256": "733d912e914cd94eeefa48da08671f768ee49ea26bcd2762370bc8b5a107552a",
+      "provenance_labels": {
+        "org.opencontainers.image.revision": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+        "io.datopsis.artifact-lock.sha256": "733d912e914cd94eeefa48da08671f768ee49ea26bcd2762370bc8b5a107552a"
+      }
+    },
+    "rauthy-ubi": {
+      "status": "pass",
+      "revision": "1e114b84b01988bf15306b110b040378878488d3",
+      "architecture": "arm64",
+      "lock_sha256": "d510242b05c28bba1186217ab5dc39419c950ce8b329c16cc839766521fd8cd6",
+      "provenance_labels": {
+        "org.opencontainers.image.revision": "1e114b84b01988bf15306b110b040378878488d3",
+        "io.datopsis.artifact-lock.sha256": "d510242b05c28bba1186217ab5dc39419c950ce8b329c16cc839766521fd8cd6"
+      }
+    }
+  },
+  "openfga": {
+    "input": {
+      "version": "1.22.1",
+      "image": "docker.io/openfga/openfga@sha256:b852071314f1fda1194d341a6ebac0a4f619b3cd87a6626d2ccc7048af4ec671"
+    },
+    "startup_tls": {
+      "status": "pass",
+      "value": {
+        "startup_seconds": 1.1055343500001982,
+        "image_bytes": 77244837,
+        "image_id": "sha256:954e0a338e8b8cb50157ec6c4d9248d1c17695cc33f9d69b3c63b9e5fb76cd70",
+        "http_tls": {
+          "version": "TLSv1.3",
+          "unknown_ca_rejected": true,
+          "wrong_name_rejected": true,
+          "plaintext_rejected": true
+        },
+        "grpc_tls": {
+          "version": "TLSv1.3",
+          "unknown_ca_rejected": true,
+          "wrong_name_rejected": true,
+          "plaintext_rejected": true
+        }
+      },
+      "seconds": 0.0
+    },
+    "normalized_model_sha256": "71a7ff260c7d762ec8ea4af9bb3190becad26205423a91136138dc722208704a"
+  },
+  "scans": {
+    "trivy": {
+      "status": "complete",
+      "fixable": {
+        "HIGH": 9,
+        "CRITICAL": 1
+      },
+      "scanner_version": "0.76.2",
+      "image": "docker.io/openfga/openfga@sha256:b852071314f1fda1194d341a6ebac0a4f619b3cd87a6626d2ccc7048af4ec671",
+      "architecture": "arm64"
+    },
+    "grype": {
+      "status": "complete",
+      "fixable": {
+        "HIGH": 10,
+        "CRITICAL": 3
+      },
+      "scanner_version": "0.121.3",
+      "image": "docker.io/openfga/openfga@sha256:b852071314f1fda1194d341a6ebac0a4f619b3cd87a6626d2ccc7048af4ec671",
+      "architecture": "arm64"
+    }
+  },
+  "limits": [
+    "STS disabled; no S3 keys vended. Storage isolation and issued-credential revocation unverified.",
+    "No-group Rauthy human token produced Lakekeeper 400 RoleSourceIdError in the preceding run.",
+    "C7 Bob has an unmapped no-access group and no data grant.",
+    "Single instances; HA, load, backups and production security qualification unverified."
+  ]
+}
