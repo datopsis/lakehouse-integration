@@ -202,12 +202,14 @@ class TlsGates(unittest.TestCase):
         observed = {
             "wrong-ca": [
                 "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate",
+                "CERTIFICATE_VERIFY_FAILED: unable to get local issuer certificate: OK",
                 "curlCode: 60, SSL peer certificate or SSH remote key was not OK; Details: SSL certificate "
                 "OpenSSL verify result: unable to get local issuer certificate (20)",
             ],
             "wrong-san": [
                 "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 's3'.",
                 "Peer name sail is not in peer certificate",
+                "Custom verification check failed with error: UNAUTHENTICATED: Hostname Verification Check failed.",
                 "javax.net.ssl.SSLPeerUnverifiedException: Certificate for <s3> doesn't match any "
                 "of the subject alternative names: [wrong.invalid]",
                 "SSL validation failed for https://s3:8333/warehouse hostname 's3' doesn't match 'wrong.invalid'",
@@ -217,6 +219,7 @@ class TlsGates(unittest.TestCase):
             "expired": [
                 "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired",
                 "OpenSSL verify result: certificate has expired (10)",
+                "CERTIFICATE_VERIFY_FAILED: certificate has expired: OK",
             ],
         }
         # Each exact diagnosis identifies only its own mutation.

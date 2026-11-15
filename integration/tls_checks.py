@@ -684,7 +684,7 @@ def runner_client(
 
 CLIENT_PATTERNS = {
     "wrong-ca": r"(?i)unknown.?(ca|issuer)|unable to get local issuer|self.signed|PKIX|certification path|certificate verify failed|CERTIFICATE_VERIFY_FAILED|curlCode: 60|UnknownIssuer|unknown authority",
-    "wrong-san": r"(?i)Peer name \S+ is not in peer certificate|hostname mismatch|doesn't match|not valid for|No subject alternative|NotValidForName|certificate verify failed|CERTIFICATE_VERIFY_FAILED|curlCode: 60|bad certificate",
+    "wrong-san": r"(?i)Peer name \S+ is not in peer certificate|hostname mismatch|doesn't match|not valid for|Hostname Verification Check failed\.|No subject alternative|NotValidForName|certificate verify failed|CERTIFICATE_VERIFY_FAILED|curlCode: 60|bad certificate",
     "expired": r"(?i)expired|NotAfter|validity check failed|certificate verify failed|CERTIFICATE_VERIFY_FAILED|curlCode: 60|Expired",
 }
 
@@ -694,6 +694,7 @@ EXACT_VERIFY_FAILURE = {
     "wrong-ca": (
         r"certificate verify failed: unable to get local issuer"
         r"|verify result: unable to get local issuer certificate \(20\)"
+        r"|CERTIFICATE_VERIFY_FAILED: unable to get local issuer certificate: OK"
     ),
     "wrong-san": (
         r"certificate verify failed: Hostname mismatch"
@@ -701,10 +702,12 @@ EXACT_VERIFY_FAILURE = {
         r"|hostname '\S+' doesn't match 'wrong\.invalid'"
         r"|Certificate for <\S+> doesn't match any of the subject alternative names: \[wrong\.invalid\]"
         r"|Peer name \S+ is not in peer certificate"
+        r"|Custom verification check failed with error: UNAUTHENTICATED: Hostname Verification Check failed\."
     ),
     "expired": (
         r"certificate verify failed: certificate has expired"
         r"|verify result: certificate has expired \(10\)"
+        r"|CERTIFICATE_VERIFY_FAILED: certificate has expired: OK"
     ),
 }
 
