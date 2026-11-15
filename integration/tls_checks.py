@@ -699,6 +699,7 @@ EXACT_VERIFY_FAILURE = {
         r"certificate verify failed: Hostname mismatch"
         r"|no alternative certificate subject name matches target host ?name"
         r"|hostname '\S+' doesn't match 'wrong\.invalid'"
+        r"|Certificate for <\S+> doesn't match any of the subject alternative names: \[wrong\.invalid\]"
         r"|Peer name \S+ is not in peer certificate"
     ),
     "expired": (
@@ -782,6 +783,20 @@ def result_call(result_fn):
     return call
 
 
+def failure_chain(error):
+    """Trino's error as its cause chain ("type: message"), without stack frames."""
+    lines = [f"{error.get('errorName')}: {error.get('message')}"]
+    info = error.get("failureInfo")
+    while info:
+        lines.append(f"{info.get('type')}: {info.get('message')}")
+        lines += [
+            f"suppressed {item.get('type')}: {item.get('message')}"
+            for item in info.get("suppressed", [])
+        ]
+        info = info.get("cause")
+    return "\n".join(lines)
+
+
 class TrinoProbe:
     """A second, real Trino (same image/config/trust) whose catalog and S3 names
     resolve to the relay. Queried over verified HTTPS at its own address."""
@@ -823,7 +838,7 @@ class TrinoProbe:
         rows, deadline = [], time.monotonic() + 240
         while True:
             if "error" in page:
-                return False, json.dumps(page["error"])
+                return False, failure_chain(page["error"])
             rows.extend(page.get("data", []))
             if "nextUri" not in page:
                 return True, json.dumps(rows)
