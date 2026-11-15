@@ -173,6 +173,8 @@ class TlsGates(unittest.TestCase):
             "wrong-san": [
                 "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 's3'.",
                 "Peer name sail is not in peer certificate",
+                "curlCode: 60, SSL peer certificate or SSH remote key was not OK; Details: SSL: "
+                "no alternative certificate subject name matches target hostname",
             ],
             "expired": [
                 "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired",
