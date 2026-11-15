@@ -59,7 +59,10 @@ PostgreSQL administration sockets. No ports are published.
 
 OpenFGA has **its own PostgreSQL container**, database and login. Its private
 backend network admits only OpenFGA, that database and Lakekeeper's shared proxy
-namespace. Client containers have no backend-network attachment. C7 probes both
+namespace. In the corrected fixture OpenFGA shares its PostgreSQL container's
+network namespace, preserving the private DNS name/IP when OpenFGA itself is
+stopped. PostgreSQL connections still use verified TLS. This is an evaluation
+layout, not a production HA recommendation. Client containers have no backend-network attachment. C7 probes both
 OpenFGA ports by IP from each client network namespace, avoiding a DNS-only test.
 The PyIceberg runner is trusted host-side fixture code; its network isolation
 probe uses a disposable container on the same client network.
@@ -74,62 +77,75 @@ dumps never become artifacts. Raw credential values are not recorded in C6.
 
 ## Native runtime evidence
 
-Latest **completed** C-suite execution: commit `61b6331`,
-[run 43753907439](https://github.com/datopsis/lakehouse-integration/actions/runs/43753907439).
-Both native jobs completed with matching outcomes. These are actual artifacts,
-not source conclusions. The corrected harness at `099146a` is running in
-[43756784648](https://github.com/datopsis/lakehouse-integration/actions/runs/43756784648);
+Latest **completed** C-suite execution: commit `099146a`,
+[run 43756784648](https://github.com/datopsis/lakehouse-integration/actions/runs/43756784648).
+These are actual artifact results. The corrected fixture at `db03ff8` is running
+in [43760505088](https://github.com/datopsis/lakehouse-integration/actions/runs/43760505088);
 its outcome is not yet known.
 
 | Test | [amd64][native-amd64] | [arm64][native-arm64] |
 | --- | --- | --- |
 | C1 | PASS | PASS |
-| C2 | FAIL — table-ID context | FAIL — table-ID context |
+| C2 | PASS | PASS |
 | C3 | PASS | PASS |
-| C4 | PASS — 27.369 ms | PASS — 42.922 ms |
-| C5 | FAIL — Trino fixture | FAIL — Trino fixture |
+| C4 | PASS — 30.489 ms | PASS — 27.246 ms |
+| C5 | FAIL — Trino hidden-namespace oracle | FAIL — Trino hidden-namespace oracle |
 | C6 | PASS | PASS |
-| C7 | FAIL — no-group token control | FAIL — no-group token control |
-| C8 | PASS | PASS |
+| C7 | FAIL — outage returned 408 | PASS |
+| C8 | FAIL — post-outage readiness | PASS |
 
-[native-amd64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43753907439/job/132933699516
-[native-arm64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43753907439/job/132933699129
+[native-amd64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43756784648/job/132942509532
+[native-arm64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43756784648/job/132942509236
 
 **Measured revocation:** the first fresh REST denial after delete acknowledgement
-was **0.027369032 s on amd64** and **0.042922373 s on arm64**; both returned 404 on
-the first probe, within the required 30-second bound. These are single-run
-observations, not a distributed-cache SLA or revocation of issued storage keys.
+was **0.030489143 s on amd64** and **0.027245632 s on arm64**; both returned 404 on
+the first probe, within 30 seconds. These are single-run observations, not a
+cache SLA or revocation of issued storage keys. The preceding native run measured
+27.369 ms / 42.922 ms respectively.
 
-C2 revealed that Lakekeeper's table relationship IDs include warehouse context:
-`lakekeeper_table:<warehouse-id>/<table-id>`. The next run uses that exact pinned
-[source mapping](https://github.com/lakekeeper/lakekeeper/blob/9bd377162345b64a716f0a4fcffe4e7e7f3c7534/crates/authz-openfga/src/entities.rs).
-Both PyIceberg and Sail passed their entire C5 subtests. Trino reached verified
-HTTPS startup but could not load its native Zstd/Brotli libraries because the
-fixture omitted the executable `/tmp/trino` tmpfs used by the owner/main fixture;
-that mount is corrected without modifying the image or jars.
+C2/C3 now pass using the pinned model's contextual table IDs
+`lakekeeper_table:<warehouse-id>/<table-id>` and explicit group membership sync.
+PyIceberg and Sail passed their entire C5 subtests. Trino successfully listed/read
+exact allowed rows and hid namespace B with **SCHEMA_NOT_FOUND, code 45** and
+`line 1:15: Schema 'denied' does not exist`. The old oracle did not recognize this
+secure hidden-namespace result, so its write probes were not reached. The next
+run accepts only that exact error for the namespace-B SELECT; every write still
+requires an actual Iceberg ForbiddenException, with authentication/timeouts and
+unrelated missing schemas rejected by regression tests. No denied write is waived.
 
-**Observed empty-group compatibility gap:** Bob's genuine Rauthy human token,
-issued for a user with no groups, received Lakekeeper **400 RoleSourceIdError**
-(`role source ID cannot be empty`) before reaching authorization. C7 does not count
-that authentication/request-metadata error as an authorization denial. Its next
-run gives Bob a real, unmapped `no-access` group, self-provisions the catalog user
-and requires a successful `whoami` control before testing impersonation. Bob still
-has no grant or role membership. The empty-group edge is retained as an observed
-compatibility issue; it is not fixed or claimed qualified by choosing a valid C7
-control. C3 already proves that removing membership denies an old, still-valid
-groups-bearing token. Fresh human tokens with no groups remain outside the
-verified successful-token profile.
+Arm64 C7 rejected forged/wrong-audience/expired tokens with 401, rejected all four
+identity headers with 404, and could not route to either OpenFGA API port from
+any client network namespace. With OpenFGA stopped it received structured **503
+AuthorizationBackendError**, then recovered to exact reads and a namespace-B 404.
+Amd64's outage request instead hit HTTP **408 with an empty body**, which does not
+satisfy the explicit backend-denial assertion; it is not counted as a pass. Its
+next C8 request arrived before the restarted endpoint was ready, so durability
+was not measured in that attempt. The next fixture keeps the backend network
+endpoint stable while stopping OpenFGA and waits for recovery in `finally`,
+without allowing timeouts as successful denials. Arm64 C8 preserved the tuple set
+and decisions through restart and two runs of both migrations.
 
-Earlier native runs and harness corrections are retained in the history:
+**Observed empty-group compatibility gap:** in
+[43753907439](https://github.com/datopsis/lakehouse-integration/actions/runs/43753907439),
+Bob's genuine Rauthy human token for a user with no groups received Lakekeeper
+**400 RoleSourceIdError** (`role source ID cannot be empty`) before authorization.
+C7 does not accept this metadata/authentication error as a valid denial. Bob now
+has a real, unmapped `no-access` group, no grant/membership, and a successful
+`whoami` control before impersonation probes. The empty-group edge is retained
+as an observed compatibility issue and is not claimed fixed. C3 proves removal
+denies the old, unexpired groups-bearing token; fresh no-group human tokens are
+outside the verified successful-token profile.
+
+Earlier native runs are retained in the history:
 [43751025278](https://github.com/datopsis/lakehouse-integration/actions/runs/43751025278)
-passed C1/C6/C8 and PyIceberg C5, while using the wrong model type, fresh negative
-catalog bootstrap and incomplete native-client fixtures;
+exposed model-type and native-client fixture errors;
 [43745228788](https://github.com/datopsis/lakehouse-integration/actions/runs/43745228788)
-blocked all C cases on a storage-listener startup race;
+blocked all C cases on storage startup readiness;
 [43747865415](https://github.com/datopsis/lakehouse-integration/actions/runs/43747865415)
-blocked them on PostgreSQL's temporary-initialization-server race. Listener/data
-readiness and the final PostgreSQL TCP listener now gate setup. Two earlier
-dispatches were cancelled during preparation and provide no C-suite evidence.
+blocked them on PostgreSQL's temporary initialization server. These readiness
+probes now wait for verified listeners, a real S3 write and PostgreSQL's final
+TCP listener. Two earlier preparation dispatches were cancelled and provide no
+C-suite runtime evidence.
 
 C6 returned **404 with no credentials** for the denied table. The read-only load
 returned remote-signing configuration names and a storage-credentials descriptor
