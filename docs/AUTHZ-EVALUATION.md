@@ -74,25 +74,78 @@ dumps never become artifacts. Raw credential values are not recorded in C6.
 
 ## Native runtime evidence
 
-Execution underway; no runtime pass is asserted yet. Results will link the actual
-native jobs, with PASS / FAIL / BLOCKED kept distinct.
+Latest **completed** C-suite execution: commit `77f4777`,
+[run 43751025278](https://github.com/datopsis/lakehouse-integration/actions/runs/43751025278).
+Both native jobs completed, with matching outcomes. These are actual artifact
+results, not source conclusions. The corrected harness at `61b6331` is running in
+[43753907439](https://github.com/datopsis/lakehouse-integration/actions/runs/43753907439);
+its outcome is not yet known.
 
-| Test | amd64 | arm64 |
+| Test | [amd64][native-amd64] | [arm64][native-arm64] |
 | --- | --- | --- |
-| C1 | Pending | Pending |
-| C2 | Pending | Pending |
-| C3 | Pending | Pending |
-| C4 | Pending | Pending |
-| C5 | Pending | Pending |
-| C6 | Pending | Pending |
-| C7 | Pending | Pending |
-| C8 | Pending | Pending |
+| C1 | PASS | PASS |
+| C2 | FAIL — provisioning type | FAIL — provisioning type |
+| C3 | FAIL — negative bootstrap | FAIL — negative bootstrap |
+| C4 | FAIL — positive prerequisite | FAIL — positive prerequisite |
+| C5 | FAIL — Trino/Sail harness | FAIL — Trino/Sail harness |
+| C6 | PASS | PASS |
+| C7 | FAIL — early assertion | FAIL — early assertion |
+| C8 | PASS | PASS |
 
-Revocation delay: not measured yet. First dispatched run:
-[43744339236](https://github.com/datopsis/lakehouse-integration/actions/runs/43744339236).
+[native-amd64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43751025278/job/132924778881
+[native-arm64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43751025278/job/132924778403
+
+**Revocation delay: not measured.** C4 failed its positive prerequisite before
+revoking anything. No revocation pass or bound is inferred from this attempt.
+
+C2 used `table:` instead of the actual model's `lakekeeper_table:` type. Without
+that grant, C3's fresh catalog construction hid the entire warehouse after the
+namespace grant was removed; C3/C4 did not reach the intended controls. The next
+run uses the recorded model's actual table type and an existing authenticated
+catalog for the expected negative. Trino's HTTPS-only configuration lacked the
+required internal HTTPS settings; these now follow the owner's tested profile.
+Sail successfully listed/read allowed rows and received a real **403 Forbidden**
+on INSERT; the harness accepted only AnalysisException, while Spark delivered
+SparkRuntimeException. It now accepts typed Spark errors only with the same
+explicit authorization status/message checks. PyIceberg's entire C5 subtest passed
+on both CPUs. C7 stopped at an assertion without a diagnostic message; it is
+unverified, with explicit identity controls and sanitized tracebacks added for the
+next run. No assertion was waived to count a failed case as passing.
+
+C6 returned **404 with no credentials** for the denied table. The read-only load
+returned remote-signing configuration names and a storage-credentials descriptor
+containing only region, endpoint and path-style settings; **no S3 keys/session
+token** were returned. This is the expected STS-disabled boundary, not STS
+isolation evidence.
+
+Earlier completed runs also remain linked for reproducibility:
+[43745228788](https://github.com/datopsis/lakehouse-integration/actions/runs/43745228788)
+blocked all C cases on a storage-listener startup race;
+[43747865415](https://github.com/datopsis/lakehouse-integration/actions/runs/43747865415)
+blocked them on the PostgreSQL temporary-initialization-server race. Both are fixed
+by verified listener/data-path readiness and waiting for PostgreSQL's final TCP
+listener. Two earlier dispatches were cancelled during preparation and provide no
+C-suite runtime evidence.
+
 Artifacts retain sanitized `builds.json`, `results.json`, the exact OpenFGA model,
 service logs and information-only OpenFGA Trivy/Grype reports for 14 days.
 Scanner execution failures remain failures, not zero findings.
+
+### Upstream OpenFGA image scans
+
+The first completed run's information-only scanner results are identical on both
+native architectures. Counts are fixable High/Critical package findings, not
+exploitability determinations or unique-advisory totals. The full scanner JSON is
+in each run artifact. No suppression or owning-repository gate change was made.
+
+| Scanner | amd64 High / Critical | arm64 High / Critical |
+| --- | --- | --- |
+| Trivy 0.76.2 | 9 / 1 | 9 / 1 |
+| Grype 0.121.3 | 10 / 3 | 10 / 3 |
+
+These upstream-image findings prevent any inference of security qualification from
+functional acceptance. Hardened Rauthy is built independently at the owner's pin;
+this table describes only the upstream OpenFGA image.
 
 ## Phase D: source boundary and optional probe
 

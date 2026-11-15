@@ -24,8 +24,8 @@ Every owner decision, and every decision still pending, is recorded in
   three-client assertions and exact-outcome Sail canaries where needed.
 - TLS between all services: REST, S3, PostgreSQL, Seaweed control HTTP/gRPC, and Trino;
   include certificate verification, lifecycle and negative tests.
-- [ ] Phase B: build a hardened `rauthy-ubi` image and qualify OpenID login on both
-  native architectures. Owner chose Rauthy on 2026-11-13, with Keycloak as the
+- [ ] Phase B: integrate the merged hardened `rauthy-ubi` image (`1e114b8`) and
+  qualify OpenID login on both native architectures in the main path. Owner chose Rauthy on 2026-11-13, with Keycloak as the
   tested fallback; see the [IdP bake-off decision and evidence](IDP-BAKEOFF.md).
   Sail 0.7.3 needs an externally supplied token-file path with token lifecycle
   management; it has no native client-credentials grant provider.
