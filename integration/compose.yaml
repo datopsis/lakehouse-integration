@@ -1,4 +1,7 @@
 name: lakehouse-integration
+# Phase A: every network hop is verified TLS. Plaintext exists only on loopback
+# inside the catalog and Sail network namespaces (proxy -> backend), and on the
+# PostgreSQL container-local Unix socket used for administrator provisioning.
 x-hardened: &hardened
   read_only: true
   cap_drop: [ALL]
@@ -6,6 +9,15 @@ x-hardened: &hardened
   networks: [private]
   pids_limit: 512
   stop_grace_period: 30s
+x-proxy: &proxy
+  image: localhost/nginx-ubi:integration
+  user: '10001:0'
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  pids_limit: 128
+  stop_grace_period: 30s
+  tmpfs: ['/tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777']
 services:
   postgres:
     <<: *hardened
@@ -15,29 +27,32 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: lakekeeper
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres-password
+      POSTGRESQL_TLS_CERT_FILE: /run/tls/server.crt
+      POSTGRESQL_TLS_KEY_FILE: /run/tls/server.key
     volumes:
       - pg-data:/var/lib/pgsql
       - ../.runtime/postgres:/run/secrets:ro
+      - ../.runtime/tls/postgres:/run/tls:ro
     tmpfs: ['/tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777']
   master:
     <<: *hardened
     image: localhost/seaweedfs-ubi:integration
     user: '1000:0'
-    command: [master, '-mdir=/data', '-ip=master', '-volumeSizeLimitMB=64']
-    volumes: [master-data:/data]
+    command: [master, '-ip.bind=0.0.0.0', '-ip=master', '-mdir=/data', '-volumeSizeLimitMB=64']
+    volumes: [master-data:/data, '../.runtime/tls/master:/etc/seaweedfs:ro']
   volume:
     <<: *hardened
     image: localhost/seaweedfs-ubi:integration
     user: '1000:0'
-    command: [volume, '-dir=/data', '-ip=volume', '-mserver=master:9333', '-max=4']
-    volumes: [volume-data:/data]
+    command: [volume, '-ip.bind=0.0.0.0', '-ip=volume', '-dir=/data', '-mserver=master:9333', '-max=4']
+    volumes: [volume-data:/data, '../.runtime/tls/volume:/etc/seaweedfs:ro']
     depends_on: [master]
   filer:
     <<: *hardened
     image: localhost/seaweedfs-ubi:integration
     user: '1000:0'
-    command: [filer, '-ip=filer', '-master=master:9333', '-defaultStoreDir=/data']
-    volumes: [filer-data:/data]
+    command: [filer, '-ip.bind=0.0.0.0', '-ip=filer', '-master=master:9333', '-defaultStoreDir=/data']
+    volumes: [filer-data:/data, '../.runtime/tls/filer:/etc/seaweedfs:ro']
     depends_on: [master, volume]
   s3:
     <<: *hardened
@@ -45,15 +60,32 @@ services:
     user: '1000:0'
     environment:
       WEED_V: '4' # Upstream fla9 logging flag via environment; keep the image entrypoint.
-    command: [s3, '-filer=filer:8888', '-ip.bind=0.0.0.0', '-config=/run/secrets/s3.json']
-    volumes: [../.runtime/s3:/run/secrets:ro]
+    # Native HTTPS on 8333 and no separate HTTPS port flag: no plaintext beside TLS.
+    command:
+      - s3
+      - '-ip.bind=0.0.0.0'
+      - '-filer=filer:8888'
+      - '-config=/run/secrets/s3.json'
+      - '-cert.file=/etc/seaweedfs/http.crt'
+      - '-key.file=/etc/seaweedfs/http.key'
+      - '-port.iceberg=0'
+      - '-port.lance=0'
+    volumes: ['../.runtime/s3:/run/secrets:ro', '../.runtime/tls/s3:/etc/seaweedfs:ro']
     depends_on: [filer]
+  provisioner:
+    # One-off administrative shell with its own client identity (bucket setup).
+    <<: *hardened
+    image: localhost/seaweedfs-ubi:integration
+    user: '1000:0'
+    volumes: ['../.runtime/tls/provisioner:/etc/seaweedfs:ro']
+    profiles: [setup]
   migrate:
     <<: *hardened
     image: localhost/lakekeeper-ubi:integration
     user: '999:0'
     command: [migrate]
     env_file: ../.runtime/lakekeeper.env
+    volumes: ['../.runtime/tls/trust:/run/tls:ro']
     profiles: [setup]
   catalog:
     <<: *hardened
@@ -61,21 +93,32 @@ services:
     user: '999:0'
     command: [serve]
     env_file: ../.runtime/lakekeeper.env
+    volumes: ['../.runtime/tls/trust:/run/tls:ro']
     depends_on: [postgres]
+  catalog-proxy:
+    # Shares ONLY the catalog's network namespace: TLS on 8181, loopback backend.
+    <<: *proxy
+    network_mode: service:catalog
+    command: [-c, /etc/nginx/profile/nginx.conf, -g, 'daemon off;']
+    volumes:
+      - ../.sources/nginx-ubi/examples/profiles/lakekeeper/nginx.conf:/etc/nginx/profile/nginx.conf:ro
+      - ../.runtime/tls/catalog-proxy:/etc/nginx/tls:ro
+    depends_on: [catalog]
   trino:
     <<: *hardened
     image: localhost/trino-ubi:integration
     user: '10001:0'
     mem_limit: 3g
-    # Explicit isolated-test profile supported by the pinned image; no published port.
+    # The pinned image's isolated-test profile waives login only; it requires
+    # HTTPS-only ingress, HTTPS internal communication and explicit trust stores.
     environment:
       TRINO_UBI_ALLOW_INSECURE: 'true'
     env_file: ../.runtime/trino.env
-    volumes: [../.runtime/trino:/etc/trino:ro]
+    volumes: ['../.runtime/trino:/etc/trino:ro', '../.runtime/tls/trino:/run/tls:ro']
     tmpfs:
       - /var/lib/trino:rw,noexec,nosuid,nodev,uid=10001,gid=0,mode=0750,size=512m
       - /tmp/trino:rw,exec,nosuid,nodev,uid=10001,gid=0,mode=0750,size=256m
-    depends_on: [catalog, s3]
+    depends_on: [catalog-proxy, s3]
 networks:
   private:
     internal: true

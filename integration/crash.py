@@ -9,7 +9,21 @@ import time
 import urllib.error
 from pathlib import Path
 
-SERVICES = ("postgres", "master", "volume", "filer", "s3", "catalog", "trino", "sail")
+SERVICES = (
+    "postgres",
+    "master",
+    "volume",
+    "filer",
+    "s3",
+    "catalog",
+    "catalog-proxy",
+    "trino",
+    "sail",
+    "sail-proxy",
+)
+# A proxy shares its application's network namespace, so it is one crash unit
+# with it: a proxy must never survive on a namespace that no longer exists.
+UNITS = {"catalog": ("catalog", "catalog-proxy")}
 BATCH_SIZE = 16
 RECOVERY_SECONDS = 180
 
@@ -176,11 +190,11 @@ def settle(p, attempt):
     query_id = attempt.get("query_id")
     assert query_id, "Submission outcome unknown: cannot prove the query has settled"
     headers = {"X-Trino-User": "integration"}
-    status, _ = p.http("DELETE", f"http://trino:8080/v1/query/{query_id}", headers=headers)
+    status, _ = p.http("DELETE", f"https://trino:8443/v1/query/{query_id}", headers=headers)
     assert status == 204, ("Could not cancel unsettled query", status, query_id)
     deadline = time.monotonic() + 30
     while time.monotonic() < deadline:
-        status, body = p.http("GET", f"http://trino:8080/v1/query/{query_id}", headers=headers)
+        status, body = p.http("GET", f"https://trino:8443/v1/query/{query_id}", headers=headers)
         assert status == 200, (status, body)
         if body["state"] in ("FINISHED", "FAILED"):
             attempt["settled_state"] = body["state"]
@@ -208,7 +222,8 @@ def component(p, service, manifest, journal):
     manifest[table] = create_table(p, table)
     attempts = manifest[table]["attempts"]
     injected = threading.Event()
-    before = containers(p, [service])
+    unit = UNITS.get(service, (service,))
+    before = containers(p, unit)
     restarted = threading.Event()
     stop = threading.Event()
     errors = []
@@ -266,7 +281,7 @@ def component(p, service, manifest, journal):
                 if query_id and not current.get("terminal"):
                     status, body = p.http(
                         "GET",
-                        f"http://trino:8080/v1/query/{query_id}",
+                        f"https://trino:8443/v1/query/{query_id}",
                         headers={"X-Trino-User": "integration"},
                     )
                     # Full query info is unavailable (410) before dispatch completes.
@@ -283,9 +298,9 @@ def component(p, service, manifest, journal):
                         break
             time.sleep(0.01)
         assert injected.is_set(), "No RUNNING INSERT observed"
-        started, previous = kill(p, [service], before)
+        started, previous = kill(p, unit, before)
         journal("killed", service=service, signal="SIGKILL", exit_code=137, containers=previous)
-        recover(p, [service], previous)
+        recover(p, unit, previous)
         recovery["restarted_at"] = time.monotonic()
         restarted.set()
         worker.join(RECOVERY_SECONDS)
@@ -329,16 +344,13 @@ def crash_durability(p):
     started, previous = kill(p, SERVICES)
     journal("killed", service="all", signal="SIGKILL", exit_code=137, containers=previous)
     recover(p, SERVICES, previous)
-    p.wait(
-        "Trino after SIGKILL",
-        lambda: p.http("GET", "http://trino:8080/v1/info")[1].get("starting") is False,
-        180,
-    )
+    p.wait("Trino after SIGKILL", p.trino_ready, 180)
     # Only readiness is retried. Exact rows/snapshots/readability assertions run once.
     p.wait(
         "catalog after SIGKILL",
         lambda: (
-            p.http("GET", "http://catalog:8181/catalog/v1/config?warehouse=qualification")[0] == 200
+            p.http("GET", "https://catalog:8181/catalog/v1/config?warehouse=qualification")[0]
+            == 200
         ),
     )
     evidence = {

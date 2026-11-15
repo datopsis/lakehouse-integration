@@ -79,6 +79,11 @@ class Gates(unittest.TestCase):
                 },
             }
             self.assertTrue(provenance_errors(image, "a" * 40, arm64, "arm64"))
+            for arch in ("amd64", "arm64"):
+                self.assertEqual(
+                    artifact_lock(source, "nginx-ubi", arch),
+                    source / f"artifacts/locks/{arch}.json",
+                )
             for repo in ("lakekeeper", "seaweedfs", "trino"):
                 for arch in ("amd64", "arm64"):
                     self.assertEqual(
@@ -209,21 +214,68 @@ class Gates(unittest.TestCase):
 
     def test_compose_isolation_including_setup_containers(self):
         compose = yaml.safe_load(Path("integration/compose.yaml").read_text())
+        sail = yaml.safe_load(Path("integration/compose.sail.yaml").read_text())
+        services = {**compose["services"], **sail["services"]}
         self.assertTrue(compose["networks"]["private"]["internal"])
-        for name, service in compose["services"].items():
+        proxies = {"catalog-proxy": "catalog", "sail-proxy": "sail"}
+        for name, service in services.items():
             with self.subTest(service=name):
                 self.assertTrue(service["read_only"])
                 self.assertEqual(service["cap_drop"], ["ALL"])
                 self.assertEqual(service["security_opt"], ["no-new-privileges:true"])
-                self.assertEqual(service["networks"], ["private"])
+                if name in proxies:
+                    # Shares only its application's network namespace.
+                    self.assertEqual(service["network_mode"], "service:" + proxies[name])
+                    self.assertNotIn("networks", service)
+                    self.assertNotIn("pid", service)
+                else:
+                    self.assertEqual(service["networks"], ["private"])
+                    self.assertNotIn("network_mode", service)
                 self.assertNotIn(service["user"].split(":")[0], ("", "root", "0"))
                 self.assertFalse(service.get("ports"))
-        self.assertEqual(compose["services"]["s3"]["volumes"], ["../.runtime/s3:/run/secrets:ro"])
-        for name, service in compose["services"].items():
+                for mount in service.get("volumes", []):
+                    source = mount.split(":")[0]
+                    # Never the TLS root, the PKI, or another service's directory.
+                    self.assertNotIn(source.rstrip("/"), ("../.runtime/tls", "../.runtime"))
+                    self.assertNotIn(".runtime/pki", source)
+                    self.assertTrue(mount.endswith(":ro") or not source.startswith("."), mount)
+        self.assertEqual(
+            compose["services"]["s3"]["volumes"],
+            ["../.runtime/s3:/run/secrets:ro", "../.runtime/tls/s3:/etc/seaweedfs:ro"],
+        )
+        for name, service in services.items():
             if name != "postgres":
                 self.assertFalse(
                     any(".runtime/postgres" in mount for mount in service.get("volumes", []))
                 )
+            tls = [m.split(":")[0] for m in service.get("volumes", []) if ".runtime/tls/" in m]
+            allowed = {
+                "postgres": ["../.runtime/tls/postgres"],
+                "master": ["../.runtime/tls/master"],
+                "volume": ["../.runtime/tls/volume"],
+                "filer": ["../.runtime/tls/filer"],
+                "s3": ["../.runtime/tls/s3"],
+                "provisioner": ["../.runtime/tls/provisioner"],
+                "migrate": ["../.runtime/tls/trust"],
+                "catalog": ["../.runtime/tls/trust"],
+                "catalog-proxy": ["../.runtime/tls/catalog-proxy"],
+                "trino": ["../.runtime/tls/trino"],
+                "sail": ["../.runtime/tls/trust"],
+                "sail-proxy": ["../.runtime/tls/sail-proxy"],
+            }[name]
+            self.assertEqual(tls, allowed, name)
+        # Pinned upstream proxy profiles are mounted unmodified, never copied.
+        for name, profile in (("catalog-proxy", "lakekeeper"), ("sail-proxy", "sail")):
+            self.assertIn(
+                f"../.sources/nginx-ubi/examples/profiles/{profile}/nginx.conf:"
+                "/etc/nginx/profile/nginx.conf:ro",
+                services[name]["volumes"],
+            )
+        # No plaintext listener beside native S3 TLS, and no extra S3 listeners.
+        s3 = compose["services"]["s3"]["command"]
+        self.assertFalse(any(arg.startswith(("-port.https", "--port.https")) for arg in s3))
+        self.assertIn("-port.iceberg=0", s3)
+        self.assertIn("-port.lance=0", s3)
 
 
 if __name__ == "__main__":

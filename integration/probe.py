@@ -4,6 +4,9 @@ import json
 import os
 import secrets
 import shutil
+import socket
+import ssl
+import struct
 import subprocess
 import sys
 import time
@@ -15,6 +18,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME = ROOT / ".runtime"
 REPORTS = ROOT / "reports"
+# The run's public root. Every runner client and fresh reader verifies against it
+# (hostname included). Set before PyArrow/gRPC import; inherited by subprocesses.
+CA_FILE = str(RUNTIME / "tls/trust/ca.crt")
+for _variable in (
+    "SSL_CERT_FILE",  # Python ssl defaults and Arrow's S3 client
+    "REQUESTS_CA_BUNDLE",  # Requests-based REST and remote-signing sessions
+    "AWS_CA_BUNDLE",  # botocore/aiobotocore (T9 FsspecFileIO)
+    "GRPC_DEFAULT_SSL_ROOTS_FILE_PATH",  # PySpark Connect channels
+):
+    os.environ[_variable] = CA_FILE
+SERVICES = ("postgres", "master", "volume", "filer", "s3", "catalog", "trino", "sail")
+PROXIES = {"catalog-proxy": "catalog", "sail-proxy": "sail"}
 DC = [
     "docker",
     "compose",
@@ -42,7 +57,27 @@ def cid(service):
     return subprocess.check_output(DC + ["ps", "-q", service], text=True).strip()
 
 
+class HttpsOnly(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise AssertionError(f"Unexpected redirect {code} to {newurl}")
+
+
+def tls_context(cafile=None):
+    context = ssl.create_default_context(cafile=cafile or CA_FILE)
+    assert context.check_hostname and context.verify_mode == ssl.CERT_REQUIRED
+    return context
+
+
+def opener():
+    return urllib.request.build_opener(
+        urllib.request.ProxyHandler({}),
+        HttpsOnly(),
+        urllib.request.HTTPSHandler(context=tls_context()),
+    )
+
+
 def http(method, url, data=None, headers=None):
+    assert url.startswith("https://"), "Plaintext URL refused: " + url
     if isinstance(data, (dict, list)):
         data = json.dumps(data).encode()
         headers = {"Content-Type": "application/json", **(headers or {})}
@@ -50,7 +85,7 @@ def http(method, url, data=None, headers=None):
         data = data.encode()
     request = urllib.request.Request(url, data=data, method=method, headers=headers or {})
     try:
-        with urllib.request.urlopen(request, timeout=30) as response:
+        with opener().open(request, timeout=30) as response:
             body = response.read()
             return response.status, json.loads(body) if body else None
     except urllib.error.HTTPError as exc:
@@ -75,15 +110,16 @@ def wait(label, fn, seconds=120):
     raise RuntimeError(f"{label} not ready after {seconds}s: {error}")
 
 
-def hosts():
+def hosts(overrides=None):
     # Linux runner can reach the internal bridge. Nothing is port-published.
+    # overrides: names the TLS negative tests temporarily resolve to their relay.
     entries = []
-    for service in ("s3", "catalog", "trino", "sail"):
+    for service in SERVICES:
         if not cid(service):
             continue
         item = json.loads(subprocess.check_output(["docker", "inspect", cid(service)]))[0]
         address = next(iter(item["NetworkSettings"]["Networks"].values()))["IPAddress"]
-        entries.append(f"{address} {service}\n")
+        entries.append(f"{(overrides or {}).get(service, address)} {service}\n")
     import re
 
     old = re.sub(
@@ -106,7 +142,7 @@ def hosts():
 
 def sql(query, observe=None):
     status, page = http(
-        "POST", "http://trino:8080/v1/statement", query, {"X-Trino-User": "integration"}
+        "POST", "https://trino:8443/v1/statement", query, {"X-Trino-User": "integration"}
     )
     assert status == 200, (status, page)
     rows = []
@@ -120,6 +156,7 @@ def sql(query, observe=None):
         if "nextUri" not in page:
             break
         assert time.monotonic() < deadline, "SQL timeout"
+        assert page["nextUri"].startswith("https://trino:8443/"), page["nextUri"]
         time.sleep(0.1)
         status, page = http("GET", page["nextUri"])
         assert status == 200, (status, page)
@@ -127,24 +164,29 @@ def sql(query, observe=None):
     return rows
 
 
-def check_container_config(item):
+def check_container_config(item, namespace_owner=None):
+    """namespace_owner: a proxy must share ONLY that container's network namespace."""
     config = item["HostConfig"]
     assert item["Config"]["User"].split(":")[0] not in ("0", "root", "")
     assert config["ReadonlyRootfs"] and "ALL" in config["CapDrop"]
     assert "no-new-privileges:true" in config["SecurityOpt"]
     assert not config["PortBindings"]
     assert not config.get("Privileged")
-    assert set(item["NetworkSettings"]["Networks"]) == {"lakehouse-integration_private"}
+    if namespace_owner is None:
+        assert set(item["NetworkSettings"]["Networks"]) == {"lakehouse-integration_private"}
+    else:
+        assert config["NetworkMode"] == "container:" + namespace_owner, config["NetworkMode"]
+        assert not item["NetworkSettings"]["Networks"]
+        assert config.get("PidMode", "") in ("", "private") and config.get("IpcMode") != "host"
 
 
 def check_hardening():
     report = {}
-    for service in ("postgres", "master", "volume", "filer", "s3", "catalog", "trino", "sail"):
+    for service in (*SERVICES, *PROXIES):
         item = json.loads(subprocess.check_output(["docker", "inspect", cid(service)]))[0]
-        check_container_config(item)
-        status = subprocess.check_output(
-            DC + ["exec", "-T", service, "cat", "/proc/1/status"], text=True
-        )
+        check_container_config(item, cid(PROXIES[service]) if service in PROXIES else None)
+        # PID 1 of the container, read from the host (proxy images ship no shell tools).
+        status = Path(f"/proc/{item['State']['Pid']}/status").read_text()
         fields = dict(line.split(":", 1) for line in status.splitlines() if ":" in line)
         assert all(int(uid) > 0 for uid in fields["Uid"].split())
         for field in ("CapInh", "CapPrm", "CapEff", "CapBnd", "CapAmb"):
@@ -162,9 +204,10 @@ def rest_catalog(delegation="client-managed", with_credentials=True):
     from pyiceberg.catalog.rest import RestCatalog
 
     properties = {
-        "uri": "http://catalog:8181/catalog",
+        "uri": "https://catalog:8181/catalog",
+        "ssl": {"cabundle": CA_FILE},
         "warehouse": "qualification",
-        "s3.endpoint": "http://s3:8333",
+        "s3.endpoint": "https://s3:8333",
         "s3.region": "local",
         "s3.path-style-access": "true",
     }
@@ -194,8 +237,20 @@ def probe(name, fn):
 
 CREDS = {
     key: secrets.token_hex(24)
-    for key in ("admin", "postgres", "encryption", "access", "secret", "wrong")
+    for key in (
+        "admin",
+        "postgres",
+        "encryption",
+        "access",
+        "secret",
+        "wrong",
+        "sail_access",
+        "sail_secret",
+        "trino_shared",
+        "truststore",
+    )
 }
+LAKEKEEPER_PG = "postgresql://lakekeeper:{}@postgres:5432/lakekeeper?sslmode=verify-full&sslrootcert=/run/tls/ca.crt"
 
 
 def prepare():
@@ -219,7 +274,16 @@ def prepare():
                             {"accessKey": CREDS["access"], "secretKey": CREDS["secret"]}
                         ],
                         "actions": ["Read:warehouse", "Write:warehouse", "List:warehouse"],
-                    }
+                    },
+                    {
+                        # Sail's own static key: SeaweedFS records which identity
+                        # signed Sail's requests now that the wire is encrypted (T10).
+                        "name": "sail",
+                        "credentials": [
+                            {"accessKey": CREDS["sail_access"], "secretKey": CREDS["sail_secret"]}
+                        ],
+                        "actions": ["Read:warehouse", "Write:warehouse", "List:warehouse"],
+                    },
                 ]
             }
         )
@@ -230,19 +294,27 @@ def prepare():
     for path in [*secret_dir.iterdir(), RUNTIME / "s3/s3.json"]:
         subprocess.run(["sudo", "chown", "root:root", str(path)], check=True)
         subprocess.run(["sudo", "chmod", "0440", str(path)], check=True)
+    # Loopback-only backend and metrics; clients reach it through the TLS proxy.
     (RUNTIME / "lakekeeper.env").write_text(
-        f"LAKEKEEPER__PG_DATABASE_URL_WRITE=postgres://lakekeeper:{CREDS['postgres']}@postgres:5432/lakekeeper\n"
+        "LAKEKEEPER__BIND_IP=127.0.0.1\n"
+        "LAKEKEEPER__LISTEN_PORT=8182\n"
+        "LAKEKEEPER__METRICS_PORT=9000\n"
+        "LAKEKEEPER__BASE_URI=https://catalog:8181\n"
+        f"LAKEKEEPER__PG_DATABASE_URL_WRITE={LAKEKEEPER_PG.format(CREDS['postgres'])}\n"
         f"LAKEKEEPER__PG_ENCRYPTION_KEY={CREDS['encryption']}\n"
+        "SSL_CERT_FILE=/run/tls/ca.crt\n"
     )
     (RUNTIME / "trino.env").write_text(
         f"S3_ACCESS_KEY_ID={CREDS['access']}\nS3_SECRET_ACCESS_KEY={CREDS['secret']}\n"
     )
     (RUNTIME / "sail.env").write_text(
-        f"AWS_ACCESS_KEY_ID={CREDS['access']}\nAWS_SECRET_ACCESS_KEY={CREDS['secret']}\n"
+        f"AWS_ACCESS_KEY_ID={CREDS['sail_access']}\nAWS_SECRET_ACCESS_KEY={CREDS['sail_secret']}\n"
     )
     for name in ("lakekeeper.env", "trino.env", "sail.env"):
         (RUNTIME / name).chmod(0o600)
     shutil.copytree(ROOT / "integration/trino", RUNTIME / "trino")
+    with (RUNTIME / "trino/config.properties").open("a") as config:
+        config.write(f"internal-communication.shared-secret={CREDS['trino_shared']}\n")
     # No encoding override in this catalog: exercise the actual Trino default.
     content = (RUNTIME / "trino/catalog/iceberg.properties").read_text()
     (RUNTIME / "trino/catalog/canary.properties").write_text(
@@ -263,36 +335,61 @@ def prepare():
         + "iceberg.remove-orphan-files.min-retention=0s\n"
     )
 
-    for path in (RUNTIME / "trino").rglob("*"):
-        path.chmod(0o755 if path.is_dir() else 0o644)
-    (RUNTIME / "trino").chmod(0o755)
+    # The pinned image requires read-only, non-world-readable configuration.
+    paths = [(path, path.is_dir()) for path in [RUNTIME / "trino", *(RUNTIME / "trino").rglob("*")]]
+    subprocess.run(["sudo", "chown", "-R", "0:0", str(RUNTIME / "trino")], check=True)
+    for path, directory in reversed(paths):
+        subprocess.run(["sudo", "chmod", "0750" if directory else "0440", str(path)], check=True)
+    from tls_setup import prepare as tls_prepare
+
+    record("TLS_certificates", tls_prepare(CREDS["truststore"]))
+
+
+def pg_tls_ready():
+    """SSLRequest then a fully verified handshake to postgres:5432 (no credentials)."""
+    with socket.create_connection(("postgres", 5432), timeout=5) as raw:
+        raw.sendall(struct.pack("!ii", 8, 80877103))
+        assert raw.recv(1) == b"S", "PostgreSQL refused TLS negotiation"
+        with tls_context().wrap_socket(raw, server_hostname="postgres") as secure:
+            return secure.version() in ("TLSv1.2", "TLSv1.3")
+
+
+def catalog_ready():
+    backend = subprocess.run(
+        DC + ["exec", "-T", "catalog", "lakekeeper", "healthcheck", "-s"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    return backend.returncode == 0 and http("GET", "https://catalog:8181/health")[0] == 200
+
+
+def trino_ready():
+    return http("GET", "https://trino:8443/v1/info")[1].get("starting") is False
+
+
+def provision(commands):
+    """Run the SeaweedFS shell with the provisioner's own mTLS client identity."""
+    name = "lakehouse-integration-provisioner"
+    try:
+        result = subprocess.run(
+            DC
+            + ["run", "--name", name, "--no-deps", "-T", "provisioner", "shell"]
+            + ["-master=master:9333", "-filer=filer:8888"],
+            input=commands,
+            text=True,
+            capture_output=True,
+            timeout=120,
+        )
+        check_container_config(json.loads(subprocess.check_output(["docker", "inspect", name]))[0])
+        return result
+    finally:
+        subprocess.run(["docker", "rm", "-f", name], check=True, stdout=subprocess.DEVNULL)
 
 
 def start():
     compose("up", "-d", "postgres", "master", "volume", "filer", "s3")
-    wait(
-        "PostgreSQL TCP",
-        lambda: (
-            subprocess.run(
-                DC
-                + [
-                    "exec",
-                    "-T",
-                    "postgres",
-                    "pg_isready",
-                    "-h",
-                    "127.0.0.1",
-                    "-U",
-                    "postgres",
-                    "-d",
-                    "lakekeeper",
-                ],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            ).returncode
-            == 0
-        ),
-    )
+    hosts()
+    wait("PostgreSQL verified TLS", pg_tls_ready)
     with (ROOT / "integration/postgres-init.sql").open() as source:
         compose(
             "exec",
@@ -316,34 +413,18 @@ def start():
         )
     finally:
         subprocess.run(["docker", "rm", "-f", migration], check=True, stdout=subprocess.DEVNULL)
-    compose("up", "-d", "catalog")
+    compose("up", "-d", "catalog", "catalog-proxy")
     hosts()
-    wait(
-        "Lakekeeper",
-        lambda: (
-            subprocess.run(
-                DC + ["exec", "-T", "catalog", "lakekeeper", "healthcheck", "-s"],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            ).returncode
-            == 0
-        ),
-    )
+    wait("Lakekeeper behind its TLS proxy", catalog_ready)
 
     # The hardened gateway disables auto-create. Register the bucket before Lakekeeper validates it.
     def bucket():
-        result = subprocess.run(
-            DC
-            + ["exec", "-T", "master", "weed", "shell", "-master=master:9333", "-filer=filer:8888"],
-            input="s3.bucket.create -name warehouse\ns3.bucket.list\n",
-            text=True,
-            capture_output=True,
-        )
+        result = provision("s3.bucket.create -name warehouse\ns3.bucket.list\n")
         return "warehouse" in result.stdout
 
     wait("registered bucket", bucket)
     status, _ = http(
-        "POST", "http://catalog:8181/management/v1/bootstrap", {"accept-terms-of-use": True}
+        "POST", "https://catalog:8181/management/v1/bootstrap", {"accept-terms-of-use": True}
     )
     assert status == 204, status
     profile = {
@@ -352,7 +433,7 @@ def start():
         "region": "local",
         "sts-enabled": False,
         "flavor": "s3-compat",
-        "endpoint": "http://s3:8333",
+        "endpoint": "https://s3:8333",
         "path-style-access": True,
     }
     warehouse = {
@@ -368,15 +449,15 @@ def start():
     bad = json.loads(json.dumps(warehouse))
     bad["warehouse-name"] = "rejected"
     bad["storage-credential"]["secret-access-key"] = CREDS["wrong"]
-    status, body = http("POST", "http://catalog:8181/management/v1/warehouse", bad)
+    status, body = http("POST", "https://catalog:8181/management/v1/warehouse", bad)
     assert status == 400 and "signature" in json.dumps(body).lower(), (status, body)
     record("wrong_s3_secret", {"status": status, "body": body})
-    status, body = http("POST", "http://catalog:8181/management/v1/warehouse", warehouse)
+    status, body = http("POST", "https://catalog:8181/management/v1/warehouse", warehouse)
     assert status in (200, 201), (status, body)
     record("warehouse", {"profile": profile, "response": body})
-    compose("up", "-d", "trino", "sail")
+    compose("up", "-d", "trino", "sail", "sail-proxy")
     hosts()
-    wait("Trino", lambda: http("GET", "http://trino:8080/v1/info")[1].get("starting") is False, 180)
+    wait("Trino over HTTPS", trino_ready, 180)
     from sail_probe import ready
 
     ready(sys.modules[__name__])
@@ -459,32 +540,15 @@ def py_write():
 
 
 def restart():
-    old = {
-        service: cid(service)
-        for service in ("postgres", "master", "volume", "filer", "s3", "catalog", "trino", "sail")
-    }
+    old = {service: cid(service) for service in (*SERVICES, *PROXIES)}
     # Down removes every container and network, retaining only named volumes and secrets.
     logs = subprocess.run(DC + ["logs", "--no-color"], text=True, capture_output=True, check=True)
     (REPORTS / "services-before-recreation.log").write_text(logs.stdout + logs.stderr)
     compose("down", "--timeout", "30")
     compose("up", "-d")
     hosts()
-    wait(
-        "catalog after restart",
-        lambda: (
-            subprocess.run(
-                DC + ["exec", "-T", "catalog", "lakekeeper", "healthcheck", "-s"],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-            ).returncode
-            == 0
-        ),
-    )
-    wait(
-        "Trino after restart",
-        lambda: http("GET", "http://trino:8080/v1/info")[1].get("starting") is False,
-        180,
-    )
+    wait("catalog and proxy after restart", catalog_ready)
+    wait("Trino after restart", trino_ready, 180)
     from sail_probe import ready
 
     ready(sys.modules[__name__])
@@ -493,6 +557,10 @@ def restart():
         previous and new[service] and new[service] != previous for service, previous in old.items()
     )
     record("container_recreation", {"before": old, "after": new})
+    from tls_checks import exposure
+
+    # Recreated proxies must not strand on an old namespace or expose plaintext.
+    probe("TLS_exposure_after_recreation", lambda: exposure(sys.modules[__name__]))
     probe("T9_remote_signing_restart", REMOTE.after)
     # A fresh independent reader matches the owner's storage fixture and avoids
     # carrying S3/signing/DNS clients across network/container replacement.
@@ -612,7 +680,8 @@ def s3_client(secret=None, anonymous=False):
 
     return botocore.session.get_session().create_client(
         "s3",
-        endpoint_url="http://s3:8333",
+        endpoint_url="https://s3:8333",
+        verify=CA_FILE,
         region_name="local",
         aws_access_key_id=CREDS["access"],
         aws_secret_access_key=secret or CREDS["secret"],
@@ -677,28 +746,38 @@ def location():
 
 def secret_isolation():
     item = json.loads(subprocess.check_output(["docker", "inspect", cid("s3")]))[0]
-    mounts = [m for m in item["Mounts"] if m["Type"] == "bind"]
-    assert len(mounts) == 1 and mounts[0]["Destination"] == "/run/secrets" and not mounts[0]["RW"]
-    assert Path(mounts[0]["Source"]).resolve() == (RUNTIME / "s3").resolve()
+    mounts = {m["Destination"]: m for m in item["Mounts"] if m["Type"] == "bind"}
+    assert set(mounts) == {"/run/secrets", "/etc/seaweedfs"}, mounts
+    assert not any(m["RW"] for m in mounts.values())
+    assert Path(mounts["/run/secrets"]["Source"]).resolve() == (RUNTIME / "s3").resolve()
     listing = subprocess.check_output(
         DC + ["exec", "-T", "s3", "ls", "-A", "/run/secrets"], text=True
     )
     assert listing.splitlines() == ["s3.json"], listing
+    from tls_checks import key_isolation
+
+    tls = key_isolation(sys.modules[__name__])
     for name in ("postgres-password", "lakekeeper-password"):
         result = subprocess.run(
             DC + ["exec", "-T", "s3", "cat", "/run/secrets/" + name], capture_output=True
         )
         assert result.returncode != 0 and b"No such file" in result.stderr, result.stderr
     # An environment leak is as serious as a mount leak.
-    for service in ("master", "volume", "filer", "s3", "trino", "sail"):
+    for service in ("master", "volume", "filer", "s3", "trino", "sail", *PROXIES):
         config = json.loads(subprocess.check_output(["docker", "inspect", cid(service)]))[0][
             "Config"
         ]
         assert all(value not in json.dumps(config) for value in (CREDS["admin"], CREDS["postgres"]))
+    for proxy in PROXIES:
+        config = json.dumps(
+            json.loads(subprocess.check_output(["docker", "inspect", cid(proxy)]))[0]["Config"]
+        )
+        assert not any(value in config for value in CREDS.values()), proxy
     from sail_probe import secret_isolation as sail_isolation
 
     return {
         "s3": "S3 sees only s3.json; PostgreSQL passwords are absent and unreadable",
+        "tls": tls,
         "sail": sail_isolation(sys.modules[__name__]),
     }
 
@@ -727,9 +806,7 @@ def negatives():
         ),
         (
             "wrong_postgres_password",
-            {
-                "LAKEKEEPER__PG_DATABASE_URL_WRITE": f"postgres://lakekeeper:{CREDS['wrong']}@postgres:5432/lakekeeper"
-            },
+            {"LAKEKEEPER__PG_DATABASE_URL_WRITE": LAKEKEEPER_PG.format(CREDS["wrong"])},
             "password authentication failed",
         ),
     ):
@@ -795,6 +872,11 @@ def main():
         probe("T12_evolution", lambda: evolution_exercise(sys.modules[__name__]))
         probe("T6_negative", negatives)
         probe("T7_secret_isolation", secret_isolation)
+        import tls_checks
+
+        probe("TLS_exposure", lambda: tls_checks.exposure(sys.modules[__name__]))
+        probe("TLS_seaweedfs_canaries", lambda: tls_checks.seaweed_canaries(sys.modules[__name__]))
+        probe("TLS_certificate_negatives", lambda: tls_checks.negatives(sys.modules[__name__]))
         from remote_signing import RestartDiagnostic
 
         REMOTE = RestartDiagnostic(rest_catalog, REPORTS, CREDS)
@@ -803,6 +885,7 @@ def main():
         from crash import crash_durability
 
         probe("T8_crash_durability", lambda: crash_durability(sys.modules[__name__]))
+        probe("TLS_exposure_after_crash", lambda: tls_checks.exposure(sys.modules[__name__]))
     except Exception as exc:
         record("fatal", {"status": "fail", "error": str(exc)})
         traceback.print_exc()
@@ -826,6 +909,11 @@ def main():
         "T12_evolution",
         "T9_remote_signing_before",
         "T9_remote_signing_restart",
+        "TLS_exposure",
+        "TLS_exposure_after_recreation",
+        "TLS_seaweedfs_canaries",
+        "TLS_certificate_negatives",
+        "TLS_exposure_after_crash",
     }
     assert expected <= RESULTS.keys(), "Missing tests: " + str(expected - RESULTS.keys())
     assert not any(isinstance(v, dict) and v.get("status") == "fail" for v in RESULTS.values()), (
