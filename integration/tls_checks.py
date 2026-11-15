@@ -741,7 +741,8 @@ class Matrix:
         # Some clients verify after the handshake (curl in the AWS C++ SDK, gRPC's
         # peer-name check) or abort without flushing an alert (asyncio). Then the
         # relay must record that client hanging up and the client the exact reason.
-        silent = closed and re.search(EXACT_VERIFY_FAILURE[variant], text)
+        diagnosis = re.search(EXACT_VERIFY_FAILURE[variant], text)
+        silent = closed and diagnosis
         if not silent:
             assert alerts and set(alerts) <= CERT_ALERTS, (
                 edge,
@@ -764,6 +765,9 @@ class Matrix:
             {
                 "alerts": sorted(set(alerts)),
                 "client": matched.group(0) if matched else "relay alert only",
+                "requests": len(requests),
+                "client_hangup": closed,
+                "exact_diagnosis": diagnosis.group(0) if diagnosis else None,
             },
         )
 
@@ -905,6 +909,12 @@ class CatalogProbe:
             h.DC + ["exec", "-T", "postgres", "psql", "-X", "-v", "ON_ERROR_STOP=1",
                     "-h", "/tmp", "-U", "postgres", "-d", "lakekeeper", "-c",
                     "CREATE DATABASE tls_probe OWNER lakekeeper"],
+            check=True, capture_output=True,
+        )  # fmt: skip
+        subprocess.run(
+            h.DC + ["exec", "-T", "postgres", "psql", "-X", "-v", "ON_ERROR_STOP=1",
+                    "-h", "/tmp", "-U", "postgres", "-d", "tls_probe", "-f",
+                    "/usr/share/lakekeeper/init.sql"],
             check=True, capture_output=True,
         )  # fmt: skip
         database = {

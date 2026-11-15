@@ -4,6 +4,7 @@ import re
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "integration"))
 import pki
@@ -13,6 +14,7 @@ from tls_checks import (
     EXACT_VERIFY_FAILURE,
     GO_400,
     NGINX_GENERIC_400,
+    Matrix,
     classify,
     decode,
     relay_conf,
@@ -152,6 +154,39 @@ class TlsGates(unittest.TestCase):
                     self.assertEqual((cn, san), (name.removesuffix("-wrong-san"), pki.WRONG_SAN))
                 elif purpose == "serverAuth":
                     self.assertEqual(san, cn)
+
+    @patch("tls_checks.time.sleep")
+    def test_negative_requires_zero_requests_and_certificate_evidence(self, _sleep):
+        relay = Mock()
+        matrix = object.__new__(Matrix)
+        matrix.relay, matrix.rows = relay, []
+        exact = (
+            "Certificate for <s3> doesn't match any of the subject alternative names: "
+            "[wrong.invalid]"
+        )
+        cases = [
+            (([], [], True), exact, True),
+            (([], [42], False), "hostname mismatch", True),
+            (([], [], False), exact, False),
+            (([], [], True), "hostname mismatch", False),
+            (([], [], True), "timed out", False),
+            (([], [], True), "certificate verify failed: certificate has expired", False),
+            ((["application request"], [42], True), exact, False),
+            (([], [80], False), exact, False),
+        ]
+        for evidence, error, accepted in cases:
+            with self.subTest(evidence=evidence, error=error):
+                relay.evidence.return_value = evidence
+
+                def call():
+                    return False, error
+
+                if accepted:
+                    matrix.case("trino-s3->s3", "s3", "wrong-san", call, "192.0.2.1")
+                    self.assertEqual(matrix.rows[-1]["detail"]["requests"], 0)
+                else:
+                    with self.assertRaises(AssertionError):
+                        matrix.case("trino-s3->s3", "s3", "wrong-san", call, "192.0.2.1")
 
     def test_negative_oracles_are_certificate_specific(self):
         self.assertEqual(CERT_ALERTS, {42, 43, 44, 45, 46, 48})
