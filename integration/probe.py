@@ -336,10 +336,10 @@ def prepare():
     )
 
     # The pinned image requires read-only, non-world-readable configuration.
+    paths = [(path, path.is_dir()) for path in [RUNTIME / "trino", *(RUNTIME / "trino").rglob("*")]]
     subprocess.run(["sudo", "chown", "-R", "0:0", str(RUNTIME / "trino")], check=True)
-    for path in [RUNTIME / "trino", *(RUNTIME / "trino").rglob("*")]:
-        mode = "0750" if path.is_dir() else "0440"
-        subprocess.run(["sudo", "chmod", mode, str(path)], check=True)
+    for path, directory in reversed(paths):
+        subprocess.run(["sudo", "chmod", "0750" if directory else "0440", str(path)], check=True)
     from tls_setup import prepare as tls_prepare
 
     record("TLS_certificates", tls_prepare(CREDS["truststore"]))
