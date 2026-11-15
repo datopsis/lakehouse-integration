@@ -19,6 +19,7 @@ from tls_checks import (
     decode,
     relay_conf,
     scope,
+    sqlx_probe_peer,
     sqlx_refusal,
     transport_hangup,
 )
@@ -236,6 +237,22 @@ class TlsGates(unittest.TestCase):
             matrix.case(
                 "pyspark-grpc->sail", "sail", "wrong-san", lambda: (False, exact), "192.0.2.1"
             )
+
+    def test_sqlx_probe_peer_excludes_readiness_and_existing_connections(self):
+        import ipaddress
+
+        subnet = ipaddress.ip_network("192.0.2.0/24")
+        readiness = "[1] LOG: connection received: host=192.0.2.1 port=40000\n"
+        probe = "[2] LOG: connection received: host=192.0.2.3 port=40001\n"
+        existing = {"192.0.2.1", "192.0.2.2"}
+        self.assertEqual(sqlx_probe_peer(readiness + probe, existing, subnet), "192.0.2.3")
+        for server in (
+            readiness,
+            readiness + probe + "[3] LOG: connection received: host=192.0.2.4 port=40002\n",
+            readiness + "[2] LOG: connection received: host=198.51.100.1 port=40001\n",
+        ):
+            with self.subTest(server=server), self.assertRaises(AssertionError):
+                sqlx_probe_peer(server, existing, subnet)
 
     def test_sqlx_hangup_is_attributed_and_certificate_specific(self):
         server = (

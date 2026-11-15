@@ -419,7 +419,13 @@ def oneoff(h, name, image, user, mounts, args, add_hosts=None, env_file=None, en
     command += ["-d"] if detach else ["-i"]
     command += [image, *args]
     result = subprocess.run(command, input=input, capture_output=True, text=True, timeout=timeout)
-    h.check_container_config(inspect(name))
+    try:
+        item = inspect(name)
+    except subprocess.CalledProcessError as exc:
+        raise AssertionError(
+            f"One-off {name} was not created (Docker exit {result.returncode}): {result.stderr}"
+        ) from exc
+    h.check_container_config(item)
     return result
 
 
@@ -1116,6 +1122,16 @@ def seaweed_client_edges(h, matrix, relay):
     return rows
 
 
+def sqlx_probe_peer(server, existing, subnet):
+    """The only new peer during this serial probe; exclude readiness/cluster peers."""
+    peers = set(re.findall(r"connection received: host=([0-9.]+) port=\d+\b", server))
+    new = peers - existing
+    assert len(new) == 1, ("Expected exactly one new PostgreSQL probe peer", peers, existing)
+    peer = new.pop()
+    assert ipaddress.ip_address(peer) in subnet, (peer, subnet)
+    return peer
+
+
 def sqlx_refusal(variant, text, server, client_ip, hostname="postgres"):
     """SQLx's exact certificate diagnosis plus that client's server-side TLS refusal.
 
@@ -1196,9 +1212,8 @@ def postgres_edges(h, matrix):
 
     network = json.loads(subprocess.check_output(["docker", "network", "inspect", NETWORK]))[0]
     subnet = ipaddress.ip_network(network["IPAM"]["Config"][0]["Subnet"])
-    client_ip = str(subnet[-3])
-    occupied = {item["IPv4Address"].split("/")[0] for item in network["Containers"].values()}
-    assert client_ip not in occupied and client_ip != network["IPAM"]["Config"][0]["Gateway"]
+    existing = {item["IPv4Address"].split("/")[0] for item in network["Containers"].values()}
+    existing.add(matrix.runner)
 
     def accepting():
         with socket.create_connection((address(impostor), 5432), timeout=3) as raw:
@@ -1226,7 +1241,7 @@ def postgres_edges(h, matrix):
                 h, client, "localhost/lakekeeper-ubi:integration", "999:0",
                 [(h.RUNTIME / "tls/trust", "/run/tls")], ["migrate"],
                 add_hosts={"postgres": address(impostor)}, env_file=h.RUNTIME / "lakekeeper.env",
-                timeout=120, extra=["--ip", client_ip],
+                timeout=120,
             )  # fmt: skip
             text = result.stdout + result.stderr
             time.sleep(0.5)  # Allow PostgreSQL to flush the final TLS close record.
@@ -1234,6 +1249,7 @@ def postgres_edges(h, matrix):
             (h.REPORTS / f"tls-postgres-{variant}-client.log").write_text(text)
             (h.REPORTS / f"tls-postgres-{variant}-server.log").write_text(server)
             remove(client)
+            client_ip = sqlx_probe_peer(server, existing, subnet)
             if variant == "valid":
                 # TLS verified; the impostor has no lakekeeper role, so SCRAM then fails.
                 assert result.returncode != 0 and re.search(
