@@ -10,7 +10,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: evaluation-${{ inputs.suite }}-${{ github.ref }}
+  group: evaluation-${{ inputs.suite }}-${{ github.ref }}-${{ github.sha }}
   cancel-in-progress: false
 defaults:
   run:

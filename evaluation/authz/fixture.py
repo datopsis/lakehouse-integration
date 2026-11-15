@@ -148,7 +148,8 @@ def database(ca):
     wait(
         lambda: (
             subprocess.run(
-                ["docker", "exec", "idp-postgres", "pg_isready", "-h", "/tmp"], capture_output=True
+                ["docker", "exec", "idp-postgres", "pg_isready", "-h", "postgres"],
+                capture_output=True,
             ).returncode
             == 0
         )
@@ -169,7 +170,7 @@ def database(ca):
         input=(ROOT / "integration/postgres-init.sql").read_text(),
     )
     fga_password = secret()
-    fga_admin = directory / "fga-postgres-password"
+    fga_admin = WORK / "fga-postgres-admin-password"
     write(fga_admin, secret())
     run("sudo", "chown", "root:root", fga_admin)
     run("sudo", "chmod", "0440", fga_admin)
