@@ -10,9 +10,9 @@ import pki
 from tls_checks import (
     CERT_ALERTS,
     CLIENT_PATTERNS,
+    EXACT_VERIFY_FAILURE,
     GO_400,
     NGINX_GENERIC_400,
-    POST_HANDSHAKE_NAME_CHECK,
     classify,
     decode,
     relay_conf,
@@ -164,9 +164,27 @@ class TlsGates(unittest.TestCase):
                     "AccessDenied",
                 ):
                     self.assertIsNone(re.search(pattern, unrelated))
-        self.assertTrue(
-            re.search(POST_HANDSHAKE_NAME_CHECK, "Peer name sail is not in peer certificate")
-        )
+        observed = {
+            "wrong-ca": [
+                "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate",
+                "curlCode: 60, SSL peer certificate or SSH remote key was not OK; Details: SSL certificate "
+                "OpenSSL verify result: unable to get local issuer certificate (20)",
+            ],
+            "wrong-san": [
+                "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 's3'.",
+                "Peer name sail is not in peer certificate",
+            ],
+            "expired": [
+                "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired",
+                "OpenSSL verify result: certificate has expired (10)",
+            ],
+        }
+        # Each exact diagnosis identifies only its own mutation.
+        for variant, pattern in EXACT_VERIFY_FAILURE.items():
+            for other, messages in observed.items():
+                for message in messages:
+                    with self.subTest(variant=variant, message=message):
+                        self.assertEqual(bool(re.search(pattern, message)), variant == other)
 
 
 if __name__ == "__main__":

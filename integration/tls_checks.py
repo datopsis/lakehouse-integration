@@ -626,9 +626,11 @@ class Relay:
 
     def evidence(self, since, port, client):
         text = logs(RELAY, since)
+        # The client hung up without an alert, before sending any request.
         closed = re.search(
-            r"peer closed connection in SSL handshake[^\n]*while SSL handshaking, "
-            rf"client: {re.escape(client)}, server: [^,]*:{port}\b",
+            r"(?:peer closed connection in SSL handshake[^\n]*while SSL handshaking"
+            r"|client closed connection while (?:waiting for request|processing HTTP/2 connection))"
+            rf", client: {re.escape(client)}, server: [^,]*:{port}\b",
             text,
         )
         requests = [
@@ -687,14 +689,22 @@ CLIENT_PATTERNS = {
 }
 
 
+# Exact verifier diagnoses (Python ssl, curl/OpenSSL in the AWS C++ SDK, gRPC core).
 EXACT_VERIFY_FAILURE = {
-    "wrong-ca": r"CERTIFICATE_VERIFY_FAILED\] certificate verify failed: unable to get local issuer",
-    "wrong-san": r"CERTIFICATE_VERIFY_FAILED\] certificate verify failed: Hostname mismatch",
-    "expired": r"CERTIFICATE_VERIFY_FAILED\] certificate verify failed: certificate has expired",
+    "wrong-ca": (
+        r"certificate verify failed: unable to get local issuer"
+        r"|verify result: unable to get local issuer certificate \(20\)"
+    ),
+    "wrong-san": (
+        r"certificate verify failed: Hostname mismatch"
+        r"|no alternative certificate subject name matches target host name"
+        r"|Peer name \S+ is not in peer certificate"
+    ),
+    "expired": (
+        r"certificate verify failed: certificate has expired"
+        r"|verify result: certificate has expired \(10\)"
+    ),
 }
-# gRPC core verifies the peer name after the TLS handshake completes, so it closes
-# the connection (no alert, no request) with this exact client-side diagnosis.
-POST_HANDSHAKE_NAME_CHECK = r"Peer name \S+ is not in peer certificate"
 
 
 class Matrix:
@@ -726,11 +736,11 @@ class Matrix:
             "application request after mutated handshake",
             requests,
         )
-        post_handshake = variant == "wrong-san" and re.search(POST_HANDSHAKE_NAME_CHECK, text)
-        # asyncio-based TLS (aiohttp) aborts without flushing its alert: then the
-        # relay must record the handshake abort and the client the exact reason.
+        # Some clients verify after the handshake (curl in the AWS C++ SDK, gRPC's
+        # peer-name check) or abort without flushing an alert (asyncio). Then the
+        # relay must record that client hanging up and the client the exact reason.
         silent = closed and re.search(EXACT_VERIFY_FAILURE[variant], text)
-        if not (post_handshake or silent):
+        if not silent:
             assert alerts and set(alerts) <= CERT_ALERTS, (
                 edge,
                 variant,
