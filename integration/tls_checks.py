@@ -899,10 +899,34 @@ class CatalogProbe:
     def __init__(self, h, relay_ip):
         self.h, self.count = h, 0
         remove(self.name)
+        # A separate disposable catalog avoids overlapping the main warehouse's
+        # bucket-wide profile. Keep the same S3 credentials and verify-full URL.
+        subprocess.run(
+            h.DC + ["exec", "-T", "postgres", "psql", "-X", "-v", "ON_ERROR_STOP=1",
+                    "-h", "/tmp", "-U", "postgres", "-d", "lakekeeper", "-c",
+                    "CREATE DATABASE tls_probe OWNER lakekeeper"],
+            check=True, capture_output=True,
+        )  # fmt: skip
+        database = {
+            "LAKEKEEPER__PG_DATABASE_URL_WRITE": h.LAKEKEEPER_PG.format(
+                h.CREDS["postgres"]
+            ).replace("/lakekeeper?", "/tls_probe?")
+        }
+        migration = "lakehouse-integration-migrate-probe"
+        try:
+            result = oneoff(
+                h, migration, "localhost/lakekeeper-ubi:integration", "999:0",
+                [(h.RUNTIME / "tls/trust", "/run/tls")], ["migrate"],
+                env_file=h.RUNTIME / "lakekeeper.env", env=database,
+            )  # fmt: skip
+            assert result.returncode == 0, result.stderr[-2000:]
+        finally:
+            remove(migration)
         oneoff(
             h, self.name, "localhost/lakekeeper-ubi:integration", "999:0",
             [(h.RUNTIME / "tls/trust", "/run/tls")], ["serve"],
-            add_hosts={"s3": relay_ip}, env_file=h.RUNTIME / "lakekeeper.env", detach=True,
+            add_hosts={"s3": relay_ip}, env_file=h.RUNTIME / "lakekeeper.env",
+            env=database, detach=True,
         )  # fmt: skip
         self.pid = inspect(self.name)["State"]["Pid"]
         self.ip = address(self.name)
@@ -914,6 +938,9 @@ class CatalogProbe:
         )  # fmt: skip
 
     def warehouse(self):
+        if self.count == 0:
+            result = runner_client(self.h, "lakekeeper-bootstrap", netns_pid=self.pid)
+            assert result["ok"], result
         self.count += 1
         payload = {
             "warehouse-name": f"tls-probe-{self.count}-{secrets.token_hex(3)}",

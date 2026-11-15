@@ -93,6 +93,17 @@ def run(mode, argument):
             return [list(row) for row in spark.sql(query).collect()]
         finally:
             spark.stop()
+    if mode == "lakekeeper-bootstrap":
+        request = urllib.request.Request(
+            "http://127.0.0.1:8182/management/v1/bootstrap",
+            data=json.dumps({"accept-terms-of-use": True}).encode(),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+        with opener.open(request, timeout=30) as response:
+            assert response.status == 204, response.status
+        return "bootstrapped isolated probe catalog"
     if mode == "lakekeeper-loopback":
         # Inside the probe catalog's own network namespace only: the backend
         # listens on 127.0.0.1 and this request never crosses a network.

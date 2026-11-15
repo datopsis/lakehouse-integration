@@ -2,8 +2,8 @@
 
 ![Phase A TLS architecture as built](diagrams/lakehouse-tls-architecture.svg)
 
-> **Status (2026-11-15): step 7 is done.** The whole integration test runs over
-> verified TLS on native amd64 and arm64 at the pins in
+> **Status (2026-11-15): step 7 awaits full green CI evidence.** The harness
+> exercises TLS on native amd64 and arm64 at the pins in
 > [images.lock.json](../images.lock.json); see "Step 7 evidence" below and
 > [ARCHITECTURE.md](ARCHITECTURE.md#phase-a-tls-as-built). The design text below is
 > the original 2026-11-11 survey, kept for its sources; the owner decisions of
@@ -405,7 +405,7 @@ qualification/docs PR. All must retain their own security/provenance gates.
    architectures prove it. No engine/delegation bump or verification bypass.
    Return an upstream-support blocker if CA injection is unavailable.
    [Entrypoint][SA-entry], [dependency graph][SA-cargo-lock].
-7. **Done (2026-11-15).** **datopsis/lakehouse-integration** — after reviewed source commits are
+7. **Implemented; qualification pending (2026-11-15).** **datopsis/lakehouse-integration** — after reviewed source commits are
    available, add the TLS harness and reviewed pin updates. New proxy dependency
    needs owner approval; use one image pin for both proxy instances. Implement
    the work below and retain the exact required `Integration` check. This is
