@@ -1,6 +1,7 @@
 """Fail-closed checks for Sail's two-lock provenance and service isolation."""
 
 import hashlib
+import json
 import sys
 import tempfile
 import unittest
@@ -58,28 +59,56 @@ class SailGates(unittest.TestCase):
                 lock_evidence(source)
 
     def test_wire_evidence_rejects_signing_or_missing_credentials(self):
+        sail = "172.18.0.9"
         trace = (
-            "...POST /catalog/v1/warehouse/namespaces/integration/tables HTTP/1.1\n"
+            "E..POST /catalog/v1/warehouse/namespaces/integration/tables HTTP/1.1\n"
             "x-iceberg-access-delegation: vended-credentials\n"
-            "authorization: AWS4-HMAC-SHA256 Credential=fixture-key/20261111/local/s3/aws4_request\n"
+            f"X-Forwarded-For: {sail}\n"
         )
-        self.assertEqual(wire_evidence(trace, "fixture-key")["signer_posts"], 0)
-        for broken in (
-            "",
-            trace.replace("fixture-key", "wrong-key"),
-            trace.replace("vended-credentials", "client-managed"),
-            trace + "...POST /catalog/v1/warehouse/s3/sign HTTP/1.1\n",
+        s3_log = '{"msg":"Found access key [REDACTED] for identity sail"}\n'
+        self.assertEqual(wire_evidence(trace, sail, s3_log)["signer_posts"], 0)
+        for broken_trace, broken_log in (
+            ("", s3_log),
+            (trace.replace(sail, "172.18.0.95"), s3_log),  # Another client's request.
+            (trace.replace("vended-credentials", "client-managed"), s3_log),
+            (
+                trace
+                + f"E..POST /catalog/v1/warehouse/s3/sign HTTP/1.1\nX-Forwarded-For: {sail}\n",
+                s3_log,
+            ),
+            (trace, s3_log.replace("identity sail", "identity lakehouse")),
+            (trace, s3_log + "Successfully validated STS session token for principal\n"),
         ):
-            with self.subTest(trace=broken), self.assertRaises(AssertionError):
-                wire_evidence(broken, "fixture-key")
+            with (
+                self.subTest(trace=broken_trace, log=broken_log),
+                self.assertRaises(AssertionError),
+            ):
+                wire_evidence(broken_trace, sail, broken_log)
 
     def test_sail_only_secret_file_and_hardened_service(self):
         compose = yaml.safe_load(Path("integration/compose.sail.yaml").read_text())
-        self.assertEqual(set(compose["services"]), {"sail"})
+        self.assertEqual(set(compose["services"]), {"sail", "sail-proxy"})
         service = compose["services"]["sail"]
         self.assertEqual(service["user"], "10001:10001")
         self.assertEqual(service["env_file"], "../.runtime/sail.env")
-        self.assertEqual(service["volumes"], ["./sail/config.json:/etc/sail/config.json:ro"])
+        self.assertEqual(
+            service["volumes"],
+            ["./sail/config.json:/etc/sail/config.json:ro", "../.runtime/tls/trust:/run/tls:ro"],
+        )
+        # Verified TLS to the catalog and S3; the owner-documented trust variable.
+        environment = service["environment"]
+        self.assertEqual(environment["AWS_ENDPOINT"], "https://s3:8333")
+        self.assertEqual(environment["AWS_ALLOW_HTTP"], "false")
+        self.assertEqual(environment["SSL_CERT_FILE"], "/run/tls/ca.crt")
+        self.assertIn('uri="https://catalog:8181/catalog"', environment["SAIL_CATALOG__LIST"])
+        config = json.loads(Path("integration/sail/config.json").read_text())
+        self.assertEqual(
+            config, {"bind": "127.0.0.1", "port": 50052, "allow_unauthenticated_remote": False}
+        )
+        proxy = compose["services"]["sail-proxy"]
+        self.assertEqual(proxy["network_mode"], "service:sail")
+        self.assertNotIn("environment", proxy)
+        self.assertNotIn("env_file", proxy)
         self.assertTrue(service["read_only"])
         self.assertEqual(service["cap_drop"], ["ALL"])
         self.assertEqual(service["security_opt"], ["no-new-privileges:true"])

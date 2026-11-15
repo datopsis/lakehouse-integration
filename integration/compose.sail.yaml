@@ -1,4 +1,5 @@
-# Merged with compose.yaml; Sail receives only its own AWS credential file.
+# Merged with compose.yaml; Sail receives only its own AWS credential file and
+# the public CA. Spark Connect binds loopback; its proxy serves TLS on 50051.
 services:
   sail:
     image: localhost/sail-ubi:integration
@@ -12,14 +13,31 @@ services:
     cpus: 2
     stop_grace_period: 30s
     environment:
-      SAIL_CATALOG__LIST: '[{type="iceberg-rest", name="qualification", uri="http://catalog:8181/catalog", warehouse="qualification"}]'
-      AWS_ENDPOINT: http://s3:8333
+      SAIL_CATALOG__LIST: '[{type="iceberg-rest", name="qualification", uri="https://catalog:8181/catalog", warehouse="qualification"}]'
+      AWS_ENDPOINT: https://s3:8333
       AWS_REGION: local
-      AWS_ALLOW_HTTP: 'true'
+      AWS_ALLOW_HTTP: 'false'
       AWS_VIRTUAL_HOSTED_STYLE_REQUEST: 'false'
+      SSL_CERT_FILE: /run/tls/ca.crt
     env_file: ../.runtime/sail.env
-    volumes: ['./sail/config.json:/etc/sail/config.json:ro']
+    volumes: ['./sail/config.json:/etc/sail/config.json:ro', '../.runtime/tls/trust:/run/tls:ro']
     tmpfs:
       - /tmp:rw,noexec,nosuid,nodev,size=256m,mode=0700,uid=10001,gid=10001
       - /var/lib/sail:rw,noexec,nosuid,nodev,size=256m,mode=0700,uid=10001,gid=10001
-    depends_on: [catalog, s3]
+    depends_on: [catalog-proxy, s3]
+  sail-proxy:
+    # Shares ONLY Sail's network namespace: TLS HTTP/2 on 50051, loopback backend.
+    image: localhost/nginx-ubi:integration
+    user: '10001:0'
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 128
+    stop_grace_period: 30s
+    network_mode: service:sail
+    command: [-c, /etc/nginx/profile/nginx.conf, -g, 'daemon off;']
+    volumes:
+      - ../.sources/nginx-ubi/examples/profiles/sail/nginx.conf:/etc/nginx/profile/nginx.conf:ro
+      - ../.runtime/tls/sail-proxy:/etc/nginx/tls:ro
+    tmpfs: ['/tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777']
+    depends_on: [sail]

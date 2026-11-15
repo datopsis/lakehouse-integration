@@ -42,6 +42,7 @@ def artifact_lock(source, repo, architecture):
     assert architecture in ("amd64", "arm64")
     paths = {
         "postgresql-lakekeeper-ubi": f"artifacts/locks/{architecture}.json",
+        "nginx-ubi": f"artifacts/locks/{architecture}.json",
         "lakekeeper-ubi": "artifacts/lakekeeper.lock.json",
         "seaweedfs-ubi": "artifacts/seaweedfs.lock.json",
         "trino-ubi": "artifacts/trino.lock.json",
@@ -74,11 +75,27 @@ def build(repo, revision, architecture):
     assert output(["git", "-C", str(source), "rev-parse", "HEAD"]) == revision
     assert not output(["git", "-C", str(source), "status", "--porcelain"])
     image = f"localhost/{repo}:integration"
-    runtime = "podman" if repo in ("lakekeeper-ubi", "seaweedfs-ubi") else "docker"
+    runtime = "podman" if repo in ("lakekeeper-ubi", "seaweedfs-ubi", "nginx-ubi") else "docker"
     env = dict(os.environ, CONTAINER_RUNTIME=runtime, IMAGE=image, RELEASE_REVISION=revision)
     lock = artifact_lock(source, repo, architecture)
+    commands = []
     if repo == "postgresql-lakekeeper-ubi":
         command = ["bash", "scripts/build-offline.sh"]
+    elif repo == "nginx-ubi":
+        # The owner's documented Podman path: verified offline acquisition, then
+        # the hermetic build that sets both strict provenance labels.
+        commands.append(
+            [
+                "python3",
+                "scripts/artifacts.py",
+                "acquire",
+                "--lock",
+                f"artifacts/locks/{architecture}.json",
+                "--output",
+                f".artifact-bundle/{architecture}",
+            ]
+        )
+        command = ["bash", "scripts/build-image.sh", architecture, image]
     elif repo == "lakekeeper-ubi":
         command = [
             "bash",
@@ -114,7 +131,8 @@ def build(repo, revision, architecture):
         command = prepare_build(source, env, run, architecture)
     else:
         command = ["bash", "scripts/build.sh", architecture]
-    run(command, cwd=source, env=env)
+    for step in [*commands, command]:
+        run(step, cwd=source, env=env)
     if runtime == "podman":
         archive = ROOT / ".sources/transfer.tar"
         run(["podman", "save", "--format", "docker-archive", "-o", str(archive), image])
@@ -162,6 +180,12 @@ def build(repo, revision, architecture):
             run(["docker", "rm", container])
             extracted.unlink(missing_ok=True)
     assert not output(["git", "-C", str(source), "diff", "HEAD"])
+    if repo == "nginx-ubi":
+        # Both proxies mount these exact pinned profiles; record their digests.
+        result["profiles"] = {
+            name: sha(source / f"examples/profiles/{name}/nginx.conf")
+            for name in ("lakekeeper", "sail")
+        }
     return result
 
 
@@ -185,7 +209,7 @@ def provenance_errors(inspected, revision, lock_hash, architecture):
 def main():
     if not __debug__:
         raise RuntimeError("Assertions must be enabled; remove -O/PYTHONOPTIMIZE")
-    assert len(PINS) == 5 and all(re.fullmatch(r"[0-9a-f]{40}", pin) for pin in PINS.values())
+    assert len(PINS) == 6 and all(re.fullmatch(r"[0-9a-f]{40}", pin) for pin in PINS.values())
     architecture = native_architecture()
     print(f"Native runner: {platform.machine()}; image architecture: {architecture}", flush=True)
     results = {}
