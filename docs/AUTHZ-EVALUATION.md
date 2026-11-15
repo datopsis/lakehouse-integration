@@ -74,43 +74,62 @@ dumps never become artifacts. Raw credential values are not recorded in C6.
 
 ## Native runtime evidence
 
-Latest **completed** C-suite execution: commit `77f4777`,
-[run 43751025278](https://github.com/datopsis/lakehouse-integration/actions/runs/43751025278).
-Both native jobs completed, with matching outcomes. These are actual artifact
-results, not source conclusions. The corrected harness at `61b6331` is running in
-[43753907439](https://github.com/datopsis/lakehouse-integration/actions/runs/43753907439);
+Latest **completed** C-suite execution: commit `61b6331`,
+[run 43753907439](https://github.com/datopsis/lakehouse-integration/actions/runs/43753907439).
+Both native jobs completed with matching outcomes. These are actual artifacts,
+not source conclusions. The corrected harness at `099146a` is running in
+[43756784648](https://github.com/datopsis/lakehouse-integration/actions/runs/43756784648);
 its outcome is not yet known.
 
 | Test | [amd64][native-amd64] | [arm64][native-arm64] |
 | --- | --- | --- |
 | C1 | PASS | PASS |
-| C2 | FAIL — provisioning type | FAIL — provisioning type |
-| C3 | FAIL — negative bootstrap | FAIL — negative bootstrap |
-| C4 | FAIL — positive prerequisite | FAIL — positive prerequisite |
-| C5 | FAIL — Trino/Sail harness | FAIL — Trino/Sail harness |
+| C2 | FAIL — table-ID context | FAIL — table-ID context |
+| C3 | PASS | PASS |
+| C4 | PASS — 27.369 ms | PASS — 42.922 ms |
+| C5 | FAIL — Trino fixture | FAIL — Trino fixture |
 | C6 | PASS | PASS |
-| C7 | FAIL — early assertion | FAIL — early assertion |
+| C7 | FAIL — no-group token control | FAIL — no-group token control |
 | C8 | PASS | PASS |
 
-[native-amd64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43751025278/job/132924778881
-[native-arm64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43751025278/job/132924778403
+[native-amd64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43753907439/job/132933699516
+[native-arm64]: https://github.com/datopsis/lakehouse-integration/actions/runs/43753907439/job/132933699129
 
-**Revocation delay: not measured.** C4 failed its positive prerequisite before
-revoking anything. No revocation pass or bound is inferred from this attempt.
+**Measured revocation:** the first fresh REST denial after delete acknowledgement
+was **0.027369032 s on amd64** and **0.042922373 s on arm64**; both returned 404 on
+the first probe, within the required 30-second bound. These are single-run
+observations, not a distributed-cache SLA or revocation of issued storage keys.
 
-C2 used `table:` instead of the actual model's `lakekeeper_table:` type. Without
-that grant, C3's fresh catalog construction hid the entire warehouse after the
-namespace grant was removed; C3/C4 did not reach the intended controls. The next
-run uses the recorded model's actual table type and an existing authenticated
-catalog for the expected negative. Trino's HTTPS-only configuration lacked the
-required internal HTTPS settings; these now follow the owner's tested profile.
-Sail successfully listed/read allowed rows and received a real **403 Forbidden**
-on INSERT; the harness accepted only AnalysisException, while Spark delivered
-SparkRuntimeException. It now accepts typed Spark errors only with the same
-explicit authorization status/message checks. PyIceberg's entire C5 subtest passed
-on both CPUs. C7 stopped at an assertion without a diagnostic message; it is
-unverified, with explicit identity controls and sanitized tracebacks added for the
-next run. No assertion was waived to count a failed case as passing.
+C2 revealed that Lakekeeper's table relationship IDs include warehouse context:
+`lakekeeper_table:<warehouse-id>/<table-id>`. The next run uses that exact pinned
+[source mapping](https://github.com/lakekeeper/lakekeeper/blob/9bd377162345b64a716f0a4fcffe4e7e7f3c7534/crates/authz-openfga/src/entities.rs).
+Both PyIceberg and Sail passed their entire C5 subtests. Trino reached verified
+HTTPS startup but could not load its native Zstd/Brotli libraries because the
+fixture omitted the executable `/tmp/trino` tmpfs used by the owner/main fixture;
+that mount is corrected without modifying the image or jars.
+
+**Observed empty-group compatibility gap:** Bob's genuine Rauthy human token,
+issued for a user with no groups, received Lakekeeper **400 RoleSourceIdError**
+(`role source ID cannot be empty`) before reaching authorization. C7 does not count
+that authentication/request-metadata error as an authorization denial. Its next
+run gives Bob a real, unmapped `no-access` group, self-provisions the catalog user
+and requires a successful `whoami` control before testing impersonation. Bob still
+has no grant or role membership. The empty-group edge is retained as an observed
+compatibility issue; it is not fixed or claimed qualified by choosing a valid C7
+control. C3 already proves that removing membership denies an old, still-valid
+groups-bearing token. Fresh human tokens with no groups remain outside the
+verified successful-token profile.
+
+Earlier native runs and harness corrections are retained in the history:
+[43751025278](https://github.com/datopsis/lakehouse-integration/actions/runs/43751025278)
+passed C1/C6/C8 and PyIceberg C5, while using the wrong model type, fresh negative
+catalog bootstrap and incomplete native-client fixtures;
+[43745228788](https://github.com/datopsis/lakehouse-integration/actions/runs/43745228788)
+blocked all C cases on a storage-listener startup race;
+[43747865415](https://github.com/datopsis/lakehouse-integration/actions/runs/43747865415)
+blocked them on PostgreSQL's temporary-initialization-server race. Listener/data
+readiness and the final PostgreSQL TCP listener now gate setup. Two earlier
+dispatches were cancelled during preparation and provide no C-suite evidence.
 
 C6 returned **404 with no credentials** for the denied table. The read-only load
 returned remote-signing configuration names and a storage-credentials descriptor
