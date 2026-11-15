@@ -23,7 +23,7 @@ jobs:
             machine: aarch64
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 60
+    timeout-minutes: 120
     env:
       INTEGRATION_ARCH: ${{ matrix.arch }}
       EXPECTED_MACHINE: ${{ matrix.machine }}
@@ -38,7 +38,7 @@ jobs:
           test "$(uname -m)" = "$EXPECTED_MACHINE"
           df -h
           sudo apt-get update -qq
-          sudo apt-get install -y rpm podman gnupg
+          sudo apt-get install -y rpm podman gnupg argon2
           python3 -m venv .venv
           .venv/bin/pip install --require-hashes -r requirements.txt
           .venv/bin/ruff check evaluation/authz

@@ -22,14 +22,19 @@ def build():
     from catalog import build_proxy
 
     arch = owner.native_architecture()
+    from exercise import initialize
+
+    initialize(arch)
     results = {}
     for repo, pin in owner.PINS.items():
-        if repo == "sail-ubi":
-            continue
         results[repo] = owner.build(repo, pin, arch)
         save("builds.json", results)
         assert results[repo]["status"] == "pass", results[repo]
     results["nginx-ubi"] = build_proxy(arch, owner)
+    save("builds.json", results)
+    from rauthy import build as build_rauthy
+
+    results["rauthy-ubi"] = build_rauthy(arch, owner)
     save("builds.json", results)
 
 
@@ -47,5 +52,7 @@ if __name__ == "__main__":
         build()
     elif sys.argv[1:] == ["cleanup"]:
         common.cleanup()
+        if common.run("docker", "network", "ls", "-q", "--filter", "name=^authz-backend$"):
+            common.run("docker", "network", "rm", "authz-backend")
     else:
         main()

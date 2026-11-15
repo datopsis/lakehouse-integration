@@ -10,7 +10,9 @@ import time
 
 from catalog import LABEL, ROWS, Catalog
 from common import HTTPS, NETWORK, ROOT, WORK, host, pki, run, secret, wait, write
-from providers import Provider
+from rauthy import Rauthy
+
+BACKEND_NETWORK = "authz-backend"
 
 INPUTS = json.loads((ROOT / "evaluation/authz/inputs.json").read_text())
 
@@ -115,32 +117,6 @@ def transport(name, port, ca, client=None):
     }
 
 
-class Rauthy(Provider):
-    def config_rauthy(self):
-        env, command, mounts = super().config_rauthy()
-        clients = self.path / "bootstrap/clients.json"
-        data = json.loads(clients.read_text())
-        # Distinct bootstrap operator and least-privilege machine subject.
-        data.append({**data[0], "id": "operator", "name": "operator"})
-        for client in data:
-            client["access_token_lifetime"] = 1800
-        write(clients, data)
-        return env, command, mounts
-
-    def token(self, client="lakekeeper"):
-        response = self.http.json(
-            "POST",
-            self.discovery["token_endpoint"],
-            data={
-                "grant_type": "client_credentials",
-                "client_id": client,
-                "client_secret": self.client_secret,
-                "scope": "openid profile groups",
-            },
-        )
-        return secret(response["access_token"])
-
-
 def database(ca):
     tls = leaf("postgres")
     directory = WORK / "postgres"
@@ -193,23 +169,35 @@ def database(ca):
         input=(ROOT / "integration/postgres-init.sql").read_text(),
     )
     fga_password = secret()
-    # SQL enters stdin only; all values are generated hex, and output is redacted.
+    container(
+        "fga-postgres",
+        "localhost/postgresql-lakekeeper-ubi:integration",
+        env={
+            "POSTGRES_PASSWORD_FILE": "/run/secrets/postgres-password",
+            "POSTGRES_DB": "openfga",
+            "POSTGRESQL_TLS_CERT_FILE": "/tls/cert.pem",
+            "POSTGRESQL_TLS_KEY_FILE": "/tls/key.pem",
+        },
+        mounts=[
+            (directory / "postgres-password", "/run/secrets/postgres-password"),
+            (leaf("fga-postgres"), "/tls"),
+        ],
+        network=BACKEND_NETWORK,
+    )
+    wait(lambda: "listening on IPv4" in run("docker", "logs", "fga-postgres"))
     run(
         "docker",
         "exec",
         "-i",
-        "idp-postgres",
+        "fga-postgres",
         "psql",
-        "-X",
         "-h",
         "/tmp",
         "-U",
         "postgres",
         "-v",
         "ON_ERROR_STOP=1",
-        "-d",
-        "lakekeeper",
-        input=f"CREATE ROLE openfga LOGIN PASSWORD '{fga_password}';\nCREATE DATABASE openfga OWNER openfga;\n",
+        input=f"CREATE ROLE openfga LOGIN PASSWORD '{fga_password}';\nALTER DATABASE openfga OWNER TO openfga;\n",
     )
     url = f"postgres://lakekeeper:{password}@postgres:5432/lakekeeper?sslmode=verify-full&sslrootcert=/ca/ca.pem"
     env = {
@@ -219,7 +207,7 @@ def database(ca):
     }
     return (
         env,
-        f"postgres://openfga:{fga_password}@postgres:5432/openfga?sslmode=verify-full&sslrootcert=/ca/ca.pem",
+        f"postgres://openfga:{fga_password}@fga-postgres:5432/openfga?sslmode=verify-full&sslrootcert=/ca/ca.pem",
     )
 
 
@@ -256,7 +244,7 @@ def openfga(ca, db, arch):
         "--label",
         LABEL,
         "--network",
-        NETWORK,
+        BACKEND_NETWORK,
         "--env-file",
         path,
         "-v",
@@ -265,7 +253,20 @@ def openfga(ca, db, arch):
         "migrate",
     )
     started = time.monotonic()
-    container("openfga", image, ["run"], env, mounts, extra=["--group-add", "0"])
+    container(
+        "openfga", image, ["run"], env, mounts, extra=["--group-add", "0"], network=BACKEND_NETWORK
+    )
+    address = json.loads(run("docker", "inspect", "openfga"))[0]["NetworkSettings"]["Networks"][
+        BACKEND_NETWORK
+    ]["IPAddress"]
+    from pathlib import Path
+
+    run(
+        "sudo",
+        "tee",
+        "/etc/hosts",
+        input=Path("/etc/hosts").read_text() + f"{address} openfga # idp-bakeoff\n",
+    )
     http = HTTPS(ca)
     headers = {"Authorization": "Bearer " + key}
     wait(
@@ -420,6 +421,9 @@ class AuthCatalog(Catalog):
         )
 
     def start_backend(self, audience="lakekeeper,operator"):
+        obj = json.loads(run("docker", "inspect", self.proxy))[0]
+        if BACKEND_NETWORK not in obj["NetworkSettings"]["Networks"]:
+            run("docker", "network", "connect", BACKEND_NETWORK, self.proxy)
         return super().start_backend(audience)
 
     def seed(self, token):
@@ -473,9 +477,10 @@ def setup(arch, record):
     ca = pki()
     os.environ["AWS_CA_BUNDLE"] = str(ca)
     run("docker", "network", "create", "--internal", NETWORK)
+    run("docker", "network", "create", "--internal", BACKEND_NETWORK)
+    env, fga_db = database(ca)
     provider = Rauthy("rauthy", ca)
     record("rauthy", lambda: provider.start(arch), required=True)
-    env, fga_db = database(ca)
     key, info = openfga(ca, fga_db, arch)
     record("openfga_startup_tls", lambda: info)
     env.update(

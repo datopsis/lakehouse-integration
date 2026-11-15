@@ -140,3 +140,94 @@ def trino(catalog):
         ), error
         negatives[statement] = error
     return {"tls": tls_evidence, "rows": ROWS, "denials": negatives}
+
+
+def sail(catalog):
+    """External token file; verified Spark Connect TLS via the unchanged owner profile."""
+    import json
+    import os
+    import subprocess
+
+    from catalog import PROXY_IMAGE
+    from common import WORK
+
+    provider = catalog.provider
+    directory = WORK / "sail-authz"
+    directory.mkdir()
+    tls = leaf("sail")
+    run("sudo", "cp", tls / "cert.pem", tls / "server.crt")
+    run("sudo", "cp", tls / "key.pem", tls / "server.key")
+    profile = ROOT / ".sources/nginx-ubi/examples/profiles/sail"
+    container(
+        "sail",
+        PROXY_IMAGE,
+        ["-c", "/etc/nginx/profile/nginx.conf", "-g", "daemon off;"],
+        mounts=[(tls, "/etc/nginx/tls"), (profile, "/etc/nginx/profile")],
+        extra=[
+            "--read-only",
+            "--cap-drop=ALL",
+            "--security-opt=no-new-privileges:true",
+            "--tmpfs",
+            "/tmp:mode=1777,size=64m",
+        ],
+    )
+    token = directory / "token"
+    write(token, provider.token())
+    run("sudo", "chown", "10001:10001", token)
+    config = directory / "config.json"
+    write(config, {"bind": "127.0.0.1", "port": 50052, "allow_unauthenticated_remote": True})
+    config.chmod(0o644)
+    env = {
+        "SAIL_CATALOG__LIST": f'[{{type="iceberg-rest", name="bakeoff", uri="{catalog.base}/catalog", warehouse="bakeoff", bearer_access_token_file="/run/catalog-token"}}]',
+        "SSL_CERT_FILE": "/ca/ca.pem",
+        "AWS_ACCESS_KEY_ID": catalog.storage.access,
+        "AWS_SECRET_ACCESS_KEY": catalog.storage.password,
+        "AWS_ENDPOINT": catalog.storage.endpoint,
+        "AWS_REGION": "local",
+        "AWS_ALLOW_HTTP": "false",
+        "AWS_VIRTUAL_HOSTED_STYLE_REQUEST": "false",
+    }
+    container(
+        "sail-backend",
+        "localhost/sail-ubi:integration",
+        env=env,
+        mounts=[
+            (provider.ca, "/ca/ca.pem"),
+            (config, "/etc/sail/config.json"),
+            (token, "/run/catalog-token"),
+        ],
+        network="container:sail",
+        extra=[
+            "--memory=2g",
+            "--cpus=2",
+            "--read-only",
+            "--cap-drop=ALL",
+            "--security-opt=no-new-privileges:true",
+            "--tmpfs",
+            "/tmp:uid=10001,gid=10001,size=256m",
+            "--tmpfs",
+            "/var/lib/sail:uid=10001,gid=10001,size=256m",
+        ],
+    )
+    from common import wait
+
+    wait(lambda: transport("sail", 50051, provider.ca), 120)
+    result = subprocess.run(
+        [
+            str(ROOT / ".sources/sail-venv/bin/python"),
+            str(ROOT / "evaluation/authz/sail_client.py"),
+        ],
+        env=dict(os.environ, GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=str(provider.ca)),
+        capture_output=True,
+        text=True,
+        timeout=180,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    evidence = json.loads(
+        next(
+            line.removeprefix("SAIL_RESULT=")
+            for line in result.stdout.splitlines()
+            if line.startswith("SAIL_RESULT=")
+        )
+    )
+    return {"tls": transport("sail", 50051, provider.ca), "token": "external file", **evidence}
