@@ -51,12 +51,12 @@
   <text x="515" y="709" class="label">Backend network · Lakekeeper joins; clients do not</text>
   <rect x="520" y="735" width="380" height="113" rx="12" fill="white" stroke="#bdb0d8"/>
   <text x="543" y="771" class="label">OpenFGA 1.22.1</text>
-  <text x="543" y="801" class="body">Pinned upstream digest · API key</text>
+  <text x="543" y="801" class="body">Pinned digest · API key · shared netns</text>
   <text x="543" y="828" class="small">Verified HTTPS / gRPC TLS</text>
   <rect x="1035" y="735" width="390" height="113" rx="12" fill="white" stroke="#bdb0d8"/>
   <text x="1058" y="771" class="label">Dedicated PostgreSQL</text>
   <text x="1058" y="801" class="body">OpenFGA database + login</text>
-  <text x="1058" y="828" class="small">Persistent through OpenFGA restart</text>
+  <text x="1058" y="828" class="small">Keeps private endpoint alive on FGA stop</text>
   <path d="M750 475 V650 H475 V790 H510" class="line"/>
   <text x="510" y="662" class="small">Authorization / TLS</text>
   <path d="M900 790 H1025" class="db"/>

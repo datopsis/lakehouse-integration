@@ -188,6 +188,7 @@ def database(ca):
             (leaf("fga-postgres"), "/tls"),
         ],
         network=BACKEND_NETWORK,
+        extra=["--network-alias", "openfga"],
     )
     wait(
         lambda: (
@@ -222,6 +223,11 @@ def database(ca):
         env,
         f"postgres://openfga:{fga_password}@fga-postgres:5432/openfga?sslmode=verify-full&sslrootcert=/ca/ca.pem",
     )
+
+
+def backend_address():
+    obj = json.loads(run("docker", "inspect", "fga-postgres"))[0]
+    return obj["NetworkSettings"]["Networks"][BACKEND_NETWORK]["IPAddress"]
 
 
 def openfga(ca, db, arch):
@@ -267,11 +273,16 @@ def openfga(ca, db, arch):
     )
     started = time.monotonic()
     container(
-        "openfga", image, ["run"], env, mounts, extra=["--group-add", "0"], network=BACKEND_NETWORK
+        "openfga",
+        image,
+        ["run"],
+        env,
+        mounts,
+        extra=["--group-add", "0"],
+        network="container:fga-postgres",
     )
-    address = json.loads(run("docker", "inspect", "openfga"))[0]["NetworkSettings"]["Networks"][
-        BACKEND_NETWORK
-    ]["IPAddress"]
+    # PostgreSQL retains the private interface/DNS endpoint when OpenFGA stops.
+    address = backend_address()
     from pathlib import Path
 
     run(

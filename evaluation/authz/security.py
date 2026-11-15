@@ -7,7 +7,7 @@ import time
 
 from catalog import b64, bad_token
 from common import decode, run, secret, wait
-from fixture import BACKEND_NETWORK, container
+from fixture import BACKEND_NETWORK, backend_address, container
 
 
 def evaluate(catalog, operator, human, namespace, tuples):
@@ -90,9 +90,7 @@ def evaluate(catalog, operator, human, namespace, tuples):
     )
     assert fresh.status_code == 200, fresh.text
     invalid["genuine_expired_token"] = {"before": 200, "after": 401, "fresh": 200}
-    address = json.loads(run("docker", "inspect", "openfga"))[0]["NetworkSettings"]["Networks"][
-        BACKEND_NETWORK
-    ]["IPAddress"]
+    address = backend_address()
     container(
         "pyiceberg-client-net",
         "localhost/sail-ubi:integration",
@@ -140,7 +138,7 @@ def evaluate(catalog, operator, human, namespace, tuples):
         failure = {"status": response.status_code, "error": error}
     finally:
         run("docker", "start", "openfga")
-    wait(lambda: http.request("GET", allowed, headers=auth).status_code == 200, 120)
+        wait(lambda: http.request("GET", allowed, headers=auth).status_code == 200, 120)
     catalog.read(catalog.pyiceberg())
     denied = http.request("GET", endpoint, headers=auth)
     assert denied.status_code in (403, 404), denied.text

@@ -1,11 +1,28 @@
 """Trino native client credentials over verified TLS, with a fixed machine identity."""
 
+import json
 import shutil
 
 from catalog import ROWS
 from clients import ready_or_error
 from common import HTTPS, ROOT, WORK, run, secret, write
 from fixture import container, leaf, transport
+
+
+def trino_denial(statement, error):
+    """Only the measured hidden namespace or a real ForbiddenException qualifies."""
+    if statement == "SELECT * FROM iceberg.denied.sample":
+        assert error["errorName"] == "SCHEMA_NOT_FOUND", error
+        assert error["errorCode"] == 45 and error["errorType"] == "USER_ERROR", error
+        assert error["message"] == "line 1:15: Schema 'denied' does not exist", error
+    else:
+        assert error["errorName"] in (
+            "ICEBERG_CATALOG_ERROR",
+            "ICEBERG_COMMIT_ERROR",
+            "PERMISSION_DENIED",
+        ), error
+        assert "org.apache.iceberg.exceptions.ForbiddenException" in json.dumps(error), error
+    return error
 
 
 def trino(catalog):
@@ -127,28 +144,7 @@ def trino(catalog):
     ):
         result = sql(statement)
         assert "error" in result, result
-        error = result["error"]
-        # Require actual catalog authorization failure, never syntax/network/authn failure.
-        import json
-
-        message = json.dumps(error)
-        assert any(
-            x in message
-            for x in (
-                "Forbidden",
-                "forbidden",
-                "not authorized",
-                "NotAuthorized",
-                "CannotSee",
-                "does not exist",
-            )
-        ), error
-        assert error["errorName"] in (
-            "ICEBERG_CATALOG_ERROR",
-            "TABLE_NOT_FOUND",
-            "PERMISSION_DENIED",
-        ), error
-        negatives[statement] = error
+        negatives[statement] = trino_denial(statement, result["error"])
     return {"tls": tls_evidence, "rows": ROWS, "denials": negatives}
 
 

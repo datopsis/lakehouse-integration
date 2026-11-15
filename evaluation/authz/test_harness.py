@@ -5,6 +5,7 @@ from pathlib import Path
 
 import run  # noqa: F401
 import yaml
+from engines import trino_denial
 from exercise import denial
 from pyiceberg.exceptions import ForbiddenError, NoSuchTableError, UnauthorizedError
 
@@ -28,6 +29,35 @@ class EvaluationSafety(unittest.TestCase):
                 denial(raises(error))
         with self.assertRaisesRegex(AssertionError, "succeeded"):
             denial(lambda: None)
+
+    def test_trino_denial_excludes_authentication_and_unrelated_errors(self):
+        statement = "INSERT INTO iceberg.bakeoff.sample VALUES (3, 'forbidden')"
+        forbidden = {
+            "errorName": "ICEBERG_COMMIT_ERROR",
+            "failureInfo": {"cause": {"type": "org.apache.iceberg.exceptions.ForbiddenException"}},
+        }
+        self.assertEqual(trino_denial(statement, forbidden), forbidden)
+        hidden = {
+            "errorName": "SCHEMA_NOT_FOUND",
+            "errorCode": 45,
+            "errorType": "USER_ERROR",
+            "message": "line 1:15: Schema 'denied' does not exist",
+        }
+        self.assertEqual(trino_denial("SELECT * FROM iceberg.denied.sample", hidden), hidden)
+        for bad in (
+            hidden,
+            {
+                "errorName": "ICEBERG_CATALOG_ERROR",
+                "failureInfo": {"type": "org.apache.iceberg.exceptions.NotAuthorizedException"},
+            },
+            {"errorName": "ICEBERG_COMMIT_ERROR", "message": "Connection timed out"},
+        ):
+            with self.assertRaises(AssertionError):
+                trino_denial(statement, bad)
+        with self.assertRaises(AssertionError):
+            trino_denial(
+                "SELECT * FROM iceberg.denied.sample", {**hidden, "message": "other missing schema"}
+            )
 
     def test_new_workflow_is_manual_only_and_not_a_required_dependency(self):
         root = Path(__file__).resolve().parents[2]
