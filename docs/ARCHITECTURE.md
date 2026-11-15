@@ -1,9 +1,27 @@
 # Architecture
 
-> **Target TLS design (Phase A, not yet implemented):** see the polished diagram below and
-> [TLS-PLAN.md](TLS-PLAN.md). The Mermaid chart that follows shows the CURRENT test topology.
+> **Target TLS design (Phase A, cross-service integration step 7 not yet run):** see the polished diagram below and
+> [TLS-PLAN.md](TLS-PLAN.md), with approved owner updates recorded below.
 
 ![Datopsis lakehouse TLS architecture: services, verified TLS and mutual TLS connections, nginx-ubi TLS proxies for Lakekeeper and Sail, and the per-run test CA](diagrams/lakehouse-tls-architecture.svg)
+
+The Phase A diagram records the owner's 2026-11-12 loopback exception and the
+component qualification status supplied on 2026-11-13; those source revisions
+are evidence, not changes to the integration pins. It updates the older
+[TLS survey](TLS-PLAN.md), whose pending-decision wording predates that approval.
+
+The [Phase B identity target](diagrams/lakehouse-identity-architecture.svg) shows
+Rauthy, chosen on 2026-11-13 with Keycloak as fallback, and its planned PostgreSQL
+storage over verified TLS. Humans use authorization code with PKCE, Trino and
+PyIceberg obtain machine tokens, and Sail 0.7.3 reads an externally obtained token
+file; Lakekeeper validates those JWTs against Rauthy's JWKS. The groups claim is
+reserved for Phase C authorization, while Phase D will vend per-table credentials
+through SeaweedFS STS; both remain unbuilt, as distinguished from the
+[IdP bake-off evidence](IDP-BAKEOFF.md).
+
+![Phase B identity target: Rauthy, TLS token flows, Lakekeeper JWT validation, and future authorization and credential vending](diagrams/lakehouse-identity-architecture.svg)
+
+The Mermaid chart below shows the current test topology.
 
 ```mermaid
 flowchart LR

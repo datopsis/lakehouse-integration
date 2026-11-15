@@ -5,6 +5,13 @@ as an independent client: [T10, restart and credential evidence](SAIL-EVIDENCE.m
 All five current image pins passed strict provenance; future pin changes still
 require review and exact labels, with no allowances.
 
+Every owner decision, and every decision still pending, is recorded in
+[DECISIONS.md](DECISIONS.md). Check it before starting new work.
+
+- [ ] Phase C: OpenFGA as the interim backend (decided 2026-11-13); then the own
+  authorization platform in [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md): spikes S1–S4,
+  an MVP, Phase D integration, then the catalogued future capabilities. Update the
+  diagrams with each feature.
 - [x] T11 table maintenance: compaction, snapshot expiry with physical S3 deletion,
   orphan removal with manifest protection, exact three-client reads, default
   retention refusals, and persistence after T5/T8 on both native architectures.
@@ -19,6 +26,11 @@ require review and exact labels, with no allowances.
   tested fallback; see the [IdP bake-off decision and evidence](IDP-BAKEOFF.md).
   Sail 0.7.3 needs an externally supplied token-file path with token lifecycle
   management; it has no native client-credentials grant provider.
+  The [Phase B identity diagram](diagrams/lakehouse-identity-architecture.svg) shows
+  human PKCE login, machine tokens, Sail's external token file, and Lakekeeper JWT
+  validation over verified TLS, with PostgreSQL as Rauthy's target storage.
+  Groups are carried for future authorization; Phase C (OpenFGA or Cedar,
+  undecided) and Phase D (SeaweedFS STS credential vending) are marked not built.
 - OpenID login for Lakekeeper **with authorization**, plus authenticated Trino access.
   Prerequisite decision: while engines hold bucket-wide static S3 keys, catalog
   permissions do not protect data (see "How each engine gets S3 access" in
