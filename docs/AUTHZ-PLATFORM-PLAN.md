@@ -78,6 +78,18 @@ Components, each its own small repo and hardened image:
 4. **Token broker.** A tiny sidecar that holds Sail's client credentials and keeps its bearer-token file fresh.
 5. **Policy toolkit.** A Cedar schema for the lakehouse, example policies, a CI action (validate, test, analyze) and bundle signing.
 
+## 4a. Consolidated design (owner decisions 2026-11-16)
+
+- **One monorepo**, temporarily named `datopsis-authz`; the owner will rename it later. It's a single Rust workspace.
+- **One program and image** with roles; each deployment enables only the roles it needs:
+  - `serve`: Cedar decisions, the relationship store (PostgreSQL), audit, and the OPA-compatible endpoint for Trino.
+  - `sail-gateway`: TLS and JWT checks in front of Sail, asking `serve` for decisions. It replaces nginx for Sail.
+  - `token-broker`: keeps Sail's bearer-token file fresh.
+  - `policy`: `validate`, `test` and `analyze` commands for CI.
+- **One thin Lakekeeper adapter crate.** It implements Lakekeeper's authorizer trait by calling `serve`, and is compiled into a Lakekeeper image, because Lakekeeper only calls plugins built into its own binary.
+- **Rules engine:** the Cedar library (decided 2026-11-16).
+- **Acceptance:** suite C1–C8 from the Phase C evaluation, plus new adversarial tests.
+
 ## 5. Phased plan, with go/no-go gates
 
 - **C0 Interim (now).** OpenFGA as decided "for now":
