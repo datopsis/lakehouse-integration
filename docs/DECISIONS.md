@@ -10,6 +10,10 @@ Items still under coordinated vulnerability disclosure are tracked privately and
 
 | Date | Area | Decision | Why | Where |
 |---|---|---|---|---|
+| 2026-11-16 | Authorization (C) | The own authorization service evaluates rules with the **Cedar** Rust library (Apache-2.0), alongside its own relationship store; it talks to Trino via OPA's protocol. | Readable, formally verified, analysable policies; native attribute/classification rules; fits the Rust stack. | [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md) |
+| 2026-11-15 | Image scanning | Rauthy's blocking image gate scans the **shipped** code (Rust crates recorded inside the binary, RPMs, npm); a separate **non-blocking** build-time dependency audit reports build-only findings (e.g. `zip` 3.0.0 in a docs build script) in the job summary and tracking issue. | Gate what users run; keep build-time risk visible. | `rauthy-ubi` |
+| 2026-11-15 | PostgreSQL images | Create `POSTGRES_DB` (default: `POSTGRES_USER`) unless it is `postgres`; reject `template0`/`template1`. Fixes a bug where the application database was never created. | `initdb` never creates a database named after the user; matches the official image. | `postgresql-ubi`, `postgresql-lakekeeper-ubi` |
+| 2026-11-15 | TLS (A) | **Phase A complete:** the whole integration test runs over verified TLS on both architectures, with an 88-case certificate-rejection matrix and exposure checks. | Owner's Phase A requirements. | [TLS-PLAN.md](TLS-PLAN.md) |
 | 2026-11-15 | Authorization (C) | Phase C OpenFGA acceptance suite C1-C8 adopted as the acceptance suite for any authorization backend; OpenFGA stays evaluation-only (upstream image has fixable Critical/High findings). | Reuse the native acceptance contract without production adoption; no production `openfga-ubi`. | [AUTHZ-EVALUATION.md](AUTHZ-EVALUATION.md), [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md) |
 | 2026-11-14 | Docs | Every feature that changes the architecture updates `docs/diagrams/*.svg` in the same PR or an immediate docs follow-up. | Diagrams are the shared map; stale diagrams mislead. | All repos and child briefs |
 | 2026-11-13 | Authorization (C) | **OpenFGA as the interim backend.** Plan an own authorization platform built on the open-source Cedar Rust library. R1–R11 are complete for now; future capabilities are catalogued. | Open-source Lakekeeper supports only OpenFGA, which ignores token groups. Built-in Cedar is in the paid Lakekeeper Plus. No option covers catalog, engines, Sail and storage together. | [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md) |
@@ -38,7 +42,6 @@ Ordered roughly by when they block work. The owner answers them one at a time.
 
 | # | Decision | Options or notes | Blocks |
 |---|---|---|---|
-| 1 | Authorization platform: policy engine | Cedar library (recommended) or another | Phase C build |
 | 2 | Authorization platform: name and repo layout | One repo per component (recommended) or a monorepo | Phase C build |
 | 4 | Authorization order | Spikes S1–S4 first (recommended) or straight to the MVP | Phase C build |
 | 5 | License for new code | Apache-2.0 suggested | New repos |
