@@ -10,6 +10,8 @@ Items still under coordinated vulnerability disclosure are tracked privately and
 
 | Date | Area | Decision | Why | Where |
 |---|---|---|---|---|
+| 2026-11-16 | SeaweedFS internal TLS | Accept SeaweedFS's documented default (gRPC clients don't check the dialed hostname). When a release includes the new opt-in `verify_server_host`, enable it in seaweedfs-ubi's TLS profile and turn the canaries into passing tests. | Documented upstream behaviour; upstream added the opt-in on 2026-11-15. | `seaweedfs-ubi` |
+| 2026-11-16 | Authorization platform | One monorepo (`datopsis/datopsis-authz`, working name, to be renamed) producing **one** program/image with roles (`serve`, `sail-gateway`, `token-broker`, `policy`) plus a thin Lakekeeper adapter crate; Apache-2.0; spikes S1–S4 first, then an owner go/no-go before the MVP. | One brain, small adapters only where a system needs an in-process hook. | [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md) |
 | 2026-11-16 | Authorization (C) | The own authorization service evaluates rules with the **Cedar** Rust library (Apache-2.0), alongside its own relationship store; it talks to Trino via OPA's protocol. | Readable, formally verified, analysable policies; native attribute/classification rules; fits the Rust stack. | [AUTHZ-PLATFORM-PLAN.md](AUTHZ-PLATFORM-PLAN.md) |
 | 2026-11-15 | Image scanning | Rauthy's blocking image gate scans the **shipped** code (Rust crates recorded inside the binary, RPMs, npm); a separate **non-blocking** build-time dependency audit reports build-only findings (e.g. `zip` 3.0.0 in a docs build script) in the job summary and tracking issue. | Gate what users run; keep build-time risk visible. | `rauthy-ubi` |
 | 2026-11-15 | PostgreSQL images | Create `POSTGRES_DB` (default: `POSTGRES_USER`) unless it is `postgres`; reject `template0`/`template1`. Fixes a bug where the application database was never created. | `initdb` never creates a database named after the user; matches the official image. | `postgresql-ubi`, `postgresql-lakekeeper-ubi` |
@@ -38,13 +40,12 @@ Items still under coordinated vulnerability disclosure are tracked privately and
 
 ## Pending decisions
 
+(Also pending: the final name of `datopsis-authz`.)
+
 Ordered roughly by when they block work. The owner answers them one at a time.
 
 | # | Decision | Options or notes | Blocks |
 |---|---|---|---|
-| 2 | Authorization platform: name and repo layout | One repo per component (recommended) or a monorepo | Phase C build |
-| 4 | Authorization order | Spikes S1–S4 first (recommended) or straight to the MVP | Phase C build |
-| 5 | License for new code | Apache-2.0 suggested | New repos |
 | 6 | Future authorization capabilities | Which of the 27 catalogued options come after the MVP; suggested first bundle: governance basics | Post-MVP roadmap |
 | 7 | Upstream filings (drafted, unfiled) | Sail keepalive request; PyIceberg/fsspec remote-signing race; an Iceberg 1.12.x Guava backport request | Faster upstream fixes |
 | 8 | PostgreSQL local socket | Replace `local all all trust` with peer or password auth | Hardening |
