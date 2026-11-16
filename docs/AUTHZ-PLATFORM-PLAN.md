@@ -1,6 +1,7 @@
 # Plan: a Datopsis authorization platform (Phase C, and the D–C glue)
 
-Status: **draft for owner review**, 2026-11-13. Interim decision: OpenFGA "for now".
+Status: **draft for owner review**, 2026-11-13. Interim decision: OpenFGA "for now". Owner update 2026-11-15: OpenFGA stays
+evaluation-only; C1–C8 is adopted for every authorization backend.
 Working name: `datopsis-authz` (placeholder).
 
 ## 1. Why build something
@@ -93,7 +94,9 @@ Components, each its own small repo and hardened image:
 
 - **C0 Interim (now).** OpenFGA as decided "for now":
   - Finish the evaluation PR's runtime tests (grant, deny, revoke, groups) to have a working baseline and a reference test suite.
-  - **Recommendation:** don't build a production `openfga-ubi` image unless C1 fails. The C0 tests become the acceptance suite every backend must pass.
+  - **Owner decision 2026-11-15:** OpenFGA stays evaluation-only; no production
+    `openfga-ubi`. Its upstream image has fixable Critical/High findings. The
+    C1–C8 tests are the acceptance suite every backend must pass.
 - **C1 Spikes,** evaluation only, each a pass/fail report:
   - **S1** Custom Lakekeeper binary with a Cedar authorizer: the authorizer trait's surface, coverage of the management API, and the C0 tests passing.
   - **S2** Trino's OPA plugin against a stub decision API: table, schema and column decisions, plus row-filter and mask support.
@@ -106,6 +109,35 @@ Components, each its own small repo and hardened image:
   - Integration test T13: C0 suite, Trino and Sail enforcement, revocation, and adversarial cases (forged, expired and wrong-audience tokens; policy-bundle tampering; decision-API spoofing).
 - **C3 Phase D:** vending gated by decisions; table-scoped STS session policies; static engine keys removed; storage tests proving cross-table access is impossible.
 - **C4 Extensions:** row filters and column masks in Trino, ClickHouse, a management API or UI, and multi-tenancy.
+
+## 5a. Mandatory backend acceptance suite
+
+The evaluation's **C1–C8** IDs are permanent acceptance tests for OpenFGA and every
+future backend, including our Cedar service. They are distinct from the phase
+names C0/C1/C2 above. Run identical assertions natively on amd64 and arm64;
+prerequisite failures are BLOCKED and any missing or failed case blocks acceptance.
+
+| ID | Required acceptance behavior |
+| --- | --- |
+| C1 | Namespace read grants allow exact table list/read, deny namespace B and writes. |
+| C2 | Namespace inheritance covers tables; single-table grants do not expose siblings. |
+| C3 | Unmapped Rauthy groups alone grant nothing; explicit mapping grants access and removal revokes it. OpenFGA uses the demonstrated membership sync; a future verified-claim adapter must preserve equivalent controls. |
+| C4 | Revocation denies fresh access within the suite's 30-second bound; report measured delay. |
+| C5 | Least-privilege Trino/PyIceberg client credentials and Sail external-token-file reads/denials. |
+| C6 | Denied users receive no storage credentials; record read-only vending and source scope. |
+| C7 | Identity spoofing, cross-client credential reuse and invalid tokens rejected, backend API isolated from clients, outage fails closed and recovery preserves decisions. |
+| C8 | Restart retains grants; repeated Lakekeeper/backend migrations are safe. |
+
+The interim OpenFGA evaluation passed all eight cases natively on amd64 and arm64
+([actual run](https://github.com/datopsis/lakehouse-integration/actions/runs/43765085173)).
+This establishes a functional reference, not production/security qualification;
+the report retains the empty-group token and storage-scope limitations.
+
+The [acceptance report](AUTHZ-EVALUATION.md) defines exact assertions, pinned inputs,
+per-architecture run links and limitations. Its
+[Phase C evaluation view](diagrams/lakehouse-authorization-evaluation.svg) records
+added components. The evaluation is manual-only and separate from `Integration`;
+passing C1–C8 does not itself remove Phase D's static-storage-key gap.
 
 ## 6. Risks and how we contain them
 
@@ -120,7 +152,8 @@ Components, each its own small repo and hardened image:
 1. Confirm or extend requirements R1–R11.
 2. Build on the Cedar library (recommended) or another engine.
 3. Project name and repo layout: one repo per component (recommended, like the image repos), or a monorepo.
-4. Interim OpenFGA depth: evaluation only (recommended) or a hardened `openfga-ubi`.
+4. Interim OpenFGA depth: **decided 2026-11-15 — evaluation only**, no production
+   `openfga-ubi`; see [DECISIONS.md](DECISIONS.md).
 5. Order: run spikes S1–S4 first (recommended) or go straight to the MVP.
 6. License for the new code (Apache-2.0 suggested, matching the other repos).
 
