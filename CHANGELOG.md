@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Pin postgresql-lakekeeper-ubi to 1054729 (PostgreSQL 18.7). PGDG removed the 18.6 RPMs the
+  previous pin (0ff367f) locked, so main could no longer build it.
 - Add permanent C1–C8 authorization backend acceptance tests, manual-only on both
   native architectures, separate from required Integration. Use the hardened
   rauthy-ubi 1e114b8 owner build with strict provenance, dedicated OpenFGA
