@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Pin lakekeeper-ubi to fe19d7f (Lakekeeper 0.13.9 with the 0.13.5-0.13.9 security fixes;
+  shipped RustSec findings 38 -> 24).
 - Pin postgresql-lakekeeper-ubi to 1054729 (PostgreSQL 18.7). PGDG removed the 18.6 RPMs the
   previous pin (0ff367f) locked, so main could no longer build it.
 - Add permanent C1–C8 authorization backend acceptance tests, manual-only on both
