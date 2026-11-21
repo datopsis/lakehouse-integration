@@ -14,6 +14,11 @@ Artifacts expire after 14 days. The PR carries the latest head's CI result.
 
 ## Credential result
 
+This section records the historical response at the original pin. Lakekeeper
+0.13.6 removed credential-less `storage-credentials` entries; the 0.13.9 pin
+requires that field to be absent while retaining the signing hints and static
+Sail identity checks. See the [PR #23 investigation](LAKEKEEPER-0.13.9.md).
+
 **Sail uses its static AWS credentials successfully despite requesting vending.**
 Lakekeeper remains `sts-enabled=false`. Its HTTP 200 table response contains
 `s3.signer=S3V4RestSigner` and `s3.remote-signing-enabled=true`. The

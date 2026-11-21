@@ -1,5 +1,6 @@
 """Fail-closed checks for Sail's two-lock provenance and service isolation."""
 
+import copy
 import hashlib
 import json
 import sys
@@ -13,10 +14,35 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "integration"))
 from build import provenance_errors
 from sail_build import lock_evidence, prepare_build
-from sail_probe import wire_evidence
+from sail_probe import static_vended_response, wire_evidence
 
 
 class SailGates(unittest.TestCase):
+    def test_sts_disabled_response_requires_no_vended_credentials(self):
+        response = {
+            "config": {
+                "s3.signer": "S3V4RestSigner",
+                "s3.remote-signing-enabled": "true",
+                "s3.endpoint": "https://s3:8333/",
+                "s3.region": "local",
+            }
+        }
+        self.assertEqual(static_vended_response(response), response["config"])
+        # Reject even the old credential-less entry, as well as real credentials.
+        for entry in (None, [], [{"prefix": "s3://warehouse/table", "config": response["config"]}]):
+            with self.subTest(entry=entry), self.assertRaises(AssertionError):
+                static_vended_response({**response, "storage-credentials": entry})
+        for key in ("s3.access-key-id", "s3.secret-access-key", "s3.session-token"):
+            leaked = copy.deepcopy(response)
+            leaked["config"][key] = "unexpected"
+            with self.subTest(key=key), self.assertRaises(AssertionError):
+                static_vended_response(leaked)
+        for key in ("s3.signer", "s3.remote-signing-enabled"):
+            broken = copy.deepcopy(response)
+            broken["config"][key] = "unexpected"
+            with self.subTest(key=key), self.assertRaises(AssertionError):
+                static_vended_response(broken)
+
     def test_owner_build_receives_each_native_architecture(self):
         for architecture in ("amd64", "arm64"):
             env = {"PATH": "/usr/bin"}
