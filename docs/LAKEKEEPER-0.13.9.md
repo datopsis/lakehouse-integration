@@ -69,4 +69,35 @@ There is no evidence here justifying a location, cache, expiry or deployment
 configuration workaround, nor an upstream regression issue.
 
 This is a fresh-volume fixture, not an in-place upgrade/migration qualification.
-Final corrected-branch integration results are recorded below after CI finishes.
+
+## Corrected-branch evidence
+
+[Run 44957439454](https://github.com/datopsis/lakehouse-integration/actions/runs/44957439454)
+passed at implementation commit `76fb458d9865be5092db32d0e2727bd395849f88`.
+Both native artifacts were downloaded and inspected, including `builds.json`,
+`results.json`, `probe.log`, `sail-traffic.log`, `sail-s3-identities.log` and the
+fresh crash-reader logs. `gh run view --log-failed` returned no failed-step logs.
+
+| Native job | Result | Job wall time | Runtime probes |
+| --- | --- | --- | --- |
+| amd64 | Passed | 25m 38s | 1268.81s |
+| arm64 | Passed | 22m 06s | 1093.47s |
+| Required `Integration` aggregate | Passed | 4s | Both jobs succeeded |
+
+On each architecture, all six builds and strict provenance passed. There were
+zero failed probes. T10 created and mutated `from_sail`, confirmed its own static
+S3 signing identity with zero signer POSTs, and recorded no `storage-credentials`
+field. T4 verified objects and exact catalog rows. T5 replaced all ten container
+IDs and passed fresh reads and new writes. T8 passed the all-service SIGKILL and
+individual PostgreSQL/catalog/volume/filer scenarios, including exact acknowledged
+rows and snapshots, independent reads and recovery writes. The 88-row TLS matrix
+passed. Encoding and remote-signing race canaries retained their exact expected
+failures and recovery assertions; they were not skipped or generalized.
+
+Local validation: 42 unit tests, Ruff lint/format, offline pedantic Zizmor,
+tracked YAML/JSON parsing, LF and diff whitespace checks passed. No local images
+were built and no local containers were run. No settings, secrets, owning
+repositories, pins beyond the original PR bump, or deployment profiles changed.
+No upstream issue was filed or drafted because this is the intentional upstream
+fix described above. In-place database upgrades, host power loss and production
+authentication/authorization remain outside this fixture's verified scope.
