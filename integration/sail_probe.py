@@ -189,6 +189,21 @@ def wire_evidence(trace, address, s3_log):
     }
 
 
+def static_vended_response(response):
+    """The pinned catalog offers signing hints, but STS is disabled here."""
+    # Lakekeeper >=0.13.6 (29c53e3, #1923) omits credential-less entries:
+    # a scoped entry without keys can override a client's working static keys.
+    # Require omission, rather than accepting arbitrary/empty credential entries.
+    assert "storage-credentials" not in response, response
+    config = response["config"]
+    assert not any(
+        key in config for key in ("s3.access-key-id", "s3.secret-access-key", "s3.session-token")
+    ), config
+    assert config["s3.signer"] == "S3V4RestSigner", config
+    assert config["s3.remote-signing-enabled"] == "true", config
+    return config
+
+
 def exercise(h):
     warehouse = h.RESULTS["warehouse"]["response"]["warehouse-id"]
     status, response = h.http(
@@ -197,18 +212,10 @@ def exercise(h):
         headers={"X-Iceberg-Access-Delegation": "vended-credentials"},
     )
     assert status == 200, (status, response)
-    config = response.get("config", {})
-    storage = response["storage-credentials"]
-    assert len(storage) == 1 and storage[0]["prefix"] == response["metadata"]["location"], storage
-    for properties in [config, storage[0]["config"]]:
-        assert not any(
-            key in properties
-            for key in ("s3.access-key-id", "s3.secret-access-key", "s3.session-token")
-        ), properties
-    assert config["s3.signer"] == "S3V4RestSigner", config
-    assert config["s3.remote-signing-enabled"] == "true", config
+    config = static_vended_response(response)
     h.record(
-        "sail_vended_response", {"status": status, "config": config, "storage-credentials": storage}
+        "sail_vended_response",
+        {"status": status, "config": config, "storage_credentials_present": False},
     )
     assert (
         queries(
