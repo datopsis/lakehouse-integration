@@ -49,6 +49,10 @@ def load(suite):
         if image == "localhost/postgresql-ubi:integration":
             image = "localhost/postgresql-lakekeeper-ubi:integration"
         extra = list(kwargs.get("extra", ()))
+        if name in ("master", "volume", "filer"):
+            # A read-only root still needs a private writable data volume.
+            # Anonymous volumes are removed by the fixture's docker rm -fv.
+            extra += ["--volume", "/data"]
         for option in ("--read-only", "--cap-drop=ALL", "--security-opt=no-new-privileges:true"):
             if not any(str(item).split(":")[0] == option.split(":")[0] for item in extra):
                 extra.append(option)
@@ -78,5 +82,5 @@ def cleanup(common):
         "docker", "network", "ls", "-q", "--filter", "name=^(authz-backend|slice1-idp)$"
     ).split():
         common.run("docker", "network", "rm", network)
-    redact_reports(ROOT / "reports", values)
+    redact_reports(ROOT / "reports", values, include_root_logs=False)
     common.run("sudo", "rm", "-rf", common.WORK)

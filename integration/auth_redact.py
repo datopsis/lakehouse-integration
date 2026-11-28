@@ -21,10 +21,10 @@ def retain(path, values=()):
     return combined
 
 
-def redact_reports(root, values):
+def redact_reports(root, values, *, include_root_logs=True):
     """Run after child processes/tee exit, including interrupted suite output."""
     root = Path(root)
-    files = list(root.glob("t13*.log"))
+    files = list(root.glob("t13*.log")) if include_root_logs else []
     if (root / "t13").exists():
         files.extend(path for path in (root / "t13").rglob("*") if path.is_file())
     for path in files:
