@@ -64,11 +64,19 @@ def load(suite):
 
 
 def cleanup(common):
+    from auth_redact import redact_reports, retain
+
+    values = list(common.SECRETS)
+    inventory = common.WORK / "secrets.json"
+    if inventory.exists():
+        stored = json.loads(inventory.read_text())
+        assert isinstance(stored, list) and all(isinstance(value, str) for value in stored)
+        values.extend(stored)
+    values = retain(ROOT / ".runtime/t13-secrets.json", values)
     common.cleanup()
     for network in common.run(
         "docker", "network", "ls", "-q", "--filter", "name=^(authz-backend|slice1-idp)$"
     ).split():
         common.run("docker", "network", "rm", network)
-    for path in (ROOT / "reports").glob("t13*.log"):
-        path.write_text(common.clean(path.read_text()))
+    redact_reports(ROOT / "reports", values)
     common.run("sudo", "rm", "-rf", common.WORK)

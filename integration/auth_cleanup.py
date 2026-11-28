@@ -11,3 +11,15 @@ if (ROOT / ".runtime/idp").exists():
 
     common.OUT = ROOT / "reports/t13/interrupted"
     cleanup(common)
+
+# Child processes and their tee writers have exited before this always-run step.
+# Retain every suite's inventory until this final pass, including any traceback
+# appended after an individual suite's finally block.
+from auth_redact import redact_reports, retain  # noqa: E402
+
+inventory = ROOT / ".runtime/t13-secrets.json"
+values = retain(inventory) if inventory.exists() else []
+redact_reports(ROOT / "reports", values)
+if (ROOT / "reports/t13").exists():
+    (ROOT / "reports/t13/SANITIZED").write_text("Final T13 redaction completed.\n")
+inventory.unlink(missing_ok=True)

@@ -12,6 +12,7 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "integration"))
 import verify
+from auth_redact import redact_reports, retain
 
 
 class AuthGates(unittest.TestCase):
@@ -48,6 +49,28 @@ class AuthGates(unittest.TestCase):
                     ):
                         with self.subTest(image=image, key=key), self.assertRaises(AssertionError):
                             verify.main()
+
+    def test_final_redaction_covers_late_tracebacks_and_all_suite_secrets(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            inventory = root / "private/inventory.json"
+            retain(inventory, ["first-suite-secret"])
+            values = retain(inventory, ["second-suite-secret"])
+            log = root / "t13-whole-stack.log"
+            log.write_text("first-suite-secret")
+            redact_reports(root, values)
+            with log.open("a") as output:
+                output.write("\nlate traceback: second-suite-secret Bearer unregistered-token")
+            redact_reports(root, retain(inventory))
+            self.assertNotIn("first-suite-secret", log.read_text())
+            self.assertNotIn("second-suite-secret", log.read_text())
+            self.assertNotIn("unregistered-token", log.read_text())
+            log.write_text("-----BEGIN PRIVATE KEY-----")
+            with self.assertRaises(AssertionError):
+                redact_reports(root, values)
+            inventory.write_text('{"invalid":"inventory"}')
+            with self.assertRaises(AssertionError):
+                retain(inventory)
 
     def test_authenticated_stages_are_mandatory_and_additional(self):
         jobs = yaml.safe_load(Path(".github/workflows/integration.yml").read_text())["jobs"]
