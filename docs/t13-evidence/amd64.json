@@ -1,0 +1,2103 @@
+{
+  "schema": 1,
+  "architecture": "amd64",
+  "source_revision": "737fb1e197fd6c886d1dcee66b316ebde4e2b442",
+  "run": "https://github.com/datopsis/lakehouse-integration/actions/runs/46105218920",
+  "job": "https://github.com/datopsis/lakehouse-integration/actions/runs/46105218920/job/140856829397",
+  "duration_seconds": 4176,
+  "baseline_seconds": 1343,
+  "delta_seconds": 2833,
+  "conclusion": "blocked: pinned Trino launcher admits only PASSWORD without insecure override",
+  "pins": {
+    "postgresql-lakekeeper-ubi": "1054729c5fa934e2a801a36d81a8b2b264aa8829",
+    "lakekeeper-ubi": "fe19d7f9a5e603c7f7457f4a3a56e1af8cd8d2e7",
+    "seaweedfs-ubi": "80bba407ba534f9d2e6ec6401c071d827dcf4a03",
+    "trino-ubi": "9343071e44fc58e4848c6e6b66ae1403a394d17f",
+    "sail-ubi": "e96e068f926b8fecb3939e953389685ee4780032",
+    "nginx-ubi": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+    "rauthy-ubi": "52c3fec20beca1975467a9c955730082cef8bf46",
+    "datopsis-authz": "ed14cf951081f0d6daad4d601ae9786ffb8a8fc0"
+  },
+  "builds": {
+    "postgresql-lakekeeper-ubi": {
+      "revision": "1054729c5fa934e2a801a36d81a8b2b264aa8829",
+      "image_id": "sha256:e59204dd9eacc3031238141b96c33f13b0fa34a3d05b4cbeaf06b1ba613a435b",
+      "architecture": "amd64",
+      "runner_machine": "x86_64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/locks/amd64.json",
+      "lock_sha256": "fe8ffbabd791386fb4003e3b41621c914fdbb0841d6fbff863467461f4fa75d1",
+      "labels": {
+        "io.datopsis.artifact-lock.sha256": "fe8ffbabd791386fb4003e3b41621c914fdbb0841d6fbff863467461f4fa75d1",
+        "io.datopsis.postgresql.publisher": "PostgreSQL Global Development Group (PGDG)",
+        "io.datopsis.postgresql.rpm-version": "18.7-1PGDG.rhel9.9",
+        "io.datopsis.postgresql.signing-key-fingerprint": "D4BF08AE67A0B4C7A1DBCCD240BCA2B408B40D20",
+        "io.datopsis.postgresql.version": "18.7",
+        "io.datopsis.ubi.builder": "registry.access.redhat.com/ubi9/ubi-minimal:9.9@sha256:baafce2d34783a28b4a472779f304e97e00f9d35c99553bc53b068b14344d9a9",
+        "io.datopsis.ubi.runtime": "registry.access.redhat.com/ubi9/ubi-micro:9.9@sha256:dbd325b96bcd432dd42816d31412bdf1dc0fb973b79ed310344bc23c76c068db",
+        "org.opencontainers.image.created": "1970-01-01T00:00:00Z",
+        "org.opencontainers.image.description": "Rootless PostgreSQL for Lakekeeper metadata with five allowlisted extensions on UBI 9 Micro",
+        "org.opencontainers.image.documentation": "https://github.com/datopsis/postgresql-lakekeeper-ubi/blob/1054729c5fa934e2a801a36d81a8b2b264aa8829/README.md",
+        "org.opencontainers.image.licenses": "Apache-2.0",
+        "org.opencontainers.image.revision": "1054729c5fa934e2a801a36d81a8b2b264aa8829",
+        "org.opencontainers.image.source": "https://github.com/datopsis/postgresql-lakekeeper-ubi",
+        "org.opencontainers.image.title": "PostgreSQL for Lakekeeper on Red Hat UBI 9",
+        "org.opencontainers.image.url": "https://github.com/datopsis/postgresql-lakekeeper-ubi",
+        "org.opencontainers.image.vendor": "Datopsis",
+        "org.opencontainers.image.version": "development"
+      },
+      "provenance_errors": [],
+      "status": "pass",
+      "seconds": 85.91
+    },
+    "lakekeeper-ubi": {
+      "revision": "fe19d7f9a5e603c7f7457f4a3a56e1af8cd8d2e7",
+      "image_id": "sha256:8233f1ce720a7e7c43701b61fcc558fc425061f789121ea5030bef5a7c800918",
+      "architecture": "amd64",
+      "runner_machine": "x86_64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/lakekeeper.lock.json",
+      "lock_sha256": "ca842ef545b7e380a199d163205b0541f1877b616888cd56c8044e782d5055b3",
+      "labels": {
+        "architecture": "x86_64",
+        "build-date": "2026-11-05T06:34:46Z",
+        "com.redhat.component": "ubi9-micro-container",
+        "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+        "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+        "description": "Very small image which doesn't install the package manager.",
+        "distribution-scope": "public",
+        "io.buildah.version": "1.33.7",
+        "io.datopsis.artifact-lock.sha256": "ca842ef545b7e380a199d163205b0541f1877b616888cd56c8044e782d5055b3",
+        "io.datopsis.lakekeeper.upstream-version": "0.13.9",
+        "io.k8s.description": "Very small image which doesn't install the package manager.",
+        "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+        "io.openshift.expose-services": "",
+        "maintainer": "Red Hat, Inc.",
+        "name": "ubi9/ubi-micro",
+        "org.opencontainers.image.created": "2026-11-05T06:34:46Z",
+        "org.opencontainers.image.description": "A security-oriented, rootless Lakekeeper Apache Iceberg REST catalog built on Red Hat UBI 9 Micro",
+        "org.opencontainers.image.documentation": "https://github.com/datopsis/lakekeeper-ubi#readme",
+        "org.opencontainers.image.licenses": "Apache-2.0",
+        "org.opencontainers.image.revision": "fe19d7f9a5e603c7f7457f4a3a56e1af8cd8d2e7",
+        "org.opencontainers.image.source": "https://github.com/datopsis/lakekeeper-ubi",
+        "org.opencontainers.image.title": "Lakekeeper on Red Hat UBI 9",
+        "org.opencontainers.image.vendor": "Datopsis",
+        "org.opencontainers.image.version": "0.13.9",
+        "release": "1793860449",
+        "summary": "ubi9 micro image",
+        "url": "https://catalog.redhat.com/en/search?searchType=containers",
+        "vcs-ref": "9d7bd388a99de116058bd54b77737e2863cb3d45",
+        "vcs-type": "git",
+        "vendor": "Red Hat, Inc.",
+        "version": "9.8"
+      },
+      "provenance_errors": [],
+      "status": "pass",
+      "image_binary_sha256": "44ffec9b35dbf8b750208c9c14fd3a5fa6ec62690042dafa9391df114ca435a3",
+      "seconds": 31.63
+    },
+    "seaweedfs-ubi": {
+      "revision": "80bba407ba534f9d2e6ec6401c071d827dcf4a03",
+      "image_id": "sha256:7d2fad79f993cfa24c30d1ff536dedbb8813d64d9ddb6a0f4c6991d96ce832c3",
+      "architecture": "amd64",
+      "runner_machine": "x86_64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/seaweedfs.lock.json",
+      "lock_sha256": "d0fc6c6303f58715068c419bfe9b083abc257416f4ca51e51763c501738b69c2",
+      "labels": {
+        "architecture": "x86_64",
+        "build-date": "2026-11-05T06:34:46Z",
+        "com.redhat.component": "ubi9-micro-container",
+        "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+        "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+        "description": "Very small image which doesn't install the package manager.",
+        "distribution-scope": "public",
+        "io.buildah.version": "1.33.7",
+        "io.datopsis.artifact-lock.sha256": "d0fc6c6303f58715068c419bfe9b083abc257416f4ca51e51763c501738b69c2",
+        "io.datopsis.seaweedfs.commit": "4ab66fb76da83700739f5839e62fcaf15fb7d02a",
+        "io.datopsis.seaweedfs.variant": "large_disk",
+        "io.datopsis.seaweedfs.version": "4.53",
+        "io.k8s.description": "Very small image which doesn't install the package manager.",
+        "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+        "io.openshift.expose-services": "",
+        "maintainer": "Red Hat, Inc.",
+        "name": "ubi9/ubi-micro",
+        "org.opencontainers.image.base.name": "registry.access.redhat.com/ubi9/ubi-micro",
+        "org.opencontainers.image.created": "2026-11-28T04:02:10Z",
+        "org.opencontainers.image.description": "Security-oriented, rootless SeaweedFS on Red Hat UBI 9",
+        "org.opencontainers.image.documentation": "https://github.com/datopsis/seaweedfs-ubi/blob/main/README.md",
+        "org.opencontainers.image.licenses": "Apache-2.0",
+        "org.opencontainers.image.revision": "80bba407ba534f9d2e6ec6401c071d827dcf4a03",
+        "org.opencontainers.image.source": "https://github.com/datopsis/seaweedfs-ubi",
+        "org.opencontainers.image.title": "seaweedfs-ubi",
+        "org.opencontainers.image.vendor": "Datopsis",
+        "org.opencontainers.image.version": "4.53",
+        "release": "1793860449",
+        "summary": "ubi9 micro image",
+        "url": "https://catalog.redhat.com/en/search?searchType=containers",
+        "vcs-ref": "9d7bd388a99de116058bd54b77737e2863cb3d45",
+        "vcs-type": "git",
+        "vendor": "Red Hat, Inc.",
+        "version": "9.8"
+      },
+      "provenance_errors": [],
+      "status": "pass",
+      "image_binary_sha256": "4b51c35ab81fd0913e2bf05db6771f1c7c82959d8b3129b54686a9a4998dd813",
+      "seconds": 24.17
+    },
+    "trino-ubi": {
+      "revision": "9343071e44fc58e4848c6e6b66ae1403a394d17f",
+      "image_id": "sha256:99ab09b782c7849746e913d19b32a48946373204d836330af38c131b9563a790",
+      "architecture": "amd64",
+      "runner_machine": "x86_64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/trino.lock.json",
+      "lock_sha256": "f881ac53191d5c96a0a973a7035ce97cd21273b29ade1e4d784ebe7d4ed6d3f0",
+      "labels": {
+        "architecture": "x86_64",
+        "build-date": "2026-11-09T00:38:17Z",
+        "com.redhat.component": "ubi9-micro-container",
+        "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+        "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+        "description": "Very small image which doesn't install the package manager.",
+        "distribution-scope": "public",
+        "io.buildah.version": "1.45.0",
+        "io.datopsis.artifact-lock.sha256": "f881ac53191d5c96a0a973a7035ce97cd21273b29ade1e4d784ebe7d4ed6d3f0",
+        "io.datopsis.ubi.runtime": "registry.access.redhat.com/ubi9/ubi-micro:9.8@sha256:d3499a0896e2d6a1642f922615831bc5c2fd513bbb34f3446cabba530d9d54a2",
+        "io.k8s.description": "Very small image which doesn't install the package manager.",
+        "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+        "io.openshift.expose-services": "",
+        "maintainer": "Red Hat, Inc.",
+        "name": "ubi9/ubi-micro",
+        "org.opencontainers.image.created": "2026-11-25T14:22:01Z",
+        "org.opencontainers.image.licenses": "Apache-2.0 AND GPL-2.0-with-classpath-exception",
+        "org.opencontainers.image.revision": "9343071e44fc58e4848c6e6b66ae1403a394d17f",
+        "org.opencontainers.image.source": "https://github.com/datopsis/trino-ubi",
+        "org.opencontainers.image.title": "Trino on UBI 9",
+        "org.opencontainers.image.version": "484-development",
+        "release": "1794184668",
+        "summary": "ubi9 micro image",
+        "url": "https://catalog.redhat.com/en/search?searchType=containers",
+        "vcs-ref": "180abe1db345daeb7a00ed9fda71e3ad05c261b7",
+        "vcs-type": "git",
+        "vendor": "Red Hat, Inc.",
+        "version": "9.8"
+      },
+      "provenance_errors": [],
+      "status": "pass",
+      "seconds": 45.4
+    },
+    "sail-ubi": {
+      "revision": "e96e068f926b8fecb3939e953389685ee4780032",
+      "image_id": "sha256:ecb257d13e2c94abc061c7391affb8113385a30c4223f430558d07b4e7f98450",
+      "architecture": "amd64",
+      "runner_machine": "x86_64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/sail.lock.json",
+      "lock_sha256": "7b66571efcca5f6e856b5922090ddc9c728489d300f20a12ca93b577ab4b4c38",
+      "labels": {
+        "architecture": "x86_64",
+        "build-date": "2026-11-09T00:38:17Z",
+        "com.redhat.component": "ubi9-micro-container",
+        "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+        "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+        "description": "Very small image which doesn't install the package manager.",
+        "distribution-scope": "public",
+        "io.buildah.version": "1.45.0",
+        "io.datopsis.artifact-lock.sha256": "7b66571efcca5f6e856b5922090ddc9c728489d300f20a12ca93b577ab4b4c38",
+        "io.k8s.description": "Very small image which doesn't install the package manager.",
+        "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+        "io.openshift.expose-services": "",
+        "maintainer": "Red Hat, Inc.",
+        "name": "ubi9/ubi-micro",
+        "org.opencontainers.image.base.name": "registry.access.redhat.com/ubi9/ubi-micro:9.8@sha256:d3499a0896e2d6a1642f922615831bc5c2fd513bbb34f3446cabba530d9d54a2",
+        "org.opencontainers.image.created": "2026-11-13T06:35:25-06:00",
+        "org.opencontainers.image.description": "Rootless local Spark Connect server",
+        "org.opencontainers.image.licenses": "Apache-2.0",
+        "org.opencontainers.image.revision": "e96e068f926b8fecb3939e953389685ee4780032",
+        "org.opencontainers.image.source": "https://github.com/datopsis/sail-ubi",
+        "org.opencontainers.image.title": "Sail on Red Hat UBI 9",
+        "org.opencontainers.image.version": "0.7.3",
+        "release": "1794184668",
+        "summary": "ubi9 micro image",
+        "url": "https://catalog.redhat.com/en/search?searchType=containers",
+        "vcs-ref": "180abe1db345daeb7a00ed9fda71e3ad05c261b7",
+        "vcs-type": "git",
+        "vendor": "Red Hat, Inc.",
+        "version": "9.8"
+      },
+      "lock_inputs": {
+        "artifacts/sail.lock.json": "8f25a1bcccfc475f87fc5239056fb56926e1d56672effa4e3e493e510c95bcc6",
+        "artifacts/rpms.lock.json": "1db2e198653d2997afc4ed205e0075a51903c111cbda51079722d858bbd0393b"
+      },
+      "provenance_errors": [],
+      "status": "pass",
+      "seconds": 58.16
+    },
+    "nginx-ubi": {
+      "revision": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+      "image_id": "sha256:151c139ec52bec80167dd42e22ad528a5d6eb1d466bf9db2df186b174b340d07",
+      "architecture": "amd64",
+      "runner_machine": "x86_64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/locks/amd64.json",
+      "lock_sha256": "5eda00936d279befa19bce2dff5592dbcff3bf6d5067899025dbd431d8a54216",
+      "labels": {
+        "architecture": "x86_64",
+        "build-date": "2026-11-05T06:34:46Z",
+        "com.redhat.component": "ubi9-micro-container",
+        "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+        "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+        "description": "Very small image which doesn't install the package manager.",
+        "distribution-scope": "public",
+        "io.buildah.version": "1.33.7",
+        "io.datopsis.artifact-lock.sha256": "5eda00936d279befa19bce2dff5592dbcff3bf6d5067899025dbd431d8a54216",
+        "io.datopsis.nginx.rpm-version": "2:1.30.6-1.el9.ngx",
+        "io.k8s.description": "Very small image which doesn't install the package manager.",
+        "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+        "io.openshift.expose-services": "",
+        "maintainer": "Red Hat, Inc.",
+        "name": "ubi9/ubi-micro",
+        "org.opencontainers.image.created": "2026-11-05T06:34:46Z",
+        "org.opencontainers.image.description": "A security-oriented, rootless NGINX image built on Red Hat UBI 9 Micro",
+        "org.opencontainers.image.documentation": "https://github.com/datopsis/nginx-ubi#readme",
+        "org.opencontainers.image.licenses": "BSD-2-Clause AND Apache-2.0",
+        "org.opencontainers.image.revision": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+        "org.opencontainers.image.source": "https://github.com/datopsis/nginx-ubi",
+        "org.opencontainers.image.title": "NGINX on Red Hat UBI 9",
+        "org.opencontainers.image.vendor": "Datopsis",
+        "org.opencontainers.image.version": "1.30.6",
+        "release": "1793860449",
+        "summary": "ubi9 micro image",
+        "url": "https://catalog.redhat.com/en/search?searchType=containers",
+        "vcs-ref": "9d7bd388a99de116058bd54b77737e2863cb3d45",
+        "vcs-type": "git",
+        "vendor": "Red Hat, Inc.",
+        "version": "9.8"
+      },
+      "provenance_errors": [],
+      "status": "pass",
+      "profiles": {
+        "lakekeeper": "ffb1f020a9fb81451bc7a0841130cd462003f16569daa7d735d2dbc484c37c63",
+        "sail": "7bfa14c1f2cd7d5e74e3d923adbf8f5d1a4ed432a9c38e6a28f43575f71fed5c"
+      },
+      "seconds": 52.9
+    },
+    "rauthy-ubi": {
+      "revision": "52c3fec20beca1975467a9c955730082cef8bf46",
+      "image_id": "sha256:893e9cff25712dca396e691af60fa94b75d99d54a859d46a3204a6c8aa79d567",
+      "architecture": "amd64",
+      "runner_machine": "x86_64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/locks/amd64.json",
+      "lock_sha256": "1fb9312d90f1acdae8a79d6827a245d2bcd05f22a149cd52fce065fb8655f6f9",
+      "labels": {
+        "architecture": "x86_64",
+        "build-date": "2026-11-12T10:12:30Z",
+        "com.redhat.component": "ubi9-micro-container",
+        "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+        "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+        "description": "Very small image which doesn't install the package manager.",
+        "distribution-scope": "public",
+        "io.buildah.version": "1.45.0",
+        "io.datopsis.artifact-lock.sha256": "1fb9312d90f1acdae8a79d6827a245d2bcd05f22a149cd52fce065fb8655f6f9",
+        "io.datopsis.rauthy.upstream-revision": "fe6bcb95192e8a83c29e2b525bf4960933bea3bd",
+        "io.k8s.description": "Very small image which doesn't install the package manager.",
+        "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+        "io.openshift.expose-services": "",
+        "maintainer": "Red Hat, Inc.",
+        "name": "ubi9/ubi-micro",
+        "org.opencontainers.image.created": "2026-11-12T10:12:30Z",
+        "org.opencontainers.image.licenses": "Apache-2.0",
+        "org.opencontainers.image.revision": "52c3fec20beca1975467a9c955730082cef8bf46",
+        "org.opencontainers.image.source": "https://github.com/datopsis/rauthy-ubi",
+        "org.opencontainers.image.title": "Rauthy on Red Hat UBI 9",
+        "org.opencontainers.image.version": "0.37.2",
+        "release": "1794478307",
+        "summary": "ubi9 micro image",
+        "url": "https://catalog.redhat.com/en/search?searchType=containers",
+        "vcs-ref": "fe65ab2ee8a23d96179165605ba81b37ed988b79",
+        "vcs-type": "git",
+        "vendor": "Red Hat, Inc.",
+        "version": "9.9"
+      },
+      "provenance_errors": [],
+      "status": "pass",
+      "seconds": 1277.88
+    },
+    "datopsis-authz": {
+      "status": "pass",
+      "revision": "ed14cf951081f0d6daad4d601ae9786ffb8a8fc0",
+      "architecture": "amd64",
+      "expected_architecture": "amd64",
+      "lock_path": "artifacts/images.lock.json",
+      "lock_sha256": "61d8f3bda717824dec5ede296eae8b86cabe16236c9ff3b34894ec4c29221cfe",
+      "images": {
+        "authz": {
+          "status": "pass",
+          "revision": "ed14cf951081f0d6daad4d601ae9786ffb8a8fc0",
+          "image_id": "sha256:2a1c4efd87559e92370ea75e1ded4c8d19dd3453c0889717d33be1fe7891eefc",
+          "architecture": "amd64",
+          "lock_sha256": "61d8f3bda717824dec5ede296eae8b86cabe16236c9ff3b34894ec4c29221cfe",
+          "labels": {
+            "architecture": "x86_64",
+            "build-date": "2026-11-12T10:12:30Z",
+            "com.redhat.component": "ubi9-micro-container",
+            "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+            "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+            "description": "Very small image which doesn't install the package manager.",
+            "distribution-scope": "public",
+            "io.buildah.version": "1.45.0",
+            "io.datopsis.artifact-lock.sha256": "61d8f3bda717824dec5ede296eae8b86cabe16236c9ff3b34894ec4c29221cfe",
+            "io.datopsis.lakekeeper.source": "a8e013b30e99e5a184486fe166c3ffb3781a7c36",
+            "io.k8s.description": "Very small image which doesn't install the package manager.",
+            "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+            "io.openshift.expose-services": "",
+            "maintainer": "Red Hat, Inc.",
+            "name": "ubi9/ubi-micro",
+            "org.opencontainers.image.created": "2026-11-12T10:12:30Z",
+            "org.opencontainers.image.licenses": "Apache-2.0",
+            "org.opencontainers.image.revision": "ed14cf951081f0d6daad4d601ae9786ffb8a8fc0",
+            "org.opencontainers.image.source": "https://github.com/datopsis/datopsis-authz",
+            "release": "1794478307",
+            "summary": "ubi9 micro image",
+            "url": "https://catalog.redhat.com/en/search?searchType=containers",
+            "vcs-ref": "fe65ab2ee8a23d96179165605ba81b37ed988b79",
+            "vcs-type": "git",
+            "vendor": "Red Hat, Inc.",
+            "version": "9.9"
+          },
+          "provenance_errors": []
+        },
+        "lakekeeper-authz": {
+          "status": "pass",
+          "revision": "ed14cf951081f0d6daad4d601ae9786ffb8a8fc0",
+          "image_id": "sha256:d4311c527c3b4f1be7041a76d2d714ef696f64d9554a6f03944a1638c83aadb3",
+          "architecture": "amd64",
+          "lock_sha256": "61d8f3bda717824dec5ede296eae8b86cabe16236c9ff3b34894ec4c29221cfe",
+          "labels": {
+            "architecture": "x86_64",
+            "build-date": "2026-11-12T10:12:30Z",
+            "com.redhat.component": "ubi9-micro-container",
+            "com.redhat.license_terms": "https://www.redhat.com/en/about/red-hat-end-user-license-agreements#UBI",
+            "cpe": "cpe:/a:redhat:enterprise_linux:9::appstream",
+            "description": "Very small image which doesn't install the package manager.",
+            "distribution-scope": "public",
+            "io.buildah.version": "1.45.0",
+            "io.datopsis.artifact-lock.sha256": "61d8f3bda717824dec5ede296eae8b86cabe16236c9ff3b34894ec4c29221cfe",
+            "io.datopsis.lakekeeper.source": "a8e013b30e99e5a184486fe166c3ffb3781a7c36",
+            "io.k8s.description": "Very small image which doesn't install the package manager.",
+            "io.k8s.display-name": "Red Hat Universal Base Image 9 Micro",
+            "io.openshift.expose-services": "",
+            "maintainer": "Red Hat, Inc.",
+            "name": "ubi9/ubi-micro",
+            "org.opencontainers.image.created": "2026-11-12T10:12:30Z",
+            "org.opencontainers.image.licenses": "Apache-2.0",
+            "org.opencontainers.image.revision": "ed14cf951081f0d6daad4d601ae9786ffb8a8fc0",
+            "org.opencontainers.image.source": "https://github.com/datopsis/datopsis-authz",
+            "release": "1794478307",
+            "summary": "ubi9 micro image",
+            "url": "https://catalog.redhat.com/en/search?searchType=containers",
+            "vcs-ref": "fe65ab2ee8a23d96179165605ba81b37ed988b79",
+            "vcs-type": "git",
+            "vendor": "Red Hat, Inc.",
+            "version": "9.9"
+          },
+          "provenance_errors": []
+        }
+      },
+      "provenance_errors": [],
+      "seconds": 1152.23
+    }
+  },
+  "whole_stack_cases": {
+    "login": {
+      "status": "blocked"
+    },
+    "visibility": {
+      "status": "blocked"
+    },
+    "rows_masks": {
+      "status": "blocked"
+    },
+    "grant_revocation": {
+      "status": "blocked"
+    },
+    "group_revocation": {
+      "status": "blocked"
+    },
+    "authz_outage": {
+      "status": "blocked"
+    },
+    "rauthy_outage": {
+      "status": "blocked"
+    },
+    "audit": {
+      "status": "blocked"
+    },
+    "tls_isolation": {
+      "status": "blocked"
+    }
+  },
+  "c1_c8": {
+    "C1": {
+      "status": "pass",
+      "value": {
+        "namespaces": [
+          [
+            "bakeoff"
+          ]
+        ],
+        "allowed": {
+          "tables": [
+            [
+              "bakeoff",
+              "sample"
+            ]
+          ],
+          "rows": [
+            {
+              "id": 1,
+              "label": "alpha"
+            },
+            {
+              "id": 2,
+              "label": "beta"
+            }
+          ]
+        },
+        "other_list": {
+          "type": "NoSuchNamespaceError",
+          "message": "NoSuchNamespaceException: Namespace with name 'denied' does not exist in warehouse '6b7c1414-eae9-11f1-b263-5bbec86974c9'"
+        },
+        "other_read": {
+          "type": "NoSuchTableError",
+          "message": "NoSuchTableException: Error getting tabular from catalog"
+        },
+        "writes": {
+          "create_namespace": {
+            "type": "ForbiddenError",
+            "message": "WarehouseActionForbidden: Warehouse action `create_namespace(name=forbidden)` forbidden on warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "create_table": {
+            "type": "ForbiddenError",
+            "message": "NamespaceActionForbidden: Namespace action `create_table(name=no, table_id=01a2208b-e799-7572-8886-d8d35b279662)` forbidden on namespace with name 'bakeoff' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "append": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "overwrite": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "delete": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "commit": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `commit(updated-properties={test: denied})` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "drop": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `drop` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "rename": {
+            "type": "ForbiddenError",
+            "message": "NamespaceActionForbidden: Namespace action `create_table(name=renamed, table_id=01a2208b-e21e-7519-b81d-53498f59c2c4, properties={write.delete.mode: copy-on-write, write.update.mode: copy-on-write})` forbidden on namespace with name 'bakeoff' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          }
+        }
+      },
+      "seconds": 0.8513
+    },
+    "C2": {
+      "status": "pass",
+      "value": {
+        "namespace_covers_new_table": true,
+        "single_table_rows": [
+          {
+            "id": 8
+          }
+        ],
+        "single_table_list": "NoSuchNamespaceError",
+        "sibling": {
+          "type": "NoSuchTableError",
+          "message": "NoSuchTableException: Error getting tabular from catalog"
+        }
+      },
+      "seconds": 0.7095
+    },
+    "C3": {
+      "status": "pass",
+      "value": {
+        "old_token_after_IdP_removal": {
+          "type": "NoSuchNamespaceError",
+          "message": "NoSuchNamespaceException: Namespace with name 'bakeoff' does not exist in warehouse '6b7c1414-eae9-11f1-b263-5bbec86974c9'"
+        },
+        "samples": [
+          {
+            "seconds_since_ack": 0.04261595200023294,
+            "status": 404
+          }
+        ]
+      },
+      "seconds": 1.1914
+    },
+    "C4": {
+      "status": "pass",
+      "value": {
+        "first_denial_seconds": 0.05221169499964162,
+        "samples": [
+          {
+            "seconds_since_ack": 0.05221169499964162,
+            "status": 404
+          }
+        ],
+        "scope": "Delete acknowledgment to first fresh REST denial; issued storage credentials excluded"
+      },
+      "seconds": 0.2181
+    },
+    "C5": {
+      "status": "pass",
+      "value": {
+        "pyiceberg": {
+          "status": "pass",
+          "value": {
+            "allowed": {
+              "tables": [
+                [
+                  "bakeoff",
+                  "sample"
+                ]
+              ],
+              "rows": [
+                {
+                  "id": 1,
+                  "label": "alpha"
+                },
+                {
+                  "id": 2,
+                  "label": "beta"
+                }
+              ]
+            },
+            "other_read": {
+              "type": "NoSuchTableError",
+              "message": "NoSuchTableException: Error getting tabular from catalog"
+            },
+            "writes": {
+              "create_namespace": {
+                "type": "ForbiddenError",
+                "message": "WarehouseActionForbidden: Warehouse action `create_namespace(name=forbidden)` forbidden on warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+              },
+              "create_table": {
+                "type": "ForbiddenError",
+                "message": "NamespaceActionForbidden: Namespace action `create_table(name=no, table_id=01a2208b-fb09-7722-9784-51f0dc856587)` forbidden on namespace with name 'bakeoff' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+              },
+              "append": {
+                "type": "ForbiddenError",
+                "message": "TableActionForbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+              },
+              "overwrite": {
+                "type": "ForbiddenError",
+                "message": "TableActionForbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+              },
+              "delete": {
+                "type": "ForbiddenError",
+                "message": "TableActionForbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+              },
+              "commit": {
+                "type": "ForbiddenError",
+                "message": "TableActionForbidden: Table action `commit(updated-properties={test: denied})` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+              },
+              "drop": {
+                "type": "ForbiddenError",
+                "message": "TableActionForbidden: Table action `drop` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+              },
+              "rename": {
+                "type": "ForbiddenError",
+                "message": "NamespaceActionForbidden: Namespace action `create_table(name=renamed, table_id=01a2208b-e21e-7519-b81d-53498f59c2c4, properties={write.delete.mode: copy-on-write, write.update.mode: copy-on-write})` forbidden on namespace with name 'bakeoff' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+              }
+            }
+          },
+          "seconds": 0.7433
+        },
+        "trino": {
+          "status": "pass",
+          "value": {
+            "tls": {
+              "version": "TLSv1.3",
+              "unknown_ca_rejected": true,
+              "wrong_name_rejected": true,
+              "plaintext_rejected": true
+            },
+            "rows": [
+              {
+                "id": 1,
+                "label": "alpha"
+              },
+              {
+                "id": 2,
+                "label": "beta"
+              }
+            ],
+            "denials": {
+              "SELECT * FROM iceberg.denied.sample": {
+                "message": "line 1:15: Schema 'denied' does not exist",
+                "errorCode": 45,
+                "errorName": "SCHEMA_NOT_FOUND",
+                "errorType": "USER_ERROR",
+                "errorLocation": {
+                  "lineNumber": 1,
+                  "columnNumber": 15
+                },
+                "failureInfo": {
+                  "type": "io.trino.spi.TrinoException",
+                  "message": "line 1:15: Schema 'denied' does not exist",
+                  "suppressed": [],
+                  "stack": [
+                    "io.trino.sql.analyzer.SemanticExceptions.semanticException(SemanticExceptions.java:65)",
+                    "io.trino.sql.analyzer.SemanticExceptions.semanticException(SemanticExceptions.java:59)",
+                    "io.trino.sql.analyzer.StatementAnalyzer$Visitor.visitTable(StatementAnalyzer.java:2457)",
+                    "io.trino.sql.analyzer.StatementAnalyzer$Visitor.visitTable(StatementAnalyzer.java:550)",
+                    "io.trino.sql.tree.Table.accept(Table.java:70)",
+                    "io.trino.sql.tree.AstVisitor.process(AstVisitor.java:27)",
+                    "io.trino.sql.analyzer.StatementAnalyzer$Visitor.process(StatementAnalyzer.java:569)",
+                    "io.trino.sql.analyzer.StatementAnalyzer$Visitor.analyzeFrom(StatementAnalyzer.java:5665)",
+                    "io.trino.sql.analyzer.StatementAnalyzer$Visitor.visitQuerySpecification(StatementAnalyzer.java:3553)",
+                    "io.trino.sql.analyzer.StatementAnalyzer$Visitor.visitQuerySpecification(StatementAnalyzer.java:550)",
+                    "io.trino.sql.tree.QuerySpecification.accept(QuerySpecification.java:155)",
+                    "io.trino.sql.tree.AstVisitor.process(AstVisitor.java:27)",
+                    "io.trino.sql.analyzer.StatementAnalyzer$Visitor.process(StatementAnalyzer.java:569)",
+                    "io.trino.sql.analyzer.StatementAnalyzer$Visitor.process(StatementAnalyzer.java:577)",
+                    "io.trino.sql.analyzer.StatementAnalyzer$Visitor.visitQuery(StatementAnalyzer.java:1653)",
+                    "io.trino.sql.analyzer.StatementAnalyzer$Visitor.visitQuery(StatementAnalyzer.java:550)",
+                    "io.trino.sql.tree.Query.accept(Query.java:130)",
+                    "io.trino.sql.tree.AstVisitor.process(AstVisitor.java:27)",
+                    "io.trino.sql.analyzer.StatementAnalyzer$Visitor.process(StatementAnalyzer.java:569)",
+                    "io.trino.sql.analyzer.StatementAnalyzer.analyze(StatementAnalyzer.java:529)",
+                    "io.trino.sql.analyzer.StatementAnalyzer.analyze(StatementAnalyzer.java:518)",
+                    "io.trino.sql.analyzer.Analyzer.analyze(Analyzer.java:98)",
+                    "io.trino.sql.analyzer.Analyzer.analyze(Analyzer.java:87)",
+                    "io.trino.execution.SqlQueryExecution.analyze(SqlQueryExecution.java:288)",
+                    "io.trino.execution.SqlQueryExecution.<init>(SqlQueryExecution.java:222)",
+                    "io.trino.execution.SqlQueryExecution$SqlQueryExecutionFactory.createQueryExecution(SqlQueryExecution.java:893)",
+                    "io.trino.dispatcher.LocalDispatchQueryFactory.lambda$createDispatchQuery$0(LocalDispatchQueryFactory.java:163)",
+                    "io.trino.$gen.Trino_484___Callable.call(Unknown Source)",
+                    "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                    "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                    "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                    "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                    "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                    "java.base/java.lang.Thread.run(Unknown Source)"
+                  ],
+                  "errorInfo": {
+                    "code": 45,
+                    "name": "SCHEMA_NOT_FOUND",
+                    "type": "USER_ERROR"
+                  },
+                  "errorLocation": {
+                    "lineNumber": 1,
+                    "columnNumber": 15
+                  }
+                }
+              },
+              "INSERT INTO iceberg.bakeoff.sample VALUES (3, 'forbidden')": {
+                "message": "Failed to commit the transaction during insert: Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                "errorCode": 84148236,
+                "errorName": "ICEBERG_COMMIT_ERROR",
+                "errorType": "EXTERNAL",
+                "failureInfo": {
+                  "type": "io.trino.spi.TrinoException",
+                  "message": "Failed to commit the transaction during insert: Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                  "cause": {
+                    "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                    "message": "Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                    "suppressed": [],
+                    "stack": [
+                      "org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)",
+                      "org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:137)",
+                      "org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:119)",
+                      "org.apache.iceberg.rest.HTTPClient.throwFailure(HTTPClient.java:242)",
+                      "org.apache.iceberg.rest.HTTPClient.handleResponse(HTTPClient.java:367)",
+                      "org.apache.iceberg.rest.HTTPClient.lambda$execute$1(HTTPClient.java:325)",
+                      "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:247)",
+                      "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:188)",
+                      "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:321)",
+                      "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:299)",
+                      "org.apache.iceberg.rest.BaseHTTPClient.post(BaseHTTPClient.java:112)",
+                      "org.apache.iceberg.rest.RESTClient.post(RESTClient.java:150)",
+                      "org.apache.iceberg.rest.RESTTableOperations.commit(RESTTableOperations.java:227)",
+                      "org.apache.iceberg.BaseTransaction.lambda$commitSimpleTransaction$1(BaseTransaction.java:371)",
+                      "org.apache.iceberg.util.Tasks$Builder.runTaskWithRetry(Tasks.java:416)",
+                      "org.apache.iceberg.util.Tasks$Builder.runSingleThreaded(Tasks.java:222)",
+                      "org.apache.iceberg.util.Tasks$Builder.run(Tasks.java:206)",
+                      "org.apache.iceberg.util.Tasks$Builder.run(Tasks.java:199)",
+                      "org.apache.iceberg.BaseTransaction.commitSimpleTransaction(BaseTransaction.java:367)",
+                      "org.apache.iceberg.BaseTransaction.commitTransaction(BaseTransaction.java:268)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.commitTransaction(IcebergMetadata.java:2362)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.commitWriteTransaction(IcebergMetadata.java:4623)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.finishInsert(IcebergMetadata.java:1769)",
+                      "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.finishInsert(ClassLoaderSafeConnectorMetadata.java:654)",
+                      "io.trino.tracing.TracingConnectorMetadata.finishInsert(TracingConnectorMetadata.java:737)",
+                      "io.trino.metadata.MetadataManager.finishInsert(MetadataManager.java:1303)",
+                      "io.trino.tracing.TracingMetadata.finishInsert(TracingMetadata.java:766)",
+                      "io.trino.sql.planner.LocalExecutionPlanner.lambda$createTableFinisher$0(LocalExecutionPlanner.java:4194)",
+                      "io.trino.operator.TableFinishOperator.getOutput(TableFinishOperator.java:320)",
+                      "io.trino.operator.Driver.processInternal(Driver.java:403)",
+                      "io.trino.operator.Driver.lambda$process$0(Driver.java:306)",
+                      "io.trino.operator.Driver.tryWithLock(Driver.java:709)",
+                      "io.trino.operator.Driver.process(Driver.java:298)",
+                      "io.trino.operator.Driver.processForDuration(Driver.java:269)",
+                      "io.trino.execution.SqlTaskExecution$DriverSplitRunner.processFor(SqlTaskExecution.java:852)",
+                      "io.trino.execution.executor.dedicated.SplitProcessor.run(SplitProcessor.java:77)",
+                      "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.lambda$run$0(TaskEntry.java:342)",
+                      "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                      "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.run(TaskEntry.java:343)",
+                      "io.trino.execution.executor.scheduler.FairScheduler.runTask(FairScheduler.java:208)",
+                      "io.trino.execution.executor.scheduler.FairScheduler.lambda$submit$0(FairScheduler.java:195)",
+                      "java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)",
+                      "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                      "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                      "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                      "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                      "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                      "java.base/java.lang.Thread.run(Unknown Source)"
+                    ],
+                    "errorInfo": {
+                      "code": 65536,
+                      "name": "GENERIC_INTERNAL_ERROR",
+                      "type": "INTERNAL_ERROR"
+                    }
+                  },
+                  "suppressed": [],
+                  "stack": [
+                    "io.trino.plugin.iceberg.IcebergMetadata.commitTransaction(IcebergMetadata.java:2368)",
+                    "io.trino.plugin.iceberg.IcebergMetadata.commitWriteTransaction(IcebergMetadata.java:4623)",
+                    "io.trino.plugin.iceberg.IcebergMetadata.finishInsert(IcebergMetadata.java:1769)",
+                    "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.finishInsert(ClassLoaderSafeConnectorMetadata.java:654)",
+                    "io.trino.tracing.TracingConnectorMetadata.finishInsert(TracingConnectorMetadata.java:737)",
+                    "io.trino.metadata.MetadataManager.finishInsert(MetadataManager.java:1303)",
+                    "io.trino.tracing.TracingMetadata.finishInsert(TracingMetadata.java:766)",
+                    "io.trino.sql.planner.LocalExecutionPlanner.lambda$createTableFinisher$0(LocalExecutionPlanner.java:4194)",
+                    "io.trino.operator.TableFinishOperator.getOutput(TableFinishOperator.java:320)",
+                    "io.trino.operator.Driver.processInternal(Driver.java:403)",
+                    "io.trino.operator.Driver.lambda$process$0(Driver.java:306)",
+                    "io.trino.operator.Driver.tryWithLock(Driver.java:709)",
+                    "io.trino.operator.Driver.process(Driver.java:298)",
+                    "io.trino.operator.Driver.processForDuration(Driver.java:269)",
+                    "io.trino.execution.SqlTaskExecution$DriverSplitRunner.processFor(SqlTaskExecution.java:852)",
+                    "io.trino.execution.executor.dedicated.SplitProcessor.run(SplitProcessor.java:77)",
+                    "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.lambda$run$0(TaskEntry.java:342)",
+                    "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                    "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.run(TaskEntry.java:343)",
+                    "io.trino.execution.executor.scheduler.FairScheduler.runTask(FairScheduler.java:208)",
+                    "io.trino.execution.executor.scheduler.FairScheduler.lambda$submit$0(FairScheduler.java:195)",
+                    "java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)",
+                    "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                    "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                    "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                    "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                    "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                    "java.base/java.lang.Thread.run(Unknown Source)"
+                  ],
+                  "errorInfo": {
+                    "code": 84148236,
+                    "name": "ICEBERG_COMMIT_ERROR",
+                    "type": "EXTERNAL"
+                  }
+                }
+              },
+              "UPDATE iceberg.bakeoff.sample SET label='forbidden' WHERE id=1": {
+                "message": "Failed to commit the transaction during write: Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                "errorCode": 84148236,
+                "errorName": "ICEBERG_COMMIT_ERROR",
+                "errorType": "EXTERNAL",
+                "failureInfo": {
+                  "type": "io.trino.spi.TrinoException",
+                  "message": "Failed to commit the transaction during write: Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                  "cause": {
+                    "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                    "message": "Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                    "suppressed": [],
+                    "stack": [
+                      "org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)",
+                      "org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:137)",
+                      "org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:119)",
+                      "org.apache.iceberg.rest.HTTPClient.throwFailure(HTTPClient.java:242)",
+                      "org.apache.iceberg.rest.HTTPClient.handleResponse(HTTPClient.java:367)",
+                      "org.apache.iceberg.rest.HTTPClient.lambda$execute$1(HTTPClient.java:325)",
+                      "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:247)",
+                      "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:188)",
+                      "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:321)",
+                      "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:299)",
+                      "org.apache.iceberg.rest.BaseHTTPClient.post(BaseHTTPClient.java:112)",
+                      "org.apache.iceberg.rest.RESTClient.post(RESTClient.java:150)",
+                      "org.apache.iceberg.rest.RESTTableOperations.commit(RESTTableOperations.java:227)",
+                      "org.apache.iceberg.BaseTransaction.lambda$commitSimpleTransaction$1(BaseTransaction.java:371)",
+                      "org.apache.iceberg.util.Tasks$Builder.runTaskWithRetry(Tasks.java:416)",
+                      "org.apache.iceberg.util.Tasks$Builder.runSingleThreaded(Tasks.java:222)",
+                      "org.apache.iceberg.util.Tasks$Builder.run(Tasks.java:206)",
+                      "org.apache.iceberg.util.Tasks$Builder.run(Tasks.java:199)",
+                      "org.apache.iceberg.BaseTransaction.commitSimpleTransaction(BaseTransaction.java:367)",
+                      "org.apache.iceberg.BaseTransaction.commitTransaction(BaseTransaction.java:268)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.commitTransaction(IcebergMetadata.java:2362)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.commitWriteTransaction(IcebergMetadata.java:4623)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.finishWrite(IcebergMetadata.java:3578)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.finishMerge(IcebergMetadata.java:3414)",
+                      "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.finishMerge(ClassLoaderSafeConnectorMetadata.java:1334)",
+                      "io.trino.tracing.TracingConnectorMetadata.finishMerge(TracingConnectorMetadata.java:818)",
+                      "io.trino.metadata.MetadataManager.finishMerge(MetadataManager.java:1476)",
+                      "io.trino.tracing.TracingMetadata.finishMerge(TracingMetadata.java:902)",
+                      "io.trino.sql.planner.LocalExecutionPlanner.lambda$createTableFinisher$0(LocalExecutionPlanner.java:4215)",
+                      "io.trino.operator.TableFinishOperator.getOutput(TableFinishOperator.java:320)",
+                      "io.trino.operator.Driver.processInternal(Driver.java:403)",
+                      "io.trino.operator.Driver.lambda$process$0(Driver.java:306)",
+                      "io.trino.operator.Driver.tryWithLock(Driver.java:709)",
+                      "io.trino.operator.Driver.process(Driver.java:298)",
+                      "io.trino.operator.Driver.processForDuration(Driver.java:269)",
+                      "io.trino.execution.SqlTaskExecution$DriverSplitRunner.processFor(SqlTaskExecution.java:852)",
+                      "io.trino.execution.executor.dedicated.SplitProcessor.run(SplitProcessor.java:77)",
+                      "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.lambda$run$0(TaskEntry.java:342)",
+                      "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                      "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.run(TaskEntry.java:343)",
+                      "io.trino.execution.executor.scheduler.FairScheduler.runTask(FairScheduler.java:208)",
+                      "io.trino.execution.executor.scheduler.FairScheduler.lambda$submit$0(FairScheduler.java:195)",
+                      "java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)",
+                      "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                      "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                      "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                      "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                      "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                      "java.base/java.lang.Thread.run(Unknown Source)"
+                    ],
+                    "errorInfo": {
+                      "code": 65536,
+                      "name": "GENERIC_INTERNAL_ERROR",
+                      "type": "INTERNAL_ERROR"
+                    }
+                  },
+                  "suppressed": [],
+                  "stack": [
+                    "io.trino.plugin.iceberg.IcebergMetadata.commitTransaction(IcebergMetadata.java:2368)",
+                    "io.trino.plugin.iceberg.IcebergMetadata.commitWriteTransaction(IcebergMetadata.java:4623)",
+                    "io.trino.plugin.iceberg.IcebergMetadata.finishWrite(IcebergMetadata.java:3578)",
+                    "io.trino.plugin.iceberg.IcebergMetadata.finishMerge(IcebergMetadata.java:3414)",
+                    "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.finishMerge(ClassLoaderSafeConnectorMetadata.java:1334)",
+                    "io.trino.tracing.TracingConnectorMetadata.finishMerge(TracingConnectorMetadata.java:818)",
+                    "io.trino.metadata.MetadataManager.finishMerge(MetadataManager.java:1476)",
+                    "io.trino.tracing.TracingMetadata.finishMerge(TracingMetadata.java:902)",
+                    "io.trino.sql.planner.LocalExecutionPlanner.lambda$createTableFinisher$0(LocalExecutionPlanner.java:4215)",
+                    "io.trino.operator.TableFinishOperator.getOutput(TableFinishOperator.java:320)",
+                    "io.trino.operator.Driver.processInternal(Driver.java:403)",
+                    "io.trino.operator.Driver.lambda$process$0(Driver.java:306)",
+                    "io.trino.operator.Driver.tryWithLock(Driver.java:709)",
+                    "io.trino.operator.Driver.process(Driver.java:298)",
+                    "io.trino.operator.Driver.processForDuration(Driver.java:269)",
+                    "io.trino.execution.SqlTaskExecution$DriverSplitRunner.processFor(SqlTaskExecution.java:852)",
+                    "io.trino.execution.executor.dedicated.SplitProcessor.run(SplitProcessor.java:77)",
+                    "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.lambda$run$0(TaskEntry.java:342)",
+                    "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                    "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.run(TaskEntry.java:343)",
+                    "io.trino.execution.executor.scheduler.FairScheduler.runTask(FairScheduler.java:208)",
+                    "io.trino.execution.executor.scheduler.FairScheduler.lambda$submit$0(FairScheduler.java:195)",
+                    "java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)",
+                    "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                    "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                    "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                    "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                    "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                    "java.base/java.lang.Thread.run(Unknown Source)"
+                  ],
+                  "errorInfo": {
+                    "code": 84148236,
+                    "name": "ICEBERG_COMMIT_ERROR",
+                    "type": "EXTERNAL"
+                  }
+                }
+              },
+              "DELETE FROM iceberg.bakeoff.sample WHERE id=1": {
+                "message": "Failed to commit the transaction during write: Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                "errorCode": 84148236,
+                "errorName": "ICEBERG_COMMIT_ERROR",
+                "errorType": "EXTERNAL",
+                "failureInfo": {
+                  "type": "io.trino.spi.TrinoException",
+                  "message": "Failed to commit the transaction during write: Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                  "cause": {
+                    "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                    "message": "Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                    "suppressed": [],
+                    "stack": [
+                      "org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)",
+                      "org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:137)",
+                      "org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:119)",
+                      "org.apache.iceberg.rest.HTTPClient.throwFailure(HTTPClient.java:242)",
+                      "org.apache.iceberg.rest.HTTPClient.handleResponse(HTTPClient.java:367)",
+                      "org.apache.iceberg.rest.HTTPClient.lambda$execute$1(HTTPClient.java:325)",
+                      "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:247)",
+                      "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:188)",
+                      "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:321)",
+                      "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:299)",
+                      "org.apache.iceberg.rest.BaseHTTPClient.post(BaseHTTPClient.java:112)",
+                      "org.apache.iceberg.rest.RESTClient.post(RESTClient.java:150)",
+                      "org.apache.iceberg.rest.RESTTableOperations.commit(RESTTableOperations.java:227)",
+                      "org.apache.iceberg.BaseTransaction.lambda$commitSimpleTransaction$1(BaseTransaction.java:371)",
+                      "org.apache.iceberg.util.Tasks$Builder.runTaskWithRetry(Tasks.java:416)",
+                      "org.apache.iceberg.util.Tasks$Builder.runSingleThreaded(Tasks.java:222)",
+                      "org.apache.iceberg.util.Tasks$Builder.run(Tasks.java:206)",
+                      "org.apache.iceberg.util.Tasks$Builder.run(Tasks.java:199)",
+                      "org.apache.iceberg.BaseTransaction.commitSimpleTransaction(BaseTransaction.java:367)",
+                      "org.apache.iceberg.BaseTransaction.commitTransaction(BaseTransaction.java:268)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.commitTransaction(IcebergMetadata.java:2362)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.commitWriteTransaction(IcebergMetadata.java:4623)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.finishWrite(IcebergMetadata.java:3578)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.finishMerge(IcebergMetadata.java:3414)",
+                      "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.finishMerge(ClassLoaderSafeConnectorMetadata.java:1334)",
+                      "io.trino.tracing.TracingConnectorMetadata.finishMerge(TracingConnectorMetadata.java:818)",
+                      "io.trino.metadata.MetadataManager.finishMerge(MetadataManager.java:1476)",
+                      "io.trino.tracing.TracingMetadata.finishMerge(TracingMetadata.java:902)",
+                      "io.trino.sql.planner.LocalExecutionPlanner.lambda$createTableFinisher$0(LocalExecutionPlanner.java:4215)",
+                      "io.trino.operator.TableFinishOperator.getOutput(TableFinishOperator.java:320)",
+                      "io.trino.operator.Driver.processInternal(Driver.java:403)",
+                      "io.trino.operator.Driver.lambda$process$0(Driver.java:306)",
+                      "io.trino.operator.Driver.tryWithLock(Driver.java:709)",
+                      "io.trino.operator.Driver.process(Driver.java:298)",
+                      "io.trino.operator.Driver.processForDuration(Driver.java:269)",
+                      "io.trino.execution.SqlTaskExecution$DriverSplitRunner.processFor(SqlTaskExecution.java:852)",
+                      "io.trino.execution.executor.dedicated.SplitProcessor.run(SplitProcessor.java:77)",
+                      "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.lambda$run$0(TaskEntry.java:342)",
+                      "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                      "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.run(TaskEntry.java:343)",
+                      "io.trino.execution.executor.scheduler.FairScheduler.runTask(FairScheduler.java:208)",
+                      "io.trino.execution.executor.scheduler.FairScheduler.lambda$submit$0(FairScheduler.java:195)",
+                      "java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)",
+                      "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                      "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                      "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                      "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                      "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                      "java.base/java.lang.Thread.run(Unknown Source)"
+                    ],
+                    "errorInfo": {
+                      "code": 65536,
+                      "name": "GENERIC_INTERNAL_ERROR",
+                      "type": "INTERNAL_ERROR"
+                    }
+                  },
+                  "suppressed": [],
+                  "stack": [
+                    "io.trino.plugin.iceberg.IcebergMetadata.commitTransaction(IcebergMetadata.java:2368)",
+                    "io.trino.plugin.iceberg.IcebergMetadata.commitWriteTransaction(IcebergMetadata.java:4623)",
+                    "io.trino.plugin.iceberg.IcebergMetadata.finishWrite(IcebergMetadata.java:3578)",
+                    "io.trino.plugin.iceberg.IcebergMetadata.finishMerge(IcebergMetadata.java:3414)",
+                    "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.finishMerge(ClassLoaderSafeConnectorMetadata.java:1334)",
+                    "io.trino.tracing.TracingConnectorMetadata.finishMerge(TracingConnectorMetadata.java:818)",
+                    "io.trino.metadata.MetadataManager.finishMerge(MetadataManager.java:1476)",
+                    "io.trino.tracing.TracingMetadata.finishMerge(TracingMetadata.java:902)",
+                    "io.trino.sql.planner.LocalExecutionPlanner.lambda$createTableFinisher$0(LocalExecutionPlanner.java:4215)",
+                    "io.trino.operator.TableFinishOperator.getOutput(TableFinishOperator.java:320)",
+                    "io.trino.operator.Driver.processInternal(Driver.java:403)",
+                    "io.trino.operator.Driver.lambda$process$0(Driver.java:306)",
+                    "io.trino.operator.Driver.tryWithLock(Driver.java:709)",
+                    "io.trino.operator.Driver.process(Driver.java:298)",
+                    "io.trino.operator.Driver.processForDuration(Driver.java:269)",
+                    "io.trino.execution.SqlTaskExecution$DriverSplitRunner.processFor(SqlTaskExecution.java:852)",
+                    "io.trino.execution.executor.dedicated.SplitProcessor.run(SplitProcessor.java:77)",
+                    "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.lambda$run$0(TaskEntry.java:342)",
+                    "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                    "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.run(TaskEntry.java:343)",
+                    "io.trino.execution.executor.scheduler.FairScheduler.runTask(FairScheduler.java:208)",
+                    "io.trino.execution.executor.scheduler.FairScheduler.lambda$submit$0(FairScheduler.java:195)",
+                    "java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)",
+                    "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                    "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                    "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                    "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                    "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                    "java.base/java.lang.Thread.run(Unknown Source)"
+                  ],
+                  "errorInfo": {
+                    "code": 84148236,
+                    "name": "ICEBERG_COMMIT_ERROR",
+                    "type": "EXTERNAL"
+                  }
+                }
+              },
+              "CREATE TABLE iceberg.bakeoff.forbidden (id BIGINT)": {
+                "message": "Failed to create transaction",
+                "errorCode": 84148237,
+                "errorName": "ICEBERG_CATALOG_ERROR",
+                "errorType": "EXTERNAL",
+                "failureInfo": {
+                  "type": "io.trino.spi.TrinoException",
+                  "message": "Failed to create transaction",
+                  "cause": {
+                    "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                    "message": "Forbidden: Namespace action `create_table(name=forbidden, table_id=01a2208c-33cd-77c5-a019-362b9b0e0d6b, properties={format-version: 2, write.format.default: PARQUET, write.parquet.compression-codec: })` forbidden on namespace with name 'bakeoff' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                    "suppressed": [],
+                    "stack": [
+                      "org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)",
+                      "org.apache.iceberg.rest.ErrorHandlers$TableErrorHandler.accept(ErrorHandlers.java:160)",
+                      "org.apache.iceberg.rest.ErrorHandlers$TableErrorHandler.accept(ErrorHandlers.java:142)",
+                      "org.apache.iceberg.rest.HTTPClient.throwFailure(HTTPClient.java:242)",
+                      "org.apache.iceberg.rest.HTTPClient.handleResponse(HTTPClient.java:367)",
+                      "org.apache.iceberg.rest.HTTPClient.lambda$execute$1(HTTPClient.java:325)",
+                      "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:247)",
+                      "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:188)",
+                      "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:321)",
+                      "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:299)",
+                      "org.apache.iceberg.rest.BaseHTTPClient.post(BaseHTTPClient.java:112)",
+                      "org.apache.iceberg.rest.RESTClient.post(RESTClient.java:150)",
+                      "org.apache.iceberg.rest.RESTSessionCatalog$Builder.create(RESTSessionCatalog.java:1046)",
+                      "io.trino.plugin.iceberg.catalog.rest.TrinoRestCatalog.newCreateTableTransaction(TrinoRestCatalog.java:460)",
+                      "io.trino.plugin.iceberg.IcebergUtil.newCreateTableTransaction(IcebergUtil.java:985)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.beginCreateTable(IcebergMetadata.java:1558)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.createTable(IcebergMetadata.java:1405)",
+                      "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.createTable(ClassLoaderSafeConnectorMetadata.java:486)",
+                      "io.trino.tracing.TracingConnectorMetadata.createTable(TracingConnectorMetadata.java:407)",
+                      "io.trino.metadata.MetadataManager.createTable(MetadataManager.java:946)",
+                      "io.trino.tracing.TracingMetadata.createTable(TracingMetadata.java:460)",
+                      "io.trino.execution.CreateTableTask.internalExecute(CreateTableTask.java:308)",
+                      "io.trino.execution.CreateTableTask.execute(CreateTableTask.java:129)",
+                      "io.trino.execution.CreateTableTask.execute(CreateTableTask.java:95)",
+                      "io.trino.execution.DataDefinitionExecution.start(DataDefinitionExecution.java:153)",
+                      "io.trino.execution.QueryManager.createQuery(QueryManager.java:333)",
+                      "io.trino.dispatcher.LocalDispatchQuery.startExecution(LocalDispatchQuery.java:151)",
+                      "io.trino.dispatcher.LocalDispatchQuery.lambda$waitForMinimumWorkers$1(LocalDispatchQuery.java:135)",
+                      "io.airlift.concurrent.MoreFutures.lambda$addSuccessCallback$0(MoreFutures.java:570)",
+                      "io.airlift.concurrent.MoreFutures$3.onSuccess(MoreFutures.java:545)",
+                      "com.google.common.util.concurrent.Futures$CallbackListener.run(Futures.java:1128)",
+                      "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                      "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                      "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                      "java.base/java.lang.Thread.run(Unknown Source)"
+                    ],
+                    "errorInfo": {
+                      "code": 65536,
+                      "name": "GENERIC_INTERNAL_ERROR",
+                      "type": "INTERNAL_ERROR"
+                    }
+                  },
+                  "suppressed": [],
+                  "stack": [
+                    "io.trino.plugin.iceberg.catalog.rest.TrinoRestCatalog.newCreateTableTransaction(TrinoRestCatalog.java:465)",
+                    "io.trino.plugin.iceberg.IcebergUtil.newCreateTableTransaction(IcebergUtil.java:985)",
+                    "io.trino.plugin.iceberg.IcebergMetadata.beginCreateTable(IcebergMetadata.java:1558)",
+                    "io.trino.plugin.iceberg.IcebergMetadata.createTable(IcebergMetadata.java:1405)",
+                    "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.createTable(ClassLoaderSafeConnectorMetadata.java:486)",
+                    "io.trino.tracing.TracingConnectorMetadata.createTable(TracingConnectorMetadata.java:407)",
+                    "io.trino.metadata.MetadataManager.createTable(MetadataManager.java:946)",
+                    "io.trino.tracing.TracingMetadata.createTable(TracingMetadata.java:460)",
+                    "io.trino.execution.CreateTableTask.internalExecute(CreateTableTask.java:308)",
+                    "io.trino.execution.CreateTableTask.execute(CreateTableTask.java:129)",
+                    "io.trino.execution.CreateTableTask.execute(CreateTableTask.java:95)",
+                    "io.trino.execution.DataDefinitionExecution.start(DataDefinitionExecution.java:153)",
+                    "io.trino.execution.QueryManager.createQuery(QueryManager.java:333)",
+                    "io.trino.dispatcher.LocalDispatchQuery.startExecution(LocalDispatchQuery.java:151)",
+                    "io.trino.dispatcher.LocalDispatchQuery.lambda$waitForMinimumWorkers$1(LocalDispatchQuery.java:135)",
+                    "io.airlift.concurrent.MoreFutures.lambda$addSuccessCallback$0(MoreFutures.java:570)",
+                    "io.airlift.concurrent.MoreFutures$3.onSuccess(MoreFutures.java:545)",
+                    "com.google.common.util.concurrent.Futures$CallbackListener.run(Futures.java:1128)",
+                    "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                    "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                    "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                    "java.base/java.lang.Thread.run(Unknown Source)"
+                  ],
+                  "errorInfo": {
+                    "code": 84148237,
+                    "name": "ICEBERG_CATALOG_ERROR",
+                    "type": "EXTERNAL"
+                  }
+                }
+              },
+              "DROP TABLE iceberg.bakeoff.sample": {
+                "message": "Failed to drop table 'sample'",
+                "errorCode": 84148237,
+                "errorName": "ICEBERG_CATALOG_ERROR",
+                "errorType": "EXTERNAL",
+                "failureInfo": {
+                  "type": "io.trino.spi.TrinoException",
+                  "message": "Failed to drop table 'sample'",
+                  "cause": {
+                    "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                    "message": "Forbidden: Table action `drop(purge=true)` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                    "suppressed": [],
+                    "stack": [
+                      "org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)",
+                      "org.apache.iceberg.rest.ErrorHandlers$TableErrorHandler.accept(ErrorHandlers.java:160)",
+                      "org.apache.iceberg.rest.ErrorHandlers$TableErrorHandler.accept(ErrorHandlers.java:142)",
+                      "org.apache.iceberg.rest.HTTPClient.throwFailure(HTTPClient.java:242)",
+                      "org.apache.iceberg.rest.HTTPClient.handleResponse(HTTPClient.java:367)",
+                      "org.apache.iceberg.rest.HTTPClient.lambda$execute$1(HTTPClient.java:325)",
+                      "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:247)",
+                      "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:188)",
+                      "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:321)",
+                      "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:299)",
+                      "org.apache.iceberg.rest.BaseHTTPClient.delete(BaseHTTPClient.java:66)",
+                      "org.apache.iceberg.rest.RESTClient.delete(RESTClient.java:45)",
+                      "org.apache.iceberg.rest.RESTSessionCatalog.purgeTable(RESTSessionCatalog.java:377)",
+                      "io.trino.plugin.iceberg.catalog.rest.TrinoRestCatalog.purgeTable(TrinoRestCatalog.java:575)",
+                      "io.trino.plugin.iceberg.catalog.rest.TrinoRestCatalog.dropTable(TrinoRestCatalog.java:533)",
+                      "io.trino.plugin.iceberg.IcebergMetadata.dropTable(IcebergMetadata.java:2636)",
+                      "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.dropTable(ClassLoaderSafeConnectorMetadata.java:494)",
+                      "io.trino.tracing.TracingConnectorMetadata.dropTable(TracingConnectorMetadata.java:416)",
+                      "io.trino.metadata.MetadataManager.dropTable(MetadataManager.java:1137)",
+                      "io.trino.tracing.TracingMetadata.dropTable(TracingMetadata.java:622)",
+                      "io.trino.execution.DropTableTask.execute(DropTableTask.java:92)",
+                      "io.trino.execution.DropTableTask.execute(DropTableTask.java:36)",
+                      "io.trino.execution.DataDefinitionExecution.start(DataDefinitionExecution.java:153)",
+                      "io.trino.execution.QueryManager.createQuery(QueryManager.java:333)",
+                      "io.trino.dispatcher.LocalDispatchQuery.startExecution(LocalDispatchQuery.java:151)",
+                      "io.trino.dispatcher.LocalDispatchQuery.lambda$waitForMinimumWorkers$1(LocalDispatchQuery.java:135)",
+                      "io.airlift.concurrent.MoreFutures.lambda$addSuccessCallback$0(MoreFutures.java:570)",
+                      "io.airlift.concurrent.MoreFutures$3.onSuccess(MoreFutures.java:545)",
+                      "com.google.common.util.concurrent.Futures$CallbackListener.run(Futures.java:1128)",
+                      "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                      "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                      "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                      "java.base/java.lang.Thread.run(Unknown Source)"
+                    ],
+                    "errorInfo": {
+                      "code": 65536,
+                      "name": "GENERIC_INTERNAL_ERROR",
+                      "type": "INTERNAL_ERROR"
+                    }
+                  },
+                  "suppressed": [],
+                  "stack": [
+                    "io.trino.plugin.iceberg.catalog.rest.TrinoRestCatalog.purgeTable(TrinoRestCatalog.java:580)",
+                    "io.trino.plugin.iceberg.catalog.rest.TrinoRestCatalog.dropTable(TrinoRestCatalog.java:533)",
+                    "io.trino.plugin.iceberg.IcebergMetadata.dropTable(IcebergMetadata.java:2636)",
+                    "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.dropTable(ClassLoaderSafeConnectorMetadata.java:494)",
+                    "io.trino.tracing.TracingConnectorMetadata.dropTable(TracingConnectorMetadata.java:416)",
+                    "io.trino.metadata.MetadataManager.dropTable(MetadataManager.java:1137)",
+                    "io.trino.tracing.TracingMetadata.dropTable(TracingMetadata.java:622)",
+                    "io.trino.execution.DropTableTask.execute(DropTableTask.java:92)",
+                    "io.trino.execution.DropTableTask.execute(DropTableTask.java:36)",
+                    "io.trino.execution.DataDefinitionExecution.start(DataDefinitionExecution.java:153)",
+                    "io.trino.execution.QueryManager.createQuery(QueryManager.java:333)",
+                    "io.trino.dispatcher.LocalDispatchQuery.startExecution(LocalDispatchQuery.java:151)",
+                    "io.trino.dispatcher.LocalDispatchQuery.lambda$waitForMinimumWorkers$1(LocalDispatchQuery.java:135)",
+                    "io.airlift.concurrent.MoreFutures.lambda$addSuccessCallback$0(MoreFutures.java:570)",
+                    "io.airlift.concurrent.MoreFutures$3.onSuccess(MoreFutures.java:545)",
+                    "com.google.common.util.concurrent.Futures$CallbackListener.run(Futures.java:1128)",
+                    "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                    "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                    "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                    "java.base/java.lang.Thread.run(Unknown Source)"
+                  ],
+                  "errorInfo": {
+                    "code": 84148237,
+                    "name": "ICEBERG_CATALOG_ERROR",
+                    "type": "EXTERNAL"
+                  }
+                }
+              }
+            }
+          },
+          "seconds": 14.2445
+        },
+        "sail": {
+          "status": "pass",
+          "value": {
+            "tls": {
+              "version": "TLSv1.3",
+              "unknown_ca_rejected": true,
+              "wrong_name_rejected": true,
+              "plaintext_rejected": true
+            },
+            "token": "external file",
+            "tables": [
+              [
+                "bakeoff",
+                "sample",
+                false
+              ]
+            ],
+            "rows": [
+              [
+                1,
+                "alpha"
+              ],
+              [
+                2,
+                "beta"
+              ]
+            ],
+            "denials": {
+              "SELECT * FROM bakeoff.denied.sample": "Table not found: [TABLE_OR_VIEW_NOT_FOUND] Table or view not found: denied.sample",
+              "INSERT INTO bakeoff.bakeoff.sample VALUES (3, 'forbidden')": "forbidden: Iceberg REST catalog commit forbidden for bakeoff.sample: response error: status code 403 Forbidden",
+              "UPDATE bakeoff.bakeoff.sample SET label='forbidden' WHERE id=1": "forbidden: Iceberg REST catalog commit forbidden for bakeoff.sample: response error: status code 403 Forbidden",
+              "DELETE FROM bakeoff.bakeoff.sample WHERE id=1": "forbidden: Iceberg REST catalog commit forbidden for bakeoff.sample: response error: status code 403 Forbidden",
+              "CREATE TABLE bakeoff.bakeoff.forbidden (id BIGINT) USING iceberg": "external error: Failed to create table: response error: status code 403 Forbidden",
+              "DROP TABLE bakeoff.bakeoff.sample": "external error: Failed to drop table: response error: status code 403 Forbidden"
+            }
+          },
+          "seconds": 2.295
+        }
+      },
+      "seconds": 17.2892
+    },
+    "C6": {
+      "status": "pass",
+      "value": {
+        "denied_status": 404,
+        "denied_credentials": false,
+        "read_only_config_keys": [
+          "client.region",
+          "py-io-impl",
+          "region",
+          "s3.endpoint",
+          "s3.path-style-access",
+          "s3.region",
+          "s3.remote-signing-enabled",
+          "s3.signer",
+          "s3.signer.endpoint",
+          "s3.signer.uri",
+          "signer.endpoint",
+          "signer.uri"
+        ],
+        "storage_credential_config_keys": [],
+        "sts_enabled": false,
+        "scope": "Read grant, no STS keys with this profile; source scopes documented separately"
+      },
+      "seconds": 0.0902
+    },
+    "C7": {
+      "status": "pass",
+      "value": {
+        "identity_header_denials": {
+          "X-Trino-User": 404,
+          "X-Iceberg-User": 404,
+          "X-User-Id": 404,
+          "X-Forwarded-User": 404
+        },
+        "tokens": {
+          "reader_secret_cannot_mint_operator_token": 401,
+          "altered_subject": 401,
+          "wrong_signature": 401,
+          "wrong_audience": 401,
+          "genuine_expired_token": {
+            "before": 200,
+            "after": 401,
+            "fresh": 200
+          }
+        },
+        "network_isolation": {
+          "trino": {
+            "8443": 101
+          },
+          "sail": {
+            "8443": 101
+          },
+          "pyiceberg-client-net": {
+            "8443": 101
+          }
+        },
+        "backend_stopped": {
+          "status": 503,
+          "error": {
+            "message": "Authorization service is unavailable",
+            "type": "AuthorizationBackendError",
+            "code": 503,
+            "stack": [
+              "Error ID: 01a2208d-cfb5-7688-885d-13ebd66f42bc"
+            ]
+          }
+        },
+        "recovered_allow": 200,
+        "recovered_deny": 404
+      },
+      "seconds": 104.2185
+    },
+    "C8": {
+      "status": "pass",
+      "value": {
+        "grants_preserved": true,
+        "migration_repetitions": 2
+      },
+      "seconds": 12.3365
+    },
+    "C5.pyiceberg": {
+      "status": "pass",
+      "value": {
+        "allowed": {
+          "tables": [
+            [
+              "bakeoff",
+              "sample"
+            ]
+          ],
+          "rows": [
+            {
+              "id": 1,
+              "label": "alpha"
+            },
+            {
+              "id": 2,
+              "label": "beta"
+            }
+          ]
+        },
+        "other_read": {
+          "type": "NoSuchTableError",
+          "message": "NoSuchTableException: Error getting tabular from catalog"
+        },
+        "writes": {
+          "create_namespace": {
+            "type": "ForbiddenError",
+            "message": "WarehouseActionForbidden: Warehouse action `create_namespace(name=forbidden)` forbidden on warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "create_table": {
+            "type": "ForbiddenError",
+            "message": "NamespaceActionForbidden: Namespace action `create_table(name=no, table_id=01a2208b-fb09-7722-9784-51f0dc856587)` forbidden on namespace with name 'bakeoff' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "append": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "overwrite": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "delete": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "commit": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `commit(updated-properties={test: denied})` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "drop": {
+            "type": "ForbiddenError",
+            "message": "TableActionForbidden: Table action `drop` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          },
+          "rename": {
+            "type": "ForbiddenError",
+            "message": "NamespaceActionForbidden: Namespace action `create_table(name=renamed, table_id=01a2208b-e21e-7519-b81d-53498f59c2c4, properties={write.delete.mode: copy-on-write, write.update.mode: copy-on-write})` forbidden on namespace with name 'bakeoff' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`"
+          }
+        }
+      },
+      "seconds": 0.7433
+    },
+    "C5.trino": {
+      "status": "pass",
+      "value": {
+        "tls": {
+          "version": "TLSv1.3",
+          "unknown_ca_rejected": true,
+          "wrong_name_rejected": true,
+          "plaintext_rejected": true
+        },
+        "rows": [
+          {
+            "id": 1,
+            "label": "alpha"
+          },
+          {
+            "id": 2,
+            "label": "beta"
+          }
+        ],
+        "denials": {
+          "SELECT * FROM iceberg.denied.sample": {
+            "message": "line 1:15: Schema 'denied' does not exist",
+            "errorCode": 45,
+            "errorName": "SCHEMA_NOT_FOUND",
+            "errorType": "USER_ERROR",
+            "errorLocation": {
+              "lineNumber": 1,
+              "columnNumber": 15
+            },
+            "failureInfo": {
+              "type": "io.trino.spi.TrinoException",
+              "message": "line 1:15: Schema 'denied' does not exist",
+              "suppressed": [],
+              "stack": [
+                "io.trino.sql.analyzer.SemanticExceptions.semanticException(SemanticExceptions.java:65)",
+                "io.trino.sql.analyzer.SemanticExceptions.semanticException(SemanticExceptions.java:59)",
+                "io.trino.sql.analyzer.StatementAnalyzer$Visitor.visitTable(StatementAnalyzer.java:2457)",
+                "io.trino.sql.analyzer.StatementAnalyzer$Visitor.visitTable(StatementAnalyzer.java:550)",
+                "io.trino.sql.tree.Table.accept(Table.java:70)",
+                "io.trino.sql.tree.AstVisitor.process(AstVisitor.java:27)",
+                "io.trino.sql.analyzer.StatementAnalyzer$Visitor.process(StatementAnalyzer.java:569)",
+                "io.trino.sql.analyzer.StatementAnalyzer$Visitor.analyzeFrom(StatementAnalyzer.java:5665)",
+                "io.trino.sql.analyzer.StatementAnalyzer$Visitor.visitQuerySpecification(StatementAnalyzer.java:3553)",
+                "io.trino.sql.analyzer.StatementAnalyzer$Visitor.visitQuerySpecification(StatementAnalyzer.java:550)",
+                "io.trino.sql.tree.QuerySpecification.accept(QuerySpecification.java:155)",
+                "io.trino.sql.tree.AstVisitor.process(AstVisitor.java:27)",
+                "io.trino.sql.analyzer.StatementAnalyzer$Visitor.process(StatementAnalyzer.java:569)",
+                "io.trino.sql.analyzer.StatementAnalyzer$Visitor.process(StatementAnalyzer.java:577)",
+                "io.trino.sql.analyzer.StatementAnalyzer$Visitor.visitQuery(StatementAnalyzer.java:1653)",
+                "io.trino.sql.analyzer.StatementAnalyzer$Visitor.visitQuery(StatementAnalyzer.java:550)",
+                "io.trino.sql.tree.Query.accept(Query.java:130)",
+                "io.trino.sql.tree.AstVisitor.process(AstVisitor.java:27)",
+                "io.trino.sql.analyzer.StatementAnalyzer$Visitor.process(StatementAnalyzer.java:569)",
+                "io.trino.sql.analyzer.StatementAnalyzer.analyze(StatementAnalyzer.java:529)",
+                "io.trino.sql.analyzer.StatementAnalyzer.analyze(StatementAnalyzer.java:518)",
+                "io.trino.sql.analyzer.Analyzer.analyze(Analyzer.java:98)",
+                "io.trino.sql.analyzer.Analyzer.analyze(Analyzer.java:87)",
+                "io.trino.execution.SqlQueryExecution.analyze(SqlQueryExecution.java:288)",
+                "io.trino.execution.SqlQueryExecution.<init>(SqlQueryExecution.java:222)",
+                "io.trino.execution.SqlQueryExecution$SqlQueryExecutionFactory.createQueryExecution(SqlQueryExecution.java:893)",
+                "io.trino.dispatcher.LocalDispatchQueryFactory.lambda$createDispatchQuery$0(LocalDispatchQueryFactory.java:163)",
+                "io.trino.$gen.Trino_484___Callable.call(Unknown Source)",
+                "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                "java.base/java.lang.Thread.run(Unknown Source)"
+              ],
+              "errorInfo": {
+                "code": 45,
+                "name": "SCHEMA_NOT_FOUND",
+                "type": "USER_ERROR"
+              },
+              "errorLocation": {
+                "lineNumber": 1,
+                "columnNumber": 15
+              }
+            }
+          },
+          "INSERT INTO iceberg.bakeoff.sample VALUES (3, 'forbidden')": {
+            "message": "Failed to commit the transaction during insert: Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+            "errorCode": 84148236,
+            "errorName": "ICEBERG_COMMIT_ERROR",
+            "errorType": "EXTERNAL",
+            "failureInfo": {
+              "type": "io.trino.spi.TrinoException",
+              "message": "Failed to commit the transaction during insert: Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+              "cause": {
+                "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                "message": "Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                "suppressed": [],
+                "stack": [
+                  "org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)",
+                  "org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:137)",
+                  "org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:119)",
+                  "org.apache.iceberg.rest.HTTPClient.throwFailure(HTTPClient.java:242)",
+                  "org.apache.iceberg.rest.HTTPClient.handleResponse(HTTPClient.java:367)",
+                  "org.apache.iceberg.rest.HTTPClient.lambda$execute$1(HTTPClient.java:325)",
+                  "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:247)",
+                  "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:188)",
+                  "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:321)",
+                  "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:299)",
+                  "org.apache.iceberg.rest.BaseHTTPClient.post(BaseHTTPClient.java:112)",
+                  "org.apache.iceberg.rest.RESTClient.post(RESTClient.java:150)",
+                  "org.apache.iceberg.rest.RESTTableOperations.commit(RESTTableOperations.java:227)",
+                  "org.apache.iceberg.BaseTransaction.lambda$commitSimpleTransaction$1(BaseTransaction.java:371)",
+                  "org.apache.iceberg.util.Tasks$Builder.runTaskWithRetry(Tasks.java:416)",
+                  "org.apache.iceberg.util.Tasks$Builder.runSingleThreaded(Tasks.java:222)",
+                  "org.apache.iceberg.util.Tasks$Builder.run(Tasks.java:206)",
+                  "org.apache.iceberg.util.Tasks$Builder.run(Tasks.java:199)",
+                  "org.apache.iceberg.BaseTransaction.commitSimpleTransaction(BaseTransaction.java:367)",
+                  "org.apache.iceberg.BaseTransaction.commitTransaction(BaseTransaction.java:268)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.commitTransaction(IcebergMetadata.java:2362)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.commitWriteTransaction(IcebergMetadata.java:4623)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.finishInsert(IcebergMetadata.java:1769)",
+                  "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.finishInsert(ClassLoaderSafeConnectorMetadata.java:654)",
+                  "io.trino.tracing.TracingConnectorMetadata.finishInsert(TracingConnectorMetadata.java:737)",
+                  "io.trino.metadata.MetadataManager.finishInsert(MetadataManager.java:1303)",
+                  "io.trino.tracing.TracingMetadata.finishInsert(TracingMetadata.java:766)",
+                  "io.trino.sql.planner.LocalExecutionPlanner.lambda$createTableFinisher$0(LocalExecutionPlanner.java:4194)",
+                  "io.trino.operator.TableFinishOperator.getOutput(TableFinishOperator.java:320)",
+                  "io.trino.operator.Driver.processInternal(Driver.java:403)",
+                  "io.trino.operator.Driver.lambda$process$0(Driver.java:306)",
+                  "io.trino.operator.Driver.tryWithLock(Driver.java:709)",
+                  "io.trino.operator.Driver.process(Driver.java:298)",
+                  "io.trino.operator.Driver.processForDuration(Driver.java:269)",
+                  "io.trino.execution.SqlTaskExecution$DriverSplitRunner.processFor(SqlTaskExecution.java:852)",
+                  "io.trino.execution.executor.dedicated.SplitProcessor.run(SplitProcessor.java:77)",
+                  "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.lambda$run$0(TaskEntry.java:342)",
+                  "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                  "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.run(TaskEntry.java:343)",
+                  "io.trino.execution.executor.scheduler.FairScheduler.runTask(FairScheduler.java:208)",
+                  "io.trino.execution.executor.scheduler.FairScheduler.lambda$submit$0(FairScheduler.java:195)",
+                  "java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)",
+                  "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                  "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                  "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                  "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                  "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                  "java.base/java.lang.Thread.run(Unknown Source)"
+                ],
+                "errorInfo": {
+                  "code": 65536,
+                  "name": "GENERIC_INTERNAL_ERROR",
+                  "type": "INTERNAL_ERROR"
+                }
+              },
+              "suppressed": [],
+              "stack": [
+                "io.trino.plugin.iceberg.IcebergMetadata.commitTransaction(IcebergMetadata.java:2368)",
+                "io.trino.plugin.iceberg.IcebergMetadata.commitWriteTransaction(IcebergMetadata.java:4623)",
+                "io.trino.plugin.iceberg.IcebergMetadata.finishInsert(IcebergMetadata.java:1769)",
+                "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.finishInsert(ClassLoaderSafeConnectorMetadata.java:654)",
+                "io.trino.tracing.TracingConnectorMetadata.finishInsert(TracingConnectorMetadata.java:737)",
+                "io.trino.metadata.MetadataManager.finishInsert(MetadataManager.java:1303)",
+                "io.trino.tracing.TracingMetadata.finishInsert(TracingMetadata.java:766)",
+                "io.trino.sql.planner.LocalExecutionPlanner.lambda$createTableFinisher$0(LocalExecutionPlanner.java:4194)",
+                "io.trino.operator.TableFinishOperator.getOutput(TableFinishOperator.java:320)",
+                "io.trino.operator.Driver.processInternal(Driver.java:403)",
+                "io.trino.operator.Driver.lambda$process$0(Driver.java:306)",
+                "io.trino.operator.Driver.tryWithLock(Driver.java:709)",
+                "io.trino.operator.Driver.process(Driver.java:298)",
+                "io.trino.operator.Driver.processForDuration(Driver.java:269)",
+                "io.trino.execution.SqlTaskExecution$DriverSplitRunner.processFor(SqlTaskExecution.java:852)",
+                "io.trino.execution.executor.dedicated.SplitProcessor.run(SplitProcessor.java:77)",
+                "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.lambda$run$0(TaskEntry.java:342)",
+                "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.run(TaskEntry.java:343)",
+                "io.trino.execution.executor.scheduler.FairScheduler.runTask(FairScheduler.java:208)",
+                "io.trino.execution.executor.scheduler.FairScheduler.lambda$submit$0(FairScheduler.java:195)",
+                "java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)",
+                "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                "java.base/java.lang.Thread.run(Unknown Source)"
+              ],
+              "errorInfo": {
+                "code": 84148236,
+                "name": "ICEBERG_COMMIT_ERROR",
+                "type": "EXTERNAL"
+              }
+            }
+          },
+          "UPDATE iceberg.bakeoff.sample SET label='forbidden' WHERE id=1": {
+            "message": "Failed to commit the transaction during write: Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+            "errorCode": 84148236,
+            "errorName": "ICEBERG_COMMIT_ERROR",
+            "errorType": "EXTERNAL",
+            "failureInfo": {
+              "type": "io.trino.spi.TrinoException",
+              "message": "Failed to commit the transaction during write: Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+              "cause": {
+                "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                "message": "Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                "suppressed": [],
+                "stack": [
+                  "org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)",
+                  "org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:137)",
+                  "org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:119)",
+                  "org.apache.iceberg.rest.HTTPClient.throwFailure(HTTPClient.java:242)",
+                  "org.apache.iceberg.rest.HTTPClient.handleResponse(HTTPClient.java:367)",
+                  "org.apache.iceberg.rest.HTTPClient.lambda$execute$1(HTTPClient.java:325)",
+                  "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:247)",
+                  "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:188)",
+                  "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:321)",
+                  "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:299)",
+                  "org.apache.iceberg.rest.BaseHTTPClient.post(BaseHTTPClient.java:112)",
+                  "org.apache.iceberg.rest.RESTClient.post(RESTClient.java:150)",
+                  "org.apache.iceberg.rest.RESTTableOperations.commit(RESTTableOperations.java:227)",
+                  "org.apache.iceberg.BaseTransaction.lambda$commitSimpleTransaction$1(BaseTransaction.java:371)",
+                  "org.apache.iceberg.util.Tasks$Builder.runTaskWithRetry(Tasks.java:416)",
+                  "org.apache.iceberg.util.Tasks$Builder.runSingleThreaded(Tasks.java:222)",
+                  "org.apache.iceberg.util.Tasks$Builder.run(Tasks.java:206)",
+                  "org.apache.iceberg.util.Tasks$Builder.run(Tasks.java:199)",
+                  "org.apache.iceberg.BaseTransaction.commitSimpleTransaction(BaseTransaction.java:367)",
+                  "org.apache.iceberg.BaseTransaction.commitTransaction(BaseTransaction.java:268)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.commitTransaction(IcebergMetadata.java:2362)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.commitWriteTransaction(IcebergMetadata.java:4623)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.finishWrite(IcebergMetadata.java:3578)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.finishMerge(IcebergMetadata.java:3414)",
+                  "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.finishMerge(ClassLoaderSafeConnectorMetadata.java:1334)",
+                  "io.trino.tracing.TracingConnectorMetadata.finishMerge(TracingConnectorMetadata.java:818)",
+                  "io.trino.metadata.MetadataManager.finishMerge(MetadataManager.java:1476)",
+                  "io.trino.tracing.TracingMetadata.finishMerge(TracingMetadata.java:902)",
+                  "io.trino.sql.planner.LocalExecutionPlanner.lambda$createTableFinisher$0(LocalExecutionPlanner.java:4215)",
+                  "io.trino.operator.TableFinishOperator.getOutput(TableFinishOperator.java:320)",
+                  "io.trino.operator.Driver.processInternal(Driver.java:403)",
+                  "io.trino.operator.Driver.lambda$process$0(Driver.java:306)",
+                  "io.trino.operator.Driver.tryWithLock(Driver.java:709)",
+                  "io.trino.operator.Driver.process(Driver.java:298)",
+                  "io.trino.operator.Driver.processForDuration(Driver.java:269)",
+                  "io.trino.execution.SqlTaskExecution$DriverSplitRunner.processFor(SqlTaskExecution.java:852)",
+                  "io.trino.execution.executor.dedicated.SplitProcessor.run(SplitProcessor.java:77)",
+                  "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.lambda$run$0(TaskEntry.java:342)",
+                  "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                  "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.run(TaskEntry.java:343)",
+                  "io.trino.execution.executor.scheduler.FairScheduler.runTask(FairScheduler.java:208)",
+                  "io.trino.execution.executor.scheduler.FairScheduler.lambda$submit$0(FairScheduler.java:195)",
+                  "java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)",
+                  "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                  "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                  "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                  "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                  "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                  "java.base/java.lang.Thread.run(Unknown Source)"
+                ],
+                "errorInfo": {
+                  "code": 65536,
+                  "name": "GENERIC_INTERNAL_ERROR",
+                  "type": "INTERNAL_ERROR"
+                }
+              },
+              "suppressed": [],
+              "stack": [
+                "io.trino.plugin.iceberg.IcebergMetadata.commitTransaction(IcebergMetadata.java:2368)",
+                "io.trino.plugin.iceberg.IcebergMetadata.commitWriteTransaction(IcebergMetadata.java:4623)",
+                "io.trino.plugin.iceberg.IcebergMetadata.finishWrite(IcebergMetadata.java:3578)",
+                "io.trino.plugin.iceberg.IcebergMetadata.finishMerge(IcebergMetadata.java:3414)",
+                "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.finishMerge(ClassLoaderSafeConnectorMetadata.java:1334)",
+                "io.trino.tracing.TracingConnectorMetadata.finishMerge(TracingConnectorMetadata.java:818)",
+                "io.trino.metadata.MetadataManager.finishMerge(MetadataManager.java:1476)",
+                "io.trino.tracing.TracingMetadata.finishMerge(TracingMetadata.java:902)",
+                "io.trino.sql.planner.LocalExecutionPlanner.lambda$createTableFinisher$0(LocalExecutionPlanner.java:4215)",
+                "io.trino.operator.TableFinishOperator.getOutput(TableFinishOperator.java:320)",
+                "io.trino.operator.Driver.processInternal(Driver.java:403)",
+                "io.trino.operator.Driver.lambda$process$0(Driver.java:306)",
+                "io.trino.operator.Driver.tryWithLock(Driver.java:709)",
+                "io.trino.operator.Driver.process(Driver.java:298)",
+                "io.trino.operator.Driver.processForDuration(Driver.java:269)",
+                "io.trino.execution.SqlTaskExecution$DriverSplitRunner.processFor(SqlTaskExecution.java:852)",
+                "io.trino.execution.executor.dedicated.SplitProcessor.run(SplitProcessor.java:77)",
+                "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.lambda$run$0(TaskEntry.java:342)",
+                "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.run(TaskEntry.java:343)",
+                "io.trino.execution.executor.scheduler.FairScheduler.runTask(FairScheduler.java:208)",
+                "io.trino.execution.executor.scheduler.FairScheduler.lambda$submit$0(FairScheduler.java:195)",
+                "java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)",
+                "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                "java.base/java.lang.Thread.run(Unknown Source)"
+              ],
+              "errorInfo": {
+                "code": 84148236,
+                "name": "ICEBERG_COMMIT_ERROR",
+                "type": "EXTERNAL"
+              }
+            }
+          },
+          "DELETE FROM iceberg.bakeoff.sample WHERE id=1": {
+            "message": "Failed to commit the transaction during write: Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+            "errorCode": 84148236,
+            "errorName": "ICEBERG_COMMIT_ERROR",
+            "errorType": "EXTERNAL",
+            "failureInfo": {
+              "type": "io.trino.spi.TrinoException",
+              "message": "Failed to commit the transaction during write: Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+              "cause": {
+                "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                "message": "Forbidden: Table action `commit` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                "suppressed": [],
+                "stack": [
+                  "org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)",
+                  "org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:137)",
+                  "org.apache.iceberg.rest.ErrorHandlers$CommitErrorHandler.accept(ErrorHandlers.java:119)",
+                  "org.apache.iceberg.rest.HTTPClient.throwFailure(HTTPClient.java:242)",
+                  "org.apache.iceberg.rest.HTTPClient.handleResponse(HTTPClient.java:367)",
+                  "org.apache.iceberg.rest.HTTPClient.lambda$execute$1(HTTPClient.java:325)",
+                  "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:247)",
+                  "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:188)",
+                  "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:321)",
+                  "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:299)",
+                  "org.apache.iceberg.rest.BaseHTTPClient.post(BaseHTTPClient.java:112)",
+                  "org.apache.iceberg.rest.RESTClient.post(RESTClient.java:150)",
+                  "org.apache.iceberg.rest.RESTTableOperations.commit(RESTTableOperations.java:227)",
+                  "org.apache.iceberg.BaseTransaction.lambda$commitSimpleTransaction$1(BaseTransaction.java:371)",
+                  "org.apache.iceberg.util.Tasks$Builder.runTaskWithRetry(Tasks.java:416)",
+                  "org.apache.iceberg.util.Tasks$Builder.runSingleThreaded(Tasks.java:222)",
+                  "org.apache.iceberg.util.Tasks$Builder.run(Tasks.java:206)",
+                  "org.apache.iceberg.util.Tasks$Builder.run(Tasks.java:199)",
+                  "org.apache.iceberg.BaseTransaction.commitSimpleTransaction(BaseTransaction.java:367)",
+                  "org.apache.iceberg.BaseTransaction.commitTransaction(BaseTransaction.java:268)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.commitTransaction(IcebergMetadata.java:2362)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.commitWriteTransaction(IcebergMetadata.java:4623)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.finishWrite(IcebergMetadata.java:3578)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.finishMerge(IcebergMetadata.java:3414)",
+                  "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.finishMerge(ClassLoaderSafeConnectorMetadata.java:1334)",
+                  "io.trino.tracing.TracingConnectorMetadata.finishMerge(TracingConnectorMetadata.java:818)",
+                  "io.trino.metadata.MetadataManager.finishMerge(MetadataManager.java:1476)",
+                  "io.trino.tracing.TracingMetadata.finishMerge(TracingMetadata.java:902)",
+                  "io.trino.sql.planner.LocalExecutionPlanner.lambda$createTableFinisher$0(LocalExecutionPlanner.java:4215)",
+                  "io.trino.operator.TableFinishOperator.getOutput(TableFinishOperator.java:320)",
+                  "io.trino.operator.Driver.processInternal(Driver.java:403)",
+                  "io.trino.operator.Driver.lambda$process$0(Driver.java:306)",
+                  "io.trino.operator.Driver.tryWithLock(Driver.java:709)",
+                  "io.trino.operator.Driver.process(Driver.java:298)",
+                  "io.trino.operator.Driver.processForDuration(Driver.java:269)",
+                  "io.trino.execution.SqlTaskExecution$DriverSplitRunner.processFor(SqlTaskExecution.java:852)",
+                  "io.trino.execution.executor.dedicated.SplitProcessor.run(SplitProcessor.java:77)",
+                  "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.lambda$run$0(TaskEntry.java:342)",
+                  "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                  "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.run(TaskEntry.java:343)",
+                  "io.trino.execution.executor.scheduler.FairScheduler.runTask(FairScheduler.java:208)",
+                  "io.trino.execution.executor.scheduler.FairScheduler.lambda$submit$0(FairScheduler.java:195)",
+                  "java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)",
+                  "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                  "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                  "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                  "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                  "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                  "java.base/java.lang.Thread.run(Unknown Source)"
+                ],
+                "errorInfo": {
+                  "code": 65536,
+                  "name": "GENERIC_INTERNAL_ERROR",
+                  "type": "INTERNAL_ERROR"
+                }
+              },
+              "suppressed": [],
+              "stack": [
+                "io.trino.plugin.iceberg.IcebergMetadata.commitTransaction(IcebergMetadata.java:2368)",
+                "io.trino.plugin.iceberg.IcebergMetadata.commitWriteTransaction(IcebergMetadata.java:4623)",
+                "io.trino.plugin.iceberg.IcebergMetadata.finishWrite(IcebergMetadata.java:3578)",
+                "io.trino.plugin.iceberg.IcebergMetadata.finishMerge(IcebergMetadata.java:3414)",
+                "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.finishMerge(ClassLoaderSafeConnectorMetadata.java:1334)",
+                "io.trino.tracing.TracingConnectorMetadata.finishMerge(TracingConnectorMetadata.java:818)",
+                "io.trino.metadata.MetadataManager.finishMerge(MetadataManager.java:1476)",
+                "io.trino.tracing.TracingMetadata.finishMerge(TracingMetadata.java:902)",
+                "io.trino.sql.planner.LocalExecutionPlanner.lambda$createTableFinisher$0(LocalExecutionPlanner.java:4215)",
+                "io.trino.operator.TableFinishOperator.getOutput(TableFinishOperator.java:320)",
+                "io.trino.operator.Driver.processInternal(Driver.java:403)",
+                "io.trino.operator.Driver.lambda$process$0(Driver.java:306)",
+                "io.trino.operator.Driver.tryWithLock(Driver.java:709)",
+                "io.trino.operator.Driver.process(Driver.java:298)",
+                "io.trino.operator.Driver.processForDuration(Driver.java:269)",
+                "io.trino.execution.SqlTaskExecution$DriverSplitRunner.processFor(SqlTaskExecution.java:852)",
+                "io.trino.execution.executor.dedicated.SplitProcessor.run(SplitProcessor.java:77)",
+                "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.lambda$run$0(TaskEntry.java:342)",
+                "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                "io.trino.execution.executor.dedicated.TaskEntry$VersionEmbedderBridge.run(TaskEntry.java:343)",
+                "io.trino.execution.executor.scheduler.FairScheduler.runTask(FairScheduler.java:208)",
+                "io.trino.execution.executor.scheduler.FairScheduler.lambda$submit$0(FairScheduler.java:195)",
+                "java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)",
+                "com.google.common.util.concurrent.TrustedListenableFutureTask$TrustedFutureInterruptibleTask.runInterruptibly(TrustedListenableFutureTask.java:128)",
+                "com.google.common.util.concurrent.InterruptibleTask.run(InterruptibleTask.java:72)",
+                "com.google.common.util.concurrent.TrustedListenableFutureTask.run(TrustedListenableFutureTask.java:80)",
+                "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                "java.base/java.lang.Thread.run(Unknown Source)"
+              ],
+              "errorInfo": {
+                "code": 84148236,
+                "name": "ICEBERG_COMMIT_ERROR",
+                "type": "EXTERNAL"
+              }
+            }
+          },
+          "CREATE TABLE iceberg.bakeoff.forbidden (id BIGINT)": {
+            "message": "Failed to create transaction",
+            "errorCode": 84148237,
+            "errorName": "ICEBERG_CATALOG_ERROR",
+            "errorType": "EXTERNAL",
+            "failureInfo": {
+              "type": "io.trino.spi.TrinoException",
+              "message": "Failed to create transaction",
+              "cause": {
+                "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                "message": "Forbidden: Namespace action `create_table(name=forbidden, table_id=01a2208c-33cd-77c5-a019-362b9b0e0d6b, properties={format-version: 2, write.format.default: PARQUET, write.parquet.compression-codec: })` forbidden on namespace with name 'bakeoff' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                "suppressed": [],
+                "stack": [
+                  "org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)",
+                  "org.apache.iceberg.rest.ErrorHandlers$TableErrorHandler.accept(ErrorHandlers.java:160)",
+                  "org.apache.iceberg.rest.ErrorHandlers$TableErrorHandler.accept(ErrorHandlers.java:142)",
+                  "org.apache.iceberg.rest.HTTPClient.throwFailure(HTTPClient.java:242)",
+                  "org.apache.iceberg.rest.HTTPClient.handleResponse(HTTPClient.java:367)",
+                  "org.apache.iceberg.rest.HTTPClient.lambda$execute$1(HTTPClient.java:325)",
+                  "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:247)",
+                  "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:188)",
+                  "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:321)",
+                  "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:299)",
+                  "org.apache.iceberg.rest.BaseHTTPClient.post(BaseHTTPClient.java:112)",
+                  "org.apache.iceberg.rest.RESTClient.post(RESTClient.java:150)",
+                  "org.apache.iceberg.rest.RESTSessionCatalog$Builder.create(RESTSessionCatalog.java:1046)",
+                  "io.trino.plugin.iceberg.catalog.rest.TrinoRestCatalog.newCreateTableTransaction(TrinoRestCatalog.java:460)",
+                  "io.trino.plugin.iceberg.IcebergUtil.newCreateTableTransaction(IcebergUtil.java:985)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.beginCreateTable(IcebergMetadata.java:1558)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.createTable(IcebergMetadata.java:1405)",
+                  "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.createTable(ClassLoaderSafeConnectorMetadata.java:486)",
+                  "io.trino.tracing.TracingConnectorMetadata.createTable(TracingConnectorMetadata.java:407)",
+                  "io.trino.metadata.MetadataManager.createTable(MetadataManager.java:946)",
+                  "io.trino.tracing.TracingMetadata.createTable(TracingMetadata.java:460)",
+                  "io.trino.execution.CreateTableTask.internalExecute(CreateTableTask.java:308)",
+                  "io.trino.execution.CreateTableTask.execute(CreateTableTask.java:129)",
+                  "io.trino.execution.CreateTableTask.execute(CreateTableTask.java:95)",
+                  "io.trino.execution.DataDefinitionExecution.start(DataDefinitionExecution.java:153)",
+                  "io.trino.execution.QueryManager.createQuery(QueryManager.java:333)",
+                  "io.trino.dispatcher.LocalDispatchQuery.startExecution(LocalDispatchQuery.java:151)",
+                  "io.trino.dispatcher.LocalDispatchQuery.lambda$waitForMinimumWorkers$1(LocalDispatchQuery.java:135)",
+                  "io.airlift.concurrent.MoreFutures.lambda$addSuccessCallback$0(MoreFutures.java:570)",
+                  "io.airlift.concurrent.MoreFutures$3.onSuccess(MoreFutures.java:545)",
+                  "com.google.common.util.concurrent.Futures$CallbackListener.run(Futures.java:1128)",
+                  "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                  "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                  "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                  "java.base/java.lang.Thread.run(Unknown Source)"
+                ],
+                "errorInfo": {
+                  "code": 65536,
+                  "name": "GENERIC_INTERNAL_ERROR",
+                  "type": "INTERNAL_ERROR"
+                }
+              },
+              "suppressed": [],
+              "stack": [
+                "io.trino.plugin.iceberg.catalog.rest.TrinoRestCatalog.newCreateTableTransaction(TrinoRestCatalog.java:465)",
+                "io.trino.plugin.iceberg.IcebergUtil.newCreateTableTransaction(IcebergUtil.java:985)",
+                "io.trino.plugin.iceberg.IcebergMetadata.beginCreateTable(IcebergMetadata.java:1558)",
+                "io.trino.plugin.iceberg.IcebergMetadata.createTable(IcebergMetadata.java:1405)",
+                "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.createTable(ClassLoaderSafeConnectorMetadata.java:486)",
+                "io.trino.tracing.TracingConnectorMetadata.createTable(TracingConnectorMetadata.java:407)",
+                "io.trino.metadata.MetadataManager.createTable(MetadataManager.java:946)",
+                "io.trino.tracing.TracingMetadata.createTable(TracingMetadata.java:460)",
+                "io.trino.execution.CreateTableTask.internalExecute(CreateTableTask.java:308)",
+                "io.trino.execution.CreateTableTask.execute(CreateTableTask.java:129)",
+                "io.trino.execution.CreateTableTask.execute(CreateTableTask.java:95)",
+                "io.trino.execution.DataDefinitionExecution.start(DataDefinitionExecution.java:153)",
+                "io.trino.execution.QueryManager.createQuery(QueryManager.java:333)",
+                "io.trino.dispatcher.LocalDispatchQuery.startExecution(LocalDispatchQuery.java:151)",
+                "io.trino.dispatcher.LocalDispatchQuery.lambda$waitForMinimumWorkers$1(LocalDispatchQuery.java:135)",
+                "io.airlift.concurrent.MoreFutures.lambda$addSuccessCallback$0(MoreFutures.java:570)",
+                "io.airlift.concurrent.MoreFutures$3.onSuccess(MoreFutures.java:545)",
+                "com.google.common.util.concurrent.Futures$CallbackListener.run(Futures.java:1128)",
+                "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                "java.base/java.lang.Thread.run(Unknown Source)"
+              ],
+              "errorInfo": {
+                "code": 84148237,
+                "name": "ICEBERG_CATALOG_ERROR",
+                "type": "EXTERNAL"
+              }
+            }
+          },
+          "DROP TABLE iceberg.bakeoff.sample": {
+            "message": "Failed to drop table 'sample'",
+            "errorCode": 84148237,
+            "errorName": "ICEBERG_CATALOG_ERROR",
+            "errorType": "EXTERNAL",
+            "failureInfo": {
+              "type": "io.trino.spi.TrinoException",
+              "message": "Failed to drop table 'sample'",
+              "cause": {
+                "type": "org.apache.iceberg.exceptions.ForbiddenException",
+                "message": "Forbidden: Table action `drop(purge=true)` forbidden on table 'bakeoff.sample' in warehouse `6b7c1414-eae9-11f1-b263-5bbec86974c9`",
+                "suppressed": [],
+                "stack": [
+                  "org.apache.iceberg.rest.ErrorHandlers$DefaultErrorHandler.accept(ErrorHandlers.java:345)",
+                  "org.apache.iceberg.rest.ErrorHandlers$TableErrorHandler.accept(ErrorHandlers.java:160)",
+                  "org.apache.iceberg.rest.ErrorHandlers$TableErrorHandler.accept(ErrorHandlers.java:142)",
+                  "org.apache.iceberg.rest.HTTPClient.throwFailure(HTTPClient.java:242)",
+                  "org.apache.iceberg.rest.HTTPClient.handleResponse(HTTPClient.java:367)",
+                  "org.apache.iceberg.rest.HTTPClient.lambda$execute$1(HTTPClient.java:325)",
+                  "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:247)",
+                  "org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:188)",
+                  "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:321)",
+                  "org.apache.iceberg.rest.HTTPClient.execute(HTTPClient.java:299)",
+                  "org.apache.iceberg.rest.BaseHTTPClient.delete(BaseHTTPClient.java:66)",
+                  "org.apache.iceberg.rest.RESTClient.delete(RESTClient.java:45)",
+                  "org.apache.iceberg.rest.RESTSessionCatalog.purgeTable(RESTSessionCatalog.java:377)",
+                  "io.trino.plugin.iceberg.catalog.rest.TrinoRestCatalog.purgeTable(TrinoRestCatalog.java:575)",
+                  "io.trino.plugin.iceberg.catalog.rest.TrinoRestCatalog.dropTable(TrinoRestCatalog.java:533)",
+                  "io.trino.plugin.iceberg.IcebergMetadata.dropTable(IcebergMetadata.java:2636)",
+                  "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.dropTable(ClassLoaderSafeConnectorMetadata.java:494)",
+                  "io.trino.tracing.TracingConnectorMetadata.dropTable(TracingConnectorMetadata.java:416)",
+                  "io.trino.metadata.MetadataManager.dropTable(MetadataManager.java:1137)",
+                  "io.trino.tracing.TracingMetadata.dropTable(TracingMetadata.java:622)",
+                  "io.trino.execution.DropTableTask.execute(DropTableTask.java:92)",
+                  "io.trino.execution.DropTableTask.execute(DropTableTask.java:36)",
+                  "io.trino.execution.DataDefinitionExecution.start(DataDefinitionExecution.java:153)",
+                  "io.trino.execution.QueryManager.createQuery(QueryManager.java:333)",
+                  "io.trino.dispatcher.LocalDispatchQuery.startExecution(LocalDispatchQuery.java:151)",
+                  "io.trino.dispatcher.LocalDispatchQuery.lambda$waitForMinimumWorkers$1(LocalDispatchQuery.java:135)",
+                  "io.airlift.concurrent.MoreFutures.lambda$addSuccessCallback$0(MoreFutures.java:570)",
+                  "io.airlift.concurrent.MoreFutures$3.onSuccess(MoreFutures.java:545)",
+                  "com.google.common.util.concurrent.Futures$CallbackListener.run(Futures.java:1128)",
+                  "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                  "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                  "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                  "java.base/java.lang.Thread.run(Unknown Source)"
+                ],
+                "errorInfo": {
+                  "code": 65536,
+                  "name": "GENERIC_INTERNAL_ERROR",
+                  "type": "INTERNAL_ERROR"
+                }
+              },
+              "suppressed": [],
+              "stack": [
+                "io.trino.plugin.iceberg.catalog.rest.TrinoRestCatalog.purgeTable(TrinoRestCatalog.java:580)",
+                "io.trino.plugin.iceberg.catalog.rest.TrinoRestCatalog.dropTable(TrinoRestCatalog.java:533)",
+                "io.trino.plugin.iceberg.IcebergMetadata.dropTable(IcebergMetadata.java:2636)",
+                "io.trino.plugin.base.classloader.ClassLoaderSafeConnectorMetadata.dropTable(ClassLoaderSafeConnectorMetadata.java:494)",
+                "io.trino.tracing.TracingConnectorMetadata.dropTable(TracingConnectorMetadata.java:416)",
+                "io.trino.metadata.MetadataManager.dropTable(MetadataManager.java:1137)",
+                "io.trino.tracing.TracingMetadata.dropTable(TracingMetadata.java:622)",
+                "io.trino.execution.DropTableTask.execute(DropTableTask.java:92)",
+                "io.trino.execution.DropTableTask.execute(DropTableTask.java:36)",
+                "io.trino.execution.DataDefinitionExecution.start(DataDefinitionExecution.java:153)",
+                "io.trino.execution.QueryManager.createQuery(QueryManager.java:333)",
+                "io.trino.dispatcher.LocalDispatchQuery.startExecution(LocalDispatchQuery.java:151)",
+                "io.trino.dispatcher.LocalDispatchQuery.lambda$waitForMinimumWorkers$1(LocalDispatchQuery.java:135)",
+                "io.airlift.concurrent.MoreFutures.lambda$addSuccessCallback$0(MoreFutures.java:570)",
+                "io.airlift.concurrent.MoreFutures$3.onSuccess(MoreFutures.java:545)",
+                "com.google.common.util.concurrent.Futures$CallbackListener.run(Futures.java:1128)",
+                "io.trino.$gen.Trino_484___Runnable.run(Unknown Source)",
+                "java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)",
+                "java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)",
+                "java.base/java.lang.Thread.run(Unknown Source)"
+              ],
+              "errorInfo": {
+                "code": 84148237,
+                "name": "ICEBERG_CATALOG_ERROR",
+                "type": "EXTERNAL"
+              }
+            }
+          }
+        }
+      },
+      "seconds": 14.2445
+    },
+    "C5.sail": {
+      "status": "pass",
+      "value": {
+        "tls": {
+          "version": "TLSv1.3",
+          "unknown_ca_rejected": true,
+          "wrong_name_rejected": true,
+          "plaintext_rejected": true
+        },
+        "token": "external file",
+        "tables": [
+          [
+            "bakeoff",
+            "sample",
+            false
+          ]
+        ],
+        "rows": [
+          [
+            1,
+            "alpha"
+          ],
+          [
+            2,
+            "beta"
+          ]
+        ],
+        "denials": {
+          "SELECT * FROM bakeoff.denied.sample": "Table not found: [TABLE_OR_VIEW_NOT_FOUND] Table or view not found: denied.sample",
+          "INSERT INTO bakeoff.bakeoff.sample VALUES (3, 'forbidden')": "forbidden: Iceberg REST catalog commit forbidden for bakeoff.sample: response error: status code 403 Forbidden",
+          "UPDATE bakeoff.bakeoff.sample SET label='forbidden' WHERE id=1": "forbidden: Iceberg REST catalog commit forbidden for bakeoff.sample: response error: status code 403 Forbidden",
+          "DELETE FROM bakeoff.bakeoff.sample WHERE id=1": "forbidden: Iceberg REST catalog commit forbidden for bakeoff.sample: response error: status code 403 Forbidden",
+          "CREATE TABLE bakeoff.bakeoff.forbidden (id BIGINT) USING iceberg": "external error: Failed to create table: response error: status code 403 Forbidden",
+          "DROP TABLE bakeoff.bakeoff.sample": "external error: Failed to drop table: response error: status code 403 Forbidden"
+        }
+      },
+      "seconds": 2.295
+    }
+  },
+  "regression_cases": {
+    "wrong_s3_secret": {
+      "status": 400,
+      "seconds": null
+    },
+    "T7_hardening": {
+      "status": "pass",
+      "seconds": 0.89
+    },
+    "T1_create_insert_select": {
+      "status": "pass",
+      "seconds": 3.24
+    },
+    "T2_pyiceberg_before_mutations": {
+      "status": "pass",
+      "seconds": 0.5
+    },
+    "T1_update_delete_history": {
+      "status": "pass",
+      "seconds": 2.57
+    },
+    "T2_pyiceberg_after_mutations": {
+      "status": "pass",
+      "seconds": 0.06
+    },
+    "T3_trino_reads_pyiceberg": {
+      "status": "pass",
+      "seconds": 0.54
+    },
+    "encoding_canary": {
+      "status": "pass",
+      "seconds": 2.67
+    },
+    "sail_vended_response": {
+      "status": 200,
+      "seconds": null
+    },
+    "T10_sail": {
+      "status": "pass",
+      "seconds": 8.21
+    },
+    "T4_location": {
+      "status": "pass",
+      "seconds": 0.34
+    },
+    "T11_maintenance": {
+      "status": "pass",
+      "seconds": 14.87
+    },
+    "T12_evolution": {
+      "status": "pass",
+      "seconds": 31.6
+    },
+    "T6_negative": {
+      "status": "pass",
+      "seconds": 0.59
+    },
+    "T7_secret_isolation": {
+      "status": "pass",
+      "seconds": 2.39
+    },
+    "TLS_exposure": {
+      "status": "pass",
+      "seconds": 2.86
+    },
+    "TLS_seaweedfs_canaries": {
+      "status": "pass",
+      "seconds": 2.41
+    },
+    "TLS_certificate_negatives": {
+      "status": "pass",
+      "seconds": 852.0
+    },
+    "T9_remote_signing_before": {
+      "status": "pass",
+      "seconds": 0.41
+    },
+    "TLS_exposure_after_recreation": {
+      "status": "pass",
+      "seconds": 2.85
+    },
+    "T9_remote_signing_restart": {
+      "status": "pass",
+      "seconds": 6.92
+    },
+    "T5_persistence": {
+      "status": "pass",
+      "seconds": 65.62
+    },
+    "T8_crash_durability": {
+      "status": "pass",
+      "seconds": 111.99
+    },
+    "TLS_exposure_after_crash": {
+      "status": "pass",
+      "seconds": 3.37
+    }
+  },
+  "encoding_canary": {
+    "status": "expected-failure",
+    "error": "Not yet implemented: DecodeArrow of DictAccumulator for DeltaLengthByteArrayDecoder."
+  },
+  "remote_signing_canary": "expected-failure"
+}

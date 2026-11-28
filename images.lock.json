@@ -2,7 +2,9 @@
   "postgresql-lakekeeper-ubi": "1054729c5fa934e2a801a36d81a8b2b264aa8829",
   "lakekeeper-ubi": "fe19d7f9a5e603c7f7457f4a3a56e1af8cd8d2e7",
   "seaweedfs-ubi": "80bba407ba534f9d2e6ec6401c071d827dcf4a03",
-  "trino-ubi": "685ff5bca0037d38e3c2e2ed47a60f2540dad7c2",
+  "trino-ubi": "b7e97fe97e67173e0f9af4d60ea9c51cdf940f13",
   "sail-ubi": "e96e068f926b8fecb3939e953389685ee4780032",
-  "nginx-ubi": "9ef9e822c6b5e508cebef2adff3bb647a206773c"
+  "nginx-ubi": "9ef9e822c6b5e508cebef2adff3bb647a206773c",
+  "rauthy-ubi": "52c3fec20beca1975467a9c955730082cef8bf46",
+  "datopsis-authz": "ed14cf951081f0d6daad4d601ae9786ffb8a8fc0"
 }

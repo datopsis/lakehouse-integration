@@ -2,6 +2,44 @@
 
 ## Unreleased
 
+- T13 passes every assertion on native amd64 and arm64 at guarded JWT Trino
+  `b7e97fe` (run 46118625205): exact identity/team access, OPA rows and masks,
+  old-token grant/group revocation within 1.1 seconds, dependency outages/recovery,
+  837 durable audit records, TLS and backend/token isolation. Retain permanent
+  sanitized evidence and historical failures; required Integration remains separate.
+
+
+- Coordinator-approved Trino PR #10 test pin `b7e97fe`: guarded JWT plus
+  Iceberg/TLS/OPA, with explicit HTTPS JWKS, issuer, audience and `sub` principal
+  configuration in T13. The unmerged image remains red only on the same five
+  Iceberg Jackson/Guava CVEs; no release claim or gate bypass.
+
+
+- Owner timing decision (2026-11-27): move whole-stack T13 unchanged to a separate
+  nightly (02:41 UTC) and workflow_dispatch workflow, never pull_request. Retain
+  C1–C8 and every original regression/provenance assertion in required Integration.
+  Keep the approved Trino pin until the coordinator supplies its JWT-capable update.
+- Add one schedule-only T13 tracking issue: update repeated results without
+  comments, comment on changes, close on recovery. Manual runs never write issues.
+- Cache immutable native Rauthy/authz builds by source/CPU/recipe; independently
+  reverify source locks, archive inventory and every provenance label on each hit.
+  Runtime fixtures, secrets and decisions are never cached; cold builds stay slow.
+
+
+- Add T13 as a separate authenticated whole-stack profile plus C1–C8 in both
+  native Integration jobs, preserving the no-auth regression profile and aggregate
+  name. Use real PKCE/JWT and client credentials, stock OPA rows/masks, team Sail
+  gateways, live revocation, dependency failures/recovery and durable audit checks.
+  Both native original gates, strict provenance and C1–C8 passed. Whole-stack
+  acceptance is BLOCKED: the approved Trino launcher rejects JWT ingress.
+  No insecure override, production or storage-isolation claim.
+- Pin unmerged authz #9 `ed14cf9`, Rauthy #3 `52c3fec` and Trino #8 `9343071`
+  with strict source/lock/CPU provenance for both authz outputs. Retain disclosed
+  quick-xml/parquet/thrift/SQLite, SvelteKit/fixable RustSec and Iceberg-jar findings;
+  no owning security gate is bypassed. Add owner-verified FIDO cache reuse.
+- Update the identity diagram to the T13 fixture as built, with runtime status.
+
+
 - Pin lakekeeper-ubi to fe19d7f (Lakekeeper 0.13.9 with the 0.13.5-0.13.9 security fixes;
   shipped RustSec findings 38 -> 24).
 - Pin postgresql-lakekeeper-ubi to 1054729 (PostgreSQL 18.7). PGDG removed the 18.6 RPMs the

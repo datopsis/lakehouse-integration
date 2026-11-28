@@ -47,6 +47,8 @@ def artifact_lock(source, repo, architecture):
         "seaweedfs-ubi": "artifacts/seaweedfs.lock.json",
         "trino-ubi": "artifacts/trino.lock.json",
         "sail-ubi": "artifacts/sail.lock.json",
+        "rauthy-ubi": f"artifacts/locks/{architecture}.json",
+        "datopsis-authz": "artifacts/images.lock.json",
     }
     return source / paths[repo]
 
@@ -74,6 +76,18 @@ def build(repo, revision, architecture):
     run(["git", "-C", str(source), "checkout", "--detach", "FETCH_HEAD"])
     assert output(["git", "-C", str(source), "rev-parse", "HEAD"]) == revision
     assert not output(["git", "-C", str(source), "status", "--porcelain"])
+    from image_cache import restore, save
+
+    cached = restore(source, repo, revision, architecture)
+    if cached is not None:
+        return cached
+    if repo == "datopsis-authz":
+        from auth_build import authz
+
+        result = authz(source, revision, architecture)
+        if result["status"] == "pass":
+            save(source, repo, revision, architecture, result)
+        return result
     image = f"localhost/{repo}:integration"
     runtime = "podman" if repo in ("lakekeeper-ubi", "seaweedfs-ubi", "nginx-ubi") else "docker"
     env = dict(os.environ, CONTAINER_RUNTIME=runtime, IMAGE=image, RELEASE_REVISION=revision)
@@ -125,6 +139,10 @@ def build(repo, revision, architecture):
         verifier.chmod(0o755)
         env["COSIGN"] = str(verifier)
         command = ["bash", "scripts/build.sh", architecture]
+    elif repo == "rauthy-ubi":
+        from auth_build import rauthy
+
+        command = rauthy(source, env, architecture)
     elif repo == "sail-ubi":
         from sail_build import prepare_build
 
@@ -186,6 +204,8 @@ def build(repo, revision, architecture):
             name: sha(source / f"examples/profiles/{name}/nginx.conf")
             for name in ("lakekeeper", "sail")
         }
+    if result["status"] == "pass":
+        save(source, repo, revision, architecture, result)
     return result
 
 
@@ -209,7 +229,7 @@ def provenance_errors(inspected, revision, lock_hash, architecture):
 def main():
     if not __debug__:
         raise RuntimeError("Assertions must be enabled; remove -O/PYTHONOPTIMIZE")
-    assert len(PINS) == 6 and all(re.fullmatch(r"[0-9a-f]{40}", pin) for pin in PINS.values())
+    assert len(PINS) == 8 and all(re.fullmatch(r"[0-9a-f]{40}", pin) for pin in PINS.values())
     architecture = native_architecture()
     print(f"Native runner: {platform.machine()}; image architecture: {architecture}", flush=True)
     results = {}

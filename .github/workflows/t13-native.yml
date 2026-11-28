@@ -1,0 +1,153 @@
+name: T13 native profile
+on:
+  workflow_call:
+permissions:
+  contents: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  native:
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+    name: T13 (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            machine: x86_64
+            runner: ubuntu-24.04
+          - arch: arm64
+            machine: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 120
+    env:
+      INTEGRATION_ARCH: ${{ matrix.arch }}
+      EXPECTED_MACHINE: ${{ matrix.machine }}
+      CI_IMAGE_CACHE: 'true'
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Prerequisites and hash-locked Python clients
+        id: dependencies
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          uname -m | tee reports/runner-uname.txt
+          test "$(uname -m)" = "$EXPECTED_MACHINE"
+          df -h
+          sudo apt-get update -qq
+          sudo apt-get install -y rpm podman gnupg tcpdump argon2 apache2-utils
+          python3 -m venv .venv
+          .venv/bin/pip install --require-hashes -r requirements.txt
+          mkdir -p reports
+          .venv/bin/pip freeze > reports/python-packages.txt
+          docker version > reports/docker-version.txt
+          podman version > reports/podman-version.txt
+      - name: Lint and unit tests
+        run: |
+          set -euo pipefail
+          if git ls-files --eol | grep -E "^i/(crlf|mixed)"; then echo "CRLF line endings found, commit LF only (see .gitattributes)" >&2; exit 1; fi
+          .venv/bin/ruff check .
+          .venv/bin/ruff format --check .
+          .venv/bin/zizmor --offline --persona pedantic .github/workflows
+          .venv/bin/python -m unittest discover -s tests -v
+      - name: Immutable native image cache keys
+        id: image-cache-keys
+        run: python3 integration/image_cache.py >> "$GITHUB_OUTPUT"
+      - name: Restore native Rauthy image built at the exact pin
+        id: rauthy-image-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .image-cache/rauthy-ubi
+          key: ${{ steps.image-cache-keys.outputs.rauthy }}
+      - name: Restore both native authz images built at the exact pin
+        id: authz-image-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .image-cache/datopsis-authz
+          key: ${{ steps.image-cache-keys.outputs.authz }}
+      - name: Read owner-locked FIDO cache key
+        id: fido-key
+        run: python3 integration/fido.py --cache-key >> "$GITHUB_OUTPUT"
+      - name: Restore owner-locked FIDO bytes
+        id: fido-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .sources/fixture-inputs/fido-mds.jwt
+          key: ${{ steps.fido-key.outputs.key }}
+      - name: Verify FIDO hash, signature, path, fresh CRLs and dates including cache hits
+        id: fido-verified
+        run: python3 integration/fido.py
+      - name: Save only owner-verified FIDO bytes
+        if: ${{ success() && steps.fido-verified.outcome == 'success' && steps.fido-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .sources/fixture-inputs/fido-mds.jwt
+          key: ${{ steps.fido-key.outputs.key }}
+      - name: Build exact pinned source with owner scripts
+        id: build
+        run: |
+          set -euo pipefail
+          python3 integration/build.py 2>&1 | tee reports/build.log
+      - name: Strict image provenance (mandatory gate)
+        id: provenance
+        run: |
+          set -euo pipefail
+          python3 integration/verify.py 2>&1 | tee reports/provenance.log
+      - name: Save provenance-verified native Rauthy image
+        if: ${{ !cancelled() && steps.provenance.outcome == 'success' && steps.rauthy-image-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .image-cache/rauthy-ubi
+          key: ${{ steps.image-cache-keys.outputs.rauthy }}
+      - name: Save provenance-verified native authz images
+        if: ${{ !cancelled() && steps.provenance.outcome == 'success' && steps.authz-image-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .image-cache/datopsis-authz
+          key: ${{ steps.image-cache-keys.outputs.authz }}
+      - name: T13 whole stack with real login, permissions, revocation, outages and durable audit
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          .venv/bin/python integration/auth_probe.py whole-stack 2>&1 | tee reports/t13-whole-stack.log
+      - name: Redact diagnostics and remove services
+        id: cleanup
+        if: ${{ always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
+        run: |
+          set -euo pipefail
+          .venv/bin/python integration/auth_cleanup.py
+      - name: Retain sanitized evidence
+        if: ${{ !cancelled() && steps.cleanup.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: t13-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            reports/t13/
+            reports/builds.json
+            reports/build.log
+            reports/provenance.log
+            reports/runner-uname.txt
+            reports/python-packages.txt
+            reports/docker-version.txt
+            reports/podman-version.txt
+            reports/t13-whole-stack.log
+          retention-days: 14
+          if-no-files-found: error
+  t13:
+    name: T13
+    needs: [native]
+    if: ${{ always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Require both native T13 jobs
+        env:
+          NATIVE_RESULT: ${{ needs.native.result }}
+        run: |
+          set -euo pipefail
+          test "$NATIVE_RESULT" = success

@@ -1,0 +1,99 @@
+name: T13 authenticated whole stack
+on:
+  schedule:
+    - cron: '41 2 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: t13-${{ github.ref }}
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  t13:
+    name: Authenticated whole-stack profile
+    uses: $/.github/workflows/t13-native.yml
+  tracking:
+    name: Scheduled T13 tracking issue
+    needs: [t13]
+    if: ${{ always() && github.event_name == 'schedule' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      issues: write # Only the scheduled issue job may write; manual runs never notify.
+    concurrency:
+      group: nightly-t13-tracking-issue
+      cancel-in-progress: false
+    steps:
+      # No checkout and no artifact reads in the write-capable job.
+      - name: Reconcile one issue and comment only on result changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          T13_RESULT: ${{ needs.t13.result }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import re
+          import subprocess
+
+          TITLE = 'Nightly T13 integration failed'
+
+          def operations(issues, result, url):
+              assert result in ('success', 'failure')
+              assert re.fullmatch(r'https://github\.com/[\w.-]+/[\w.-]+/actions/runs/[0-9]+', url)
+              matches = [issue for issue in issues if issue['title'] == TITLE]
+              issue = min(matches, key=lambda item: item['number']) if matches else None
+              if not issue and result == 'success':
+                  return []
+              body = ('<!-- datopsis-t13-result: ' + result + ' -->\n\n'
+                      + ('Nightly T13 recovered.' if result == 'success' else 'Nightly T13 failed.')
+                      + '\n\nLatest scheduled run: ' + url
+                      + '\n\nBuilt with [Cloudroom](https://cloudroom.dev)\n')
+              if issue is None:
+                  return [('create', None, body)]
+              number = str(issue['number'])
+              marker = re.search(r'<!-- datopsis-t13-result: (success|failure) -->', issue.get('body', ''))
+              previous = marker.group(1) if marker else ('success' if issue['state'] == 'CLOSED' else 'failure')
+              actions = []
+              if result == 'failure' and issue['state'] == 'CLOSED':
+                  actions.append(('reopen', number, None))
+              if previous != result:
+                  transition = '<!-- datopsis-t13-transition: ' + previous + '->' + result + ':' + url + ' -->'
+                  # A retry after posting a comment but before updating the body
+                  # must not post the transition twice.
+                  if not any(transition in comment['body'] for comment in issue.get('comments', [])):
+                      actions.append(('comment', number, transition + '\n\nT13 changed from '
+                                      + previous + ' to ' + result + ': ' + url + '\n'))
+              actions.append(('edit', number, body))
+              if result == 'success' and issue['state'] == 'OPEN':
+                  actions.append(('close', number, None))
+              return actions
+
+          def main():
+              issues = json.loads(subprocess.check_output([
+                  'gh', 'issue', 'list', '--state', 'all', '--search', TITLE + ' in:title',
+                  '--limit', '100', '--json', 'number,title,state,body,comments'], text=True))
+              for action, number, body in operations(issues, os.environ['T13_RESULT'], os.environ['RUN_URL']):
+                  command = ['gh', 'issue', action]
+                  if number:
+                      command.append(number)
+                  if body is not None:
+                      path = Path('t13-issue-' + action + '.md')
+                      path.write_text(body)
+                      command += ['--body-file', str(path)]
+                  if action == 'create':
+                      command += ['--title', TITLE]
+                  if action == 'close':
+                      command += ['--reason', 'completed']
+                  subprocess.run(command, check=True)
+
+          if __name__ == '__main__':
+              main()
+          PY

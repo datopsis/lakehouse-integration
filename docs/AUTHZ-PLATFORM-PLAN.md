@@ -139,6 +139,27 @@ per-architecture run links and limitations. Its
 added components. The evaluation is manual-only and separate from `Integration`;
 passing C1–C8 does not itself remove Phase D's static-storage-key gap.
 
+## Slice 4 status (owner approved 2026-11-26)
+
+Slice 4a supplies hardened images from unmerged authz PR #9 at `ed14cf9`;
+owning security gates remain red on quick-xml, parquet, thrift and SQLite.
+Owner timing decision (2026-11-27): slice 4b implements [T13](T13.md) in a
+separate **nightly + on-demand** workflow, never pull_request. Both native
+architectures remain mandatory there. Required Integration retains its original
+no-auth path, C1–C8 and strict provenance, with immutable native image reuse
+to avoid recompiling unchanged Rauthy/authz inputs. It uses Rauthy
+`52c3fec` (FIDO cache verified even on hits) and JWT/TLS/OPA Trino `b7e97fe` (coordinator-approved unmerged PR #10).
+Whole-stack login, per-team access, row/mask enforcement, shared revocation and
+outages, durable audit and C1–C8 require actual Actions evidence before acceptance.
+**T13 PASS on native amd64 and arm64** at runtime revision `090a29b`,
+[run 46118625205](https://github.com/datopsis/lakehouse-integration/actions/runs/46118625205).
+Real PKCE/JWT and machine grants, exact per-team rows and denials, OPA rows/masks,
+old-token grant/group revocation, both dependency outages/recovery and durable
+audits passed. Each CPU retained 837 audit records across PostgreSQL restart.
+The separate required regression/C-suite gate and its duration remain independently
+reported in [PR #24](https://github.com/datopsis/lakehouse-integration/pull/24). Token-broker lifecycle,
+Phase D scoped storage and production operation remain separate work.
+
 ## 6. Risks and how we contain them
 
 - **Owning a security-critical component.** Keep it small, embed a formally specified engine, require adversarial tests, and have the PoCs and tests for this work done by a local Claude Code child, since Codex refuses adversarial work.
