@@ -10,17 +10,17 @@ The Phase A diagram shows the as-built topology at the pins in
 [images.lock.json](../images.lock.json), with the owner's 2026-11-12 loopback
 exception. It supersedes the target design in the [TLS survey](TLS-PLAN.md).
 
-The [Phase B identity target](diagrams/lakehouse-identity-architecture.svg) shows
-Rauthy, chosen on 2026-11-13 with Keycloak as fallback, and its planned PostgreSQL
+The [as-built T13 identity fixture](diagrams/lakehouse-identity-architecture.svg) shows
+Rauthy, chosen on 2026-11-13 with Keycloak as fallback, and its PostgreSQL
 storage over verified TLS. Humans use authorization code with PKCE, Trino and
 PyIceberg obtain machine tokens, and Sail 0.7.3 reads an externally obtained token
-file; Lakekeeper validates those JWTs against Rauthy's JWKS. The groups claim is
-reserved for Phase C authorization, while Phase D will vend per-table credentials
-through SeaweedFS STS; neither is enabled in the main integration path. See the
+file; Lakekeeper validates those JWTs against Rauthy's JWKS. T13 resolves live Rauthy groups at decision time; token groups do not grant
+access. Phase D table-scoped SeaweedFS STS credentials remain unqualified.
+The original no-auth integration profile remains unchanged. See the
 [IdP bake-off evidence](IDP-BAKEOFF.md) and the separate
 [Phase C acceptance evaluation](AUTHZ-EVALUATION.md).
 
-![Phase B identity target: Rauthy, TLS token flows, Lakekeeper JWT validation, and future authorization and credential vending](diagrams/lakehouse-identity-architecture.svg)
+![As-built T13 identity fixture: Rauthy, TLS token flows, Lakekeeper JWT validation, and future authorization and credential vending](diagrams/lakehouse-identity-architecture.svg)
 
 The [Phase C evaluation view](diagrams/lakehouse-authorization-evaluation.svg)
 records the separate, manual C1–C8 acceptance fixture. Its upstream OpenFGA image
@@ -379,7 +379,8 @@ Owner timing decision (2026-11-27): T13 runs only in the separate nightly/manual
 `t13.yml` workflow, never on pull_request. The original TLS/crash/canary profile
 and C1–C8 remain required in Integration. Both workflows use both native CPUs.
 Its as-built configuration is in `integration/auth_probe.py`, `auth_fixture.py`,
-`auth_trino.py` and `auth_sail.py`. The JWT-capable Trino pin is under whole-stack native qualification;
+`auth_trino.py` and `auth_sail.py`. Whole-stack T13 passed on both native CPUs at the guarded JWT Trino pin
+([native evidence](T13.md));
 [the evidence ledger](T13.md) records actual results and limits. The unchanged
 required `Integration` aggregate requires both native regression/C-suite jobs;
 the separate `T13` aggregate requires both nightly/manual whole-stack jobs.

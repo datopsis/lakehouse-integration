@@ -151,11 +151,13 @@ to avoid recompiling unchanged Rauthy/authz inputs. It uses Rauthy
 `52c3fec` (FIDO cache verified even on hits) and JWT/TLS/OPA Trino `b7e97fe` (coordinator-approved unmerged PR #10).
 Whole-stack login, per-team access, row/mask enforcement, shared revocation and
 outages, durable audit and C1–C8 require actual Actions evidence before acceptance.
-**Native JWT qualification pending at the new Trino pin.** The previous
-PASSWORD-only launcher blocker is removed by the coordinator-approved `b7e97fe`.
-T13 keeps its complete assertion set and is dispatched on both native CPUs;
-[historical evidence](T13.md#historical-native-evidence-at-the-earlier-trino-pin)
-remains tied to its original pins. Token-broker lifecycle,
+**T13 PASS on native amd64 and arm64** at runtime revision `090a29b`,
+[run 46118625205](https://github.com/datopsis/lakehouse-integration/actions/runs/46118625205).
+Real PKCE/JWT and machine grants, exact per-team rows and denials, OPA rows/masks,
+old-token grant/group revocation, both dependency outages/recovery and durable
+audits passed. Each CPU retained 837 audit records across PostgreSQL restart.
+The separate required regression/C-suite gate and its duration remain independently
+reported in [PR #24](https://github.com/datopsis/lakehouse-integration/pull/24). Token-broker lifecycle,
 Phase D scoped storage and production operation remain separate work.
 
 ## 6. Risks and how we contain them

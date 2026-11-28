@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- T13 passes every assertion on native amd64 and arm64 at guarded JWT Trino
+  `b7e97fe` (run 46118625205): exact identity/team access, OPA rows and masks,
+  old-token grant/group revocation within 1.1 seconds, dependency outages/recovery,
+  837 durable audit records, TLS and backend/token isolation. Retain permanent
+  sanitized evidence and historical failures; required Integration remains separate.
+
+
 - Coordinator-approved Trino PR #10 test pin `b7e97fe`: guarded JWT plus
   Iceberg/TLS/OPA, with explicit HTTPS JWKS, issuer, audience and `sub` principal
   configuration in T13. The unmerged image remains red only on the same five
