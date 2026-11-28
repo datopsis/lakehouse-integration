@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- Owner timing decision (2026-11-27): move whole-stack T13 unchanged to a separate
+  nightly (02:41 UTC) and workflow_dispatch workflow, never pull_request. Retain
+  C1–C8 and every original regression/provenance assertion in required Integration.
+  Keep the approved Trino pin until the coordinator supplies its JWT-capable update.
+- Add one schedule-only T13 tracking issue: update repeated results without
+  comments, comment on changes, close on recovery. Manual runs never write issues.
+- Cache immutable native Rauthy/authz builds by source/CPU/recipe; independently
+  reverify source locks, archive inventory and every provenance label on each hit.
+  Runtime fixtures, secrets and decisions are never cached; cold builds stay slow.
+
+
 - Add T13 as a separate authenticated whole-stack profile plus C1–C8 in both
   native Integration jobs, preserving the no-auth regression profile and aggregate
   name. Use real PKCE/JWT and client credentials, stock OPA rows/masks, team Sail

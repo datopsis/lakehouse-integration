@@ -375,11 +375,14 @@ the existing encoding/remote-signing canaries keep their assertions unchanged.
 
 ## T13 authenticated fixture (slice 4b)
 
-T13 is an additional CI stage after the original TLS/crash/canary stack is removed.
+Owner timing decision (2026-11-27): T13 runs only in the separate nightly/manual
+`t13.yml` workflow, never on pull_request. The original TLS/crash/canary profile
+and C1–C8 remain required in Integration. Both workflows use both native CPUs.
 Its as-built configuration is in `integration/auth_probe.py`, `auth_fixture.py`,
 `auth_trino.py` and `auth_sail.py`. Whole-stack runtime acceptance is BLOCKED by the approved Trino image's PASSWORD-only launcher;
 [the evidence ledger](T13.md) records actual results and limits. The unchanged
-required `Integration` aggregate requires both native jobs and every stage.
+required `Integration` aggregate requires both native regression/C-suite jobs;
+the separate `T13` aggregate requires both nightly/manual whole-stack jobs.
 
 Rauthy stores identities in PostgreSQL and uses its TLS Hiqlite cache. Humans
 log in with authorization code/S256 PKCE. Trino authenticates their signed JWTs
@@ -418,3 +421,12 @@ prove arbitrary-path storage isolation; Phase D STS remains unbuilt. Sail/direct
 client machines receive no catalog grant on the row/mask fixture. Trino's trusted
 connector can load it; deployment isolation of that credential remains required.
 No production security qualification is inferred from this profile.
+
+The two expensive native source-image builds (Rauthy and both authz outputs) may
+be restored from immutable CI archives. Keys bind source pin, architecture and
+build recipe. Fresh source/lock verification, archive checksum and exact image
+inventory checks, independent image inspection and the strict provenance gate
+remain mandatory on hits. Fixtures, secrets, policies/decisions and runtime tests
+are never cached. Cold misses still build through the owner scripts. A separate
+schedule-only job reconciles the single T13 issue, without checkout or artifact
+reads, comments on result changes only and closes it on recovery.

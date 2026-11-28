@@ -34,7 +34,7 @@
   <rect width="1720" height="1330" fill="#ffffff"/>
   <rect width="1720" height="92" fill="url(#hdr)"/>
   <text x="40" y="44" font-size="26" font-weight="700" fill="#ffffff">Datopsis lakehouse · Identity architecture (T13)</text>
-  <text x="40" y="72" font-size="14" fill="#c8d8ec">Slice 4 approved 2026-11-26 · T13 additional authenticated fixture · PostgreSQL storage · source: docs/T13.md</text>
+  <text x="40" y="72" font-size="14" fill="#c8d8ec">Owner 2026-11-27: T13 nightly + on demand · Integration retains regressions + C1–C8 · source: docs/T13.md</text>
   <rect x="1352" y="28" width="330" height="36" rx="18" fill="#f2a900"/>
   <text x="1517" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#2b1d00">AS BUILT · T13 BLOCKED</text>
 
@@ -75,7 +75,7 @@
 
   <!-- Identity and catalog services. Proxy-internal hops are detailed in Phase A. -->
   <rect x="40" y="434" width="1640" height="656" rx="16" fill="#f5f8fc" stroke="#7d97b8" stroke-width="2" stroke-dasharray="10 6"/>
-  <text x="760" y="460" class="zone">T13 AS BUILT · verified TLS · original no-auth profile also remains mandatory</text>
+  <text x="760" y="460" class="zone">T13 NIGHTLY + ON DEMAND · verified TLS · no pull_request runs · required Integration retains C1–C8</text>
   <rect x="60" y="490" width="650" height="210" rx="10" class="card" filter="url(#sh)"/>
   <rect x="60" y="490" width="650" height="6" rx="3" fill="#1f9d8a"/>
   <text x="76" y="520" class="t1">Rauthy · OpenID provider over TLS</text>

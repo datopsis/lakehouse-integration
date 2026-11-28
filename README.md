@@ -56,7 +56,7 @@ security gate, and does not authorize release or modify the jars.
 | T10 | Sail CREATE/INSERT, exact Trino/fresh-PyIceberg reads after INSERT/UPDATE/DELETE; Sail reads Trino/PyIceberg tables, with passive REST/S3 credential evidence (catalog loopback hop and the S3 gateway's signing identity) |
 | T11 | Six small INSERTs; optimize reduces data-file count with exact rows in Trino/PyIceberg/Sail; expire all noncurrent snapshots, reject expired time travel, verify old files deleted in S3; remove a planted orphan while preserving every manifest reference; default seven-day retention refusals; repeat exact reads and S3 references after T5 and every T8 crash |
 | T12 | Trino add/rename/drop/widen/nested-add; exact schemas and old/new rows after every DDL and INSERT in Trino, fresh-process PyIceberg and fresh-session Sail; six historical snapshots by ID and timestamp, with historical schemas after evolution; exact Sail failure canaries only where measured |
-| T13 | Additional authenticated profile: real Rauthy PKCE/JWT and machine grants, exact catalog/Trino/per-team Sail visibility and rows, Trino row filters/NULL masks, old-token grant/group revocation under five seconds, dependency outages/recovery, durable audit, and C1–C8. Whole-stack acceptance BLOCKED by the approved Trino launcher; see [T13](docs/T13.md). |
+| T13 | Nightly/on-demand authenticated profile (never pull_request): real Rauthy PKCE/JWT and machine grants, exact catalog/Trino/per-team Sail visibility and rows, Trino row filters/NULL masks, old-token grant/group revocation under five seconds, dependency outages/recovery, durable audit, and C1–C8. Whole-stack acceptance BLOCKED by the approved Trino launcher; see [T13](docs/T13.md). |
 | TLS | Exact listener inventory per namespace; plaintext refused on every exposed listener; loopback backends refuse other containers; SeaweedFS mTLS required; real clients refuse wrong-CA, wrong-hostname and expired certificates; SeaweedFS exact-outcome canaries. Exposure checks repeat after T5 and T8 |
 | Canary | Default Trino encoding, INSERT/UPDATE/DELETE, then PyIceberg read; only the exact known Arrow decoder error is an expected failure |
 
@@ -202,10 +202,15 @@ Never run Python with `-O` or `PYTHONOPTIMIZE`: assertions are the test contract
 
 One workflow runs on pull requests, weekly Mondays at 06:23 UTC, and manual
 dispatch. `Integration (amd64)` on `ubuntu-24.04` and `Integration (arm64)` on
-`ubuntu-24.04-arm` run in parallel, each with a 120-minute cap (source-building the authz images adds substantial time) and fail-fast disabled.
+`ubuntu-24.04-arm` run in parallel, each with a 120-minute cold-build cap and fail-fast disabled.
+Native Rauthy/authz images are cached by exact source pin, native CPU and harness
+build recipe. Every hit fetches the pinned source anew and rechecks archive
+integrity, exact image IDs/tags and revision/lock/CPU provenance. No verdict is cached.
+Cold misses still compile; warm-cache duration requires measured CI evidence.
 Both assert `uname -m` and run the same builds, strict provenance, T1–T12, T8 crash
 scenarios, encoding canary, remote-signing canary and the cross-service TLS checks
-without exemptions. After teardown, T13 runs a separate authenticated whole-stack profile and the permanent C1–C8 contract. The no-auth main path stays intact. The
+without exemptions. After teardown, the permanent C1–C8 contract remains mandatory.
+Whole-stack T13 runs only in its separate nightly/manual workflow. The
 required check named exactly `Integration` waits for both matrix jobs and fails
 unless both succeed (including skipped/cancelled outcomes). All actions use full SHAs.
 Artifacts are named `lakehouse-<architecture>-<run_id>-<attempt>` and include
@@ -256,7 +261,14 @@ Owner approved slice 4 on 2026-11-26. [T13](docs/T13.md) adds Rauthy,
 `datopsis-authz serve`, the compiled Lakekeeper adapter, stock Trino OPA and
 one Sail per team behind `sail-gateway`. All network calls use verified TLS.
 The original T1–T12/crash/TLS/canary profile still runs with login off.
-Both profiles are mandatory on both native jobs under the unchanged `Integration` aggregate.
+The no-auth regression profile and C1–C8 remain mandatory under the unchanged
+`Integration` aggregate. Owner timing decision (2026-11-27): whole-stack T13 is
+**NIGHTLY + ON DEMAND**, never a pull-request stage. `t13.yml` runs both native
+architectures at 02:41 UTC daily and through `workflow_dispatch`. Its separate
+`T13` aggregate requires both native jobs. Only scheduled runs may maintain the
+one **Nightly T13 integration failed** issue: repeated results update its run link
+without comments; result changes get one comment, and recovery closes it.
+The schedule becomes active only after this workflow reaches the default branch.
 
 The new test pins are **unmerged PR heads**, not security-qualified releases:
 [authz #9](https://github.com/datopsis/datopsis-authz/pull/9) `ed14cf9`

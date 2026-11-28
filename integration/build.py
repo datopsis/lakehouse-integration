@@ -76,10 +76,18 @@ def build(repo, revision, architecture):
     run(["git", "-C", str(source), "checkout", "--detach", "FETCH_HEAD"])
     assert output(["git", "-C", str(source), "rev-parse", "HEAD"]) == revision
     assert not output(["git", "-C", str(source), "status", "--porcelain"])
+    from image_cache import restore, save
+
+    cached = restore(source, repo, revision, architecture)
+    if cached is not None:
+        return cached
     if repo == "datopsis-authz":
         from auth_build import authz
 
-        return authz(source, revision, architecture)
+        result = authz(source, revision, architecture)
+        if result["status"] == "pass":
+            save(source, repo, revision, architecture, result)
+        return result
     image = f"localhost/{repo}:integration"
     runtime = "podman" if repo in ("lakekeeper-ubi", "seaweedfs-ubi", "nginx-ubi") else "docker"
     env = dict(os.environ, CONTAINER_RUNTIME=runtime, IMAGE=image, RELEASE_REVISION=revision)
@@ -196,6 +204,8 @@ def build(repo, revision, architecture):
             name: sha(source / f"examples/profiles/{name}/nginx.conf")
             for name in ("lakekeeper", "sail")
         }
+    if result["status"] == "pass":
+        save(source, repo, revision, architecture, result)
     return result
 
 

@@ -19,7 +19,19 @@ from auth_redact import redact_reports, retain  # noqa: E402
 
 inventory = ROOT / ".runtime/t13-secrets.json"
 values = retain(inventory) if inventory.exists() else []
-redact_reports(ROOT / "reports", values)
+redact_reports(
+    ROOT / "reports",
+    values,
+    extra_files=(
+        "builds.json",
+        "build.log",
+        "provenance.log",
+        "runner-uname.txt",
+        "python-packages.txt",
+        "docker-version.txt",
+        "podman-version.txt",
+    ),
+)
 if (ROOT / "reports/t13").exists():
     (ROOT / "reports/t13/SANITIZED").write_text("Final T13 redaction completed.\n")
 inventory.unlink(missing_ok=True)

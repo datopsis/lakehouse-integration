@@ -30,6 +30,7 @@ jobs:
     env:
       INTEGRATION_ARCH: ${{ matrix.arch }}
       EXPECTED_MACHINE: ${{ matrix.machine }}
+      CI_IMAGE_CACHE: 'true'
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -59,6 +60,21 @@ jobs:
           .venv/bin/ruff format --check .
           .venv/bin/zizmor --offline --persona pedantic .github/workflows
           .venv/bin/python -m unittest discover -s tests -v
+      - name: Immutable native image cache keys
+        id: image-cache-keys
+        run: python3 integration/image_cache.py >> "$GITHUB_OUTPUT"
+      - name: Restore native Rauthy image built at the exact pin
+        id: rauthy-image-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .image-cache/rauthy-ubi
+          key: ${{ steps.image-cache-keys.outputs.rauthy }}
+      - name: Restore both native authz images built at the exact pin
+        id: authz-image-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .image-cache/datopsis-authz
+          key: ${{ steps.image-cache-keys.outputs.authz }}
       - name: Read owner-locked FIDO cache key
         id: fido-key
         run: python3 integration/fido.py --cache-key >> "$GITHUB_OUTPUT"
@@ -87,6 +103,18 @@ jobs:
         run: |
           set -euo pipefail
           python3 integration/verify.py 2>&1 | tee reports/provenance.log
+      - name: Save provenance-verified native Rauthy image
+        if: ${{ !cancelled() && steps.provenance.outcome == 'success' && steps.rauthy-image-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .image-cache/rauthy-ubi
+          key: ${{ steps.image-cache-keys.outputs.rauthy }}
+      - name: Save provenance-verified native authz images
+        if: ${{ !cancelled() && steps.provenance.outcome == 'success' && steps.authz-image-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .image-cache/datopsis-authz
+          key: ${{ steps.image-cache-keys.outputs.authz }}
       - name: T1–T12, canaries and cross-service TLS checks
         # Collect runtime evidence even if provenance fails; the job stays failed.
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
@@ -96,12 +124,7 @@ jobs:
       - name: Remove no-auth stack before the additional authenticated profile
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: python3 integration/cleanup.py
-      - name: T13 whole stack with real login, permissions, revocation, outages and durable audit
-        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
-        run: |
-          set -euo pipefail
-          .venv/bin/python integration/auth_probe.py whole-stack 2>&1 | tee reports/t13-whole-stack.log
-      - name: T13 permanent C1-C8 contract against the hardened catalog and service
+      - name: C1-C8 mandatory hardened catalog acceptance
         if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: |
           set -euo pipefail

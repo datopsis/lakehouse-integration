@@ -61,7 +61,10 @@ class AuthGates(unittest.TestCase):
             redact_reports(root, values)
             with log.open("a") as output:
                 output.write("\nlate traceback: second-suite-secret Bearer unregistered-token")
-            redact_reports(root, retain(inventory))
+            build_log = root / "build.log"
+            build_log.write_text("first-suite-secret")
+            redact_reports(root, retain(inventory), extra_files=("build.log",))
+            self.assertNotIn("first-suite-secret", build_log.read_text())
             self.assertNotIn("first-suite-secret", log.read_text())
             self.assertNotIn("second-suite-secret", log.read_text())
             self.assertNotIn("unregistered-token", log.read_text())
@@ -79,15 +82,13 @@ class AuthGates(unittest.TestCase):
         original = next(
             i for i, command in enumerate(commands) if "python integration/probe.py" in command
         )
-        for suite in ("whole-stack", "c1-c8"):
-            index = next(
-                i for i, command in enumerate(commands) if "auth_probe.py " + suite in command
-            )
-            self.assertGreater(index, original)
-            self.assertNotIn("continue-on-error", steps[index])
-            self.assertEqual(
-                steps[index]["if"], "${{ !cancelled() && steps.build.outcome == 'success' }}"
-            )
+        self.assertFalse(any("auth_probe.py whole-stack" in command for command in commands))
+        index = next(i for i, command in enumerate(commands) if "auth_probe.py c1-c8" in command)
+        self.assertGreater(index, original)
+        self.assertNotIn("continue-on-error", steps[index])
+        self.assertEqual(
+            steps[index]["if"], "${{ !cancelled() && steps.build.outcome == 'success' }}"
+        )
         self.assertEqual(jobs["integration"]["name"], "Integration")
 
 

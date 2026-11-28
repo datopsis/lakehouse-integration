@@ -143,8 +143,11 @@ passing C1–C8 does not itself remove Phase D's static-storage-key gap.
 
 Slice 4a supplies hardened images from unmerged authz PR #9 at `ed14cf9`;
 owning security gates remain red on quick-xml, parquet, thrift and SQLite.
-Slice 4b implements [T13](T13.md) as additional mandatory stages in both native
-Integration jobs, with the original no-auth path preserved. It uses Rauthy
+Owner timing decision (2026-11-27): slice 4b implements [T13](T13.md) in a
+separate **nightly + on-demand** workflow, never pull_request. Both native
+architectures remain mandatory there. Required Integration retains its original
+no-auth path, C1–C8 and strict provenance, with immutable native image reuse
+to avoid recompiling unchanged Rauthy/authz inputs. It uses Rauthy
 `52c3fec` (FIDO cache verified even on hits) and Trino OPA `9343071`.
 Whole-stack login, per-team access, row/mask enforcement, shared revocation and
 outages, durable audit and C1–C8 require actual Actions evidence before acceptance.
