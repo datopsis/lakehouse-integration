@@ -6,7 +6,9 @@
   native Integration jobs, preserving the no-auth regression profile and aggregate
   name. Use real PKCE/JWT and client credentials, stock OPA rows/masks, team Sail
   gateways, live revocation, dependency failures/recovery and durable audit checks.
-  Native qualification pending; no production or storage-isolation claim.
+  Both native original gates, strict provenance and C1–C8 passed. Whole-stack
+  acceptance is BLOCKED: the approved Trino launcher rejects JWT ingress.
+  No insecure override, production or storage-isolation claim.
 - Pin unmerged authz #9 `ed14cf9`, Rauthy #3 `52c3fec` and Trino #8 `9343071`
   with strict source/lock/CPU provenance for both authz outputs. Retain disclosed
   quick-xml/parquet/thrift/SQLite, SvelteKit/fixable RustSec and Iceberg-jar findings;

@@ -377,7 +377,7 @@ the existing encoding/remote-signing canaries keep their assertions unchanged.
 
 T13 is an additional CI stage after the original TLS/crash/canary stack is removed.
 Its as-built configuration is in `integration/auth_probe.py`, `auth_fixture.py`,
-`auth_trino.py` and `auth_sail.py`. Native runtime qualification is pending;
+`auth_trino.py` and `auth_sail.py`. Whole-stack runtime acceptance is BLOCKED by the approved Trino image's PASSWORD-only launcher;
 [the evidence ledger](T13.md) records actual results and limits. The unchanged
 required `Integration` aggregate requires both native jobs and every stage.
 

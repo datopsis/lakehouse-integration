@@ -148,7 +148,7 @@ Integration jobs, with the original no-auth path preserved. It uses Rauthy
 `52c3fec` (FIDO cache verified even on hits) and Trino OPA `9343071`.
 Whole-stack login, per-team access, row/mask enforcement, shared revocation and
 outages, durable audit and C1–C8 require actual Actions evidence before acceptance.
-**Implementation present; native qualification pending.** Token-broker lifecycle,
+**Whole-stack acceptance BLOCKED:** both native jobs passed original regressions, strict provenance and C1–C8, but the approved Trino launcher rejects JWT ingress. A reviewed compatible pin or an owner clarification of ingress scope is required; see [actual evidence](T13.md#current-native-evidence-and-required-input). Token-broker lifecycle,
 Phase D scoped storage and production operation remain separate work.
 
 ## 6. Risks and how we contain them
