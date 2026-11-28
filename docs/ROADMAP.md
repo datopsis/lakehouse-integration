@@ -34,6 +34,9 @@ Every owner decision, and every decision still pending, is recorded in
   reported upstream) once a reviewed upstream fix lands; the exact-outcome canaries
   announce the change.
 - [ ] TLS lifecycle beyond the test: rotation, revocation and production PKI.
+- [ ] T13 / MVP slice 4b: authenticated whole-stack stages implemented; native
+  qualification pending. See [T13 evidence and limits](T13.md). T1–T12, crash,
+  TLS and canaries remain mandatory in their original no-auth profile.
 - [ ] Phase B: integrate the merged hardened `rauthy-ubi` image (`1e114b8`) and
   qualify OpenID login on both native architectures in the main path. Owner chose Rauthy on 2026-11-13, with Keycloak as the
   tested fallback; see the [IdP bake-off decision and evidence](IDP-BAKEOFF.md).

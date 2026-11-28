@@ -15,6 +15,13 @@ def main():
     for repo, revision in PINS.items():
         result = results[repo]
         print(repo + ": " + result["status"] + "; architecture=" + str(result.get("architecture")))
+        if repo == "datopsis-authz":
+            assert set(result["images"]) == {"authz", "lakekeeper-authz"}
+            for image in result["images"].values():
+                assert image["status"] == "pass", image
+                assert image["revision"] == revision
+                assert image["architecture"] == architecture
+                assert not image["provenance_errors"], image
         for error in result.get("provenance_errors", []):
             print("  " + error)
         if (

@@ -26,10 +26,11 @@ jobs:
             machine: aarch64
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 45
+    timeout-minutes: 120
     env:
       INTEGRATION_ARCH: ${{ matrix.arch }}
       EXPECTED_MACHINE: ${{ matrix.machine }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -43,7 +44,7 @@ jobs:
           test "$(uname -m)" = "$EXPECTED_MACHINE"
           df -h
           sudo apt-get update -qq
-          sudo apt-get install -y rpm podman gnupg tcpdump
+          sudo apt-get install -y rpm podman gnupg tcpdump argon2 apache2-utils
           python3 -m venv .venv
           .venv/bin/pip install --require-hashes -r requirements.txt
           mkdir -p reports
@@ -58,6 +59,24 @@ jobs:
           .venv/bin/ruff format --check .
           .venv/bin/zizmor --offline --persona pedantic .github/workflows
           .venv/bin/python -m unittest discover -s tests -v
+      - name: Read owner-locked FIDO cache key
+        id: fido-key
+        run: python3 integration/fido.py --cache-key >> "$GITHUB_OUTPUT"
+      - name: Restore owner-locked FIDO bytes
+        id: fido-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .sources/fixture-inputs/fido-mds.jwt
+          key: ${{ steps.fido-key.outputs.key }}
+      - name: Verify FIDO hash, signature, path, fresh CRLs and dates including cache hits
+        id: fido-verified
+        run: python3 integration/fido.py
+      - name: Save only owner-verified FIDO bytes
+        if: ${{ success() && steps.fido-verified.outcome == 'success' && steps.fido-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: .sources/fixture-inputs/fido-mds.jwt
+          key: ${{ steps.fido-key.outputs.key }}
       - name: Build exact pinned source with owner scripts
         id: build
         run: |
@@ -74,18 +93,34 @@ jobs:
         run: |
           set -euo pipefail
           .venv/bin/python integration/probe.py 2>&1 | tee reports/probe.log
+      - name: Remove no-auth stack before the additional authenticated profile
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: python3 integration/cleanup.py
+      - name: T13 whole stack with real login, permissions, revocation, outages and durable audit
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          .venv/bin/python integration/auth_probe.py whole-stack 2>&1 | tee reports/t13-whole-stack.log
+      - name: T13 permanent C1-C8 contract against the hardened catalog and service
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          .venv/bin/python integration/auth_probe.py c1-c8 2>&1 | tee reports/t13-c1-c8.log
       - name: Redact diagnostics and remove services
         id: cleanup
         if: always()
         run: |
           set -euo pipefail
+          .venv/bin/python integration/auth_cleanup.py
           python3 integration/cleanup.py
       - name: Retain sanitized evidence
         if: ${{ !cancelled() && steps.cleanup.outcome == 'success' }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: lakehouse-${{ matrix.arch }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: reports/sanitized/
+          path: |
+            reports/sanitized/
+            reports/t13/
           retention-days: 14
           if-no-files-found: error
   integration:

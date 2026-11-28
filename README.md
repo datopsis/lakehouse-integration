@@ -17,14 +17,14 @@ See [Phase A TLS](#phase-a-tls) below.
 
 The implementation follows the evidence on
 [`spike/feasibility`](https://github.com/datopsis/lakehouse-integration/blob/spike/feasibility/SPIKE-FINDINGS.md).
-That branch is retained unchanged. All six source commits live in
+That branch is retained unchanged. All source commits live in
 [images.lock.json](images.lock.json); changing a pin is a reviewed one-line change.
 Each input is fetched by full SHA, checked against detached HEAD, built with its
 own build script, and inspected after loading. Trino falls back to fetching
 `refs/pull/2/head` if the SHA fetch fails, then still requires exact HEAD.
 
 **Strict provenance is mandatory for every image.** There is no allowance for
-inherited or missing labels. All six current pins pass this gate on both
+inherited or missing labels. The six baseline pins passed this gate on both
 architectures in this repository's PR checks. The mandatory gate checks
 `org.opencontainers.image.revision` against the pin and
 `io.datopsis.artifact-lock.sha256` against the exact repository artifact lock. The image
@@ -56,6 +56,7 @@ security gate, and does not authorize release or modify the jars.
 | T10 | Sail CREATE/INSERT, exact Trino/fresh-PyIceberg reads after INSERT/UPDATE/DELETE; Sail reads Trino/PyIceberg tables, with passive REST/S3 credential evidence (catalog loopback hop and the S3 gateway's signing identity) |
 | T11 | Six small INSERTs; optimize reduces data-file count with exact rows in Trino/PyIceberg/Sail; expire all noncurrent snapshots, reject expired time travel, verify old files deleted in S3; remove a planted orphan while preserving every manifest reference; default seven-day retention refusals; repeat exact reads and S3 references after T5 and every T8 crash |
 | T12 | Trino add/rename/drop/widen/nested-add; exact schemas and old/new rows after every DDL and INSERT in Trino, fresh-process PyIceberg and fresh-session Sail; six historical snapshots by ID and timestamp, with historical schemas after evolution; exact Sail failure canaries only where measured |
+| T13 | Additional authenticated profile: real Rauthy PKCE/JWT and machine grants, exact catalog/Trino/per-team Sail visibility and rows, Trino row filters/NULL masks, old-token grant/group revocation under five seconds, dependency outages/recovery, durable audit, and C1–C8. Native qualification pending; see [T13](docs/T13.md). |
 | TLS | Exact listener inventory per namespace; plaintext refused on every exposed listener; loopback backends refuse other containers; SeaweedFS mTLS required; real clients refuse wrong-CA, wrong-hostname and expired certificates; SeaweedFS exact-outcome canaries. Exposure checks repeat after T5 and T8 |
 | Canary | Default Trino encoding, INSERT/UPDATE/DELETE, then PyIceberg read; only the exact known Arrow decoder error is an expected failure |
 
@@ -201,10 +202,10 @@ Never run Python with `-O` or `PYTHONOPTIMIZE`: assertions are the test contract
 
 One workflow runs on pull requests, weekly Mondays at 06:23 UTC, and manual
 dispatch. `Integration (amd64)` on `ubuntu-24.04` and `Integration (arm64)` on
-`ubuntu-24.04-arm` run in parallel, each with a 45-minute cap and fail-fast disabled.
+`ubuntu-24.04-arm` run in parallel, each with a 120-minute cap (source-building the authz images adds substantial time) and fail-fast disabled.
 Both assert `uname -m` and run the same builds, strict provenance, T1–T12, T8 crash
 scenarios, encoding canary, remote-signing canary and the cross-service TLS checks
-without exemptions. The
+without exemptions. After teardown, T13 runs a separate authenticated whole-stack profile and the permanent C1–C8 contract. The no-auth main path stays intact. The
 required check named exactly `Integration` waits for both matrix jobs and fails
 unless both succeed (including skipped/cancelled outcomes). All actions use full SHAs.
 Artifacts are named `lakehouse-<architecture>-<run_id>-<attempt>` and include
@@ -248,3 +249,19 @@ shows direct S3 signing with zero signer calls. T10 is a mandatory success test.
 Configurable delegation was added upstream in [0c8333a](https://github.com/lakehq/sail/commit/0c8333a349e5438e4b37fe984b9e3a45befc7bff);
 a future reviewed sail-ubi release containing that change can explicitly omit
 vending. This integration does not patch or upgrade the pinned engine.
+
+## T13 authenticated profile
+
+Owner approved slice 4 on 2026-11-26. [T13](docs/T13.md) adds Rauthy,
+`datopsis-authz serve`, the compiled Lakekeeper adapter, stock Trino OPA and
+one Sail per team behind `sail-gateway`. All network calls use verified TLS.
+The original T1–T12/crash/TLS/canary profile still runs with login off.
+Both profiles are mandatory on both native jobs under the unchanged `Integration` aggregate.
+
+The new test pins are **unmerged PR heads**, not security-qualified releases:
+[authz #9](https://github.com/datopsis/datopsis-authz/pull/9) `ed14cf9`
+(quick-xml, parquet, thrift and SQLite findings),
+[Rauthy #3](https://github.com/datopsis/rauthy-ubi/pull/3) `52c3fec`
+(SvelteKit and fixable RustSec findings), and
+[Trino #8](https://github.com/datopsis/trino-ubi/pull/8) `9343071`
+(Iceberg jars). Their owning security gates remain blocking.

@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- Add T13 as a separate authenticated whole-stack profile plus C1–C8 in both
+  native Integration jobs, preserving the no-auth regression profile and aggregate
+  name. Use real PKCE/JWT and client credentials, stock OPA rows/masks, team Sail
+  gateways, live revocation, dependency failures/recovery and durable audit checks.
+  Native qualification pending; no production or storage-isolation claim.
+- Pin unmerged authz #9 `ed14cf9`, Rauthy #3 `52c3fec` and Trino #8 `9343071`
+  with strict source/lock/CPU provenance for both authz outputs. Retain disclosed
+  quick-xml/parquet/thrift/SQLite, SvelteKit/fixable RustSec and Iceberg-jar findings;
+  no owning security gate is bypassed. Add owner-verified FIDO cache reuse.
+- Update the identity diagram to the T13 fixture as built, with runtime status.
+
+
 - Pin lakekeeper-ubi to fe19d7f (Lakekeeper 0.13.9 with the 0.13.5-0.13.9 security fixes;
   shipped RustSec findings 38 -> 24).
 - Pin postgresql-lakekeeper-ubi to 1054729 (PostgreSQL 18.7). PGDG removed the 18.6 RPMs the
