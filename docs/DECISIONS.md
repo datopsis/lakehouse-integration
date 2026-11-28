@@ -10,6 +10,16 @@ Items still under coordinated vulnerability disclosure are tracked privately and
 
 | Date | Area | Decision | Why | Where |
 |---|---|---|---|---|
+| 2026-11-28 | Required Integration | Keep C1–C8 on the hardened authz images inside required `Integration` on every PR (about 26 min per architecture, was about 23). | Every PR proves authorization still enforces on the shipped images; the full T13 stays nightly. | [T13](T13.md) |
+| 2026-11-28 | Authorization review (slice 4c) | Fix all six adversarial-review findings in our code (F1–F6) and the five hardening notes (O1–O5); the review's tests must pass unchanged on both architectures before the MVP is done. | Two High findings (one bad grant can stop every decision; a stale name binding after rename). | datopsis-authz #11 |
+| 2026-11-27 | Rust advisory gate | Block a shipped-crate RustSec advisory whenever a patched version exists, whatever its type. Report and track advisories with no patch (e.g. unmaintained) in one tracking issue. Build-only and unselected crates are report-only. Inventory comes from cargo-auditable 0.7.8 in the binary. | Trivy and Grype miss RustSec advisories without CVE aliases. Blocking only on fixable items keeps the gate actionable. | lakekeeper-ubi #28, rauthy-ubi #4, datopsis-authz #9 |
+| 2026-11-27 | Upstream Rust dependencies | **Wait for upstream releases.** Gates stay red (Lakekeeper 0.13.9: 24 fixable; Rauthy 0.37.2: 43 fixable). No upstream refresh requests and no re-measuring newer versions for now. | Not production-imminent; no patched binaries. | [Waiting on upstream](#waiting-on-upstream-no-decision-needed-recheck) |
+| 2026-11-27 | authz dependencies | Upgrade `axum-server` to 0.9 to drop the unmaintained `rustls-pemfile`. `chrono` stays (no own uses; 17 third-party dependents incl. Cedar, Arrow, Iceberg, Lakekeeper, sqlx); report-only and tracked. | Remove what we can; don't fork the ecosystem. | datopsis-authz #9, #10 |
+| 2026-11-26 | Rauthy FIDO feed in CI | Cache the fetched feed in GitHub Actions, keyed by the locked SHA-256, and fully verify it on every hit. | Many jobs fetching live hit HTTP 429. The cache is ephemeral CI storage, not repo storage. | rauthy-ubi #3, ARTIFACT-ACQUISITION.md |
+| 2026-11-26 | MVP slices 2–3 | Approved slice 2 (Trino via the OPA endpoint; opt-in pinned OPA plugin in trino-ubi) on 2026-11-25 and slice 3 (Sail gateway, one Sail per team) on 2026-11-26. | Per the 4-slice MVP plan. | datopsis-authz #7, #8; trino-ubi #7 |
+| 2026-11-25 | Rauthy FIDO feed storage | Store **no** feed data in the repo (no copy, LFS or size exception). Live fetch with full signature/chain/serial/freshness verification; refresh the lock on our release tempo via a scheduled tracking issue. Accepted: old pins stop building after each feed publication. | The feed is about 11 MB and changes upstream. | rauthy-ubi #3 |
+| 2026-11-18 | Lakekeeper update | Split: 0.13.9 update merges on existing gates; the blocking RustSec gate is a separate PR (stays red); plus a 0.15.1 evaluation (result: stay on 0.13.9). | Don't hold a security update behind a new gate. | lakekeeper-ubi #26, #28 |
+| 2026-11-18 | quick-xml (via Lakekeeper's Azure SDK) | Draft an upstream proposal (optional Azure/GCS storage features plus a quick-xml bump) for owner review before posting; keep the authz slices going with that gate honestly red; no S3-only patch. | Fix it upstream rather than carry a patch. | lakekeeper-ubi #27 |
 | 2026-11-27 | T13 timing | **NIGHTLY + ON DEMAND.** Run whole-stack T13 in its own workflow, nightly and workflow_dispatch, never pull_request. Required Integration keeps T1–T12, crash, TLS, canaries, C1–C8 and strict provenance. Scheduled failures maintain one issue, comment only on result changes and close on recovery. | Keep the required gate near its former duration without dropping assertions. | [.github/workflows/t13.yml](../.github/workflows/t13.yml), [T13](T13.md) |
 | 2026-11-26 | MVP slice 4 | Owner approved hardened images (4a) and T13 whole-stack integration (4b); keep the no-auth main path and both native mandatory jobs. Approved unmerged authz/Rauthy/Trino heads are testing pins with disclosed upstream security findings, not releases. | Qualify actual login and permissions without regressing TLS/crash/canary evidence. | [T13](T13.md) |
 | 2026-11-17 | Authorization platform | **GO on the MVP, in 4 slices:** (1) catalog — durable PostgreSQL store, revocation, Lakekeeper adapter, all C1–C8 green; (2) Trino via OPA (trino-ubi must ship the OPA plugin); (3) Sail gateway per team; (4) hardened image and integration test T13. Owner check-in after each slice. | Spikes S1–S4 proved the design: no Lakekeeper patching, Trino rows/masks/parity, Sail gateway fixes the ~80 s reset, revocation within seconds. | `datopsis-authz` |
@@ -58,12 +68,19 @@ Ordered roughly by when they block work. The owner answers them one at a time.
 | 10 | ClickHouse backup operations | Database scope, alert ownership | Production use |
 | 11 | Drift-notification rollout | Confirm the nginx-ubi pilot notification arrived, then copy it to the other repos | Update awareness |
 | 12 | `container-hardening` #25 | Two applicability decisions | That PR |
+| 13 | Rauthy SvelteKit CVE-2026-128120 | Wait for a Rauthy release on SvelteKit 3.1.1+ (recommended) or pin Rauthy main | rauthy-ubi #3/#4 merge |
+| 14 | Upstream proposals | Review the drafts before anything is posted: sail-ubi #7 (per-session identity, keepalive), lakekeeper-ubi #27 (optional storage features) | Upstream fixes |
+| 15 | Artifact archiving | Whether to archive or mirror locked artifacts so pinned builds stay reproducible | Reproducible old builds |
+| 16 | Actions PR setting | Whether to allow GitHub Actions to create and approve pull requests (scheduled refreshes use tracking issues meanwhile) | Automated refresh PRs |
 
 ## Waiting on upstream (no decision needed; recheck)
 
 | Item | Waiting for | Next check |
 |---|---|---|
-| Trino Iceberg connector (#2) | An Iceberg release with Guava 33.7.2+ (no 1.12.x backport yet) and a Trino release carrying it; Parquet 1.18.2 is already on Trino master | When Trino 485 ships, or in about 2 weeks |
-| SeaweedFS Go modules | A SeaweedFS release with `golang.org/x/net` 0.62+ and `apache/thrift` 0.25+ | On each SeaweedFS release |
+| Trino Iceberg connector (#2) | An Iceberg release with Guava 33.7.2+ (checked 2026-11-28: still 1.12.0, no 1.12.x backport) and a Trino release carrying it (still 484); Parquet 1.18.2 is already on Trino master | When Trino 485 ships, or in about 2 weeks |
+| SeaweedFS Go modules | SeaweedFS 4.55 (2026-11-23) ships `golang.org/x/net` 0.62; the upgrade from 4.53 is deferred by the owner (not production-imminent) | Owner's call; recheck at the next reminder |
+| Lakekeeper Rust advisories | A Lakekeeper release refreshing quick-xml, parquet, thrift and SQLite (lakekeeper-authz gate red) | On each Lakekeeper release |
+| Rauthy SvelteKit and Rust advisories | A Rauthy release with SvelteKit 3.1.1+ and refreshed crates (latest v0.37.2) | On each Rauthy release |
+| lakekeeper/sqlx fork | Upstream sqlx release with #4394; then drop the full-commit fork pin in datopsis-authz | On each sqlx release |
 | Parquet encoding workaround | Arrow decoder fix (the canary reports it) | Automatic |
 | Remote-signing canary (T9) | PyIceberg/fsspec race fix (the canary reports it) | Automatic |
