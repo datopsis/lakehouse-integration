@@ -24,7 +24,18 @@ class T13Workflow(unittest.TestCase):
         self.assertEqual(set(triggers), {"schedule", "workflow_dispatch"})
         self.assertEqual(triggers["schedule"], [{"cron": "41 2 * * *"}])
         main = yaml.safe_load(Path(".github/workflows/integration.yml").read_text())
-        job = workflow["jobs"]["native"]
+        reusable = yaml.safe_load(Path(".github/workflows/t13-native.yml").read_text())
+        self.assertEqual(workflow["jobs"]["t13"]["uses"], "$/.github/workflows/t13-native.yml")
+        self.assertEqual(set(reusable.get("on", reusable.get(True))), {"workflow_call"})
+        job = reusable["jobs"]["native"]
+        self.assertEqual(
+            job["if"],
+            "${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}",
+        )
+        bridge = yaml.safe_load(Path(".github/workflows/idp-bakeoff.yml").read_text())
+        self.assertEqual(set(bridge.get("on", bridge.get(True))), {"workflow_dispatch"})
+        self.assertEqual(bridge["jobs"]["t13"]["uses"], "$/.github/workflows/t13-native.yml")
+        self.assertEqual(bridge["jobs"]["t13"]["if"], "${{ inputs.suite == 't13' }}")
         self.assertEqual(job["strategy"], main["jobs"]["architectures"]["strategy"])
         commands = [step.get("run", "") for step in job["steps"]]
         self.assertTrue(any("auth_probe.py whole-stack" in c for c in commands))

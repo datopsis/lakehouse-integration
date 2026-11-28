@@ -5,7 +5,7 @@ on:
       suite:
         description: Manual evaluation suite
         type: choice
-        options: [identity, authorization]
+        options: [identity, authorization, t13]
         default: identity
 permissions:
   contents: read
@@ -16,7 +16,13 @@ defaults:
   run:
     shell: bash
 jobs:
+  t13:
+    # Registration bridge until t13.yml reaches the default branch. The caller
+    # is workflow_dispatch only and cannot grant issue-write permissions.
+    if: ${{ inputs.suite == 't13' }}
+    uses: $/.github/workflows/t13-native.yml
   evaluate:
+    if: ${{ inputs.suite != 't13' }}
     name: ${{ inputs.suite }} evaluation (${{ matrix.arch }})
     strategy:
       fail-fast: false

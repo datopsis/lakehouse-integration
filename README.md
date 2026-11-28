@@ -269,6 +269,9 @@ architectures at 02:41 UTC daily and through `workflow_dispatch`. Its separate
 one **Nightly T13 integration failed** issue: repeated results update its run link
 without comments; result changes get one comment, and recovery closes it.
 The schedule becomes active only after this workflow reaches the default branch.
+Before registration, the existing manual evaluation workflow
+[dispatches the same native T13 profile](docs/T13.md#branch-dispatch-before-workflow-registration)
+with `suite=t13`. It cannot write issues or run T13 on pull requests.
 
 The new test pins are **unmerged PR heads**, not security-qualified releases:
 [authz #9](https://github.com/datopsis/datopsis-authz/pull/9) `ed14cf9`
