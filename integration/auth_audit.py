@@ -39,7 +39,7 @@ def audit(catalog, users):
                 f"{catalog.provider.ca}:/ca/ca.pem:ro",
                 "localhost/postgresql-lakekeeper-ubi:integration",
                 "psql",
-                "-XAt",
+                "-XqAt",
                 "-v",
                 "ON_ERROR_STOP=1",
                 "-f",
@@ -98,7 +98,7 @@ def audit(catalog, users):
         "DELETE FROM authz_audit",
         "TRUNCATE authz_audit",
     ):
-        query = f"DO $$ BEGIN {statement}; RAISE EXCEPTION 'mutation unexpectedly succeeded'; EXCEPTION WHEN raise_exception THEN IF SQLERRM <> 'authorization audit is append-only' THEN RAISE; END IF; END $$; SELECT true;"
+        query = f"DO $$ BEGIN {statement}; RAISE EXCEPTION 'mutation unexpectedly succeeded'; EXCEPTION WHEN raise_exception THEN IF SQLERRM <> 'authorization audit is append-only' THEN RAISE; END IF; END $$; SELECT to_json(true);"
         assert sql(query) is True
     return {
         "records": len(rows),

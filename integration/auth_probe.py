@@ -298,6 +298,11 @@ def whole_stack(common, fixture):
             ]
             evidence[name] = {
                 "catalog_other": denial(lambda: reader.load_table("team_" + other + ".sample")),
+                "trino_namespaces": trino_rows(
+                    users[name],
+                    "SHOW SCHEMAS FROM iceberg",
+                    [["restricted"], ["team_a"]] if name == "a" else [["team_b"]],
+                ),
                 "trino_tables": trino_rows(
                     users[name], "SHOW TABLES FROM iceberg.team_" + name, [["sample"], ["sibling"]]
                 ),
