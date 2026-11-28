@@ -76,12 +76,12 @@ def whole_stack(common, fixture):
         clients = json.loads(path.read_text())
         clients += [
             {**clients[0], "id": name, "name": name}
-            for name in ("sail-team-a", "sail-team-b", "pyiceberg-service")
+            for name in ("sail-team-a", "sail-team-b", "pyiceberg-service", "trino-catalog")
         ]
         write(path, clients)
         return value
 
-    machines = ("sail-team-a", "sail-team-b", "pyiceberg-service")
+    machines = ("sail-team-a", "sail-team-b", "pyiceberg-service", "trino-catalog")
     with patch.object(fixture.Rauthy, "config_rauthy", config):
         catalog, operator, key = fixture.setup(
             os.environ["INTEGRATION_ARCH"],
@@ -136,6 +136,10 @@ def whole_stack(common, fixture):
     # Machine clients are read-only and cannot reach the protected rows/masks table.
     grant("user:oidc~lakekeeper", "team_a")
     grant("user:oidc~pyiceberg-service", "team_a")
+    # The private connector must load both teams' metadata; OPA independently
+    # enforces each authenticated caller's grants. It is not the ingress client.
+    grant("user:oidc~trino-catalog", "team_a")
+    grant("user:oidc~trino-catalog", "team_b")
     admin.create_namespace("restricted")
     restricted = admin.create_table(
         "restricted.people",
@@ -182,7 +186,7 @@ def whole_stack(common, fixture):
     fixture.grant(
         catalog,
         key,
-        "user:oidc~lakekeeper",
+        "user:oidc~trino-catalog",
         "select",
         "lakekeeper_table:" + catalog.warehouse_id + "/" + resource["id"],
     )
@@ -267,6 +271,9 @@ def whole_stack(common, fixture):
         assert reader.list_namespaces() == [("team_a",)], reader.list_namespaces()
         assert reader.load_table("team_a.sample").scan().to_arrow().to_pylist() == [{"id": 11}]
         denied = denial(lambda: reader.load_table("team_b.sample"))
+        connector = catalog.pyiceberg(provider.token("trino-catalog"))
+        assert connector.load_table("team_b.sample").scan().to_arrow().to_pylist() == [{"id": 22}]
+        connector_denied = denial(lambda: connector.load_table("denied.sample"))
         return {
             "human": "Rauthy authorization code with S256 PKCE; JWT to all three services",
             "pyiceberg": {"rows": [{"id": 11}], "other_namespace": denied},
@@ -276,6 +283,7 @@ def whole_stack(common, fixture):
             "trino_machine": trino_rows(
                 "oidc~lakekeeper", "SELECT id FROM iceberg.team_a.sample", [[11]]
             ),
+            "private_connector": {"team_b_rows": [{"id": 22}], "outside_union": connector_denied},
             "sail": "independent client-credentials token file per team",
             "trino_tls": trino_tls,
         }

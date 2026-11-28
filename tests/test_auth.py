@@ -2,6 +2,7 @@
 
 import copy
 import json
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -12,6 +13,7 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "integration"))
 import verify
+from auth_fixture import TRINO_JWT_USER_PATTERN
 from auth_redact import redact_reports, retain
 
 
@@ -49,6 +51,17 @@ class AuthGates(unittest.TestCase):
                     ):
                         with self.subTest(image=image, key=key), self.assertRaises(AssertionError):
                             verify.main()
+
+    def test_jwt_mapping_cannot_append_an_empty_suffix_identity(self):
+        # Java Matcher.replaceAll and Python re.sub both replace every match,
+        # including an unanchored empty suffix. The fixture must map exactly once.
+        for subject in ("human-subject", "lakekeeper", "trino-catalog"):
+            self.assertEqual(
+                re.sub(TRINO_JWT_USER_PATTERN, lambda match: "oidc~" + match[1], subject),
+                "oidc~" + subject,
+            )
+        self.assertIsNone(re.fullmatch(TRINO_JWT_USER_PATTERN, ""))
+        self.assertIsNone(re.fullmatch(TRINO_JWT_USER_PATTERN, "human\nother"))
 
     def test_final_redaction_covers_late_tracebacks_and_all_suite_secrets(self):
         with TemporaryDirectory() as directory:

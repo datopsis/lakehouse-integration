@@ -62,6 +62,7 @@ def audit(catalog, users):
         "oidc~sail-team-b",
         "oidc~pyiceberg-service",
         "oidc~lakekeeper",
+        "oidc~trino-catalog",
     ):
         matching = [r for r in rows if r["principal"] == user]
         assert any(r["decision"] for r in matching), user

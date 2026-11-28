@@ -11,6 +11,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / ".sources/datopsis-authz"
 PINS = json.loads((ROOT / "images.lock.json").read_text())
+# Trino uses Java Matcher.replaceAll: an unanchored (.*) also replaces the
+# empty suffix, producing oidc~<subject>oidc~ and an unknown live-group identity.
+TRINO_JWT_USER_PATTERN = r"^(.+)$"
 
 
 def load(suite):

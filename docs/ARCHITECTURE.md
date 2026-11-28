@@ -388,7 +388,10 @@ Rauthy stores identities in PostgreSQL and uses its TLS Hiqlite cache. Humans
 log in with authorization code/S256 PKCE. Trino authenticates their signed JWTs
 against Rauthy JWKS with exact issuer/audience and maps verified subjects to
 `oidc~sub`; client identity headers cannot select another user's grants.
-The REST connector and PyIceberg obtain client-credentials tokens. Each team Sail
+The REST connector and PyIceberg obtain client-credentials tokens. The private
+`trino-catalog` connector identity has the union of table grants needed by Trino;
+its secret is distinct from the least-privilege `lakekeeper` ingress machine
+client. OPA enforces each authenticated end user independently of that connector. Each team Sail
 receives only its own protected machine-token file. A trusted fixture supervisor
 obtains those tokens; automatic token-broker lifecycle remains unimplemented.
 

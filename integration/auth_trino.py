@@ -2,6 +2,7 @@
 
 import shutil
 
+from auth_fixture import TRINO_JWT_USER_PATTERN
 from clients import ready_or_error
 from common import HTTPS, ROOT, WORK, run, secret, write
 from fixture import BACKEND_NETWORK, container, leaf, transport
@@ -40,7 +41,10 @@ def start(catalog, key, tokens, mode="batch"):
         "path=/etc/trino/trust.p12\ntype=PKCS12\npassword-file=/etc/trino/trust-password\n",
     )
     write(directory / "context.properties", "serviceKey=" + key + "\n")
-    write(directory / "user-mapping.json", {"rules": [{"pattern": "(.*)", "user": "oidc~$1"}]})
+    write(
+        directory / "user-mapping.json",
+        {"rules": [{"pattern": TRINO_JWT_USER_PATTERN, "user": "oidc~$1"}]},
+    )
     base = "https://cedar:8443/opa/"
     config = "access-control.name=opa\nopa.policy.uri=" + base + "allow\n"
     if mode == "batch":
@@ -93,7 +97,7 @@ def start(catalog, key, tokens, mode="batch"):
         + catalog.provider.discovery["token_endpoint"]
         + "\n"
     )
-    config += "iceberg.rest-catalog.oauth2.credential=lakekeeper:${ENV:IDP_CLIENT_SECRET}\niceberg.rest-catalog.oauth2.scope=openid profile\n"
+    config += "iceberg.rest-catalog.oauth2.credential=trino-catalog:${ENV:IDP_CLIENT_SECRET}\niceberg.rest-catalog.oauth2.scope=openid profile\n"
     write(path, config)
     for path in directory.rglob("*"):
         if path.is_file():
@@ -107,7 +111,7 @@ def start(catalog, key, tokens, mode="batch"):
         env={
             "S3_ACCESS_KEY_ID": catalog.storage.access,
             "S3_SECRET_ACCESS_KEY": catalog.storage.password,
-            "IDP_CLIENT_SECRET": catalog.provider.client_secret,
+            "IDP_CLIENT_SECRET": catalog.provider.client_secrets["trino-catalog"],
         },
         mounts=[(directory, "/etc/trino")],
         extra=[
