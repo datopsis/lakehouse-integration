@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1720" height="1330" viewBox="0 0 1720 1330" font-family="'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif">
-  <title>Datopsis lakehouse: T13 identity architecture (as-built fixture; Trino ingress blocked)</title>
-  <desc>Rauthy chosen 2026-11-13, Keycloak fallback. Human PKCE and machine client-credentials flows, Sail external token file, Lakekeeper JWT validation and PostgreSQL storage over verified TLS. Cedar, OPA and per-team Sail gateway are wired in T13; native Trino ingress blocked. STS vending is not built.</desc>
+  <title>Datopsis lakehouse: T13 identity architecture (as-built fixture; JWT native qualification pending)</title>
+  <desc>Rauthy chosen 2026-11-13, Keycloak fallback. Human PKCE and machine client-credentials flows, Sail external token file, Lakekeeper JWT validation and PostgreSQL storage over verified TLS. Cedar, OPA and per-team Sail gateway are wired in T13; native JWT native qualification pending. STS vending is not built.</desc>
   <defs>
     <linearGradient id="hdr" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="#0f2742"/>
@@ -36,7 +36,7 @@
   <text x="40" y="44" font-size="26" font-weight="700" fill="#ffffff">Datopsis lakehouse · Identity architecture (T13)</text>
   <text x="40" y="72" font-size="14" fill="#c8d8ec">Owner 2026-11-27: T13 nightly + on demand · Integration retains regressions + C1–C8 · source: docs/T13.md</text>
   <rect x="1352" y="28" width="330" height="36" rx="18" fill="#f2a900"/>
-  <text x="1517" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#2b1d00">AS BUILT · T13 BLOCKED</text>
+  <text x="1517" y="51" text-anchor="middle" font-size="13" font-weight="700" fill="#2b1d00">AS BUILT · JWT CI PENDING</text>
 
   <!-- Clients and external token acquisition. -->
   <rect x="40" y="128" width="1640" height="244" rx="12" fill="#f4f5f7" stroke="#9aa5b1" stroke-width="1.5"/>
@@ -93,7 +93,7 @@
   <text x="1016" y="570" class="t2">⑤ Validate JWT with Rauthy's JWKS signing keys</text>
   <text x="1016" y="594" class="t2">Check issuer, audience, expiry and signature</text>
   <text x="1016" y="618" class="t2">Cedar adapter → serve · durable grants and audits</text>
-  <text x="1016" y="646" class="t3">OPA + team Sail configured; whole-stack tests blocked</text>
+  <text x="1016" y="646" class="t3">Trino b7e97fe JWT + OPA · team Sail · native CI pending</text>
   <text x="1016" y="674" class="t3">nginx → catalog HTTPS → in-process loopback API</text>
 
   <!-- Token acquisition arrows point to the endpoint; replies return on TLS. -->
@@ -133,7 +133,7 @@
   <text x="76" y="972" class="t1">Phase C · Cedar serve + OPA + Sail gateway</text>
   <text x="76" y="998" class="t2">authz ed14cf9 · Lakekeeper adapter · PostgreSQL audits</text>
   <text x="76" y="1022" class="t2">Live Rauthy revocation · exact team permissions · no stale fallback</text>
-  <text x="76" y="1048" class="t3">C1–C8 pass both CPUs; T13 blocked before Trino ingress</text>
+  <text x="76" y="1048" class="t3">Prior C1–C8 passed both CPUs; full T13 at JWT pin pending</text>
   <rect x="1000" y="942" width="620" height="126" rx="12" fill="#ecf7f5" stroke="#1f9d8a" stroke-width="1.6" stroke-dasharray="10 6"/>
   <text x="1016" y="972" class="t1">Phase D · Credential vending · NOT BUILT</text>
   <text x="1016" y="998" class="t2">Lakekeeper → SeaweedFS STS over HTTPS</text>
@@ -158,5 +158,5 @@
   <text x="840" y="1212" class="t2">③ An external client obtains Sail's token; Sail reads its local token file, with no native grant.</text>
   <text x="840" y="1236" class="t2">④ Each API client sends its access token as a bearer token to Lakekeeper over HTTPS.</text>
   <text x="840" y="1260" class="t2">⑤ JWT validation plus live group lookup; catalog, OPA and Sail share Cedar decisions.</text>
-  <text x="840" y="1284" class="t3">T13 BLOCKED: approved Trino launcher requires PASSWORD. Original gates + C1–C8 passed both CPUs.</text>
+  <text x="840" y="1284" class="t3">T13 JWT profile: verified Rauthy HTTPS JWKS + exact issuer/audience/sub. Native qualification pending.</text>
 </svg>

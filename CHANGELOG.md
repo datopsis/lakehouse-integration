@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Coordinator-approved Trino PR #10 test pin `b7e97fe`: guarded JWT plus
+  Iceberg/TLS/OPA, with explicit HTTPS JWKS, issuer, audience and `sub` principal
+  configuration in T13. The unmerged image remains red only on the same five
+  Iceberg Jackson/Guava CVEs; no release claim or gate bypass.
+
+
 - Owner timing decision (2026-11-27): move whole-stack T13 unchanged to a separate
   nightly (02:41 UTC) and workflow_dispatch workflow, never pull_request. Retain
   C1–C8 and every original regression/provenance assertion in required Integration.

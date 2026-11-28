@@ -68,6 +68,7 @@ def start(catalog, key, tokens, mode="batch"):
         "http-server.authentication.jwt.key-file=" + catalog.provider.discovery["jwks_uri"] + "\n"
         "http-server.authentication.jwt.required-issuer=" + catalog.provider.issuer + "\n"
         "http-server.authentication.jwt.required-audience=lakekeeper\n"
+        "http-server.authentication.jwt.principal-field=sub\n"
         "http-server.authentication.jwt.user-mapping.file=/etc/trino/user-mapping.json\n"
         "discovery.uri=https://trino:8443\ninternal-communication.https.required=true\n"
         "internal-communication.https.keystore.path=/etc/trino/server.pem\n"

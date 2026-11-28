@@ -379,7 +379,7 @@ Owner timing decision (2026-11-27): T13 runs only in the separate nightly/manual
 `t13.yml` workflow, never on pull_request. The original TLS/crash/canary profile
 and C1–C8 remain required in Integration. Both workflows use both native CPUs.
 Its as-built configuration is in `integration/auth_probe.py`, `auth_fixture.py`,
-`auth_trino.py` and `auth_sail.py`. Whole-stack runtime acceptance is BLOCKED by the approved Trino image's PASSWORD-only launcher;
+`auth_trino.py` and `auth_sail.py`. The JWT-capable Trino pin is under whole-stack native qualification;
 [the evidence ledger](T13.md) records actual results and limits. The unchanged
 required `Integration` aggregate requires both native regression/C-suite jobs;
 the separate `T13` aggregate requires both nightly/manual whole-stack jobs.

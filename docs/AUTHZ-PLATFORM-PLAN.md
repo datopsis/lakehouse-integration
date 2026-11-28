@@ -148,10 +148,14 @@ separate **nightly + on-demand** workflow, never pull_request. Both native
 architectures remain mandatory there. Required Integration retains its original
 no-auth path, C1–C8 and strict provenance, with immutable native image reuse
 to avoid recompiling unchanged Rauthy/authz inputs. It uses Rauthy
-`52c3fec` (FIDO cache verified even on hits) and Trino OPA `9343071`.
+`52c3fec` (FIDO cache verified even on hits) and JWT/TLS/OPA Trino `b7e97fe` (coordinator-approved unmerged PR #10).
 Whole-stack login, per-team access, row/mask enforcement, shared revocation and
 outages, durable audit and C1–C8 require actual Actions evidence before acceptance.
-**Whole-stack acceptance BLOCKED:** both native jobs passed original regressions, strict provenance and C1–C8, but the approved Trino launcher rejects JWT ingress. A reviewed compatible pin or an owner clarification of ingress scope is required; see [actual evidence](T13.md#current-native-evidence-and-required-input). Token-broker lifecycle,
+**Native JWT qualification pending at the new Trino pin.** The previous
+PASSWORD-only launcher blocker is removed by the coordinator-approved `b7e97fe`.
+T13 keeps its complete assertion set and is dispatched on both native CPUs;
+[historical evidence](T13.md#historical-native-evidence-at-the-earlier-trino-pin)
+remains tied to its original pins. Token-broker lifecycle,
 Phase D scoped storage and production operation remain separate work.
 
 ## 6. Risks and how we contain them

@@ -36,8 +36,8 @@ Every owner decision, and every decision still pending, is recorded in
 - [ ] TLS lifecycle beyond the test: rotation, revocation and production PKI.
 - [ ] T13 / MVP slice 4b: whole-stack assertions run **nightly + on demand**,
   never pull_request (owner 2026-11-27), on both native architectures. Native
-  acceptance BLOCKED by the approved Trino launcher; both original gates and
-  C1–C8 passed natively. See [T13 evidence and limits](T13.md). T1–T12, crash,
+  qualification is pending at JWT-capable Trino `b7e97fe`; both original gates
+  and C1–C8 passed at the earlier pin. See [T13 evidence and limits](T13.md). T1–T12, crash,
   TLS and canaries remain mandatory in their original no-auth profile; C1–C8
   and strict provenance stay in required Integration.
 - [ ] Phase B: integrate the merged hardened `rauthy-ubi` image (`1e114b8`) and
